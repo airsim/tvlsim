@@ -1,0 +1,8 @@
+port=$1
+maxport=$2
+
+for ((i = port; i< maxport; i += 1))
+do
+port=$(($port+1))
+./agent -port $port &
+done 
