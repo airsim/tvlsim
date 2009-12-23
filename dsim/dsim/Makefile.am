@@ -6,7 +6,7 @@ include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = 
+SUBDIRS = command
 
 #EXTRA_DIST = config_msvc.h
 EXTRA_DIST =
