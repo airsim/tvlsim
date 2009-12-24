@@ -6,6 +6,8 @@
 // Boost
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
+// Distribution
+#include <simcrs/SIMCRS_Service.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/basic/BasChronometer.hpp>
@@ -56,6 +58,12 @@ namespace DSIM {
     DSIM_ServiceContext& lDSIM_ServiceContext =
       FacDsimServiceContext::instance().create ();
     _dsimServiceContext = &lDSIM_ServiceContext;
+
+    // Initialise the SIMCRS service handler
+    const SIMCRS::CRSCode_T lCRSCode = "1S";
+    SIMCRS_ServicePtr_T lSIMCRS_Service =
+      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioLogStream, lCRSCode));
+    lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -73,11 +81,15 @@ namespace DSIM {
     DSIM_ServiceContext& lDSIM_ServiceContext= *_dsimServiceContext;
 
     try {
+
+      // Get a reference on the SIMCRS service handler
+      SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+        lDSIM_ServiceContext.getSIMCRS_Service();
       
       // Delegate the booking to the dedicated command
       BasChronometer lSimulationChronometer;
       lSimulationChronometer.start();
-      Simulator::simulate();
+      Simulator::simulate (lSIMCRS_Service);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
       
       // DEBUG

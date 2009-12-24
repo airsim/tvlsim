@@ -6,9 +6,20 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
+// Boost
+#include <boost/shared_ptr.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/service/ServiceAbstract.hpp>
+
+// Forward declarations
+namespace SIMCRS {
+  class SIMCRS_Service;
+}
+
+/** Pointer on the SIMCRS Service handler. */
+typedef boost::shared_ptr<SIMCRS::SIMCRS_Service> SIMCRS_ServicePtr_T;
+
 
 namespace DSIM {
 
@@ -22,6 +33,10 @@ namespace DSIM {
       return _simulatorID;
     }
 
+    /** Get a reference on the SIMCRS service handler. */
+    SIMCRS::SIMCRS_Service& getSIMCRS_Service () const {
+      return *_simcrsService.get();
+    }
     
     // ///////// Setters //////////
     /** Set the simulator ID. */
@@ -29,6 +44,10 @@ namespace DSIM {
       _simulatorID = iSimulatorID;
     }
 
+    /** Set the pointer on the SIMCRS service handler. */
+    void setSIMCRS_Service (SIMCRS_ServicePtr_T ioSIMCRS_ServicePtr) {
+      _simcrsService = ioSIMCRS_ServicePtr;
+    }
 
     // ///////// Display Methods //////////
     /** Display the short DSIM_ServiceContext content. */
@@ -48,6 +67,13 @@ namespace DSIM {
     /** Destructor. */
     ~DSIM_ServiceContext();
 
+    
+  private:
+    // ///////////// Children ////////////
+    /** CRS Service Handler. */
+    SIMCRS_ServicePtr_T _simcrsService;
+
+    
   private:
     // //////////// Attributes //////////////////
     /** Simulator ID. */

@@ -7,6 +7,11 @@
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
 
+// Forward declarations
+namespace SIMCRS {
+  class SIMCRS_Service;
+}
+
 namespace DSIM {
 
   /** Class wrapping the simulation methods. */
@@ -15,7 +20,7 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate();
+    static void simulate (SIMCRS::SIMCRS_Service& lSIMCRS_Service);
 
   private:
     /** Constructors. */
