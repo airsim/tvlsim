@@ -11,8 +11,18 @@ namespace DSIM {
 
   /** Class wrapping the simulation methods. */
   class Simulator : public CmdAbstract {
-  public:
-    
+    friend class DSIM_Service;
+  private:
+
+    /** Perform a simulation. */
+    static void simulate();
+
+  private:
+    /** Constructors. */
+    Simulator() {}
+    Simulator(const Simulator&) {}
+    /** Destructor. */
+    ~Simulator() {}
   };
 
 }

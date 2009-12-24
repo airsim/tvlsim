@@ -1,15 +1,14 @@
 # dsim
 include $(top_srcdir)/Makefile.common
-#include $(srcdir)/core/sources.mk
+include $(srcdir)/core/sources.mk
 
 ## Source directory
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = command
+SUBDIRS = basic bom factory command service core config batches
 
-#EXTRA_DIST = config_msvc.h
-EXTRA_DIST =
+EXTRA_DIST = config_msvc.h
 
 
 # Header files
