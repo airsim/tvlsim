@@ -59,6 +59,8 @@ namespace DSIM {
       FacDsimServiceContext::instance().create ();
     _dsimServiceContext = &lDSIM_ServiceContext;
 
+    // TODO: do not hardcode the CRS code (e.g., take it from a
+    // configuration file).
     // Initialise the SIMCRS service handler
     const SIMCRS::CRSCode_T lCRSCode = "1S";
     SIMCRS_ServicePtr_T lSIMCRS_Service =
