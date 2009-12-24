@@ -31,6 +31,9 @@ namespace DSIM {
       // Make a booking
       ioSIMCRS_Service.sell (lAirlineCode, lPartySize);
     
+      // DEBUG
+      DSIM_LOG_DEBUG ("The simulation has ended");
+
     } catch (const std::exception& lStdError) {
       DSIM_LOG_ERROR ("Error: " << lStdError.what());
       throw SimulationException();

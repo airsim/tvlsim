@@ -20,7 +20,7 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate (SIMCRS::SIMCRS_Service& lSIMCRS_Service);
+    static void simulate (SIMCRS::SIMCRS_Service&);
 
   private:
     /** Constructors. */
