@@ -4,6 +4,8 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+// Distribution
+#include <simcrs/SIMCRS_Service.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/config/dsim-paths.hpp>
