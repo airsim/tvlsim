@@ -464,6 +464,17 @@ AC_CONFIG_FILES(
 	dsim/core/Makefile
 	dsim/batches/Makefile
 	test/Makefile
+	test/boost/Makefile
+	test/boost/accumulators/Makefile
+	test/boost/asio/Makefile
+	test/boost/asio/httpd/Makefile
+	test/boost/asio/logd/Makefile
+	test/boost/asio/logger/Makefile
+	test/boost/mpi/Makefile
+	test/boost/mpl/Makefile
+	test/boost/spirit/Makefile
+	test/boost/serialization/Makefile
+	test/boost/signals/Makefile
 )
 AC_OUTPUT
 

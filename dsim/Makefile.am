@@ -25,7 +25,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure \
 EXTRA_DIST =
 
 # Build in these directories:
-SUBDIRS = stdair trademgen airsched airinv simcrs rmol $(TEST_DIR)
+SUBDIRS = stdair trademgen airsched airinv simcrs rmol dsim $(TEST_DIR)
 
 
 # Configuration helpers

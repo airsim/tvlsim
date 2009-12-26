@@ -4,7 +4,7 @@ include $(top_srcdir)/Makefile.common
 MAINTAINERCLEANFILES = Makefile.in
 
 ##
-SUBDIRS =
+SUBDIRS = boost
 
 ##
 check_PROGRAMS = simulate
