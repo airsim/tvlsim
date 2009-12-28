@@ -141,7 +141,11 @@ AC_SUBST(CXXFLAGS_OPT)
 # -----------------------------------------------------------------------------
 # Support for ExtraCC (Extra-CruiseControl): http://sf.net/projects/extracc
 # -----------------------------------------------------------------------------
-AM_PATH_EXTRACC
+# Note: the ExtraCC is now imported as a Subversion external reference,
+#       thus directly accessible within the extracppunit directory.
+#       When that library will be widely avaible on Linux distributions,
+#       the external reference can be removed and the following line uncommented.
+#AM_PATH_EXTRACC
 #AC_SUBST(EXTRACC_VERSION)
 #AC_SUBST(EXTRACC_CFLAGS)
 #AC_SUBST(EXTRACC_LIBS)
@@ -199,14 +203,6 @@ AC_SUBST(BOOST_MPI_LIB)
 AC_SUBST(BOOST_MPI_PYTHON_LIB)
 
 # --------------------------------------------------------------------
-# Support for MySQL++ (C++ client API): http://tangentsoft.net/mysql++
-# --------------------------------------------------------------------
-AX_MYSQLPP
-AC_SUBST(MYSQLPP_VERSION)
-AC_SUBST(MYSQLPP_CFLAGS)
-AC_SUBST(MYSQLPP_LIBS)
-
-# --------------------------------------------------------------------
 # Support for SOCI http://soci.sourceforge.net
 # --------------------------------------------------------------------
 AX_SOCI
@@ -217,18 +213,22 @@ AC_SUBST(SOCI_LIBS)
 # --------------------------------------------------------------------
 # Support for TRAVEL-CCM (CCM Open Library): http://sf.net/projects/travel-ccm
 # --------------------------------------------------------------------
-AM_PATH_TRAVELCCM
-AC_SUBST(TRAVELCCM_VERSION)
-AC_SUBST(TRAVELCCM_CFLAGS)
-AC_SUBST(TRAVELCCM_LIBS)
+# Note: That library is imported as a Subversion external reference. So, there is
+#       no need to import it as an independent library as well.
+#AM_PATH_TRAVELCCM
+#AC_SUBST(TRAVELCCM_VERSION)
+#AC_SUBST(TRAVELCCM_CFLAGS)
+#AC_SUBST(TRAVELCCM_LIBS)
 
 # --------------------------------------------------------------------
 # Support for RMOL (RM Open Library): http://sf.net/projects/rmol
 # --------------------------------------------------------------------
-AM_PATH_RMOL([0.19])
-AC_SUBST(RMOL_VERSION)
-AC_SUBST(RMOL_CFLAGS)
-AC_SUBST(RMOL_LIBS)
+# Note: That library is imported as a Subversion external reference. So, there is
+#       no need to import it as an independent library as well.
+#AM_PATH_RMOL([0.19])
+#AC_SUBST(RMOL_VERSION)
+#AC_SUBST(RMOL_CFLAGS)
+#AC_SUBST(RMOL_LIBS)
 
 # ============ X E R C E S ==================
 AX_XERCES_C
@@ -237,14 +237,6 @@ AX_XERCES_C
 # librt
 #
 AC_CHECK_LIBRT
-
-# -----------------------------------------------------------
-# Xapian (Indexing & Search API: http://www.xapian.org
-# -----------------------------------------------------------
-XO_LIB_XAPIAN
-AC_SUBST(XAPIAN_VERSION)
-AC_SUBST(XAPIAN_CFLAGS)
-AC_SUBST(XAPIAN_LIBS)
 
 # -------------------------------------------------------------------
 # Support for documentation
@@ -463,6 +455,7 @@ AC_CONFIG_FILES(
 	dsim/config/Makefile
 	dsim/core/Makefile
 	dsim/batches/Makefile
+	extracppunit/Makefile
 	test/Makefile
 	test/boost/Makefile
 	test/boost/accumulators/Makefile
@@ -561,11 +554,6 @@ External libraries:
     o MYSQL_CFLAGS .... : ${MYSQL_CFLAGS}
     o MYSQL_LIBS ...... : ${MYSQL_LIBS} 
 
-  - MySQL++ ........... :
-    o MYSQLPP_version . : ${MYSQLPP_VERSION}
-    o MYSQLPP_CFLAGS .. : ${MYSQLPP_CFLAGS}
-    o MYSQLPP_LIBS .... : ${MYSQLPP_LIBS}
-
   - SOCI .............. :	
     o SOCI_version .... : ${SOCI_VERSION}
     o SOCI_CFLAGS ..... : ${SOCI_CFLAGS}
@@ -575,26 +563,6 @@ External libraries:
     o XERCES_VERSION .. : ${XERCES_VERSION}
     o XERCES_CFLAGS ... : ${XERCES_CFLAGS}
     o XERCES_LIBS ..... : ${XERCES_LIBS}
-
-  - EXTRACC ........... :
-    o EXTRACC_VERSION . : ${EXTRACC_VERSION}
-    o EXTRACC_CFLAGS .. : ${EXTRACC_CFLAGS}
-    o EXTRACC_LIBS .... : ${EXTRACC_LIBS}
-
-  - TRAVELCCM ......... :
-    o TRAVELCCM_VERSION : ${TRAVELCCM_VERSION}
-    o TRAVELCCM_CFLAGS  : ${TRAVELCCM_CFLAGS}
-    o TRAVELCCM_LIBS .. : ${TRAVELCCM_LIBS}
-
-  - RMOL .............. :
-    o RMOL_VERSION .... : ${RMOL_VERSION}
-    o RMOL_CFLAGS ..... : ${RMOL_CFLAGS}
-    o RMOL_LIBS ....... : ${RMOL_LIBS}
-
-  - XAPIAN ............ :
-    o XAPIAN_VERSION .. : ${XAPIAN_VERSION}
-    o XAPIAN_CFLAGS ... : ${XAPIAN_CFLAGS}
-    o XAPIAN_LIBS ..... : ${XAPIAN_LIBS}
 
  - CPPUNIT............ :
     o CPPUNIT_VERSION . : ${CPPUNIT_VERSION}
