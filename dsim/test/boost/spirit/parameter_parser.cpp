@@ -23,17 +23,17 @@
 #pragma warning(disable: 4355)
 #endif // defined(_MSC_VER) && !defined(__COMO__)
 
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/symbols/symbols.hpp>
+#include <boost/spirit/home/classic/core.hpp>
+#include <boost/spirit/home/classic/symbols/symbols.hpp>
 
-#include <boost/spirit/phoenix/tuples.hpp>
-#include <boost/spirit/phoenix/tuple_helpers.hpp>
-#include <boost/spirit/phoenix/primitives.hpp>
-#include <boost/spirit/attribute/closure.hpp>
+#include <boost/spirit/home/classic/phoenix/tuples.hpp>
+#include <boost/spirit/home/classic/phoenix/tuple_helpers.hpp>
+#include <boost/spirit/home/classic/phoenix/primitives.hpp>
+#include <boost/spirit/home/classic/attribute/closure.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // used namespaces
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 using namespace std;
 
@@ -99,7 +99,7 @@ private:
 //  used closure type
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct var_decl_closure : boost::spirit::closure<var_decl_closure, declaration_type>
+struct var_decl_closure : boost::spirit::classic::closure<var_decl_closure, declaration_type>
 {
   member1 val;
 };
@@ -116,7 +116,7 @@ class symbols_with_data
 {
 public:
   typedef
-  symbol_inserter<T, boost::spirit::impl::tst<T, char> >
+  symbol_inserter<T, boost::spirit::classic::impl::tst<T, char> >
   symbol_inserter_t;
 
   symbols_with_data(symbol_inserter_t const &add_, InitT const &data_) :
@@ -140,7 +140,7 @@ private:
 template <typename T, typename CharT, typename InitT>
 inline
 symbols_with_data<T, InitT>
-symbols_gen(symbol_inserter<T, boost::spirit::impl::tst<T, CharT> > const &add_,
+symbols_gen(symbol_inserter<T, boost::spirit::classic::impl::tst<T, CharT> > const &add_,
 	    InitT const &data_)
 {
   return symbols_with_data<T, InitT>(add_, data_);

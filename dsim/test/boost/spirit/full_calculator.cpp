@@ -14,14 +14,14 @@
 //  [ JDG 6/29/2002 ]
 //
 ////////////////////////////////////////////////////////////////////////////
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/attribute.hpp>
+#include <boost/spirit/home/classic/core.hpp>
+#include <boost/spirit/home/classic/attribute.hpp>
 #include <iostream>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////
 using namespace std;
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ using namespace phoenix;
 //          driver code that uses the calculator below).
 //
 ////////////////////////////////////////////////////////////////////////////
-struct calc_closure : boost::spirit::closure<calc_closure, double>
+struct calc_closure : boost::spirit::classic::closure<calc_closure, double>
 {
   member1 val;
 };
@@ -53,7 +53,6 @@ struct calculator : public grammar<calculator, calc_closure::context_t>
       expression
 	=   term[expression.val = arg1]
 	>> *(   ('+' >> term[expression.val += arg1])
-		|   ('+' >> term[expression.val -= arg1])
 		|   ('-' >> term[expression.val -= arg1])
 		)
 	;
