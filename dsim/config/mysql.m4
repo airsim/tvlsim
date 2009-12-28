@@ -113,10 +113,10 @@ AC_DEFUN([AX_MYSQL],
 
 		AC_MSG_RESULT([$MYSQL_libdir])
 
-		case "$MYSQL_libdir" in
-		  /usr/lib) ;;
-		  *) LDFLAGS="$LDFLAGS -L${MYSQL_libdir}" ;;
-		esac
+#		case "$MYSQL_libdir" in
+#		  /usr/lib) ;;
+#		  *) LDFLAGS="$LDFLAGS -L${MYSQL_libdir}" ;;
+#		esac
 
 		#
 		# Look for MySQL C API headers

@@ -17,12 +17,12 @@ XFAIL_TESTS = #
 #SimulationTestSuite_LDADD = $(top_builddir)/test/com/libcppunitcore.la
 #SimulationTestSuite_LDFLAGS = \
 #		$(BOOST_LIBS) $(CPPUNIT_LIBS) \
-#		$(top_builddir)/@PACKAGE@/lib@PACKAGE@.la
+#		$(top_builddir)/dsim/libdsim.la
 
 simulate_SOURCES = simulate.cpp
 simulate_CXXFLAGS= $(CPPUNIT_CFLAGS) $(BOOST_CFLAGS)
 simulate_LDADD =
 simulate_LDFLAGS = $(BOOST_LIBS) \
-		$(top_builddir)/@PACKAGE@/core/lib@PACKAGE@.la
+		$(top_builddir)/dsim/core/libdsim.la
 
 EXTRA_DIST =

@@ -79,10 +79,10 @@ AC_DEFUN([AX_SOCI],
 
 	AC_MSG_RESULT([$SOCI_libdir])
 
-	case "$SOCI_libdir" in
-	  /usr/lib) ;;
-	  *) LDFLAGS="$LDFLAGS -L${SOCI_libdir}" ;;
-	esac
+#	case "$SOCI_libdir" in
+#	  /usr/lib) ;;
+#	  *) LDFLAGS="$LDFLAGS -L${SOCI_libdir}" ;;
+#	esac
 
 
 	#
@@ -119,8 +119,8 @@ AC_DEFUN([AX_SOCI],
 	then
 		SOCI_LIBS="-L${SOCI_libdir}"
 	fi
-	SOCI_CFLAGS="-DSOCI_HEADERS_BURIED -DSOCI_MYSQL_HEADERS_BURIED $SOCI_CFLAGS"
-	SOCI_LIBS="$SOCI_LIBS -l${SOCI_CORE_LIB} -l${SOCI_MYSQL_LIB} -ldl"
+	SOCI_CFLAGS="-DSOCI_HEADERS_BURIED -DSOCI_MYSQL_HEADERS_BURIED ${MYSQL_CFLAGS} ${SOCI_CFLAGS}"
+	SOCI_LIBS="${MYSQL_LIBS} ${SOCI_LIBS} -l${SOCI_CORE_LIB} -l${SOCI_MYSQL_LIB} -ldl"
 	AC_SUBST(SOCI_CFLAGS)
 	AC_SUBST(SOCI_LIBS)
 

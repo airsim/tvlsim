@@ -5,8 +5,8 @@ include $(srcdir)/sources.mk
 noinst_LTLIBRARIES= libbom.la
 
 libbom_la_SOURCES= $(bom_h_sources) $(bom_cc_sources) 
-libbom_la_CXXFLAGS = $(GSL_CFLAGS)
-libbom_la_LDFLAGS = $(GSL_LIBS)
+libbom_la_CXXFLAGS =
+libbom_la_LDFLAGS =
 
 #pkgincludedir = $(includedir)/@PACKAGE@/bom
 #pkginclude_HEADERS = $(bom_h_sources)
