@@ -203,6 +203,14 @@ AC_SUBST(BOOST_MPI_LIB)
 AC_SUBST(BOOST_MPI_PYTHON_LIB)
 
 # --------------------------------------------------------------------
+# Support for MySQL (C client API): http://www.mysql.org
+# --------------------------------------------------------------------
+AX_MYSQL
+AC_SUBST(MYSQL_VERSION)
+AC_SUBST(MYSQL_CFLAGS)
+AC_SUBST(MYSQL_LIBS)
+
+# --------------------------------------------------------------------
 # Support for SOCI http://soci.sourceforge.net
 # --------------------------------------------------------------------
 AX_SOCI
