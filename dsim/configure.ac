@@ -481,6 +481,7 @@ AC_CONFIG_FILES(
 	test/airinv/Makefile
 	test/rmol/Makefile
 	test/simcrs/Makefile
+	test/dsim/Makefile
 )
 AC_OUTPUT
 
