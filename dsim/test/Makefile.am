@@ -4,7 +4,7 @@ include $(top_srcdir)/Makefile.common
 MAINTAINERCLEANFILES = Makefile.in
 
 ##
-SUBDIRS = boost rmol
+SUBDIRS = boost airsched rmol
 
 ##
 check_PROGRAMS = simulate

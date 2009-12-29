@@ -476,6 +476,7 @@ AC_CONFIG_FILES(
 	test/boost/spirit/Makefile
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
+	test/airsched/Makefile
 	test/rmol/Makefile
 )
 AC_OUTPUT
