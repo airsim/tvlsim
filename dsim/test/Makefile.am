@@ -4,7 +4,7 @@ include $(top_srcdir)/Makefile.common
 MAINTAINERCLEANFILES = Makefile.in
 
 ##
-SUBDIRS = boost stdair trademgen airsched airinv rmol simcrs dsim
+SUBDIRS = boost samples stdair trademgen airsched airinv rmol simcrs dsim
 
 EXTRA_DIST =
 

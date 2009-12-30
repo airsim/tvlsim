@@ -465,6 +465,7 @@ AC_CONFIG_FILES(
 	dsim/batches/Makefile
 	extracppunit/Makefile
 	test/Makefile
+	test/samples/Makefile
 	test/boost/Makefile
 	test/boost/accumulators/Makefile
 	test/boost/asio/Makefile
