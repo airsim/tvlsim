@@ -10,6 +10,8 @@
 #include <boost/shared_ptr.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
+#include <dsim/bom/ConfigurationParameters.hpp>
+#include <dsim/bom/RDSParameters.hpp>
 #include <dsim/service/ServiceAbstract.hpp>
 
 // Forward declarations
@@ -22,15 +24,52 @@ typedef boost::shared_ptr<SIMCRS::SIMCRS_Service> SIMCRS_ServicePtr_T;
 
 
 namespace DSIM {
-
+    
   /** Class holding the context of the Dsim services. */
   class DSIM_ServiceContext : public ServiceAbstract {
     friend class FacDsimServiceContext;
+
+  private:
+    // ///////////// Children ////////////
+    /** CRS Service Handler. */
+    SIMCRS_ServicePtr_T _simcrsService;
+
+  private:
+    // //////////// Attributes //////////////////
+    /** Simulator ID. */
+    SimulatorID_T _simulatorID;
+
+    /** Configuration parameters. */
+    ConfigurationParameters _configurationParameters;
+    
+    /** Reference Data Set parameters. */
+    RDSParameters _rdsParameters;
+    
+  private:
+    // /////// Construction / initialisation ////////
+    /** Constructors. */
+    DSIM_ServiceContext ();
+    DSIM_ServiceContext (const SimulatorID_T&);
+    DSIM_ServiceContext (const DSIM_ServiceContext&);
+
+    /** Destructor. */
+    ~DSIM_ServiceContext();
+
   public:
     // ///////// Getters //////////
     /** Get the simulator ID. */
     const SimulatorID_T& getSimulatorID () const {
       return _simulatorID;
+    }
+
+    /** Get the configuration parameters. */
+    const ConfigurationParameters& getConfigurationParameters () const {
+      return _configurationParameters;
+    }
+    
+    /** Get the RDS parameters. */
+    const RDSParameters& getRDSParameters () const {
+      return _rdsParameters;
     }
 
     /** Get a reference on the SIMCRS service handler. */
@@ -44,6 +83,16 @@ namespace DSIM {
       _simulatorID = iSimulatorID;
     }
 
+    /** Set the configuration parameters. */
+    void setConfigurationParameters (const ConfigurationParameters& iConfigurationParameters) {
+      _configurationParameters = iConfigurationParameters;
+    }
+    
+    /** Set the RDS parameters. */
+    void setRDSParameters (const RDSParameters& iRDSParameters) {
+      _rdsParameters = iRDSParameters;
+    }
+    
     /** Set the pointer on the SIMCRS service handler. */
     void setSIMCRS_Service (SIMCRS_ServicePtr_T ioSIMCRS_ServicePtr) {
       _simcrsService = ioSIMCRS_ServicePtr;
@@ -55,29 +104,6 @@ namespace DSIM {
     
     /** Display the full DSIM_ServiceContext content. */
     const std::string display() const;
-
-    
-  private:
-    // /////// Construction / initialisation ////////
-    /** Constructors. */
-    DSIM_ServiceContext ();
-    DSIM_ServiceContext (const SimulatorID_T&);
-    DSIM_ServiceContext (const DSIM_ServiceContext&);
-
-    /** Destructor. */
-    ~DSIM_ServiceContext();
-
-    
-  private:
-    // ///////////// Children ////////////
-    /** CRS Service Handler. */
-    SIMCRS_ServicePtr_T _simcrsService;
-
-    
-  private:
-    // //////////// Attributes //////////////////
-    /** Simulator ID. */
-    SimulatorID_T _simulatorID;
   };
 
 }

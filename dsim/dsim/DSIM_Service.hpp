@@ -14,20 +14,21 @@ namespace DSIM {
 
   // Forward declaration
   class DSIM_ServiceContext;
-
+  struct RDSParameters;
   
   /** Interface for the DSIM Services. */
   class DSIM_Service {
-  public:
-    // /////////// Business Methods /////////////
-    /** Perform a simulation. */
-    void simulate();
-
     
+  private:
+    // ///////// Service Context /////////
+    /** Dsim context. */
+    DSIM_ServiceContext* _dsimServiceContext;
+    
+  public:
     // ////////// Constructors and destructors //////////
     /** Constructor.
         @param std::ostream& Output log stream (for instance, std::cout). */
-    DSIM_Service (std::ostream& ioLogStream);
+    DSIM_Service (const std::string&, std::ostream& ioLogStream);
 
     /** Destructor. */
     ~DSIM_Service();
@@ -41,16 +42,16 @@ namespace DSIM {
     DSIM_Service (const DSIM_Service&);
 
     /** Initialise. */
-    void init (std::ostream& ioLogStream);
+    void init (const std::string&, std::ostream& ioLogStream);
 
     /** Finalise. */
     void finalise ();
 
-    
-  private:
-    // ///////// Service Context /////////
-    /** Dsim context. */
-    DSIM_ServiceContext* _dsimServiceContext;
+  public:
+    // /////////// Business Methods /////////////
+    /** Perform a simulation. */
+    void simulate();
+
   };
 }
 #endif // __DSIM_SVC_DSIM_SERVICE_HPP

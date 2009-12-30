@@ -21,9 +21,10 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::
-  DSIM_Service (std::ostream& ioLogStream)
+  DSIM_Service (const std::string& iScheduleInputFilename,
+                std::ostream& ioLogStream)
     : _dsimServiceContext (NULL) {
-    init (ioLogStream);
+    init (iScheduleInputFilename, ioLogStream);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -50,7 +51,8 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::init (std::ostream& ioLogStream) {
+  void DSIM_Service::init (const std::string& iScheduleInputFilename,
+                           std::ostream& ioLogStream) {
     // Set the log file
     logInit (LOG::DEBUG, ioLogStream);
 
@@ -64,7 +66,8 @@ namespace DSIM {
     // Initialise the SIMCRS service handler
     const SIMCRS::CRSCode_T lCRSCode = "1S";
     SIMCRS_ServicePtr_T lSIMCRS_Service =
-      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioLogStream, lCRSCode));
+      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioLogStream, lCRSCode,
+                                                       iScheduleInputFilename));
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
   }
   
