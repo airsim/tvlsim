@@ -477,6 +477,7 @@ AC_CONFIG_FILES(
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
 	test/stdair/Makefile
+	test/trademgen/Makefile
 	test/airsched/Makefile
 	test/airinv/Makefile
 	test/rmol/Makefile
