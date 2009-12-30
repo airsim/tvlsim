@@ -13,6 +13,9 @@ int main (int argc, char* argv[]) {
 
   try {
     
+    // Schedule input file name
+    std::string lScheduleInputFilename ("../samples/schedule01.csv");
+
     // Output log File
     std::string lLogFilename ("simulate.log");
 
@@ -23,7 +26,7 @@ int main (int argc, char* argv[]) {
     logOutputFile.clear();
     
     // Initialise the list of classes/buckets
-    DSIM::DSIM_Service dsimService (logOutputFile);
+    DSIM::DSIM_Service dsimService (lScheduleInputFilename, logOutputFile);
 
     // Perform a simulation
     dsimService.simulate();
