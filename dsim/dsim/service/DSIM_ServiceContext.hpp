@@ -77,7 +77,6 @@ namespace DSIM {
     
     /** Display the full DSIM_ServiceContext content. */
     const std::string display() const;
-  };
 
   private:
     // /////// Construction / initialisation ////////
@@ -104,6 +103,7 @@ namespace DSIM {
     
     /** Reference Data Set parameters. */
     RDSParameters _rdsParameters;
+  };
 
 }
 #endif // __DSIM_SVC_DSIMSERVICECONTEXT_HPP
