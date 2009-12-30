@@ -454,6 +454,15 @@ AC_CONFIG_FILES(
 	rmol/config/Makefile
 	rmol/core/Makefile
 	rmol/batches/Makefile
+	travelccm/Makefile
+	travelccm/basic/Makefile
+	travelccm/bom/Makefile
+	travelccm/factory/Makefile
+	travelccm/command/Makefile
+	travelccm/service/Makefile
+	travelccm/core/Makefile
+	travelccm/config/Makefile
+	travelccm/batches/Makefile
 	dsim/Makefile
 	dsim/basic/Makefile
 	dsim/bom/Makefile
@@ -483,6 +492,7 @@ AC_CONFIG_FILES(
 	test/airinv/Makefile
 	test/rmol/Makefile
 	test/simcrs/Makefile
+	test/travelccm/Makefile
 	test/dsim/Makefile
 )
 AC_OUTPUT
