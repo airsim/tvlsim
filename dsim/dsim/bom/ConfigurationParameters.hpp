@@ -11,9 +11,14 @@ namespace DSIM {
 
   /** Structure wrapping the configuration parameters. */
   struct ConfigurationParameters : public StructAbstract {
-
   public:
-    // ///////// Attributes //////////
+    // //////// GETTERS /////////     
+    
+    // //////// SETTERS /////////
+    
+    /////////// DISPLAY METHOD ///////////
+    const std::string describe() const;
+
     
   public:
     /** Costructor. */
@@ -23,15 +28,8 @@ namespace DSIM {
     /** Destructor. */
     ~ConfigurationParameters ();
     
-    
   public:
-    // //////// GETTERS /////////     
-    
-    // //////// SETTERS /////////
-    
-    /////////// DISPLAY METHOD ///////////
-    const std::string describe() const;
-    
+    // ///////// Attributes //////////
   };
   
 }

@@ -18,12 +18,12 @@ namespace DSIM {
   
   /** Interface for the DSIM Services. */
   class DSIM_Service {
+  public:
+    // /////////// Business Methods /////////////
+    /** Perform a simulation. */
+    void simulate();
     
-  private:
-    // ///////// Service Context /////////
-    /** Dsim context. */
-    DSIM_ServiceContext* _dsimServiceContext;
-    
+
   public:
     // ////////// Constructors and destructors //////////
     /** Constructor.
@@ -47,10 +47,11 @@ namespace DSIM {
     /** Finalise. */
     void finalise ();
 
-  public:
-    // /////////// Business Methods /////////////
-    /** Perform a simulation. */
-    void simulate();
+    
+  private:
+    // ///////// Service Context /////////
+    /** Dsim context. */
+    DSIM_ServiceContext* _dsimServiceContext;
 
   };
 }

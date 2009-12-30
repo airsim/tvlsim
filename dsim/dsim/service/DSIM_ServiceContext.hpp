@@ -28,33 +28,6 @@ namespace DSIM {
   /** Class holding the context of the Dsim services. */
   class DSIM_ServiceContext : public ServiceAbstract {
     friend class FacDsimServiceContext;
-
-  private:
-    // ///////////// Children ////////////
-    /** CRS Service Handler. */
-    SIMCRS_ServicePtr_T _simcrsService;
-
-  private:
-    // //////////// Attributes //////////////////
-    /** Simulator ID. */
-    SimulatorID_T _simulatorID;
-
-    /** Configuration parameters. */
-    ConfigurationParameters _configurationParameters;
-    
-    /** Reference Data Set parameters. */
-    RDSParameters _rdsParameters;
-    
-  private:
-    // /////// Construction / initialisation ////////
-    /** Constructors. */
-    DSIM_ServiceContext ();
-    DSIM_ServiceContext (const SimulatorID_T&);
-    DSIM_ServiceContext (const DSIM_ServiceContext&);
-
-    /** Destructor. */
-    ~DSIM_ServiceContext();
-
   public:
     // ///////// Getters //////////
     /** Get the simulator ID. */
@@ -105,6 +78,32 @@ namespace DSIM {
     /** Display the full DSIM_ServiceContext content. */
     const std::string display() const;
   };
+
+  private:
+    // /////// Construction / initialisation ////////
+    /** Constructors. */
+    DSIM_ServiceContext ();
+    DSIM_ServiceContext (const SimulatorID_T&);
+    DSIM_ServiceContext (const DSIM_ServiceContext&);
+
+    /** Destructor. */
+    ~DSIM_ServiceContext();
+
+  private:
+    // ///////////// Children ////////////
+    /** CRS Service Handler. */
+    SIMCRS_ServicePtr_T _simcrsService;
+
+  private:
+    // //////////// Attributes //////////////////
+    /** Simulator ID. */
+    SimulatorID_T _simulatorID;
+
+    /** Configuration parameters. */
+    ConfigurationParameters _configurationParameters;
+    
+    /** Reference Data Set parameters. */
+    RDSParameters _rdsParameters;
 
 }
 #endif // __DSIM_SVC_DSIMSERVICECONTEXT_HPP

@@ -13,19 +13,6 @@ namespace DSIM {
   struct RDSParameters : public StructAbstract {
     
   public:
-    // ////////// Attributes ///////////
-    /** Schedule input filename. */
-    std::string _scheduleInputFilename;
-
-  public:
-    /** Costructor. */
-    RDSParameters ();
-    RDSParameters (const RDSParameters&);
-
-    /** Destructor. */
-    ~RDSParameters ();
-
-  public:
     // //////// GETTERS /////////  
     /** Get the schedule input filename. */
     const std::string& getScheduleInputFilename () const {
@@ -41,6 +28,19 @@ namespace DSIM {
     /////////// DISPLAY METHOD ///////////
     const std::string describe() const;
     
+
+  public:
+    /** Costructor. */
+    RDSParameters ();
+    RDSParameters (const RDSParameters&);
+
+    /** Destructor. */
+    ~RDSParameters ();
+
+  public:
+    // ////////// Attributes ///////////
+    /** Schedule input filename. */
+    std::string _scheduleInputFilename;
   };
   
 }
