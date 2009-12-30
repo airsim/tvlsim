@@ -1,9 +1,10 @@
 ## test/boost sub-directory
 include $(top_srcdir)/Makefile.common
 
+#
+MAINTAINERCLEANFILES = Makefile.in
+
 ##
 SUBDIRS = accumulators asio mpi mpl serialization signals spirit
-
-MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =
