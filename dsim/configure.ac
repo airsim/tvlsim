@@ -499,6 +499,7 @@ AC_CONFIG_FILES(
 	test/boost/asio/httpd/Makefile
 	test/boost/asio/logd/Makefile
 	test/boost/asio/logger/Makefile
+	test/boost/filesystem/Makefile
 	test/boost/mpi/Makefile
 	test/boost/mpl/Makefile
 	test/boost/spirit/Makefile

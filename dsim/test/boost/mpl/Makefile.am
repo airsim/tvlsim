@@ -1,4 +1,4 @@
-## test/mpl sub-directory
+## test/boost/mpl sub-directory
 include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in

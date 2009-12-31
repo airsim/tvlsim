@@ -1,4 +1,4 @@
-## test/signals sub-directory
+## test/boost/signals sub-directory
 include $(top_srcdir)/Makefile.common
 
 ##

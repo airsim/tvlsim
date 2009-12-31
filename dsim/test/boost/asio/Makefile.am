@@ -1,4 +1,4 @@
-## test/asio sub-directory
+## test/boost/asio sub-directory
 include $(top_srcdir)/Makefile.common
 
 ##
