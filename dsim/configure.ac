@@ -426,24 +426,6 @@ AC_CONFIG_FILES(
 	airsched/config/Makefile
 	airsched/core/Makefile
 	airsched/batches/Makefile
-	airinv/Makefile
-	airinv/basic/Makefile
-	airinv/bom/Makefile
-	airinv/factory/Makefile
-	airinv/command/Makefile
-	airinv/service/Makefile
-	airinv/config/Makefile
-	airinv/core/Makefile
-	airinv/batches/Makefile
-	simcrs/Makefile
-	simcrs/basic/Makefile
-	simcrs/bom/Makefile
-	simcrs/factory/Makefile
-	simcrs/command/Makefile
-	simcrs/service/Makefile
-	simcrs/config/Makefile
-	simcrs/core/Makefile
-	simcrs/batches/Makefile
 	rmol/Makefile
 	rmol/basic/Makefile
 	rmol/field/Makefile
@@ -454,6 +436,42 @@ AC_CONFIG_FILES(
 	rmol/config/Makefile
 	rmol/core/Makefile
 	rmol/batches/Makefile
+	airinv/Makefile
+	airinv/basic/Makefile
+	airinv/bom/Makefile
+	airinv/factory/Makefile
+	airinv/command/Makefile
+	airinv/service/Makefile
+	airinv/config/Makefile
+	airinv/core/Makefile
+	airinv/batches/Makefile
+	avlcal/Makefile
+	avlcal/basic/Makefile
+	avlcal/bom/Makefile
+	avlcal/factory/Makefile
+	avlcal/command/Makefile
+	avlcal/service/Makefile
+	avlcal/config/Makefile
+	avlcal/core/Makefile
+	avlcal/batches/Makefile
+	simfqt/Makefile
+	simfqt/basic/Makefile
+	simfqt/bom/Makefile
+	simfqt/factory/Makefile
+	simfqt/command/Makefile
+	simfqt/service/Makefile
+	simfqt/config/Makefile
+	simfqt/core/Makefile
+	simfqt/batches/Makefile
+	simcrs/Makefile
+	simcrs/basic/Makefile
+	simcrs/bom/Makefile
+	simcrs/factory/Makefile
+	simcrs/command/Makefile
+	simcrs/service/Makefile
+	simcrs/config/Makefile
+	simcrs/core/Makefile
+	simcrs/batches/Makefile
 	travelccm/Makefile
 	travelccm/basic/Makefile
 	travelccm/bom/Makefile
@@ -489,8 +507,10 @@ AC_CONFIG_FILES(
 	test/stdair/Makefile
 	test/trademgen/Makefile
 	test/airsched/Makefile
-	test/airinv/Makefile
 	test/rmol/Makefile
+	test/airinv/Makefile
+	test/avlcal/Makefile
+	test/simfqt/Makefile
 	test/simcrs/Makefile
 	test/travelccm/Makefile
 	test/dsim/Makefile
