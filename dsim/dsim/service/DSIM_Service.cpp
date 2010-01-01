@@ -3,6 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <ostream>
 // Boost
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
@@ -21,15 +22,14 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::
-  DSIM_Service (const std::string& iScheduleInputFilename,
-                std::ostream& ioLogStream)
+  DSIM_Service (std::ostream& ioLogStream,
+                const stdair::Filename_T& iScheduleInputFilename)
     : _dsimServiceContext (NULL) {
-    init (iScheduleInputFilename, ioLogStream);
+    init (ioLogStream, iScheduleInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::DSIM_Service ()
-    : _dsimServiceContext (NULL) {
+  DSIM_Service::DSIM_Service () : _dsimServiceContext (NULL) {
     assert (false);
   }
 
@@ -51,8 +51,8 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::init (const std::string& iScheduleInputFilename,
-                           std::ostream& ioLogStream) {
+  void DSIM_Service::init (std::ostream& ioLogStream,
+                           const stdair::Filename_T& iScheduleInputFilename) {
     // Set the log file
     logInit (LOG::DEBUG, ioLogStream);
 
@@ -65,6 +65,10 @@ namespace DSIM {
     // configuration file).
     // Initialise the SIMCRS service handler
     const SIMCRS::CRSCode_T lCRSCode = "1S";
+    
+    // Note that the (Boost.)Smart Pointer keeps track of the references
+    // on the Service object, and deletes that object when it is no longer
+    // referenced (e.g., at the end of the process).
     SIMCRS_ServicePtr_T lSIMCRS_Service =
       SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioLogStream, lCRSCode,
                                                        iScheduleInputFilename));

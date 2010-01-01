@@ -26,7 +26,7 @@ int main (int argc, char* argv[]) {
     logOutputFile.clear();
     
     // Initialise the list of classes/buckets
-    DSIM::DSIM_Service dsimService (lScheduleInputFilename, logOutputFile);
+    DSIM::DSIM_Service dsimService (logOutputFile, lScheduleInputFilename);
 
     // Perform a simulation
     dsimService.simulate();

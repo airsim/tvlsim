@@ -5,8 +5,10 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <ostream>
+#include <iosfwd>
 #include <string>
+// StdAir
+#include <stdair/STDAIR_Types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
@@ -27,8 +29,9 @@ namespace DSIM {
   public:
     // ////////// Constructors and destructors //////////
     /** Constructor.
-        @param std::ostream& Output log stream (for instance, std::cout). */
-    DSIM_Service (const std::string&, std::ostream& ioLogStream);
+        @param std::ostream& Output log stream (for instance, std::cout).
+        @param const stdair::Filename_T& Filename of the input schedule file. */
+    DSIM_Service (std::ostream& ioLogStream, const stdair::Filename_T&);
 
     /** Destructor. */
     ~DSIM_Service();
@@ -41,8 +44,10 @@ namespace DSIM {
     /** Default copy constructor. */
     DSIM_Service (const DSIM_Service&);
 
-    /** Initialise. */
-    void init (const std::string&, std::ostream& ioLogStream);
+    /** Initialise.
+        @param std::ostream& Output log stream (for instance, std::cout).
+        @param const stdair::Filename_T& Filename of the input schedule file. */
+    void init (std::ostream& ioLogStream, const stdair::Filename_T&);
 
     /** Finalise. */
     void finalise ();
