@@ -9,7 +9,7 @@ SUBDIRS =
 EXTRA_DIST = pympi.py
 
 #
-check_PROGRAMS = mpi_c mpi mpi_p2p
+check_PROGRAMS = mpi_c mpi mpi_p2p mpi_p2p_nb
 
 
 # mpi_c must be compiled with mpic++
@@ -30,4 +30,9 @@ mpi_p2p_SOURCES = mpi_p2p.cpp
 mpi_p2p_CXXFLAGS = $(BOOST_CFLAGS) $(MPICH2_CFLAGS)
 mpi_p2p_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
 mpi_p2p_LDADD =
+
+mpi_p2p_nb_SOURCES = mpi_p2p_nb.cpp
+mpi_p2p_nb_CXXFLAGS = $(BOOST_CFLAGS) $(MPICH2_CFLAGS)
+mpi_p2p_nb_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
+mpi_p2p_nb_LDADD =
 
