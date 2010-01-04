@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <exception>
+// STDAIR
+#include <stdair/STDAIR_Types.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // Dsim
@@ -23,10 +25,10 @@ namespace DSIM {
       DSIM_LOG_DEBUG ("The simulation is starting");
 
       // Airline code
-      std::string lAirlineCode ("LH");
+      stdair::AirlineCode_T lAirlineCode ("BA");
     
       // Number of passengers in the travelling group
-      SIMCRS::PartySize_T lPartySize = 5;
+      stdair::PartySize_T lPartySize = 5;
     
       // Make a booking
       ioSIMCRS_Service.sell (lAirlineCode, lPartySize);
