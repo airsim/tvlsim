@@ -1,8 +1,8 @@
 # Process this file with autoconf to produce a configure script
 #-------------------------------------------------------------------
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (C) 2007-2010 Amadeus DEV-ORI <darnaud@amadeus.com>])
-AC_INIT([DSIM],[0.1.0],[darnaud@amadeus.com],[dsim])
+AC_COPYRIGHT([Copyright (C) 2007-2010 Denis Arnaud <denis_arnaud@users.sourceforge.net>])
+AC_INIT([DSIM],[99.99.99],[denis_arnaud@users.sourceforge.net],[dsim])
 AC_CONFIG_HEADER([stdair/config.h])
 AC_CONFIG_SRCDIR([stdair/basic/BasConst.cpp])
 AC_CONFIG_AUX_DIR([config])
@@ -16,7 +16,7 @@ RPM_RELEASE="1"
 AC_SUBST(RPM_RELEASE)
 
 # Shared library versioning for the main library
-GENERIC_LIBRARY_VERSION="2:1:0"
+GENERIC_LIBRARY_VERSION="99:99:99"
 #                        | | |
 #                 +------+ | +---+
 #                 |        |     |
