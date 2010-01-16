@@ -169,21 +169,22 @@ AC_SUBST(PYTHON_CFLAGS)
 AC_SUBST(PYTHON_ADD_LIBS)
 
 # -----------------------------------------------------------
-# MPICH2: http://www.mcs.anl.gov/research/projects/mpich2
-# Note: Boost.MPI depends on MPICH2, rather than on OpenMPI
-# -----------------------------------------------------------
-AX_MPICH2
-AC_SUBST(MPICH2_VERSION)
-AC_SUBST(MPICH2_CFLAGS)
-AC_SUBST(MPICH2_LIBS)
-
-# -----------------------------------------------------------
 # OpenMPI: http://www.open-mpi.org
 # -----------------------------------------------------------
 #AX_OPENMPI
-AC_SUBST(OPENMPI_VERSION)
-AC_SUBST(OPENMPI_CFLAGS)
-AC_SUBST(OPENMPI_LIBS)
+#AC_SUBST(MPIGEN_VERSION)
+#AC_SUBST(MPIGEN_CFLAGS)
+#AC_SUBST(MPIGEN_LIBS)
+
+# -----------------------------------------------------------
+# MPICH2: http://www.mcs.anl.gov/research/projects/mpich2
+# Note: Boost.MPI depends on MPICH2 by default, rather than 
+#       on OpenMPI
+# -----------------------------------------------------------
+AX_MPICH2
+AC_SUBST(MPIGEN_VERSION)
+AC_SUBST(MPIGEN_CFLAGS)
+AC_SUBST(MPIGEN_LIBS)
 
 # ---------------------------------------------------------------
 # Support for Boost (Extension of the STL): http://www.boost.org
@@ -518,6 +519,26 @@ AC_CONFIG_FILES(
 )
 AC_OUTPUT
 
+# OpenMPI
+if test "x$HAVE_OPENMPI" = "x1"; then
+   OPENMPI_OUTPUT="  - OPENMPI ........... :
+    o OPENMPI_VERSION . : ${MPIGEN_VERSION}
+    o OPENMPI_CFLAGS .. : ${MPIGEN_CFLAGS}
+    o OPENMPI_LIBS .... : ${MPIGEN_LIBS}"
+else
+   OPENMPI_OUTPUT="  - OPENMPI ........... : No"
+fi
+
+# MPICH2
+if test "x$HAVE_MPICH2" = "x1"; then
+   MPICH2_OUTPUT="  - MPICH2 ............ :
+    o MPICH2_VERSION .. : ${MPIGEN_VERSION}
+    o MPICH2_CFLAGS ... : ${MPIGEN_CFLAGS}
+    o MPICH2_LIBS ..... : ${MPIGEN_LIBS}"
+else
+   MPICH2_OUTPUT="  - MPICH2 ............ : No"
+fi
+
 echo "
 ------------------------------------------------------------------------------
 $PACKAGE-$VERSION library configuration:
@@ -565,21 +586,15 @@ External libraries:
     o GSL_CFLAGS ...... : ${GSL_CFLAGS}
     o GSL_LIBS ........ : ${GSL_LIBS}
 
-  - OPENMPI ........... :
-    o OPENMPI_VERSION . : ${OPENMPI_VERSION}
-    o OPENMPI_CFLAGS .. : ${OPENMPI_CFLAGS}
-    o OPENMPI_LIBS .... : ${OPENMPI_LIBS}
+${OPENMPI_OUTPUT}
 
-  - MPICH2 ............ :
-    o MPICH2_VERSION .. : ${MPICH2_VERSION}
-    o MPICH2_CFLAGS ... : ${MPICH2_CFLAGS}
-    o MPICH2_LIBS ..... : ${MPICH2_LIBS}
+${MPICH2_OUTPUT}
 
-  - Python ........... :
-    o PYTHON_VERSION . : ${PYTHON_VERSION}
-    o PYTHON_CFLAGS .. : ${PYTHON_CFLAGS}
-    o PYTHON_LIBS .... : ${PYTHON_LIBS}
-    o PYTHON_ADD_LIBS  : ${PYTHON_ADD_LIBS}
+  - Python ............ :
+    o PYTHON_VERSION .. : ${PYTHON_VERSION}
+    o PYTHON_CFLAGS ... : ${PYTHON_CFLAGS}
+    o PYTHON_LIBS ..... : ${PYTHON_LIBS}
+    o PYTHON_ADD_LIBS . : ${PYTHON_ADD_LIBS}
 
   - Boost ............. :
     o BOOST_VERSION ... : ${BOOST_VERSION}
