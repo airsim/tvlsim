@@ -22,17 +22,17 @@ mpi_c: $(mpi_c_SOURCES)
 
 #
 mpi_SOURCES = mpi.cpp
-mpi_CXXFLAGS = $(BOOST_CFLAGS) $(MPICH2_CFLAGS)
+mpi_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
 mpi_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
 mpi_LDADD =
 
 mpi_p2p_SOURCES = mpi_p2p.cpp
-mpi_p2p_CXXFLAGS = $(BOOST_CFLAGS) $(MPICH2_CFLAGS)
+mpi_p2p_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
 mpi_p2p_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
 mpi_p2p_LDADD =
 
 mpi_p2p_nb_SOURCES = mpi_p2p_nb.cpp
-mpi_p2p_nb_CXXFLAGS = $(BOOST_CFLAGS) $(MPICH2_CFLAGS)
+mpi_p2p_nb_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
 mpi_p2p_nb_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
 mpi_p2p_nb_LDADD =
 
