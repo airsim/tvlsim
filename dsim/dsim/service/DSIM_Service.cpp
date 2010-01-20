@@ -7,11 +7,12 @@
 // Boost
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
+// StdAir
+#include <stdair/basic/BasChronometer.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
-#include <dsim/basic/BasChronometer.hpp>
 #include <dsim/command/Simulator.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
@@ -96,14 +97,14 @@ namespace DSIM {
         lDSIM_ServiceContext.getSIMCRS_Service();
       
       // Delegate the booking to the dedicated command
-      BasChronometer lSimulationChronometer;
+      stdair::BasChronometer lSimulationChronometer;
       lSimulationChronometer.start();
       Simulator::simulate (lSIMCRS_Service);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
       
       // DEBUG
       DSIM_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
-                        << lDSIM_ServiceContext.display());
+                      << lDSIM_ServiceContext.display());
 
     } catch (const std::exception& error) {
       DSIM_LOG_ERROR ("Exception: "  << error.what());
