@@ -12,7 +12,6 @@ namespace DSIM {
   // Forward declarations
   class FacBomAbstract;
   class FacServiceAbstract;
-  class Logger;
 
   /** Singleton class to register and clean all Factories. */
   class FacSupervisor {
@@ -39,16 +38,6 @@ namespace DSIM {
         @param FacServiceAbstract& the concrete Factory to register. */
     void registerServiceFactory (FacServiceAbstract*);
 
-    /** Register a newly instantiated concrete factory for the
-        Logger object. In fact, as the Logger object
-        follows the singleton pattern, the concrete factory is the
-        Logger object itself.
-        <br>When a concrete Factory is firstly instantiated this
-        factory have to register itself to the FacSupervisor.
-        @param FacServiceAbstract& the concrete Factory to
-        register. */
-    void registerLoggerService (Logger*);
-
     /** Clean all created object.
         <br>Call the clean method of all the instantiated  factories
         for the Bom layer. */
@@ -58,9 +47,6 @@ namespace DSIM {
         <br>Call the clean method of all the instantiated  factories
         for the Service layer. */
     void cleanServiceLayer();
-
-    /** Delete the Logger object. */
-    void cleanLoggerService();
 
     /** Clean the static instance.
         <br> The singleton is deleted.*/
@@ -84,9 +70,6 @@ namespace DSIM {
     /** The unique instance.*/
     static FacSupervisor* _instance;
 
-    /** Logger (singleton) instance. */
-    Logger* _logger;
-      
     /** List of instantiated factories for the Bom layer. */
     BomFactoryPool_T _bomPool;
 

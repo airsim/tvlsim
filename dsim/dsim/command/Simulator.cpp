@@ -6,13 +6,14 @@
 #include <string>
 #include <vector>
 #include <exception>
-// STDAIR
+// StdAir
 #include <stdair/STDAIR_Types.hpp>
+#include <stdair/service/Logger.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // Dsim
+#include <dsim/DSIM_Types.hpp>
 #include <dsim/command/Simulator.hpp>
-#include <dsim/service/Logger.hpp>
 
 namespace DSIM {
 
@@ -22,7 +23,7 @@ namespace DSIM {
     try {
 
       // DEBUG
-      DSIM_LOG_DEBUG ("The simulation is starting");
+      STDAIR_LOG_DEBUG ("The simulation is starting");
 
       // Airline code
       stdair::AirlineCode_T lAirlineCode ("BA");
@@ -34,10 +35,10 @@ namespace DSIM {
       ioSIMCRS_Service.sell (lAirlineCode, lPartySize);
     
       // DEBUG
-      DSIM_LOG_DEBUG ("The simulation has ended");
+      STDAIR_LOG_DEBUG ("The simulation has ended");
 
     } catch (const std::exception& lStdError) {
-      DSIM_LOG_ERROR ("Error: " << lStdError.what());
+      STDAIR_LOG_ERROR ("Error: " << lStdError.what());
       throw SimulationException();
     }
   }

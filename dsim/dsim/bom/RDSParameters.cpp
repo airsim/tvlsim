@@ -6,7 +6,6 @@
 #include <cassert>
 // DSIM 
 #include <dsim/bom/RDSParameters.hpp>
-#include <dsim/service/Logger.hpp>
 
 namespace DSIM {
 
@@ -25,18 +24,12 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   const std::string RDSParameters::describe() const {
-    // Store current formatting flags of std::cout
-    std::ios::fmtflags oldFlags = std::cout.flags();
-      
     std::ostringstream ostr;
 
     ostr << "RDS Parameters: " << std::endl;
 
     ostr << " Schedule file: " << _scheduleInputFilename;
     ostr << std::endl;
-    
-    // Reset formatting flags of std::cout
-    std::cout.flags (oldFlags);
 
     return ostr.str();
   }

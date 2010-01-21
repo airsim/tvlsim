@@ -6,7 +6,6 @@
 #include <cassert>
 // DSIM 
 #include <dsim/bom/ConfigurationParameters.hpp>
-#include <dsim/service/Logger.hpp>
 
 namespace DSIM {
 
@@ -25,13 +24,7 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   const std::string ConfigurationParameters::describe() const {
-    // Store current formatting flags of std::cout
-    std::ios::fmtflags oldFlags = std::cout.flags();
-      
     std::ostringstream ostr;
-
-    // Reset formatting flags of std::cout
-    std::cout.flags (oldFlags);
 
     return ostr.str();
   }
