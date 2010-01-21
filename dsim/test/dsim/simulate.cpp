@@ -26,7 +26,8 @@ int main (int argc, char* argv[]) {
     logOutputFile.clear();
     
     // Initialise the list of classes/buckets
-    DSIM::DSIM_Service dsimService (logOutputFile, lScheduleInputFilename);
+    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+    DSIM::DSIM_Service dsimService (lLogParams, lScheduleInputFilename);
 
     // Perform a simulation
     dsimService.simulate();

@@ -4,11 +4,10 @@
 // STL
 #include <cassert>
 #include <ostream>
-// Boost
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
+#include <stdair/bom/BomManager.hpp> // for display()
+#include <stdair/service/Logger.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // Dsim
@@ -16,18 +15,9 @@
 #include <dsim/command/Simulator.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
-#include <dsim/service/Logger.hpp>
 #include <dsim/DSIM_Service.hpp>
 
 namespace DSIM {
-
-  // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::
-  DSIM_Service (std::ostream& ioLogStream,
-                const stdair::Filename_T& iScheduleInputFilename)
-    : _dsimServiceContext (NULL) {
-    init (ioLogStream, iScheduleInputFilename);
-  }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service () : _dsimServiceContext (NULL) {
@@ -40,23 +30,38 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
+  DSIM_Service::DSIM_Service (const stdair::Filename_T& iScheduleInputFilename)
+    : _dsimServiceContext (NULL) {
+
+    // Initialise the context
+    init (iScheduleInputFilename);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
+                              const stdair::Filename_T& iScheduleInputFilename)
+    : _dsimServiceContext (NULL) {
+
+    // Set the log file
+    logInit (iLogParams);
+
+    // Initialise the (remaining of the) context
+    init (iScheduleInputFilename);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
   DSIM_Service::~DSIM_Service () {
     // Delete/Clean all the objects from memory
     finalise();
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void logInit (const LOG::EN_LogLevel iLogLevel,
-                std::ostream& ioLogOutputFile) {
-    Logger::instance().setLogParameters (iLogLevel, ioLogOutputFile);
+  void DSIM_Service::logInit (const stdair::BasLogParams& iLogParams) {
+    stdair::Logger::init (iLogParams);
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::init (std::ostream& ioLogStream,
-                           const stdair::Filename_T& iScheduleInputFilename) {
-    // Set the log file
-    logInit (LOG::DEBUG, ioLogStream);
-
+  void DSIM_Service::init (const stdair::Filename_T& iScheduleInputFilename) {
     // Initialise the context
     DSIM_ServiceContext& lDSIM_ServiceContext =
       FacDsimServiceContext::instance().create ();
@@ -71,7 +76,7 @@ namespace DSIM {
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
     SIMCRS_ServicePtr_T lSIMCRS_Service =
-      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioLogStream, lCRSCode,
+      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (lCRSCode,
                                                        iScheduleInputFilename));
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
   }
@@ -103,11 +108,11 @@ namespace DSIM {
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
       
       // DEBUG
-      DSIM_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
-                      << lDSIM_ServiceContext.display());
+      STDAIR_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
+                        << lDSIM_ServiceContext.display());
 
     } catch (const std::exception& error) {
-      DSIM_LOG_ERROR ("Exception: "  << error.what());
+      STDAIR_LOG_ERROR ("Exception: "  << error.what());
       throw SimulationException();
     }
   }
