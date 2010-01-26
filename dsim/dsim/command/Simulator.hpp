@@ -8,6 +8,10 @@
 #include <dsim/command/CmdAbstract.hpp>
 
 // Forward declarations
+namespace stdair {
+  struct BookingRequestStruct;
+}
+
 namespace SIMCRS {
   class SIMCRS_Service;
 }
@@ -21,6 +25,9 @@ namespace DSIM {
 
     /** Perform a simulation. */
     static void simulate (SIMCRS::SIMCRS_Service&);
+
+    /** Play a booking request event. */
+    static void playBookingRequest (const stdair::BookingRequestStruct&);
 
   private:
     /** Constructors. */
