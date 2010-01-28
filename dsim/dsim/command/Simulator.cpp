@@ -75,8 +75,10 @@ namespace DSIM {
       const stdair::NbOfSeats_T& lNbOfSeats = iBookingRequest.getPartySize();
 
       // Make a sale.
+      assert (lChosenTravelSolution_ptr != NULL);
       ioSIMCRS_Service.sell (*lChosenTravelSolution_ptr, lNbOfSeats);
     }
   }
   
 }
+
