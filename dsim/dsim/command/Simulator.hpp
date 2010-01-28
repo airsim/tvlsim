@@ -27,7 +27,8 @@ namespace DSIM {
     static void simulate (SIMCRS::SIMCRS_Service&);
 
     /** Play a booking request event. */
-    static void playBookingRequest (const stdair::BookingRequestStruct&);
+    static void playBookingRequest (SIMCRS::SIMCRS_Service&,
+                                    const stdair::BookingRequestStruct&);
 
   private:
     /** Constructors. */

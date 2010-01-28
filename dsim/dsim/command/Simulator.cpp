@@ -8,10 +8,13 @@
 #include <exception>
 // StdAir
 #include <stdair/STDAIR_Types.hpp>
+#include <stdair/bom/OutboundPathTypes.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
+// Airsched
+#include <airsched/AIRSCHED_Service.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/command/Simulator.hpp>
@@ -37,14 +40,14 @@ namespace DSIM {
       // Passenger type
       stdair::PassengerType_T lPaxType ("L");
       // Number of passengers in the travelling group
-      stdair::PartySize_T lPartySize = 5;
+      stdair::NbOfSeats_T lPartySize = 5;
       // Booking request
       stdair::BookingRequestStruct lBookingRequest (lOrigin, lDestination,
                                                     lDepartureDate,
                                                     lPaxType, lPartySize);
 
       // Play booking request
-      playBookingRequest (lBookingRequest);
+      playBookingRequest (ioSIMCRS_Service, lBookingRequest);
             
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation has ended");
@@ -57,8 +60,23 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
-  playBookingRequest (const stdair::BookingRequestStruct& iBookingRequest) {
-    
+  playBookingRequest (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+                      const stdair::BookingRequestStruct& iBookingRequest) {
+    // Retrieve a list of travel solutions corresponding the given
+    // booking request.
+    stdair::OutboundPathLightList_T lOutboundPathList =
+      ioSIMCRS_Service.getTravelSolutions (iBookingRequest);
+
+    // Hardcode a travel solution choice.
+    if (lOutboundPathList.empty() == false) {
+      stdair::OutboundPath* lChosenTravelSolution_ptr = lOutboundPathList.at(0);
+
+      // Get the number of seats in the request.
+      const stdair::NbOfSeats_T& lNbOfSeats = iBookingRequest.getPartySize();
+
+      // Make a sale.
+      ioSIMCRS_Service.sell (*lChosenTravelSolution_ptr, lNbOfSeats);
+    }
   }
   
 }
