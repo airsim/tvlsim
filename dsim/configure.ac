@@ -507,6 +507,7 @@ AC_CONFIG_FILES(
 	test/boost/spirit/Makefile
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
+	test/boost/smart_pointers/Makefile
 	test/stdair/Makefile
 	test/trademgen/Makefile
 	test/airsched/Makefile

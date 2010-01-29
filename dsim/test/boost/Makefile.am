@@ -5,6 +5,7 @@ include $(top_srcdir)/Makefile.common
 MAINTAINERCLEANFILES = Makefile.in
 
 ##
-SUBDIRS = accumulators asio filesystem mpi mpl serialization signals spirit
+SUBDIRS = accumulators asio filesystem mpi mpl serialization signals spirit \
+	smart_pointers
 
 EXTRA_DIST =
