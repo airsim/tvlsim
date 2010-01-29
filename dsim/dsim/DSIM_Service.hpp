@@ -62,7 +62,18 @@ namespace DSIM {
 
     /** Initialise.
         @param const stdair::Filename_T& Filename of the input schedule file. */
-    void init (const stdair::Filename_T&);
+    void init (stdair::STDAIR_ServicePtr_T, const stdair::Filename_T&);
+
+    /** Initialise the (DSIM) service context (i.e., the
+        DSIM_ServiceContext object). */
+    void initServiceContext ();
+
+    /** Initialise the STDAIR service (including the log service).
+        <br>A reference on the root of the BOM tree, namely the BomRoot object,
+        is stored within the service context for later use.
+        @param const stdair::BasLogParams& Parameters for the output log stream.
+    */
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
 
     /** Finalise. */
     void finalise ();

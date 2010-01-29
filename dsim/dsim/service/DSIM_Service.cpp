@@ -7,7 +7,12 @@
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/bom/BomManager.hpp> // for display()
+#include <stdair/bom/AirlineFeature.hpp>
+#include <stdair/bom/AirlineFeatureSet.hpp>
+#include <stdair/bom/BomRoot.hpp>
+#include <stdair/factory/FacBomContent.hpp>
 #include <stdair/service/Logger.hpp>
+#include <stdair/STDAIR_Service.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // Dsim
@@ -32,21 +37,29 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::Filename_T& iScheduleInputFilename)
     : _dsimServiceContext (NULL) {
-
+    
+    // Initialise the service context
+    initServiceContext ();
     // Initialise the context
-    init (iScheduleInputFilename);
+    //init (iScheduleInputFilename);
+
+    assert (false);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::Filename_T& iScheduleInputFilename)
     : _dsimServiceContext (NULL) {
-
-    // Set the log file
-    logInit (iLogParams);
-
+    
+    // Initialise the service context
+    initServiceContext ();
+    
+    // Initialise the STDAIR service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams);
+    
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename);
+    init (lSTDAIR_Service_ptr, iScheduleInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -55,18 +68,61 @@ namespace DSIM {
     finalise();
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::logInit (const stdair::BasLogParams& iLogParams) {
-    stdair::Logger::init (iLogParams);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::init (const stdair::Filename_T& iScheduleInputFilename) {
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initServiceContext () {
     // Initialise the context
     DSIM_ServiceContext& lDSIM_ServiceContext =
       FacDsimServiceContext::instance().create ();
     _dsimServiceContext = &lDSIM_ServiceContext;
+  }
 
+  // //////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_ServicePtr_T DSIM_Service::
+  initStdAirService (const stdair::BasLogParams& iLogParams) {
+
+    // Retrieve the Dsim service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
+    // Initialise the STDAIR service handler
+    // Note that the track on the object memory is kept thanks to the Boost
+    // Smart Pointers component.
+    stdair::STDAIR_ServicePtr_T oSTDAIR_Service_ptr = 
+      stdair::STDAIR_ServicePtr_T (new stdair::STDAIR_Service (iLogParams));
+
+    // Retrieve the root of the BOM tree, on which all of the other BOM objects
+    // will be attached
+    assert (oSTDAIR_Service_ptr != NULL);
+    stdair::BomRoot& lBomRoot = oSTDAIR_Service_ptr->getBomRoot();
+
+    // TODO: do not hardcode the initialisation of AirlineFeatureSet
+    // Initialise the set of required airline features
+    stdair::AirlineFeatureSet& lAirlineFeatureSet =
+      stdair::FacBomContent::instance().create<stdair::AirlineFeatureSet>();
+    
+    // Airline code
+    stdair::AirlineCode_T lAirlineCode ("BA");
+    // Initialise an AirlineFeature object
+    stdair::AirlineFeatureKey_T lAirlineFeatureKey (lAirlineCode);
+    stdair::AirlineFeature& lAirlineFeature = stdair::FacBomContent::
+      instance().create<stdair::AirlineFeature> (lAirlineFeatureKey);
+    stdair::FacBomContent::
+      linkWithParent<stdair::AirlineFeature> (lAirlineFeature,
+                                              lAirlineFeatureSet);
+
+    // Set the AirlineFeatureSet for the BomRoot.
+    lBomRoot.setAirlineFeatureSet (&lAirlineFeatureSet);
+
+    return oSTDAIR_Service_ptr;
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::init (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                           const stdair::Filename_T& iScheduleInputFilename) {
+    // Retrieve the service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
     // TODO: do not hardcode the CRS code (e.g., take it from a
     // configuration file).
     // Initialise the SIMCRS service handler
@@ -76,7 +132,8 @@ namespace DSIM {
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
     SIMCRS_ServicePtr_T lSIMCRS_Service =
-      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (lCRSCode,
+      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (ioSTDAIR_ServicePtr,
+                                                       lCRSCode,
                                                        iScheduleInputFilename));
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
   }
