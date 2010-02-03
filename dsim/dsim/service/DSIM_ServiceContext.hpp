@@ -18,9 +18,15 @@
 namespace SIMCRS {
   class SIMCRS_Service;
 }
+namespace TRADEMGEN {
+  class TRADEMGEN_Service;
+}
 
 /** Pointer on the SIMCRS Service handler. */
 typedef boost::shared_ptr<SIMCRS::SIMCRS_Service> SIMCRS_ServicePtr_T;
+
+/** Pointer on the TRADEMGEN Service handler. */
+typedef boost::shared_ptr<TRADEMGEN::TRADEMGEN_Service> TRADEMGEN_ServicePtr_T;
 
 
 namespace DSIM {
@@ -50,6 +56,11 @@ namespace DSIM {
       return *_simcrsService.get();
     }
     
+    /** Get a reference on the TRADEMGEN service handler. */
+    TRADEMGEN::TRADEMGEN_Service& getTRADEMGEN_Service () const {
+      return *_trademgenService.get();
+    }
+    
     // ///////// Setters //////////
     /** Set the simulator ID. */
     void setSimulatorID (const SimulatorID_T& iSimulatorID) {
@@ -69,6 +80,11 @@ namespace DSIM {
     /** Set the pointer on the SIMCRS service handler. */
     void setSIMCRS_Service (SIMCRS_ServicePtr_T ioSIMCRS_ServicePtr) {
       _simcrsService = ioSIMCRS_ServicePtr;
+    }
+
+    /** Set the pointer on the TRADEMGEN service handler. */
+    void setTRADEMGEN_Service (TRADEMGEN_ServicePtr_T ioTRADEMGEN_ServicePtr) {
+      _trademgenService = ioTRADEMGEN_ServicePtr;
     }
 
     // ///////// Display Methods //////////
@@ -92,6 +108,8 @@ namespace DSIM {
     // ///////////// Children ////////////
     /** CRS Service Handler. */
     SIMCRS_ServicePtr_T _simcrsService;
+    /** TRADEMGEN Service Handler. */
+    TRADEMGEN_ServicePtr_T _trademgenService;
 
   private:
     // //////////// Attributes //////////////////

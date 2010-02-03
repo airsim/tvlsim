@@ -16,6 +16,10 @@ namespace SIMCRS {
   class SIMCRS_Service;
 }
 
+namespace TRADEMGEN {
+  class TRADEMGEN_Service;
+}
+
 namespace DSIM {
 
   /** Class wrapping the simulation methods. */
@@ -24,7 +28,7 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate (SIMCRS::SIMCRS_Service&);
+    static void simulate (SIMCRS::SIMCRS_Service&,TRADEMGEN::TRADEMGEN_Service&);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,

@@ -24,4 +24,5 @@ libdsim_la_LDFLAGS = \
 	$(top_builddir)/stdair/core/libstdair.la \
 	$(top_builddir)/airsched/core/libairsched.la \
 	$(top_builddir)/simcrs/core/libsimcrs.la \
+	$(top_builddir)/trademgen/core/libtrademgen.la \
 	-version-info $(GENERIC_LIBRARY_VERSION)

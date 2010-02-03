@@ -15,6 +15,9 @@
 #include <stdair/STDAIR_Service.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
+// TRADEMGEN
+#include <trademgen/TRADEMGEN_Service.hpp>
+#include <trademgen/DBParams.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/command/Simulator.hpp>
@@ -136,6 +139,16 @@ namespace DSIM {
                                                        lCRSCode,
                                                        iScheduleInputFilename));
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
+
+    // TODO: do not hardcode the DBParams.
+    // Initialise the TRADEMGEN service handler
+    const TRADEMGEN::DBParams lDBParams =
+      TRADEMGEN::DBParams ("anguyen", "anguyen", "ncemysqlp.nce.amadeus.net",
+                           "3321", "sim_anguyen");
+    TRADEMGEN_ServicePtr_T lTRADEMGEN_Service =
+      TRADEMGEN_ServicePtr_T (new TRADEMGEN::TRADEMGEN_Service (lDBParams));
+    lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service);
+    
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -157,11 +170,14 @@ namespace DSIM {
       // Get a reference on the SIMCRS service handler
       SIMCRS::SIMCRS_Service& lSIMCRS_Service =
         lDSIM_ServiceContext.getSIMCRS_Service();
+      // Get a reference on the TRADEMGEN service handler
+      TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+        lDSIM_ServiceContext.getTRADEMGEN_Service();
       
       // Delegate the booking to the dedicated command
       stdair::BasChronometer lSimulationChronometer;
       lSimulationChronometer.start();
-      Simulator::simulate (lSIMCRS_Service);
+      Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
       
       // DEBUG

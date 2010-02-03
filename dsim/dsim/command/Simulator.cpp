@@ -14,6 +14,8 @@
 #include <stdair/service/Logger.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
+// TRADEMGEN
+#include <trademgen/TRADEMGEN_Service.hpp>
 // Airsched
 #include <airsched/AIRSCHED_Service.hpp>
 // Dsim
@@ -23,30 +25,18 @@
 namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
-  void Simulator::simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service) {
+  void Simulator::simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+                            TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service) {
 
     try {
 
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation is starting");
 
-      // TODO: remove this hardcoded section
-      // Hardcode a booking request in order to simulate a sale.
-      // Departure airport code
-      stdair::AirportCode_T lOrigin ("LHR");
-      // Arrival airport code
-      stdair::AirportCode_T lDestination ("JFK");
-      // Departure date
-      stdair::Date_T lDepartureDate (2010, 01, 19);
-      // Passenger type
-      stdair::PassengerType_T lPaxType ("L");
-      // Number of passengers in the travelling group
-      stdair::NbOfSeats_T lPartySize = 5;
-      // Booking request
-      stdair::BookingRequestStruct lBookingRequest (lOrigin, lDestination,
-                                                    lDepartureDate,
-                                                    lPaxType, lPartySize);
-
+      // Generate a booking request.
+      stdair::BookingRequestStruct lBookingRequest =
+        ioTRADEMGEN_Service.generateBookingRequest ();
+      
       // Play booking request
       playBookingRequest (ioSIMCRS_Service, lBookingRequest);
             
