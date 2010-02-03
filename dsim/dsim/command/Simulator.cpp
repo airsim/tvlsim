@@ -10,6 +10,7 @@
 #include <stdair/STDAIR_Types.hpp>
 #include <stdair/bom/OutboundPathTypes.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
@@ -64,19 +65,24 @@ namespace DSIM {
                       const stdair::BookingRequestStruct& iBookingRequest) {
     // Retrieve a list of travel solutions corresponding the given
     // booking request.
-    stdair::OutboundPathLightList_T lOutboundPathList =
+    stdair::TravelSolutionList_T lTravelSolutionList =
       ioSIMCRS_Service.getTravelSolutions (iBookingRequest);
 
     // Hardcode a travel solution choice.
-    if (lOutboundPathList.empty() == false) {
-      stdair::OutboundPath* lChosenTravelSolution_ptr = lOutboundPathList.at(0);
-
+    if (lTravelSolutionList.empty() == false) {
+      // DEBUG
+      STDAIR_LOG_DEBUG ("A travel solution is chosen.");
+      
+      stdair::TravelSolutionStruct lChosenTravelSolution =
+        lTravelSolutionList.at(0);
       // Get the number of seats in the request.
       const stdair::NbOfSeats_T& lNbOfSeats = iBookingRequest.getPartySize();
-
       // Make a sale.
-      assert (lChosenTravelSolution_ptr != NULL);
-      ioSIMCRS_Service.sell (*lChosenTravelSolution_ptr, lNbOfSeats);
+      ioSIMCRS_Service.sell (lChosenTravelSolution, lNbOfSeats);
+
+    } else {
+      // DEBUG
+      STDAIR_LOG_DEBUG ("No travel solution is chosen.");
     }
   }
   
