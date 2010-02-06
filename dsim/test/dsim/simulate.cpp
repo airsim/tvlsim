@@ -11,8 +11,6 @@
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
-  try {
-    
     // Schedule input file name
     std::string lScheduleInputFilename ("../samples/schedule01.csv");
 
@@ -32,13 +30,6 @@ int main (int argc, char* argv[]) {
     // Perform a simulation
     dsimService.simulate();
     
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return -1;
-    
-  } catch (...) {
-    return -1;
-  }
-  
   return 0;	
 }
+

@@ -140,15 +140,16 @@ namespace DSIM {
                                                        iScheduleInputFilename));
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
 
-    // TODO: do not hardcode the DBParams.
+    // TODO: do not hardcode the stdair::BasDBParams.
+    // TODO: do not hardcode the demand input file.
     // Initialise the TRADEMGEN service handler
-    const TRADEMGEN::DBParams lDBParams =
-      TRADEMGEN::DBParams ("anguyen", "anguyen", "ncemysqlp.nce.amadeus.net",
-                           "3321", "sim_anguyen");
+    const stdair::Filename_T lDemandInputFilename ("../../test/samples/demand01.csv");
+    const stdair::BasDBParams lDBParams =
+      stdair::BasDBParams ("dsim", "dsim", "localhost", "3306", "dsim");
     TRADEMGEN_ServicePtr_T lTRADEMGEN_Service =
-      TRADEMGEN_ServicePtr_T (new TRADEMGEN::TRADEMGEN_Service (lDBParams));
+      TRADEMGEN_ServicePtr_T (new TRADEMGEN::TRADEMGEN_Service (ioSTDAIR_ServicePtr,
+                                                                lDemandInputFilename));
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service);
-    
   }
   
   // //////////////////////////////////////////////////////////////////////
