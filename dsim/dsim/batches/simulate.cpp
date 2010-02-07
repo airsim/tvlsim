@@ -15,8 +15,6 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/factory/FacBomContent.hpp>
-#include <stdair/bom/AirlineFeatureSet.hpp>
-#include <stdair/bom/AirlineFeature.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/config/dsim-paths.hpp>
@@ -296,18 +294,6 @@ int main (int argc, char* argv[]) {
     logOutputFile.open (lLogFilename.c_str());
     logOutputFile.clear();
 
-    // Initialise the set of required airline features
-    stdair::AirlineFeatureSet& lAirlineFeatureSet =
-      stdair::FacBomContent::instance().create<stdair::AirlineFeatureSet>();
-
-    // Initialise an AirlineFeature object
-    stdair::AirlineFeatureKey_T lAirlineFeatureKey (lAirlineCode);
-    stdair::AirlineFeature& lAirlineFeature = stdair::FacBomContent::
-      instance().create<stdair::AirlineFeature> (lAirlineFeatureKey);
-    stdair::FacBomContent::
-      linkWithParent<stdair::AirlineFeature> (lAirlineFeature,
-                                              lAirlineFeatureSet);
-    
     // Initialise the simulation context
     const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,

@@ -67,7 +67,7 @@ namespace DSIM {
     void simulate();
     
     /** Display the list of airlines. */
-    void displayAirlineListFromDB();
+    void displayAirlineListFromDB() const;
 
     
   private:

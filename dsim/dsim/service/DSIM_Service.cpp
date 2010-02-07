@@ -210,7 +210,7 @@ namespace DSIM {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::displayAirlineListFromDB () {
+  void DSIM_Service::displayAirlineListFromDB () const {
     if (_dsimServiceContext == NULL) {
       throw NonInitialisedServiceException();
     }
