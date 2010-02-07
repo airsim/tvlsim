@@ -1,2 +1,2 @@
 batches_h_sources = 
-batches_cc_sources =
+batches_cc_sources =  $(top_srcdir)/dsim/batches/simulate.cpp

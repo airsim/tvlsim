@@ -6,9 +6,16 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/STDAIR_Types.hpp>
-#include <stdair/basic/BasLogParams.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
+
+// Forward declarations.
+namespace stdair {
+  class AirlineFeatureSet;
+  class STDAIR_Service;
+  struct BasLogParams;
+  struct BasDBParams;
+}
 
 namespace DSIM {
 
@@ -19,35 +26,48 @@ namespace DSIM {
   /** Interface for the DSIM Services. */
   class DSIM_Service {
   public:
-    // /////////// Business Methods /////////////
-    /** Perform a simulation. */
-    void simulate();
-    
-
-  public:
     // ////////// Constructors and destructors //////////
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
         for more details.
-        <br>Moreover, a reference on an output stream is given, so
-        that log outputs can be directed onto that stream.       
+        <br>A reference on an output stream is given, so that log
+        outputs can be directed onto that stream.
+        <br>Moreover, database connection parameters are given, so that a
+        session can be created on the corresponding database.
         @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::Filename_T& Filename of the input schedule file. */
-    DSIM_Service (const stdair::BasLogParams&, const stdair::Filename_T&);
+        @param const stdair::BasDBParams& Parameters for the database access.
+        @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input demand file. */
+    DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
+                  const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iDemandInputFilenames);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
         for more details.
         <br>Moreover, as no reference on any output stream is given,
-        it is assumed that the StdAir log service has already been
-        initialised with the proper log output stream by some other
-        methods in the calling chain (for instance, when the DSIM_Service
-        is itself being initialised by another library service).
-        @param const stdair::Filename_T& Filename of the input schedule file. */
-    DSIM_Service (const stdair::Filename_T&);
+        neither any database access parameter is given, it is assumed
+        that the StdAir log service has already been initialised with
+        the proper log output stream by some other methods in the
+        calling chain (for instance, when the DSIM_Service is
+        itself being initialised by another library service).
+        @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input demand file. */
+    DSIM_Service (stdair::STDAIR_ServicePtr_T,
+                  const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iDemandInputFilenames);
 
     /** Destructor. */
     ~DSIM_Service();
+
+    
+  public:
+    // /////////// Business Methods /////////////
+    /** Perform a simulation. */
+    void simulate();
+    
+    /** Display the list of airlines. */
+    void displayAirlineListFromDB();
 
     
   private:
@@ -57,13 +77,6 @@ namespace DSIM {
     /** Default copy constructor. */
     DSIM_Service (const DSIM_Service&);
 
-    /** Initialise the log. */
-    void logInit (const stdair::BasLogParams&);
-
-    /** Initialise.
-        @param const stdair::Filename_T& Filename of the input schedule file. */
-    void init (stdair::STDAIR_ServicePtr_T, const stdair::Filename_T&);
-
     /** Initialise the (DSIM) service context (i.e., the
         DSIM_ServiceContext object). */
     void initServiceContext ();
@@ -72,9 +85,20 @@ namespace DSIM {
         <br>A reference on the root of the BOM tree, namely the BomRoot object,
         is stored within the service context for later use.
         @param const stdair::BasLogParams& Parameters for the output log stream.
-    */
-    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
-
+        @param const stdair::BasDBParams& Parameters for the database access.
+        @param const stdair::AirlineFeatureSet& Set of airline features. */
+    void initStdAirService (const stdair::BasLogParams&,
+                            const stdair::BasDBParams&);
+    
+    /** Initialise.
+        <br>The CSV file, describing the airline schedules for the
+        simulator, is parsed and the inventories are generated accordingly.
+        @param const stdair::AirlineFeatureSet& Set of airline features.
+        @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input demand file. */
+    void init (const stdair::Filename_T& iScheduleInputFilename,
+               const stdair::Filename_T& iDemandInputFilename);
+    
     /** Finalise. */
     void finalise ();
 

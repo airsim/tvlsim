@@ -8,6 +8,8 @@
 #include <string>
 // Boost
 #include <boost/shared_ptr.hpp>
+// StdAir
+#include <stdair/STDAIR_Types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/bom/ConfigurationParameters.hpp>
@@ -36,6 +38,11 @@ namespace DSIM {
     friend class FacDsimServiceContext;
   public:
     // ///////// Getters //////////
+    /** Get the pointer on the STDAIR service handler. */
+    stdair::STDAIR_ServicePtr_T getSTDAIR_Service () const {
+      return _stdairService;
+    }
+    
     /** Get the simulator ID. */
     const SimulatorID_T& getSimulatorID () const {
       return _simulatorID;
@@ -62,6 +69,11 @@ namespace DSIM {
     }
     
     // ///////// Setters //////////
+    /** Set the pointer on the STDAIR service handler. */
+    void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
+      _stdairService = ioSTDAIR_ServicePtr;
+    }
+
     /** Set the simulator ID. */
     void setSimulatorID (const SimulatorID_T& iSimulatorID) {
       _simulatorID = iSimulatorID;
@@ -106,6 +118,8 @@ namespace DSIM {
 
   private:
     // ///////////// Children ////////////
+    /** Standard Airline (StdAir) Service Handler. */
+    stdair::STDAIR_ServicePtr_T _stdairService;
     /** CRS Service Handler. */
     SIMCRS_ServicePtr_T _simcrsService;
     /** TRADEMGEN Service Handler. */

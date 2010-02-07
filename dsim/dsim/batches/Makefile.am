@@ -6,10 +6,12 @@ include $(srcdir)/sources.mk
 
 MAINTAINERCLEANFILES = Makefile.in
 
-# Binaries (batches)
-bin_PROGRAMS =
 
-#airinv_SOURCES = $(batches_h_sources) $(batches_cc_sources)
-#airinv_CXXFLAGS = $(BOOST_CFLAGS)
-#airinv_LDADD =
-#airinv_LDFLAGS = $(BOOST_PROGRAM_OPTIONS_LIB) $(top_builddir)/airinv/core/libairinv.la
+# Binaries (batches)
+bin_PROGRAMS = simulate
+
+simulate_SOURCES = $(batches_h_sources) $(batches_cc_sources)
+simulate_CXXFLAGS = $(BOOST_CFLAGS)
+simulate_LDADD =
+simulate_LDFLAGS = $(BOOST_PROGRAM_OPTIONS_LIB) $(SOCI_LIBS) \
+	$(top_builddir)/dsim/core/libdsim.la

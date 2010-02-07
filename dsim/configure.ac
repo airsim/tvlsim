@@ -171,20 +171,20 @@ AC_SUBST(PYTHON_ADD_LIBS)
 # -----------------------------------------------------------
 # OpenMPI: http://www.open-mpi.org
 # -----------------------------------------------------------
-#AX_OPENMPI
-#AC_SUBST(MPIGEN_VERSION)
-#AC_SUBST(MPIGEN_CFLAGS)
-#AC_SUBST(MPIGEN_LIBS)
+AX_OPENMPI
+AC_SUBST(MPIGEN_VERSION)
+AC_SUBST(MPIGEN_CFLAGS)
+AC_SUBST(MPIGEN_LIBS)
 
 # -----------------------------------------------------------
 # MPICH2: http://www.mcs.anl.gov/research/projects/mpich2
 # Note: Boost.MPI depends on MPICH2 by default, rather than 
 #       on OpenMPI
 # -----------------------------------------------------------
-AX_MPICH2
-AC_SUBST(MPIGEN_VERSION)
-AC_SUBST(MPIGEN_CFLAGS)
-AC_SUBST(MPIGEN_LIBS)
+#AX_MPICH2
+#AC_SUBST(MPIGEN_VERSION)
+#AC_SUBST(MPIGEN_CFLAGS)
+#AC_SUBST(MPIGEN_LIBS)
 
 # ---------------------------------------------------------------
 # Support for Boost (Extension of the STL): http://www.boost.org
@@ -404,6 +404,7 @@ AC_CONFIG_FILES(
 	stdair/Makefile
 	stdair/basic/Makefile
 	stdair/bom/Makefile
+	stdair/dbadaptor/Makefile
 	stdair/factory/Makefile
 	stdair/config/Makefile
 	stdair/service/Makefile

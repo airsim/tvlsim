@@ -1,19 +1,24 @@
 // STL
-#include <cassert>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
+// CPPUNIT
+#include <extracppunit/CppUnitCore.hpp>
 // StdAir
-#include <stdair/STDAIR_Types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
-// DSIM
+// Dsim
+#include <dsim/DSIM_Types.hpp>
 #include <dsim/DSIM_Service.hpp>
-#include <dsim/config/dsim-paths.hpp>
+// Dsim Test Suite
+#include <test/dsim/SimulationTestSuite.hpp>
 
-// ///////// M A I N ////////////
-int main (int argc, char* argv[]) {
+// //////////////////////////////////////////////////////////////////////
+// Test is based on ...
+// //////////////////////////////////////////////////////////////////////
+
+// //////////////////////////////////////////////////////////////////////
+void SimulationTestSuite::simpleSimulationHelper() {
 
   try {
     
@@ -45,16 +50,34 @@ int main (int argc, char* argv[]) {
     
   } catch (const DSIM::RootException& otexp) {
     std::cerr << "Standard exception: " << otexp.what() << std::endl;
-    return -1;
+    return;
     
   } catch (const std::exception& stde) {
     std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return -1;
+    return;
     
   } catch (...) {
-    return -1;
+    return;
   }
   
-  return 0;	
 }
+
+// //////////////////////////////////////////////////////////////////////
+void SimulationTestSuite::simpleSimulation () {
+  // TODO: Check that the simulation goes as expected
+  CPPUNIT_ASSERT_NO_THROW ( simpleSimulationHelper(););
+}
+
+// //////////////////////////////////////////////////////////////////////
+// void SimulationTestSuite::errorCase () {
+//  CPPUNIT_ASSERT (false);
+// }
+
+// //////////////////////////////////////////////////////////////////////
+SimulationTestSuite::SimulationTestSuite () {
+  _describeKey << "Running test on simulation";  
+}
+
+// /////////////// M A I N /////////////////
+CPPUNIT_MAIN()
 
