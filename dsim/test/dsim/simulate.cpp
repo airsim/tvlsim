@@ -39,7 +39,6 @@ int main (int argc, char* argv[]) {
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
                                     lScheduleInputFilename,
                                     lDemandInputFilename);
-
     // Perform a simulation
     dsimService.simulate();
     

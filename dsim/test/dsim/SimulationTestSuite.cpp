@@ -39,8 +39,9 @@ void SimulationTestSuite::simpleSimulationHelper() {
     
     // Initialise the simulation context
     const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
-                                         "dsim");
+    const stdair::BasDBParams lDBParams ("anguyen", "anguyen",
+                                         "ncemysqlp.nce.amadeus.net", "3321",
+                                         "sim_anguyen");
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
                                     lScheduleInputFilename,
                                     lDemandInputFilename);
