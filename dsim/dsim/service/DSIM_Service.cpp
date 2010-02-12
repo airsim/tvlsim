@@ -111,25 +111,6 @@ namespace DSIM {
     // Retrieve the root of the BOM tree, on which all of the other BOM objects
     // will be attached
     assert (lSTDAIR_Service_ptr != NULL);
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
-
-    // TODO: do not hardcode the initialisation of AirlineFeatureSet
-    // Initialise the set of required airline features
-    stdair::AirlineFeatureSet& lAirlineFeatureSet =
-      stdair::FacBomContent::instance().create<stdair::AirlineFeatureSet>();
-    
-    // Airline code
-    stdair::AirlineCode_T lAirlineCode ("BA");
-    // Initialise an AirlineFeature object
-    stdair::AirlineFeatureKey_T lAirlineFeatureKey (lAirlineCode);
-    stdair::AirlineFeature& lAirlineFeature = stdair::FacBomContent::
-      instance().create<stdair::AirlineFeature> (lAirlineFeatureKey);
-    stdair::FacBomContent::
-      linkWithParent<stdair::AirlineFeature> (lAirlineFeature,
-                                              lAirlineFeatureSet);
-
-    // Set the AirlineFeatureSet for the BomRoot.
-    lBomRoot.setAirlineFeatureSet (&lAirlineFeatureSet);
 
     // Store the STDAIR service object within the (TRADEMGEN) service context
     lDSIM_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
