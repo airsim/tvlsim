@@ -39,134 +39,13 @@ namespace DSIM {
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation is starting");
 
-      // ////////// Hardcoded section for demand generation ///////////
-      /** Origin. */
-      const stdair::AirportCode_T lLHR ("LHR");
-      /** Destination. */
-      const stdair::AirportCode_T lJFK ("JFK");
-      /** Preferred departure date. */
-      const stdair::Date_T lPreferredDepartureDate1 (2010, 1, 17);
-      const stdair::Date_T lPreferredDepartureDate2 (2010, 1, 18);
-      /** Passenger type. */
-      const stdair::PassengerType lLeisurePax ('L');
-      const stdair::PassengerType lBusinessPax ('B');
-      /** Demand distribution parameters. */
-      const stdair::NbOfRequests_T lDemandMean1 (10.0);
-      const stdair::StandardDeviationValue_T lDemandStdDev1 (2.0);
-      const stdair::NbOfRequests_T lDemandMean2 (12.0);
-      const stdair::StandardDeviationValue_T lDemandStdDev2 (1.0);
-      
-      // Demand characteristics
-      const stdair::DemandStreamKey_T key1 (lLHR, lJFK, lPreferredDepartureDate1,
-                                            lLeisurePax);
-      const stdair::DemandStreamKey_T key2 (lLHR, lJFK, lPreferredDepartureDate2,
-                                            lBusinessPax);
-
-      stdair::DemandCharacteristics demandCharacteristics1 (key1);
-      stdair::DemandCharacteristics demandCharacteristics2 (key2);
-    
-    
-      // Demand distribution
-      stdair::DemandDistribution demandDistribution1 (lDemandMean1,
-                                                      lDemandStdDev1);
-      stdair::DemandDistribution demandDistribution2 (lDemandMean2,
-                                                      lDemandStdDev2);
-
-
-      // Arrival pattern
-      stdair::ArrivalPatternCumulativeDistribution_T arrivalPatternCumulativeDistribution1;
-      arrivalPatternCumulativeDistribution1.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-365.0,
-                                                                            0) );
-      arrivalPatternCumulativeDistribution1.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-67.0,
-                                                                            0.2) );
-      arrivalPatternCumulativeDistribution1.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-17.0,
-                                                                            0.5) );
-      arrivalPatternCumulativeDistribution1.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (0.0,
-                                                                            1.0) );
-  
-      stdair::ArrivalPatternCumulativeDistribution_T arrivalPatternCumulativeDistribution2;
-      arrivalPatternCumulativeDistribution2.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-365.0,
-                                                                            0) );
-      arrivalPatternCumulativeDistribution2.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-300.0,
-                                                                            0.5) );
-      arrivalPatternCumulativeDistribution2.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (-200.0,
-                                                                            0.9) );
-      arrivalPatternCumulativeDistribution2.
-        insert (stdair::ArrivalPatternCumulativeDistribution_T::value_type (0.0,
-                                                                            1.0) );
-
-      // When creating the ContinuousAttribute object, the mapping is
-      // inverted, i.e., the inverse cumulative distribution can be
-      // derived from the cumulative distribution
-      const stdair::ContinuousFloatDuration_T arrivalPattern1 (arrivalPatternCumulativeDistribution1);
-      demandCharacteristics1.setArrivalPattern (arrivalPattern1);
-      const stdair::ContinuousFloatDuration_T arrivalPattern2 (arrivalPatternCumulativeDistribution2);
-      demandCharacteristics2.setArrivalPattern (arrivalPattern2);
-      
-      // Display
-      STDAIR_LOG_DEBUG ("Demand 1: " << std::endl
-                        << demandCharacteristics1.display()
-                        << demandDistribution1.display());
-      
-      STDAIR_LOG_DEBUG ("Demand 2: " << std::endl
-                        << demandCharacteristics2.display()
-                        << demandDistribution2.display());
-      
-      // Seeds
-      stdair::RandomSeed_T seed = 2;
-  
-      // Initialise the demand stream
-      ioTRADEMGEN_Service.addDemandStream (key1, demandCharacteristics1,
-                                        demandDistribution1, seed, seed, seed);
-      ioTRADEMGEN_Service.addDemandStream (key2, demandCharacteristics2,
-                                        demandDistribution2, seed, seed, seed);
-  
-      // Get the total number of requests to be generated
-      stdair::NbOfRequests_T totalNumberOfRequestsToBeGenerated1 =
-        ioTRADEMGEN_Service.getTotalNumberOfRequestsToBeGenerated (key1);
-      stdair::NbOfRequests_T totalNumberOfRequestsToBeGenerated2 =
-        ioTRADEMGEN_Service.getTotalNumberOfRequestsToBeGenerated (key2);
-
-      STDAIR_LOG_DEBUG ("Number of requests to be generated (demand 1): "
-                        << totalNumberOfRequestsToBeGenerated1 << std::endl);
-      STDAIR_LOG_DEBUG ("Number of requests to be generated (demand 2): "
-                        << totalNumberOfRequestsToBeGenerated2 << std::endl);
-
       // /////////////////////////////////////////////////////
       // Event queue
       stdair::EventQueue lEventQueue = stdair::EventQueue ();
+      // Browse the list of DemandStreams and Generate the first event for each
+      // DemandStream.
+      ioTRADEMGEN_Service.generateFirstRequests (lEventQueue);
   
-      // Initialize by adding one request of each type
-      const bool stillHavingRequestsToBeGenerated1 = 
-        ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (key1);
-      if (stillHavingRequestsToBeGenerated1) {
-        stdair::BookingRequestPtr_T lRequest1 =
-          ioTRADEMGEN_Service.generateNextRequest (key1);
-        assert (lRequest1 != NULL);
-        stdair::DateTime_T lRequestDateTime = lRequest1->getRequestDateTime ();
-        stdair::EventStruct lEventStruct ("Request", lRequestDateTime, key1,
-                                          lRequest1);
-        lEventQueue.addEvent (lEventStruct);
-      }
-  
-      const bool stillHavingRequestsToBeGenerated2 = 
-        ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (key2);
-      if (stillHavingRequestsToBeGenerated2) {
-        stdair::BookingRequestPtr_T lRequest2 =
-          ioTRADEMGEN_Service.generateNextRequest (key2);
-        assert (lRequest2 != NULL);
-        stdair::DateTime_T lRequestDateTime = lRequest2->getRequestDateTime ();
-        stdair::EventStruct lEventStruct("Request", lRequestDateTime, key2,
-                                         lRequest2);
-        lEventQueue.addEvent (lEventStruct);
-      }
   
       // Pop requests, get type, and generate next request of same type
       int i = 0;
@@ -195,7 +74,7 @@ namespace DSIM {
         playBookingRequest (ioSIMCRS_Service, lPoppedRequest);
     
         // Retrieve the corresponding demand stream
-        const stdair::DemandStreamKey_T& lDemandStreamKey =
+        const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
           lEventStruct.getDemandStreamKey ();
         // generate next request
         bool stillHavingRequestsToBeGenerated = 
