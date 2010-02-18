@@ -48,28 +48,15 @@ namespace DSIM {
   
   
       // Pop requests, get type, and generate next request of same type
-      int i = 0;
-      while (lEventQueue.isQueueDone() == false && i < 20) {
-        // DEBUG
-        STDAIR_LOG_DEBUG ("Before popping (" << i << ")" );
-        STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize () );
-        STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone () );
-    
+      while (lEventQueue.isQueueDone() == false) {
         stdair::EventStruct& lEventStruct = lEventQueue.popEvent ();
 
-        // DEBUG
-        STDAIR_LOG_DEBUG ("After popping" );
-        STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize ());
-        STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone ());
-
-        STDAIR_LOG_DEBUG ("Popped request " << i );
-    
         const stdair::BookingRequestStruct& lPoppedRequest =
           lEventStruct.getBookingRequest ();
-    
+
         // DEBUG
-        STDAIR_LOG_DEBUG (lPoppedRequest.describe());
-        
+        STDAIR_LOG_DEBUG ("Poped request: " << lPoppedRequest.describe());
+    
         // Play booking request
         playBookingRequest (ioSIMCRS_Service, lPoppedRequest);
     
@@ -79,13 +66,11 @@ namespace DSIM {
         // generate next request
         bool stillHavingRequestsToBeGenerated = 
           ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated(lDemandStreamKey);
-        STDAIR_LOG_DEBUG ("stillHavingRequestsToBeGenerated: " << stillHavingRequestsToBeGenerated );
+       
         if (stillHavingRequestsToBeGenerated) {
           stdair::BookingRequestPtr_T lNextRequest =
             ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey);
           assert (lNextRequest != NULL);
-          // DEBUG
-          STDAIR_LOG_DEBUG ("Added request: " << lNextRequest->describe());
       
           stdair::DateTime_T lNextRequestDateTime =
             lNextRequest->getRequestDateTime ();
@@ -93,24 +78,11 @@ namespace DSIM {
                                                 lNextRequestDateTime,
                                                 lDemandStreamKey,
                                                 lNextRequest);
-          lEventQueue.eraseLastUsedEvent ();
           lEventQueue.addEvent (lNextEventStruct);
-      
-          // DEBUG
-          STDAIR_LOG_DEBUG ("After adding");
-          STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize ());
-          STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone ());
-    
         }
 
-        // DEBUG
-        STDAIR_LOG_DEBUG (std::endl);
-    
-        // Iterate
-        ++i;
+        lEventQueue.eraseLastUsedEvent ();
       }
-      // Play booking request
-      //playBookingRequest (ioSIMCRS_Service, lBookingRequest);
             
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation has ended");
