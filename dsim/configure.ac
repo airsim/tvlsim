@@ -199,6 +199,7 @@ AC_SUBST(BOOST_FILESYSTEM_LIB)
 AC_SUBST(BOOST_THREAD_LIB)
 AC_SUBST(BOOST_PYTHON_LIB)
 AC_SUBST(BOOST_SIGNALS_LIB)
+AC_SUBST(BOOST_IOSTREAMS_LIB)
 AC_SUBST(BOOST_ASIO_LIB)
 AC_SUBST(BOOST_MPI_LIB)
 AC_SUBST(BOOST_MPI_PYTHON_LIB)
@@ -504,6 +505,7 @@ AC_CONFIG_FILES(
 	test/boost/asio/logd/Makefile
 	test/boost/asio/logger/Makefile
 	test/boost/filesystem/Makefile
+	test/boost/iostreams/Makefile
 	test/boost/mpi/Makefile
 	test/boost/mpl/Makefile
 	test/boost/spirit/Makefile
@@ -609,6 +611,7 @@ ${MPICH2_OUTPUT}
     o BOOST_FS_LIB .... : ${BOOST_FILESYSTEM_LIB}
     o BOOST_THRD_LIB .. : ${BOOST_THREAD_LIB}
     o BOOST_PY_LIB .... : ${BOOST_PYTHON_LIB}
+    o BOOST_IOSTR_LIB . : ${BOOST_IOSTREAMS_LIB}
     o BOOST_ASIO_LIB .. : ${BOOST_ASIO_LIB}
     o BOOST_SIG_LIB ... : ${BOOST_SIGNALS_LIB}
     o BOOST_MPI_LIB ... : ${BOOST_MPI_LIB}
