@@ -393,9 +393,10 @@ int main (int argc, char *argv[]) {
   // Display the complete schedule
   std::cout << "original schedule";
   std::cout << original_schedule;
+  std::cout << std::endl;
     
   std::string filename (boost::archive::tmpdir());
-  filename += "/demofile.txt";
+  filename += "/serial1.txt";
 
   // Save the schedule
   save_schedule (original_schedule, filename.c_str());
@@ -409,7 +410,9 @@ int main (int argc, char *argv[]) {
   // And display
   std::cout << "\nrestored schedule";
   std::cout << new_schedule;
+  std::cout << std::endl;
   // Should be the same as the old one (except for the pointer values)
 
   return 0;
 }
+
