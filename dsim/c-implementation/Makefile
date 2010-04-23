@@ -6,7 +6,7 @@ all: dSim
 	mpicc $^ -c
 
 dSim: parser.o schedule.o demand_generation.o interface.o master.o slave.o slave_init.o slave_live.o prototype.o 
-	mpicc -inline $^ -o $@ -lmysqlclient
+	mpicc -inline $^ -o $@ -L/usr/lib/mysql -lmysqlclient
 
 connector: connector.c
 	gcc $^ -o $@
