@@ -432,15 +432,15 @@ AC_CONFIG_FILES(
 	airsched/config/Makefile
 	airsched/core/Makefile
 	airsched/batches/Makefile
-        airrac/Makefile
-        airrac/basic/Makefile
-        airrac/bom/Makefile
-        airrac/factory/Makefile
-        airrac/command/Makefile
-        airrac/service/Makefile
-        airrac/config/Makefile
-        airrac/core/Makefile
-        airrac/batches/Makefile
+	airrac/Makefile
+	airrac/basic/Makefile
+	airrac/bom/Makefile
+	airrac/factory/Makefile
+	airrac/command/Makefile
+	airrac/service/Makefile
+	airrac/config/Makefile
+	airrac/core/Makefile
+	airrac/batches/Makefile
 	rmol/Makefile
 	rmol/basic/Makefile
 	rmol/field/Makefile
@@ -460,6 +460,7 @@ AC_CONFIG_FILES(
 	airinv/config/Makefile
 	airinv/core/Makefile
 	airinv/batches/Makefile
+	airinv/server/Makefile
 	avlcal/Makefile
 	avlcal/basic/Makefile
 	avlcal/bom/Makefile
@@ -525,7 +526,7 @@ AC_CONFIG_FILES(
 	test/stdair/Makefile
 	test/trademgen/Makefile
 	test/airsched/Makefile
-        test/airrac/Makefile
+	test/airrac/Makefile
 	test/rmol/Makefile
 	test/airinv/Makefile
 	test/avlcal/Makefile
