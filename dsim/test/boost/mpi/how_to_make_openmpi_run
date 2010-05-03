@@ -1,0 +1,5 @@
+- Turnoff eth0 on all virtual machines(for the host, it's not necessary) by 
+    su -
+    ifdown eth0
+
+- Then, all work like a charm !

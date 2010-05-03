@@ -1,0 +1,16 @@
+- Make sure that ssh,mpich2 is installed on ALL machines (openssh-server, openssh-client,mpich2,mpich2-devel)
+
+- Verify /etc/hosts, ensure the machine's name is NOT in the line 127.0.0.1. Create a line that contains machine's IP, its name (complete one and short one), place it just BEFORE the line 
+    ::1 localhost ......
+
+- Ensures the executable file is on ALL  machines, preferably at ~/
+
+- Make sure that  ~/.mpd.conf is on ALL machines, contains the same content (MPD_SECRETWORD must be the SAME)
+
+- Create a file, name it for example "hosts" that contains the name of all machines on what we want to run the program
+
+- Then RUN:
+    mpdboot -n number_of_machine --file hosts --verbose
+    mpdtrace -l (to verify)
+    mpiexec -n number_of_machine(preferably) ~/name_of_program
+
