@@ -9,7 +9,7 @@ SUBDIRS =
 EXTRA_DIST = pympi.py
 
 #
-check_PROGRAMS = mpi_c mpi mpi_p2p mpi_p2p_nb
+check_PROGRAMS = mpi_c mpi mpi_p2p mpi_p2p_nb alo_example
 
 
 # mpi_c must be compiled with mpic++
@@ -36,3 +36,7 @@ mpi_p2p_nb_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
 mpi_p2p_nb_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
 mpi_p2p_nb_LDADD =
 
+alo_example_SOURCES = alo_example.cpp
+alo_example_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
+alo_example_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB)
+alo_example_LDADD =

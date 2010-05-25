@@ -1,0 +1,7 @@
+#Example of a hostfile
+#to use it:
+#/usr/lib/openmpi/bin/mpirun --hostfile my_hostfile -n 2 alo_example
+#For details about how slots are calculated, see http://www.open-mpi.org/faq/?category=running#mpirun-scheduling
+
+fed1 slots=1 max-slots=1
+localhost slots=1
