@@ -138,6 +138,7 @@ else
 fi
 AC_SUBST(CXXFLAGS_OPT)
 
+
 # -----------------------------------------------------------------------------
 # Support for ExtraCC (Extra-CruiseControl): http://sf.net/projects/extracc
 # -----------------------------------------------------------------------------
@@ -643,6 +644,11 @@ ${MPICH2_OUTPUT}
     o XERCES_VERSION .. : ${XERCES_VERSION}
     o XERCES_CFLAGS ... : ${XERCES_CFLAGS}
     o XERCES_LIBS ..... : ${XERCES_LIBS}
+
+  - ExtraCC ........... :
+    o EXTRACC_VERSION . : ${EXTRACC_VERSION}
+    o EXTRACC_CFLAGS .. : ${EXTRACC_CFLAGS}
+    o EXTRACC_LIBS .... : ${EXTRACC_LIBS}
 
  - CPPUNIT............ :
     o CPPUNIT_VERSION . : ${CPPUNIT_VERSION}

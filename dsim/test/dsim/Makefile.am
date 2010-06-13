@@ -18,7 +18,7 @@ SimulationTestSuite_CXXFLAGS= $(CPPUNIT_CFLAGS) $(BOOST_CFLAGS)
 SimulationTestSuite_LDADD =
 SimulationTestSuite_LDFLAGS = \
 		$(BOOST_LIBS) $(CPPUNIT_LIBS) \
-		$(top_builddir)/extracppunit/libextracc-extracppunit.la \
+		$(top_builddir)/extracppunit/libextracppunit.la \
 		$(top_builddir)/stdair/core/libstdair.la \
 		$(top_builddir)/dsim/core/libdsim.la
 
@@ -28,3 +28,4 @@ SimulationTestSuite_LDFLAGS = \
 #simulate_LDFLAGS = $(BOOST_LIBS) \
 #		$(top_builddir)/stdair/core/libstdair.la \
 #		$(top_builddir)/dsim/core/libdsim.la
+
