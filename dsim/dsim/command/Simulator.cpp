@@ -113,7 +113,7 @@ namespace DSIM {
 
     } else {
       // DEBUG
-      STDAIR_LOG_DEBUG ("No travel solution is chosen.");
+      STDAIR_LOG_DEBUG ("No travel solution has been found/chosen.");
     }
   }
   
