@@ -11,6 +11,7 @@ namespace mpi=boost::mpi;
 int main(int argc, char ** argv){
     mpi::environment env(argc, argv);
     mpi::communicator world;
+	
     int rank = world.rank();
     string s;
     int tag = 10;

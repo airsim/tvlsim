@@ -1,6 +1,6 @@
 /*
- * Object: Make a simple master-slave program
- * Utilisation: User tape a number, master send it to a slave (he is chosen based on the number of slave ), that slave return the square of that number to master. 
+ * Object: a simple master-slave example
+ * Usage: Run master_slave.sh 
  * 
  */
 

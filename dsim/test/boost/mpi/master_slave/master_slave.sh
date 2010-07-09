@@ -1,5 +1,5 @@
-#Execute trademgen on three machines: local, fed1 and fed2
+# Execute master on localhost, 4 slave on localhost (or fed1, fed2)
 #!/bin/sh
 
 /usr/lib/openmpi/bin/mpirun --host localhost -n 1  master : \
-                            --host fed1 -n 4 slave
+                            --host localhost -n 4 slave

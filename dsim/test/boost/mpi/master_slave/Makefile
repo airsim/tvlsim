@@ -1,6 +1,6 @@
 ALL: master slave
 
-CC = mpicxx  -lmpi_cxx -lboost_mpi 
+CC = mpicxx  -lmpi_cxx -L/usr/lib/openmpi/lib/ -lboost_mpi
 
 master: master.cpp
 	  $(CC) master.cpp -o master
