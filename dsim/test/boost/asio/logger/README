@@ -1,0 +1,10 @@
+
+#
+# That program shows how to use log service on the client side.
+# It needs a "day-time" server running, otherwise, an error like
+# "connection refused" will be triggered.
+# Such a day-time server is to be found in the parent directory:
+#  * daytime2
+#  * daytime3
+#
+
