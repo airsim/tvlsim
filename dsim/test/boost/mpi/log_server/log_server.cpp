@@ -14,6 +14,9 @@
 #include <time.h>
 #include <sys/types.h>
 #include<stdio.h>
+// Some log macros
+#include"log_service.hpp"
+
 
 using namespace std;
 namespace mpi=boost::mpi;
@@ -44,6 +47,7 @@ void inactive_wait(mpi::communicator& world){
 	//world.probe(root,tag);//active waiting: take much more resources
 }
 
+
 int main(int argc, char ** argv){
 	mpi::environment env(argc, argv);
 	mpi::communicator world;
@@ -54,9 +58,12 @@ int main(int argc, char ** argv){
 	
 	int rank = world.rank(); //process's rank
 	string message; // message received from client
-	bool yes=true, tmp;
+	bool yes=true;
 	
 	if (rank==0){
+
+		
+		
 		cout << "We have " << world.size() -1 << " clients " << endl;
 		cout << "=============================================================" << endl;
 	
@@ -72,7 +79,8 @@ int main(int argc, char ** argv){
 			inactive_wait(world);
 			world.recv(dest,tag,message);
 			
-			logToFile("ex.log", message);
+			LOG_DEBUG("ex.log", message);
+			
 			cout << "server received: " << message << endl ;
 		}
 	}

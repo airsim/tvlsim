@@ -1,0 +1,5 @@
+log_service.hpp contains some macros for logging ( copied & modified from Logger.hpp) like LOG_ERROR(logFile,message_to_log), LOG_DEBUG(logFile,message_to_log)
+
+Log_server & clients use MPI for communication -> not efficient (log_server takes 33% of CPU)
+
+Run run.sh (Ctrl-C for stops), then see ex.log for the log 
