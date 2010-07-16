@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
 		
 			boost::system::error_code lIgnoredError;
 			boost::system::error_code lTransferError;
-			boost::array<char, 4> lBuffer;
+			boost::array<char, 1024> lBuffer;
 			
 			ofstream out ("server.log", ios::app); //file to write log
 			

@@ -12,7 +12,7 @@
 /* Send filename's content to server */
 void send_file (std::string filename){
 	using namespace std;
-	std::string lHostname = "fed2";
+	std::string lHostname = "localhost";
 	// Service name (as specified within /etc/services)
 	// The "aria" service corresponds to the port 2624
 	const std::string lServiceName = "aria";
