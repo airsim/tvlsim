@@ -9,12 +9,15 @@
 // /////////// M A I N ////////////////
 int main (int argc, char* argv[]) {
 
-  boost::asio::io_service lIOService;
-  boost::asio::deadline_timer lTimer (lIOService, boost::posix_time::seconds(1));
+	boost::asio::io_service lIOService;
+	boost::asio::deadline_timer lTimer (lIOService, boost::posix_time::seconds(5));
 
-  lTimer.wait();
+	lTimer.wait();
 
-  std::cout << "We have waited 1 second" << std::endl;
+	//This line won't be printed immediately(), contrary to case lTimer.async_wait()
+	std::cout << "Waiting 5s...." << std::endl;
 
-  return 0;
+	std::cout << "We have waited 5 second" << std::endl;
+
+	return 0;
 }

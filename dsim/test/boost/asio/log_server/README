@@ -1,0 +1,7 @@
+* Log server modele using ASIO
+	Client 1 will take input1 to send to server
+	Client 2 will take inpu2 to send to server
+	Server will log these two files into server.log
+
+* For verifying:
+	Client 1 & Client 2 don't intefere -> in server.log, 2 parts (for client 1 & client 2) are seperated

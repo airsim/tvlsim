@@ -28,6 +28,7 @@ int main (int argc, char* argv[]) {
     boost::asio::ip::tcp::resolver lResolver (lIOService);
 
     boost::asio::ip::tcp::resolver::query lQuery (lHostname, lServiceName);
+//     boost::asio::ip::tcp::resolver::query lQuery (lHostname, "daytime");
 
     boost::asio::ip::tcp::resolver::iterator itEndPoint =
       lResolver.resolve (lQuery);
