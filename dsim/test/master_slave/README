@@ -1,0 +1,12 @@
+* Master-slave-log_server model: 
+	- Master receive demands (BookingRequest), get the TravelSolutionList and send each to the corresponding slave (by using slaveTable[]) (copied and modified from /airsched/batches/aisched.cpp)
+	- Each slave works on an inventory: one for BA, one for AA,... ( need to add AIRINV functionalities).
+	- Everytime slave receives order from master, he send log message to log_server and log_server will write this message in server.log.
+
+* log_server uses the mecanisme of locking i.e. he takes care of slave one by one. Slave will wake up every second to see if log_master has accepted his demand.
+
+* Run run.sh and  see master.log for  result
+
+* This model uses openMPI like mean of comunication, so log_server uses more resource than it should be (~ 33 % CPU all the time). See test/boost/asio/log_server for another log_server model which uses BOOST ASIO ( a lot better in term of CPU)
+
+* myStringLib.cpp contains some useful functions for string
