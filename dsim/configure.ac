@@ -515,10 +515,14 @@ AC_CONFIG_FILES(
 	test/boost/asio/Makefile
 	test/boost/asio/httpd/Makefile
 	test/boost/asio/logd/Makefile
+	test/boost/asio/log_server/Makefile
 	test/boost/asio/logger/Makefile
+	test/boost/asio/chat/Makefile
 	test/boost/filesystem/Makefile
 	test/boost/iostreams/Makefile
 	test/boost/mpi/Makefile
+	test/boost/mpi/master_slave/Makefile
+	test/boost/mpi/log_server/Makefile
 	test/boost/mpl/Makefile
 	test/boost/spirit/Makefile
 	test/boost/serialization/Makefile
@@ -535,6 +539,7 @@ AC_CONFIG_FILES(
 	test/simcrs/Makefile
 	test/travelccm/Makefile
 	test/dsim/Makefile
+	test/master_slave/Makefile
 )
 AC_OUTPUT
 
