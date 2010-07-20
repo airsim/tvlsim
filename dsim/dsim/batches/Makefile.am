@@ -1,4 +1,4 @@
-# batches
+# dsim/batches
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
@@ -10,7 +10,7 @@ MAINTAINERCLEANFILES = Makefile.in
 # Binaries (batches)
 bin_PROGRAMS = simulate
 
-simulate_SOURCES = $(batches_h_sources) $(batches_cc_sources)
+simulate_SOURCES = $(dsim_batches_h_sources) $(dsim_batches_cc_sources)
 simulate_CXXFLAGS = $(BOOST_CFLAGS)
 simulate_LDADD =
 simulate_LDFLAGS = $(BOOST_PROGRAM_OPTIONS_LIB) $(SOCI_LIBS) \

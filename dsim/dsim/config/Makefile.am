@@ -1,4 +1,4 @@
-# config
+# dsim/config
 include $(top_srcdir)/Makefile.common
 
 ## Source directory

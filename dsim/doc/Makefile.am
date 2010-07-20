@@ -1,13 +1,14 @@
 include $(top_srcdir)/doc/local/sources.mk
 include $(top_srcdir)/doc/tutorial/sources.mk
 include $(top_srcdir)/doc/tutorial/src/sources.mk
-#include $(top_srcdir)/stdair/basic/sources.mk
-#include $(top_srcdir)/stdair/bom/sources.mk
-#include $(top_srcdir)/stdair/factory/sources.mk
-#include $(top_srcdir)/stdair/command/sources.mk
-#include $(top_srcdir)/stdair/service/sources.mk
-#include $(top_srcdir)/stdair/core/sources.mk
-#include $(top_srcdir)/stdair/batches/sources.mk
+include $(top_srcdir)/stdair/basic/sources.mk
+include $(top_srcdir)/stdair/bom/sources.mk
+include $(top_srcdir)/stdair/factory/sources.mk
+include $(top_srcdir)/stdair/dbadaptor/sources.mk
+include $(top_srcdir)/stdair/command/sources.mk
+include $(top_srcdir)/stdair/service/sources.mk
+include $(top_srcdir)/stdair/core/sources.mk
+include $(top_srcdir)/stdair/batches/sources.mk
 #include $(top_srcdir)/trademgen/basic/sources.mk
 #include $(top_srcdir)/trademgen/bom/sources.mk
 #include $(top_srcdir)/trademgen/factory/sources.mk
@@ -94,11 +95,18 @@ html-local: html/index.html
 html/index.html: doxygen_html.cfg \
 	$(doc_local_sources) $(html_local_sources) \
 	$(doc_tutorial_sources) $(cpp_tutorial_sources) \
-	$(bas_h_sources) $(bas_cc_sources) \
-	$(bom_h_sources) $(bom_cc_sources) \
-	$(fac_h_sources) $(fac_cc_sources) \
-	$(cmd_h_sources) $(cmd_cc_sources) \
-	$(svc_h_sources) $(svc_cc_sources)
+	$(stdair_service_h_sources) $(stdair_service_cc_sources) \
+	$(stdair_bas_h_sources) $(stdair_bas_cc_sources) \
+	$(stdair_bom_h_sources) $(stdair_bom_cc_sources) \
+	$(stdair_fac_h_sources) $(stdair_fac_cc_sources) \
+	$(stdair_cmd_h_sources) $(stdair_cmd_cc_sources) \
+	$(stdair_svc_h_sources) $(stdair_svc_cc_sources) \
+	$(dsim_service_h_sources) $(dsim_service_cc_sources) \
+	$(dsim_bas_h_sources) $(dsim_bas_cc_sources) \
+	$(dsim_bom_h_sources) $(dsim_bom_cc_sources) \
+	$(dsim_fac_h_sources) $(dsim_fac_cc_sources) \
+	$(dsim_cmd_h_sources) $(dsim_cmd_cc_sources) \
+	$(dsim_svc_h_sources) $(dsim_svc_cc_sources)
 	doxygen $<; \
 	if test -d html; then \
 		cp $(srcdir)/images/dsim_logo.png html; \

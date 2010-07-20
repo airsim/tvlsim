@@ -1,11 +1,13 @@
-## basic sub-directory
+## dsim/basic sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
-noinst_LTLIBRARIES= libbas.la
+#
+noinst_LTLIBRARIES = libdsimbas.la
 
-libbas_la_SOURCES= $(bas_h_sources) $(bas_cc_sources) 
-libbas_la_CXXFLAGS =
+libdsimbas_la_SOURCES = $(dsim_bas_h_sources) $(dsim_bas_cc_sources) 
+libdsim_bas_la_CXXFLAGS =
+
 
 #pkgincludedir = $(includedir)/@PACKAGE@/basic
 #pkginclude_HEADERS = $(bas_h_sources)

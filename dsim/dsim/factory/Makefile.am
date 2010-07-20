@@ -1,11 +1,13 @@
-## factory sub-directory
+## dsim/factory sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
-noinst_LTLIBRARIES= libfac.la
+#
+noinst_LTLIBRARIES= libdsimfac.la
 
-libfac_la_SOURCES= $(fac_h_sources) $(fac_cc_sources) 
-libfac_la_CXXFLAGS =
+libdsimfac_la_SOURCES= $(dsim_fac_h_sources) $(dsim_fac_cc_sources) 
+libdsimfac_la_CXXFLAGS =
+
 
 #pkgincludedir = $(includedir)/@PACKAGE@/factory
 #pkginclude_HEADERS = $(fac_h_sources)
