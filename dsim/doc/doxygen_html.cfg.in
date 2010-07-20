@@ -554,7 +554,9 @@ WARN_LOGFILE           = doxygen_html.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @top_srcdir@/@PACKAGE@ \
+INPUT                  = @top_srcdir@/stdair \
+					   	 @top_srcdir@/rmol \
+					   	 @top_srcdir@/dsim \
                          @top_srcdir@/doc/local \
                          @top_builddir@/doc/local \
                          @top_srcdir@/doc/tutorial

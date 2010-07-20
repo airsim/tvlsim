@@ -29,13 +29,14 @@ include $(top_srcdir)/stdair/batches/sources.mk
 #include $(top_srcdir)/airrac/command/sources.mk
 #include $(top_srcdir)/airrac/service/sources.mk
 #include $(top_srcdir)/airrac/core/sources.mk
-#include $(top_srcdir)/rmol/basic/sources.mk
-#include $(top_srcdir)/rmol/bom/sources.mk
-#include $(top_srcdir)/rmol/factory/sources.mk
-#include $(top_srcdir)/rmol/command/sources.mk
-#include $(top_srcdir)/rmol/service/sources.mk
-#include $(top_srcdir)/rmol/core/sources.mk
-#include $(top_srcdir)/rmol/batches/sources.mk
+include $(top_srcdir)/rmol/basic/sources.mk
+include $(top_srcdir)/rmol/field/sources.mk
+include $(top_srcdir)/rmol/bom/sources.mk
+include $(top_srcdir)/rmol/factory/sources.mk
+include $(top_srcdir)/rmol/command/sources.mk
+include $(top_srcdir)/rmol/service/sources.mk
+include $(top_srcdir)/rmol/core/sources.mk
+include $(top_srcdir)/rmol/batches/sources.mk
 #include $(top_srcdir)/airinv/basic/sources.mk
 #include $(top_srcdir)/airinv/bom/sources.mk
 #include $(top_srcdir)/airinv/factory/sources.mk
@@ -101,6 +102,14 @@ html/index.html: doxygen_html.cfg \
 	$(stdair_fac_h_sources) $(stdair_fac_cc_sources) \
 	$(stdair_cmd_h_sources) $(stdair_cmd_cc_sources) \
 	$(stdair_svc_h_sources) $(stdair_svc_cc_sources) \
+	$(rmol_service_h_sources) $(rmol_service_cc_sources) \
+	$(rmol_batches_h_sources) $(rmol_batches_cc_sources) \
+	$(rmol_bas_h_sources) $(rmol_bas_cc_sources) \
+	$(rmol_fld_h_sources) $(rmol_fld_cc_sources) \
+	$(rmol_bom_h_sources) $(rmol_bom_cc_sources) \
+	$(rmol_fac_h_sources) $(rmol_fac_cc_sources) \
+	$(rmol_cmd_h_sources) $(rmol_cmd_cc_sources) \
+	$(rmol_svc_h_sources) $(rmol_svc_cc_sources) \
 	$(dsim_service_h_sources) $(dsim_service_cc_sources) \
 	$(dsim_bas_h_sources) $(dsim_bas_cc_sources) \
 	$(dsim_bom_h_sources) $(dsim_bom_cc_sources) \
