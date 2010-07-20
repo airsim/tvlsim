@@ -106,37 +106,14 @@ fi
 AC_SUBST(docdir)
 
 
-PACKAGE_DEBUG="$PACKAGE"
-# Set debug flags
-if test "x$enable_debug" = xyes; then
-  PACKAGE_DEBUG="$PACKAGE"_debug
-  CXXFLAGS_DEBUG="-DASSERT_LEVEL=2 -g"
-  # Only for GCC compiler 
-  if test "x$GXX" = xyes; then
-    if test "x$enable_exceptions" = xno; then
-      CXXFLAGS_DEBUG="$CXXFLAGS_DEBUG -fno-exceptions"
-    fi
-    CXXFLAGS_DEBUG="$CXXFLAGS_DEBUG -Wall -pipe"
-  fi
+# Default compilation flags
+if test -z "${CFLAGS}"; then
+   CFLAGS="-g -Wall"
 fi
-AC_SUBST(CXXFLAGS_DEBUG)
-AC_SUBST(PACKAGE_DEBUG)
 
-# Set optimised flags
-if test "x$CXXFLAGS" = x; then
-  CXXFLAGS_OPT="-DASSERT_LEVEL=1 -O2" 
-  # Only for GCC compiler 
-  if test "x$GXX" = xyes; then
-    if test "x$enable_exceptions" = xno; then
-      CXXFLAGS_OPT="$CXXFLAGS_OPT -fno-exceptions"
-    fi
-    CXXFLAGS_OPT="$CXXFLAGS_OPT -Wall -pipe"
-  fi
-else
-  CXXFLAGS_OPT="$CXXFLAGS"
-  CXXFLAGS=""
+if test -z "${CXXFLAGS}"; then
+   CXXFLAGS="-g -Wall"
 fi
-AC_SUBST(CXXFLAGS_OPT)
 
 
 # -----------------------------------------------------------------------------
@@ -508,6 +485,14 @@ AC_CONFIG_FILES(
 	dsim/core/Makefile
 	dsim/batches/Makefile
 	extracppunit/Makefile
+	doc/Makefile
+	doc/images/Makefile
+	doc/tutorial/Makefile
+	doc/tutorial/src/Makefile
+	doc/local/Makefile
+	doc/local/index.doc
+	doc/doxygen_html.cfg
+	doc/sourceforge/howto_release_dsim.html
 	test/Makefile
 	test/samples/Makefile
 	test/boost/Makefile

@@ -21,11 +21,12 @@ endif
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure \
 			config-h.in sic/stamp-h.in autogen.sh bootstrap
 
-EXTRA_DIST = @PACKAGE@.spec @PACKAGE@.m4 @PACKAGE@.pc Makefile.common 
+#EXTRA_DIST = @PACKAGE@.spec @PACKAGE@.m4 @PACKAGE@.pc Makefile.common 
+EXTRA_DIST =
 
 # Build in these directories:
 SUBDIRS = stdair trademgen airsched airrac rmol airinv avlcal simfqt simcrs \
-	travelccm dsim extracppunit $(TEST_DIR)
+	travelccm dsim $(HTML_DOC_DIR) extracppunit $(TEST_DIR)
 
 
 # Configuration helpers
