@@ -16,13 +16,13 @@ include $(top_srcdir)/stdair/batches/sources.mk
 #include $(top_srcdir)/trademgen/service/sources.mk
 #include $(top_srcdir)/trademgen/core/sources.mk
 #include $(top_srcdir)/trademgen/batches/sources.mk
-#include $(top_srcdir)/airsched/basic/sources.mk
-#include $(top_srcdir)/airsched/bom/sources.mk
-#include $(top_srcdir)/airsched/factory/sources.mk
-#include $(top_srcdir)/airsched/command/sources.mk
-#include $(top_srcdir)/airsched/service/sources.mk
-#include $(top_srcdir)/airsched/core/sources.mk
-#include $(top_srcdir)/airsched/batches/sources.mk
+include $(top_srcdir)/airsched/basic/sources.mk
+include $(top_srcdir)/airsched/bom/sources.mk
+include $(top_srcdir)/airsched/factory/sources.mk
+include $(top_srcdir)/airsched/command/sources.mk
+include $(top_srcdir)/airsched/service/sources.mk
+include $(top_srcdir)/airsched/core/sources.mk
+include $(top_srcdir)/airsched/batches/sources.mk
 #include $(top_srcdir)/airrac/basic/sources.mk
 #include $(top_srcdir)/airrac/bom/sources.mk
 #include $(top_srcdir)/airrac/factory/sources.mk
@@ -102,6 +102,14 @@ html/index.html: doxygen_html.cfg \
 	$(stdair_fac_h_sources) $(stdair_fac_cc_sources) \
 	$(stdair_cmd_h_sources) $(stdair_cmd_cc_sources) \
 	$(stdair_svc_h_sources) $(stdair_svc_cc_sources) \
+	$(airsched_batches_h_sources) $(airsched_batches_cc_sources) \
+	$(airsched_service_h_sources) $(airsched_service_cc_sources) \
+	$(airsched_bas_h_sources) $(airsched_bas_cc_sources) \
+	$(airsched_bom_h_sources) $(airsched_bom_cc_sources) \
+	$(airsched_fac_h_sources) $(airsched_fac_cc_sources) \
+	$(airsched_dba_h_sources) $(airsched_dba_cc_sources) \
+	$(airsched_cmd_h_sources) $(airsched_cmd_cc_sources) \
+	$(airsched_svc_h_sources) $(airsched_svc_cc_sources) \
 	$(rmol_service_h_sources) $(rmol_service_cc_sources) \
 	$(rmol_batches_h_sources) $(rmol_batches_cc_sources) \
 	$(rmol_bas_h_sources) $(rmol_bas_cc_sources) \
