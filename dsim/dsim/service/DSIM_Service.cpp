@@ -4,6 +4,8 @@
 // STL
 #include <cassert>
 #include <ostream>
+// Boost
+#include <boost/make_shared.hpp>
 // SOCI
 #include <soci/core/soci.h>
 // StdAir
@@ -104,8 +106,7 @@ namespace DSIM {
     // Note that the track on the object memory is kept thanks to the Boost
     // Smart Pointers component.
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      stdair::STDAIR_ServicePtr_T (new stdair::STDAIR_Service (iLogParams,
-                                                               iDBParams));
+      boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
 
     // Retrieve the root of the BOM tree, on which all of the other BOM objects
     // will be attached
@@ -136,17 +137,16 @@ namespace DSIM {
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
     SIMCRS_ServicePtr_T lSIMCRS_Service =
-      SIMCRS_ServicePtr_T (new SIMCRS::SIMCRS_Service (lSTDAIR_Service_ptr,
-                                                       lCRSCode,
-                                                       iScheduleInputFilename));
+      boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr,
+                                                  lCRSCode,
+                                                  iScheduleInputFilename);
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
 
     // TODO: do not hardcode the demand input file.
     // Initialise the TRADEMGEN service handler
     TRADEMGEN_ServicePtr_T lTRADEMGEN_Service =
-      TRADEMGEN_ServicePtr_T (new TRADEMGEN::
-                              TRADEMGEN_Service (lSTDAIR_Service_ptr,
-                                                 iDemandInputFilename));
+      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
+                                                        iDemandInputFilename);
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service);
   }
   
@@ -195,7 +195,7 @@ namespace DSIM {
       throw NonInitialisedServiceException();
     }
     assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    //DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
 
     // Get the date-time for the present time
     boost::posix_time::ptime lNowDateTime =

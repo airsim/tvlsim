@@ -142,14 +142,14 @@ namespace DSIM {
       DBManager::prepareSelectOnAirlineCodeStatement (ioSociSession,
                                                       lSelectStatement,
                                                       iAirlineCode, ioAirline);
-      const bool shouldDoReset = true;
+      //const bool shouldDoReset = true;
       bool hasStillData = iterateOnStatement (lSelectStatement, ioAirline);
       if (hasStillData == true) {
         oHasRetrievedAirline = true;
       }
 
       // Sanity check
-      const bool shouldNotDoReset = false;
+      //const bool shouldNotDoReset = false;
       hasStillData = iterateOnStatement (lSelectStatement, ioAirline);
       
       // Debug
