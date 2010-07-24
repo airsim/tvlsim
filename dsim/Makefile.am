@@ -74,4 +74,3 @@ upload-html: dist-html
 upload-tex: dist-tex
 	@UPLOAD_COMMAND@ @PACKAGE_TARNAME@-tex-@VERSION@.tar.gz \
 	@PACKAGE_TARNAME@-tex-@VERSION@.tar.bz2
-

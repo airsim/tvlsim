@@ -158,6 +158,13 @@ install-data-local: html-local tex-local
 			$(INSTALL_DATA) $$f $(DESTDIR)$(docdir)/html; \
 		done \
 	fi
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	if test -d latex; then \
+		$(mkinstalldirs) $(DESTDIR)$(docdir)/latex; \
+		for f in latex/*; do \
+			$(INSTALL_DATA) $$f $(DESTDIR)$(docdir)/latex; \
+		done \
+	fi
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(docdir)
