@@ -2,7 +2,7 @@
 include $(top_srcdir)/doc/local/sources.mk
 include $(top_srcdir)/doc/tutorial/sources.mk
 include $(top_srcdir)/doc/tutorial/src/sources.mk
-#
+# StdAir
 include $(top_srcdir)/stdair/basic/sources.mk
 include $(top_srcdir)/stdair/bom/sources.mk
 include $(top_srcdir)/stdair/factory/sources.mk
@@ -11,6 +11,7 @@ include $(top_srcdir)/stdair/command/sources.mk
 include $(top_srcdir)/stdair/service/sources.mk
 include $(top_srcdir)/stdair/core/sources.mk
 include $(top_srcdir)/stdair/batches/sources.mk
+# TraDemGen
 #include $(top_srcdir)/trademgen/basic/sources.mk
 #include $(top_srcdir)/trademgen/bom/sources.mk
 #include $(top_srcdir)/trademgen/factory/sources.mk
@@ -18,6 +19,7 @@ include $(top_srcdir)/stdair/batches/sources.mk
 #include $(top_srcdir)/trademgen/service/sources.mk
 #include $(top_srcdir)/trademgen/core/sources.mk
 #include $(top_srcdir)/trademgen/batches/sources.mk
+# AirSched
 include $(top_srcdir)/airsched/basic/sources.mk
 include $(top_srcdir)/airsched/bom/sources.mk
 include $(top_srcdir)/airsched/factory/sources.mk
@@ -25,12 +27,14 @@ include $(top_srcdir)/airsched/command/sources.mk
 include $(top_srcdir)/airsched/service/sources.mk
 include $(top_srcdir)/airsched/core/sources.mk
 include $(top_srcdir)/airsched/batches/sources.mk
+# AirRAC
 #include $(top_srcdir)/airrac/basic/sources.mk
 #include $(top_srcdir)/airrac/bom/sources.mk
 #include $(top_srcdir)/airrac/factory/sources.mk
 #include $(top_srcdir)/airrac/command/sources.mk
 #include $(top_srcdir)/airrac/service/sources.mk
 #include $(top_srcdir)/airrac/core/sources.mk
+# RMOL
 include $(top_srcdir)/rmol/basic/sources.mk
 include $(top_srcdir)/rmol/field/sources.mk
 include $(top_srcdir)/rmol/bom/sources.mk
@@ -39,12 +43,16 @@ include $(top_srcdir)/rmol/command/sources.mk
 include $(top_srcdir)/rmol/service/sources.mk
 include $(top_srcdir)/rmol/core/sources.mk
 include $(top_srcdir)/rmol/batches/sources.mk
-#include $(top_srcdir)/airinv/basic/sources.mk
-#include $(top_srcdir)/airinv/bom/sources.mk
-#include $(top_srcdir)/airinv/factory/sources.mk
-#include $(top_srcdir)/airinv/command/sources.mk
-#include $(top_srcdir)/airinv/service/sources.mk
-#include $(top_srcdir)/airinv/core/sources.mk
+# AirInv
+include $(top_srcdir)/airinv/basic/sources.mk
+include $(top_srcdir)/airinv/bom/sources.mk
+include $(top_srcdir)/airinv/factory/sources.mk
+include $(top_srcdir)/airinv/command/sources.mk
+include $(top_srcdir)/airinv/service/sources.mk
+include $(top_srcdir)/airinv/core/sources.mk
+include $(top_srcdir)/airinv/batches/sources.mk
+include $(top_srcdir)/airinv/server/sources.mk
+# AvlCal
 #include $(top_srcdir)/avlcal/basic/sources.mk
 #include $(top_srcdir)/avlcal/bom/sources.mk
 #include $(top_srcdir)/avlcal/factory/sources.mk
@@ -52,6 +60,7 @@ include $(top_srcdir)/rmol/batches/sources.mk
 #include $(top_srcdir)/avlcal/service/sources.mk
 #include $(top_srcdir)/avlcal/core/sources.mk
 #include $(top_srcdir)/avlcal/batches/sources.mk
+# SimFQT
 #include $(top_srcdir)/simfqt/basic/sources.mk
 #include $(top_srcdir)/simfqt/bom/sources.mk
 #include $(top_srcdir)/simfqt/factory/sources.mk
@@ -59,6 +68,7 @@ include $(top_srcdir)/rmol/batches/sources.mk
 #include $(top_srcdir)/simfqt/service/sources.mk
 #include $(top_srcdir)/simfqt/core/sources.mk
 #include $(top_srcdir)/simfqt/batches/sources.mk
+# SimCRS
 #include $(top_srcdir)/simcrs/basic/sources.mk
 #include $(top_srcdir)/simcrs/bom/sources.mk
 #include $(top_srcdir)/simcrs/factory/sources.mk
@@ -66,13 +76,15 @@ include $(top_srcdir)/rmol/batches/sources.mk
 #include $(top_srcdir)/simcrs/service/sources.mk
 #include $(top_srcdir)/simcrs/core/sources.mk
 #include $(top_srcdir)/simcrs/batches/sources.mk
-#include $(top_srcdir)/travelccm/basic/sources.mk
-#include $(top_srcdir)/travelccm/bom/sources.mk
-#include $(top_srcdir)/travelccm/factory/sources.mk
-#include $(top_srcdir)/travelccm/command/sources.mk
-#include $(top_srcdir)/travelccm/service/sources.mk
-#include $(top_srcdir)/travelccm/core/sources.mk
-#include $(top_srcdir)/travelccm/batches/sources.mk
+# TravelCCM
+include $(top_srcdir)/travelccm/basic/sources.mk
+include $(top_srcdir)/travelccm/bom/sources.mk
+include $(top_srcdir)/travelccm/factory/sources.mk
+include $(top_srcdir)/travelccm/command/sources.mk
+include $(top_srcdir)/travelccm/service/sources.mk
+include $(top_srcdir)/travelccm/core/sources.mk
+include $(top_srcdir)/travelccm/batches/sources.mk
+# DSim
 include $(top_srcdir)/dsim/basic/sources.mk
 include $(top_srcdir)/dsim/bom/sources.mk
 include $(top_srcdir)/dsim/factory/sources.mk
@@ -121,6 +133,23 @@ html/index.html: doxygen_html.cfg \
 	$(rmol_fac_h_sources) $(rmol_fac_cc_sources) \
 	$(rmol_cmd_h_sources) $(rmol_cmd_cc_sources) \
 	$(rmol_svc_h_sources) $(rmol_svc_cc_sources) \
+	$(airinv_batches_h_sources) $(airinv_batches_cc_sources) \
+	$(airinv_service_h_sources) $(airinv_service_cc_sources) \
+	$(airinv_bas_h_sources) $(airinv_bas_cc_sources) \
+	$(airinv_bom_h_sources) $(airinv_bom_cc_sources) \
+	$(airinv_fac_h_sources) $(airinv_fac_cc_sources) \
+	$(airinv_dba_h_sources) $(airinv_dba_cc_sources) \
+	$(airinv_cmd_h_sources) $(airinv_cmd_cc_sources) \
+	$(airinv_svc_h_sources) $(airinv_svc_cc_sources) \
+	$(airinv_svr_h_sources) $(airinv_svr_cc_sources) \
+	$(airinv_clt_h_sources) $(airinv_clt_cc_sources) \
+	$(travelccm_service_h_sources) $(travelccm_service_cc_sources) \
+	$(travelccm_batches_h_sources) $(travelccm_batches_cc_sources) \
+	$(travelccm_bas_h_sources) $(travelccm_bas_cc_sources) \
+	$(travelccm_bom_h_sources) $(travelccm_bom_cc_sources) \
+	$(travelccm_fac_h_sources) $(travelccm_fac_cc_sources) \
+	$(travelccm_cmd_h_sources) $(travelccm_cmd_cc_sources) \
+	$(travelccm_svc_h_sources) $(travelccm_svc_cc_sources) \
 	$(dsim_service_h_sources) $(dsim_service_cc_sources) \
 	$(dsim_bas_h_sources) $(dsim_bas_cc_sources) \
 	$(dsim_bom_h_sources) $(dsim_bom_cc_sources) \
