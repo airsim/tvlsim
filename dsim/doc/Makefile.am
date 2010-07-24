@@ -150,7 +150,7 @@ dist-tex: html-local
 		bzip2 -9 -c > $(top_builddir)/$(tex_tarname).tar.bz2
 	rm -rf $(top_builddir)/$(tex_tarname)
 
-install-data-local: html-local tex-local
+install-data-local: html-local
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
 	if test -d html; then \
 		$(mkinstalldirs) $(DESTDIR)$(docdir)/html; \
