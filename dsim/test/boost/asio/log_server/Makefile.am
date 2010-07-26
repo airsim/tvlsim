@@ -5,7 +5,7 @@ include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
 
-check_PROGRAMS = client server
+check_PROGRAMS = client server asynServer
 
 client_SOURCES = client.cpp
 client_CXXFLAGS = $(BOOST_CFLAGS) $(BOOST_CFLAGS)
@@ -17,3 +17,7 @@ server_CXXFLAGS = $(BOOST_CFLAGS) $(BOOST_CFLAGS)
 server_LDFLAGS = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB) $(BOOST_ASIO_LIB)
 server_LDADD =
 
+asynServer_SOURCES = asynServer.cpp
+asynServer_CXXFLAGS = $(BOOST_CFLAGS) $(BOOST_CFLAGS)
+asynServer_LDFLAGS = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB) $(BOOST_ASIO_LIB)
+asynServer_LDADD =
