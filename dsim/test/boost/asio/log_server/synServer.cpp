@@ -26,10 +26,11 @@ int main (int argc, char* argv[]) {
 		log_file = string(argv[1]);
 	}else if (argc == 2)
 		log_file = string(argv[1]);
-
+	
+	cout << "=======================================================================================" << endl;
 	cout << "Server log to file:" << log_file << endl;
 	cout << "Server listening on port:" << listening_port << endl;
-	cout << "======================================================================" << endl;
+	cout << "=======================================================================================" << endl;
 
 
 	try {
@@ -47,8 +48,7 @@ int main (int argc, char* argv[]) {
 			nbConnections ++;
 			std::cout << "Nb of connections:" << nbConnections << std::endl;
 			cout << "received client: " << lSocket.remote_endpoint() << endl;
-		
-			boost::system::error_code lIgnoredError;
+
 			boost::system::error_code lTransferError;
 			boost::array<char, 1024> lBuffer;
 			
@@ -63,7 +63,7 @@ int main (int argc, char* argv[]) {
 
 				if (lTransferError == boost::asio::error::eof) {
 					// Connection closed cleanly by peer.
-					cout << "EOF found: Transfer finished\n" ;
+					cout << "EOF found: Transfer finished\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n" ;
 					break;
 				} else if (lTransferError) {
 					// Some other error.

@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <fstream>
 // Boost.ASIO
 #include <iostream>
 #include <boost/asio.hpp>
@@ -28,8 +29,8 @@ class TCPConnection :  public boost::enable_shared_from_this<TCPConnection> {
 	typedef boost::shared_ptr<TCPConnection> Pointer_T;
 
 	/** Create a TCP connection, from a given Boost.ASIO service. */
-	static Pointer_T create (boost::asio::io_service& ioIOService) {
-		TCPConnection* oConnectionPtr = new TCPConnection (ioIOService);
+	static Pointer_T create (boost::asio::io_service& ioIOService,  string lLogFile) {
+		TCPConnection* oConnectionPtr = new TCPConnection (ioIOService, lLogFile);
 		assert (oConnectionPtr != NULL);
 		return Pointer_T (oConnectionPtr);
 	}
@@ -41,23 +42,48 @@ class TCPConnection :  public boost::enable_shared_from_this<TCPConnection> {
 
 	/** Process the incoming client request, by giving it back the time of day. */
 	void start() {
+		ostringstream ostr;
+		ostr << _socket.remote_endpoint();
+		string clientFullName=ostr.str(); //127.0.0.1:73784
+		string clientName= clientFullName.substr(0,clientFullName.find(":")); //127.0.0.1
 
-		_message = make_daytime_string();
+		ostringstream oss;
+		oss << clientName << ".log";
+		log_file= oss.str(); // each client log into a seperate file which ends by log. Ex:127.0.0.1.log
+		cout << "Received client: " << clientName << "           Corresponding log file:" << log_file << endl;
+		
+		ofstream out (log_file.c_str(), ios::app); // open log file
+		if (out == NULL){
+			cout << log_file <<  " :openning problem!" << endl;
+			return ;
+		}
+		
+		boost::system::error_code lTransferError;
+		boost::array<char, 1024> lBuffer;
+		for(;;){
+			size_t lLength = _socket.read_some (boost::asio::buffer (lBuffer),  lTransferError);
+			out.write(lBuffer.data(),lLength);
 
-		boost::system::error_code lIgnoredError;
-		boost::asio::async_write (_socket, boost::asio::buffer (_message),
-								boost::bind (&TCPConnection::handleWrite,
-											shared_from_this(),
-											boost::asio::placeholders::error,
-											boost::asio::placeholders::bytes_transferred));
+			if (lTransferError == boost::asio::error::eof) {
+				// Connection closed cleanly by peer.
+				cout << "EOF found: Transfer finished\n >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n" ;
+				break;
+			} else if (lTransferError) {
+				// Some other error.
+				throw boost::system::system_error (lTransferError);
+			}
+// 				std::cout.write (lBuffer.data(), lLength);
+		}
+		out.close();
 	}
 
 
 	private:
 	// //////////// Constructors & Destructors /////////////
 	/** Constructor. */
-	TCPConnection (boost::asio::io_service& ioIOService)
+	TCPConnection (boost::asio::io_service& ioIOService, string lLogFile)
 		: _socket (ioIOService) {
+			log_file = lLogFile;
 	}
 
 	void handleWrite (const boost::system::error_code& iErrorCode,
@@ -77,6 +103,9 @@ class TCPConnection :  public boost::enable_shared_from_this<TCPConnection> {
 
 	/** TCP/IP socket. */
 	boost::asio::ip::tcp::socket _socket;
+
+	/** Log file prefix */
+	string log_file;
 };
 
 
@@ -85,11 +114,12 @@ class TCPServer {
 	public:
 	// //////////// Constructors & Destructors /////////////
 	/** Constructor.
-		<br>Create a listener for IP/TCP v4, listening on port 2624 (corresponding
-		to the "aria" service, as specified within the /etc/services file) */
-	TCPServer (boost::asio::io_service& ioIOService) : _acceptor (ioIOService,
-					boost::asio::ip::tcp::endpoint (boost::asio::ip::tcp::v4(), 2624)) {
+		<br>Create a listener for IP/TCP v4 and listening on port lPort */
+	TCPServer (boost::asio::io_service& ioIOService, int lPort, string lLogFile) : _acceptor (ioIOService,
+					boost::asio::ip::tcp::endpoint (boost::asio::ip::tcp::v4(), lPort)) {
+		log_file = lLogFile;
 		startAccept();
+		
 	}
 
 
@@ -97,8 +127,7 @@ class TCPServer {
 	// ///////////////// Technical Methods ///////////////////
 	/** Accept (socket) connection from any client. */
 	void startAccept() {
-		TCPConnection::Pointer_T lConnection =
-		TCPConnection::create (_acceptor.io_service());
+		TCPConnection::Pointer_T lConnection = TCPConnection::create (_acceptor.io_service(), log_file);
 
 		boost::asio::ip::tcp::socket& lSocket = lConnection->socket();
 		_acceptor.async_accept (lSocket,
@@ -109,9 +138,11 @@ class TCPServer {
 
 	/** Process the (socket) connection from any client. */
 	void handleAccept (TCPConnection::Pointer_T ioConnection,const boost::system::error_code& iError) {
-		cout << "received 1 client" << endl;
+		static int nbConnections = 0;
+		nbConnections ++ ;
+		cout << "Has received:"  << nbConnections << " clients" << endl;
 		if (!iError) {
-			ioConnection->start();
+			ioConnection -> start();
 			startAccept();
 		}
 	}
@@ -121,23 +152,40 @@ class TCPServer {
 	// /////////// Attributes /////////////
 	/** Connection acceptor. */
 	boost::asio::ip::tcp::acceptor _acceptor;
+	string log_file;
 	};
 
 
 // //////////////////// M A I N /////////////////////////////
 int main (int argc, char* argv[]) {
 
-  try {
+	string log_file = "abcd.log";
+	int listening_port = 2624;//corresponding to the "aria" service, as specified within the /etc/services file
 
-    boost::asio::io_service lIOService;
-    TCPServer lServer (lIOService);
+	cout << "Syntax: ./asynServer  [file_to_log] [listening_port]" << endl;
+	cout << "By default, server listens on port 2624 and file_to_log=\"abcd.log\"" << endl;
 
-    lIOService.run();
+	if (argc > 2){
+		listening_port = atoi(argv[2]);
+		log_file = string(argv[1]);
+	}
+	cout << "=======================================================================================" << endl;
+	cout << "Server log to file:" << log_file << endl;
+	cout << "Server listening on port:" << listening_port << endl;
+	cout << "=======================================================================================" << endl;
 
-  } catch (std::exception& lException) {
-    std::cerr << lException.what() << std::endl;
-  }
+	
+	try {
 
-  return 0;
+		boost::asio::io_service lIOService;
+		TCPServer lServer (lIOService, listening_port, log_file);
+
+		lIOService.run();
+
+	} catch (std::exception& lException) {
+		std::cerr << lException.what() << std::endl;
+	}
+
+	return 0;
 }
 
