@@ -1,31 +1,26 @@
-#ifndef __TINYLOG__
-#define __TINYLOG__
+#ifndef __DSIM_TINYLOG__
+#define __DSIM_TINYLOG__
 
 // String, stream functions
-#include <iostream>
 #include <string>
-#include <fstream>
-// Boost.ASIO
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
-// Sleep funtion
-#include <unistd.h>
-//Some network functions
-#include "networkFunctions.cpp"
 
-/* Send filename's content to server
-* lServerName: name of server,ex: localhost
-* lServerPort: listening port on server
-* filename: file to send to server
+/**
+ * \brief Send filename's content to server
+ * \param[in] lServerName: name of server,ex: localhost
+ * \param[in] lServerPort: listening port on server
+ * \param[in] filename: file to send to server
 */
-void send_file (std::string lServerName, int lServerPort, std::string filename);
+void send_file (const std::string& lServerName, const int lServerPort,
+                const std::string& filename);
 
-/* Send string buffer to server
-* lServerName: name of server,ex: localhost
-* lServerPort: listening port on server
-* filename: file to send to server
+/**
+ * \brief Send string buffer to server
+ * \param[in] lServerName: name of server,ex: localhost
+ * \param[in] lServerPort: listening port on server
+ * \param[in] filename: file to send to server
 */
-void send_string(std::string lServerName, int lServerPort, std::string buffer);
+void send_string (const std::string& lServerName, const int lServerPort,
+                  const std::string& buffer);
 
 
-#endif
+#endif // __DSIM_TINYLOG__

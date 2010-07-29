@@ -7,7 +7,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 check_PROGRAMS = client synServer asynServer
 
-client_SOURCES = client.cpp
+client_SOURCES = client.cpp networkFunctions.cpp
 client_CXXFLAGS = $(BOOST_CFLAGS) $(BOOST_CFLAGS)
 client_LDFLAGS = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB) $(BOOST_ASIO_LIB)
 client_LDADD =

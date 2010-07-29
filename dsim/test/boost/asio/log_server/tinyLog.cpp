@@ -1,8 +1,19 @@
+
+// String, stream functions
+#include <string>
+#include <fstream>
+// Boost.ASIO
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
+// Sleep funtion
+#include <unistd.h>
+//Some network functions
+#include "networkFunctions.cpp"
+//
 #include "tinyLog.hpp"
 
-
-
-void send_file (std::string lServerName, int lServerPort, std::string filename){
+void send_file (const std::string& lServerName, const int lServerPort,
+                const std::string& filename) {
 	using namespace std;
 	int attempt=0; //Nb of attemps to connect to server
 	// testing if file exists
@@ -66,8 +77,8 @@ void send_file (std::string lServerName, int lServerPort, std::string filename){
 	}
 }
 
-
-void send_string(std::string lServerName, int lServerPort, std::string buffer){
+void send_string (const std::string& lServerName, const int lServerPort,
+                  const std::string& buffer) {
 	using namespace std;
 	int attempt=0; //Nb of attemps to connect to server
 

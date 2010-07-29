@@ -1,19 +1,27 @@
+// STL
+#include <iostream>
+#include <string>
+//
+#include <netdb.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+//
 #include "networkFunctions.hpp"
 
 
-int service_to_port(std::string s){
+int service_to_port (const std::string& s) {
 	servent* a = getservbyname(s.c_str(), NULL);
 	endservent();
 
-	if (a!= NULL)
+	if (a!= NULL) {
 		return htons(a -> s_port);
-	else{
+	} else {
 		std::cout << "No service with name:" << s << " is found" << std::endl;
 		return -1;
 	}
 }
 
-std::string port_to_service(int p){
+std::string port_to_service (const int p){
 	servent* a = getservbyport(htons(p), NULL);
 	endservent();
 
@@ -25,7 +33,7 @@ std::string port_to_service(int p){
 	}
 }
 
-std::string ip_to_hostname(std::string s){
+std::string ip_to_hostname (const std::string& s){
 	struct hostent *he;
 	struct in_addr ipv4addr;
 	inet_pton(AF_INET, s.c_str(), &ipv4addr);
