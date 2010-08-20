@@ -10,11 +10,10 @@
 #include <soci/core/soci.h>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
-#include <stdair/bom/BomManager.hpp> // for display()
+#include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/AirlineFeature.hpp>
-#include <stdair/factory/FacBomContent.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/service/DBSessionManager.hpp>
 #include <stdair/STDAIR_Service.hpp>

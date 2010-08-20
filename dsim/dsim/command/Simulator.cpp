@@ -8,10 +8,6 @@
 #include <exception>
 // StdAir
 #include <stdair/STDAIR_Types.hpp>
-#include <stdair/basic/DemandCharacteristics.hpp>
-#include <stdair/basic/DemandDistribution.hpp>
-#include <stdair/basic/CategoricalAttribute.hpp>
-#include <stdair/basic/ContinuousAttribute.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>

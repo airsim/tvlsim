@@ -14,7 +14,6 @@
 #include <stdair/STDAIR_Types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
-#include <stdair/factory/FacBomContent.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/config/dsim-paths.hpp>
