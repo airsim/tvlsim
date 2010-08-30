@@ -21,11 +21,3 @@ SimulationTestSuite_LDFLAGS = \
 		$(top_builddir)/extracppunit/libextracppunit.la \
 		$(top_builddir)/stdair/core/libstdair.la \
 		$(top_builddir)/dsim/core/libdsim.la
-
-#simulate_SOURCES = simulate.cpp
-#simulate_CXXFLAGS= $(CPPUNIT_CFLAGS) $(BOOST_CFLAGS)
-#simulate_LDADD =
-#simulate_LDFLAGS = $(BOOST_LIBS) \
-#		$(top_builddir)/stdair/core/libstdair.la \
-#		$(top_builddir)/dsim/core/libdsim.la
-

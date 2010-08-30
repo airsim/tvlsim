@@ -29,7 +29,7 @@ void SimulationTestSuite::simpleSimulationHelper() {
     const stdair::Filename_T lDemandInputFilename ("../samples/demand01.csv");
     
     // Output log File
-    const std::string lLogFilename ("simulate.log");
+    const std::string lLogFilename ("SimulationTestSuite.log");
 
     // Set the log parameters
     std::ofstream logOutputFile;
