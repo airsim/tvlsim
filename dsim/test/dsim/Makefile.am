@@ -19,5 +19,5 @@ SimulationTestSuite_LDADD =
 SimulationTestSuite_LDFLAGS = \
 		$(BOOST_LIBS) $(CPPUNIT_LIBS) \
 		$(top_builddir)/extracppunit/libextracppunit.la \
-		$(top_builddir)/stdair/core/libstdair.la \
+		$(top_builddir)/stdair/libstdair.la \
 		$(top_builddir)/dsim/core/libdsim.la

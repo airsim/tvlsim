@@ -15,7 +15,7 @@ check_PROGRAMS = log_server client
 log_server_SOURCES = log_server.cpp
 log_server_CXXFLAGS = $(BOOST_CFLAGS) $(MPIGEN_CFLAGS)
 log_server_LDFLAGS = $(BOOST_LIBS) $(BOOST_MPI_LIB) \
-			$(top_builddir)/stdair/core/libstdair.la \
+			$(top_builddir)/stdair/libstdair.la \
 			$(top_builddir)/airsched/core/libairsched.la
 
 #

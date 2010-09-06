@@ -22,7 +22,7 @@ libdsim_la_LIBADD = \
 libdsim_la_LDFLAGS = \
 	$(BOOST_DATE_TIME_LIB) $(BOOST_PROGRAM_OPTIONS_LIB) \
 	$(BOOST_FILESYSTEM_LIB) \
-	$(top_builddir)/stdair/core/libstdair.la \
+	$(top_builddir)/stdair/libstdair.la \
 	$(top_builddir)/airsched/core/libairsched.la \
 	$(top_builddir)/simcrs/core/libsimcrs.la \
 	$(top_builddir)/trademgen/core/libtrademgen.la \
