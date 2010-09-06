@@ -10,7 +10,6 @@ include $(top_srcdir)/stdair/dbadaptor/sources.mk
 include $(top_srcdir)/stdair/command/sources.mk
 include $(top_srcdir)/stdair/service/sources.mk
 include $(top_srcdir)/stdair/sources.mk
-include $(top_srcdir)/stdair/batches/sources.mk
 # TraDemGen
 #include $(top_srcdir)/trademgen/basic/sources.mk
 #include $(top_srcdir)/trademgen/bom/sources.mk
