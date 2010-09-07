@@ -3,7 +3,7 @@
 AC_PREREQ(2.59)
 AC_COPYRIGHT([Copyright (C) 2007-2010 Denis Arnaud <denis_arnaud@users.sourceforge.net>])
 AC_INIT([DSIM],[99.99.99],[denis_arnaud@users.sourceforge.net],[dsim])
-AC_CONFIG_HEADER([dsim/DSIM_Service.hpp])
+AC_CONFIG_HEADER([dsim/config.h])
 AC_CONFIG_SRCDIR([dsim])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
