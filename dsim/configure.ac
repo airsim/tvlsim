@@ -3,17 +3,13 @@
 AC_PREREQ(2.59)
 AC_COPYRIGHT([Copyright (C) 2007-2010 Denis Arnaud <denis_arnaud@users.sourceforge.net>])
 AC_INIT([DSIM],[99.99.99],[denis_arnaud@users.sourceforge.net],[dsim])
-AC_CONFIG_HEADER([stdair/config.h])
-AC_CONFIG_SRCDIR([stdair/basic/BasConst.cpp])
+AC_CONFIG_HEADER([dsim/DSIM_Service.hpp])
+AC_CONFIG_SRCDIR([dsim])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
 AM_INIT_AUTOMAKE
 AM_PATH_CPPUNIT(1.10)
 AM_CONDITIONAL([HAVE_CPPUNIT], [test "x$CPPUNIT_LIBS" != x])
-
-# RPM release number
-RPM_RELEASE="1"
-AC_SUBST(RPM_RELEASE)
 
 # Shared library versioning for the main library
 GENERIC_LIBRARY_VERSION="99:99:99"
@@ -123,10 +119,10 @@ fi
 #       thus directly accessible within the extracppunit directory.
 #       When that library will be widely avaible on Linux distributions,
 #       the external reference can be removed and the following line uncommented.
-#AM_PATH_EXTRACC
-#AC_SUBST(EXTRACC_VERSION)
-#AC_SUBST(EXTRACC_CFLAGS)
-#AC_SUBST(EXTRACC_LIBS)
+AM_PATH_EXTRACC
+AC_SUBST(EXTRACC_VERSION)
+AC_SUBST(EXTRACC_CFLAGS)
+AC_SUBST(EXTRACC_LIBS)
 
 # -----------------------------------------------------------------------------
 # Support for the GSL (GNU Scientific Library): http://www.gnu.org/software/gsl
@@ -197,6 +193,14 @@ AX_SOCI
 AC_SUBST(SOCI_VERSION)
 AC_SUBST(SOCI_CFLAGS)
 AC_SUBST(SOCI_LIBS)
+
+# -----------------------------------------------------------------------------
+# Support for StdAir (): http://sf.net/projects/stdair
+# -----------------------------------------------------------------------------
+AM_PATH_STDAIR
+AC_SUBST(STDAIR_VERSION)
+AC_SUBST(STDAIR_CFLAGS)
+AC_SUBST(STDAIR_LIBS)
 
 # --------------------------------------------------------------------
 # Support for TRAVEL-CCM (CCM Open Library): http://sf.net/projects/travel-ccm
@@ -379,15 +383,6 @@ AC_CONFIG_FILES(
 	dsim-config
 	dsim.m4
 	dsim.pc
-	dsim.spec
-	stdair/Makefile
-	stdair/basic/Makefile
-	stdair/bom/Makefile
-	stdair/dbadaptor/Makefile
-	stdair/factory/Makefile
-	stdair/command/Makefile
-	stdair/config/Makefile
-	stdair/service/Makefile
 	trademgen/Makefile
 	trademgen/basic/Makefile
 	trademgen/bom/Makefile
@@ -482,7 +477,6 @@ AC_CONFIG_FILES(
 	dsim/config/Makefile
 	dsim/core/Makefile
 	dsim/batches/Makefile
-	extracppunit/Makefile
 	doc/Makefile
 	doc/images/Makefile
 	doc/tutorial/Makefile
@@ -511,7 +505,6 @@ AC_CONFIG_FILES(
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
 	test/boost/smart_pointers/Makefile
-	test/stdair/Makefile
 	test/trademgen/Makefile
 	test/airsched/Makefile
 	test/airrac/Makefile
@@ -632,6 +625,11 @@ ${MPICH2_OUTPUT}
     o XERCES_VERSION .. : ${XERCES_VERSION}
     o XERCES_CFLAGS ... : ${XERCES_CFLAGS}
     o XERCES_LIBS ..... : ${XERCES_LIBS}
+
+  - StdAir ........... :
+    o STDAIR_VERSION .. : ${STDAIR_VERSION}
+    o STDAIR_CFLAGS ... : ${STDAIR_CFLAGS}
+    o STDAIR_LIBS ..... : ${STDAIR_LIBS}
 
   - ExtraCC ........... :
     o EXTRACC_VERSION . : ${EXTRACC_VERSION}

@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 ##
 SUBDIRS = boost samples \
-	stdair trademgen airsched airrac rmol airinv avlcal simfqt simcrs \
+	trademgen airsched airrac rmol airinv avlcal simfqt simcrs \
 	travelccm dsim
 
 EXTRA_DIST =
