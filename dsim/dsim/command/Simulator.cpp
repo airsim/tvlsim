@@ -100,12 +100,15 @@ namespace DSIM {
       // Get the fare quote for each travel solution.
       // Get the availability for each travel solution.
       //ioSIMCRS_Service.getAvailability (lTravelSolutionList);
+
       // Hardcode a travel solution choice.
-      // Make a sale.
-      // ioSIMCRS_Service.sell (lChosenTravelSolution, lNbOfSeats);
       stdair::TravelSolutionList_T::iterator itTS = lTravelSolutionList.begin();
       const stdair::TravelSolutionStruct& lChosenTS = *itTS;
       STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS);
+      
+      // Make a sale.
+      const stdair::NbOfSeats_T& lPartySize = iBookingRequest.getPartySize();
+      ioSIMCRS_Service.sell (lChosenTS, lPartySize);
 
     } else {
       // DEBUG
