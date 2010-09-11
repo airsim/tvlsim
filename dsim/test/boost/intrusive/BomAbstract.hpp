@@ -24,6 +24,11 @@ namespace stdair {
       oStr << idx;
       _key = oStr.str();
     }
+    /** Get the key. */
+    const std::string& getKey() const {
+      return _key;
+    }
+    
   protected:
     /** Default constructors.
         <br>They are kept private, so as to forbid their use (only the
@@ -33,18 +38,26 @@ namespace stdair {
 
   public:
     // Comparison operators
-    friend bool operator== (const BomAbstract &a, const BomAbstract &b) {
+    friend bool operator< (const BomAbstract& a, const BomAbstract& b) {
+      return a._key < b._key;
+    }
+
+    friend bool operator> (const BomAbstract& a, const BomAbstract& b) {
+      return a._key > b._key;
+    }
+
+    friend bool operator== (const BomAbstract& a, const BomAbstract& b) {
       return a._key == b._key;
     }
 
-   friend bool operator!= (const BomAbstract &a, const BomAbstract &b) {
-     return a._key != b._key;
-   }
+    friend bool operator!= (const BomAbstract& a, const BomAbstract& b) {
+      return a._key != b._key;
+    }
 
-   // The hash function
-   friend std::size_t hash_value (const BomAbstract &i) {
-     return boost::hash<std::string>() (i._key);
-   }
+    // The hash function
+    friend std::size_t hash_value (const BomAbstract& iBom) {
+      return boost::hash<std::string>() (iBom._key);
+    }
 
   public:
     // /////////// Display support methods /////////
@@ -56,7 +69,7 @@ namespace stdair {
         @param istream& the input stream. */
     virtual void fromStream (std::istream& ioIn) = 0;
 
-   /** Get the serialised version of the Business Object. */
+    /** Get the serialised version of the Business Object. */
     virtual std::string toString() const = 0;
     
   protected:
@@ -115,6 +128,29 @@ struct delete_disposer {
   void operator() (BOM* oBOM_ptr) {
     delete oBOM_ptr; oBOM_ptr = NULL;
   }
+};
+
+// These compare (STL strings) keys of BOM objects
+template <typename BOM>
+struct StrExpComp {
+  bool operator() (const std::string& iKey, const BOM& iBom) const {
+    return (iKey < iBom.getKey());
+  }
+
+  bool operator() (const BOM& iBom, const std::string& iKey) const {
+    return (iBom.getKey() < iKey);
+  }
+};
+
+template <typename BOM>
+struct StrExpEqual {
+   bool operator() (const std::string& iKey, const BOM& iBom) const {
+     return (iKey == iBom.getKey());
+   }
+
+   bool operator() (const BOM& iBom, const std::string& iKey) const {
+     return (iBom.getKey() == iKey);
+   }
 };
 
 #endif // __INTRUSIVE_BOM_BOMABSTRACT_HPP

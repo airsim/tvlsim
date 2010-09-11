@@ -7,6 +7,9 @@
 // STL
 #include <cassert>
 #include <string>
+// Boost.Intrusive
+#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/set.hpp>
 // Local
 #include <test/boost/intrusive/BomAbstract.hpp>
 
@@ -31,7 +34,8 @@ namespace stdair {
     FlightDate (const FlightDate&) {}
 
   public:
-    bi::list_member_hook<> _childHook;
+    bi::list_member_hook<> _childListHook;
+    bi::set_member_hook<> _childSetHook;
 
   public:
     // /////////// Display support methods /////////
@@ -52,8 +56,11 @@ namespace stdair {
 
   /** List of child-type FlightDate objects. */
   typedef bi::member_hook <FlightDate, bi::list_member_hook<>,
-                           &FlightDate::_childHook> FlightDateChildMemberOption;
-  typedef bi::list<FlightDate, FlightDateChildMemberOption> FlightDateChildren;
+                           &FlightDate::_childListHook> FlightDateListMemberOption;
+  typedef bi::list<FlightDate, FlightDateListMemberOption> FlightDateChildList;
 
+  typedef bi::member_hook <FlightDate, bi::set_member_hook<>,
+                           &FlightDate::_childSetHook> FlightDateSetMemberOption;
+  typedef bi::set<FlightDate, FlightDateSetMemberOption> FlightDateChildSet;
 }
 #endif // __INTRUSIVE_BOM_FLIGHTDATE_HPP
