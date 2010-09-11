@@ -20,7 +20,14 @@ namespace stdair {
   public:
     LegDate (const std::string& iKey) : BomAbstract (iKey)  {}
     LegDate (const int idx) : BomAbstract (idx) {}
-    
+  private:
+    /** Default constructors.
+        <br>They are kept private, so as to forbid their use (only the
+        public constructors should be used). */
+    LegDate () {}
+    LegDate (const LegDate&) {}
+
+  public:
     bi::list_member_hook<> _childHook;
     bi::list_member_hook<> _siblingHook;
 

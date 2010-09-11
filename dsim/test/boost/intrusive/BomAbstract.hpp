@@ -17,13 +17,21 @@ namespace stdair {
   /** BomAbstract. */
   class BomAbstract {
   public:
+    /** Constructors. */
     BomAbstract (const std::string& iKey) : _key (iKey)  {}
     BomAbstract (const int idx) {
       std::ostringstream oStr;
       oStr << idx;
       _key = oStr.str();
     }
+  protected:
+    /** Default constructors.
+        <br>They are kept private, so as to forbid their use (only the
+        public constructors should be used). */
+    BomAbstract () {}
+    BomAbstract (const BomAbstract&) {}
 
+  public:
     // Comparison operators
     friend bool operator== (const BomAbstract &a, const BomAbstract &b) {
       return a._key == b._key;

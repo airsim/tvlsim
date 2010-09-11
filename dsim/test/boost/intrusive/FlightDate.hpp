@@ -23,7 +23,14 @@ namespace stdair {
     FlightDate (const int idx) : BomAbstract (idx) {}
     /** Destructor. */
     ~FlightDate() {}
-    
+  private:
+    /** Default constructors.
+        <br>They are kept private, so as to forbid their use (only the
+        public constructors should be used). */
+    FlightDate () {}
+    FlightDate (const FlightDate&) {}
+
+  public:
     bi::list_member_hook<> _childHook;
 
   public:
