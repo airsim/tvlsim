@@ -124,15 +124,6 @@ AC_SUBST(EXTRACC_VERSION)
 AC_SUBST(EXTRACC_CFLAGS)
 AC_SUBST(EXTRACC_LIBS)
 
-# -----------------------------------------------------------------------------
-# Support for the GSL (GNU Scientific Library): http://www.gnu.org/software/gsl
-# -----------------------------------------------------------------------------
-# Provide --with-gsl
-AM_PATH_GSL([1.8])
-AC_SUBST(GSL_VERSION)
-AC_SUBST(GSL_CFLAGS)
-AC_SUBST(GSL_LIBS)
-
 # -----------------------------------------------------------
 # Python: http://www.python.org
 # -----------------------------------------------------------
@@ -502,6 +493,7 @@ AC_CONFIG_FILES(
 	test/boost/mpi/master_slave/Makefile
 	test/boost/mpi/log_server/Makefile
 	test/boost/mpl/Makefile
+	test/boost/random/Makefile
 	test/boost/spirit/Makefile
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
@@ -582,11 +574,6 @@ Compiler/linker flags/libs/defs:
   - LIBS .............. : ${LIBS}
 
 External libraries:
-  - GSL ............... :
-    o GSL_VERSION ..... : ${GSL_VERSION}
-    o GSL_CFLAGS ...... : ${GSL_CFLAGS}
-    o GSL_LIBS ........ : ${GSL_LIBS}
-
 ${OPENMPI_OUTPUT}
 
 ${MPICH2_OUTPUT}
