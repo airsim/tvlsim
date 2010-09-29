@@ -36,7 +36,7 @@ namespace test_random {
                               ba::stats<ba::tag::min, ba::tag::max,
                                         ba::tag::mean (ba::immediate),
                                         ba::tag::sum,
-                                        ba::tag::moment<2> > > stat_acc_type;
+                                        ba::tag::variance> > stat_acc_type;
 
   
   /** Helper class for testing random number generation

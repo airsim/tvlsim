@@ -58,7 +58,7 @@ namespace test_random {
     _oStr << "  mean      = " << ba::mean (iStatAcc) << std::endl;
     _oStr << "  maximum   = " << ba::max (iStatAcc) << std::endl;
     _oStr << "  count     = " << ba::count (iStatAcc) << std::endl;
-    _oStr << "  moment<2> = " << ba::moment<2> (iStatAcc) << std::endl;
+    _oStr << "  variance  = " << ba::variance (iStatAcc) << std::endl;
   
     // Reset formatting flags of _oStr
     _oStr.flags (oldFlags);
