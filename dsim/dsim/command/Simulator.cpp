@@ -61,21 +61,15 @@ namespace DSIM {
         // generate next request
         bool stillHavingRequestsToBeGenerated = 
           ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated(lDemandStreamKey);
-       
         if (stillHavingRequestsToBeGenerated) {
           stdair::BookingRequestPtr_T lNextRequest =
             ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey);
           assert (lNextRequest != NULL);
-      
-          stdair::DateTime_T lNextRequestDateTime =
-            lNextRequest->getRequestDateTime ();
-          stdair::EventStruct lNextEventStruct ("Request",
-                                                lNextRequestDateTime,
-                                                lDemandStreamKey,
+          
+          stdair::EventStruct lNextEventStruct ("Request", lDemandStreamKey,
                                                 lNextRequest);
           lEventQueue.addEvent (lNextEventStruct);
         }
-
         lEventQueue.eraseLastUsedEvent ();
       }
             
