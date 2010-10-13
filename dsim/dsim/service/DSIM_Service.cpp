@@ -45,6 +45,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
                               const stdair::Filename_T& iScheduleInputFilename,
+                              const stdair::Filename_T& iODInputFilename,
+                              const stdair::Filename_T& iFareInputFilename,
                               const stdair::Filename_T& iDemandInputFilename)
     : _dsimServiceContext (NULL) {
     
@@ -59,13 +61,16 @@ namespace DSIM {
     lDSIM_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
     // Initialise the context
-    init (iScheduleInputFilename, iDemandInputFilename);
+    init (iScheduleInputFilename, iODInputFilename,
+          iFareInputFilename, iDemandInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
                               const stdair::Filename_T& iScheduleInputFilename,
+                              const stdair::Filename_T& iODInputFilename,
+                              const stdair::Filename_T& iFareInputFilename,
                               const stdair::Filename_T& iDemandInputFilename)
     : _dsimServiceContext (NULL) {
     
@@ -76,7 +81,8 @@ namespace DSIM {
     initStdAirService (iLogParams, iDBParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iDemandInputFilename);
+    init (iScheduleInputFilename, iODInputFilename,
+          iFareInputFilename, iDemandInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -117,6 +123,8 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::init (const stdair::Filename_T& iScheduleInputFilename,
+                           const stdair::Filename_T& iODInputFilename,
+                           const stdair::Filename_T& iFareInputFilename,
                            const stdair::Filename_T& iDemandInputFilename) {
     // Retrieve the service context
     assert (_dsimServiceContext != NULL);
@@ -136,12 +144,12 @@ namespace DSIM {
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
     SIMCRS_ServicePtr_T lSIMCRS_Service =
-      boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr,
-                                                  lCRSCode,
-                                                  iScheduleInputFilename);
+      boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr, lCRSCode,
+                                                  iScheduleInputFilename,
+                                                  iODInputFilename,
+                                                  iFareInputFilename);
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
 
-    // TODO: do not hardcode the demand input file.
     // Initialise the TRADEMGEN service handler
     TRADEMGEN_ServicePtr_T lTRADEMGEN_Service =
       boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,

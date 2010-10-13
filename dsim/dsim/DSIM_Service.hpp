@@ -37,9 +37,13 @@ namespace DSIM {
         @param const stdair::BasLogParams& Parameters for the output log stream.
         @param const stdair::BasDBParams& Parameters for the database access.
         @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input O&D file.
+        @param const stdair::Filename_T& Filename of the input fare file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                   const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iODInputFilename,
+                  const stdair::Filename_T& iFareInputFilename,
                   const stdair::Filename_T& iDemandInputFilenames);
 
     /** Constructor.
@@ -52,9 +56,13 @@ namespace DSIM {
         calling chain (for instance, when the DSIM_Service is
         itself being initialised by another library service).
         @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input O&D file.
+        @param const stdair::Filename_T& Filename of the input Fare file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (stdair::STDAIR_ServicePtr_T,
                   const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iODInputFilename,
+                  const stdair::Filename_T& iFareInputFilename,
                   const stdair::Filename_T& iDemandInputFilenames);
 
     /** Destructor. */
@@ -95,8 +103,12 @@ namespace DSIM {
         simulator, is parsed and the inventories are generated accordingly.
         @param const stdair::AirlineFeatureSet& Set of airline features.
         @param const stdair::Filename_T& Filename of the input schedule file.
+        @param const stdair::Filename_T& Filename of the input O&D file.
+        @param const stdair::Filename_T& Filename of the input Fare file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     void init (const stdair::Filename_T& iScheduleInputFilename,
+               const stdair::Filename_T& iODInputFilename,
+               const stdair::Filename_T& iFareInputFilename,
                const stdair::Filename_T& iDemandInputFilename);
     
     /** Finalise. */
