@@ -24,9 +24,15 @@ void SimulationTestSuite::simpleSimulationHelper() {
     
     // Schedule input file name
     const std::string lScheduleInputFilename ("../samples/schedule01.csv");
+    
+    // O&D input file name
+    const std::string lODInputFilename ("../samples/ond01.csv");
 
     // Demand input file name
     const stdair::Filename_T lDemandInputFilename ("../samples/demand01.csv");
+
+    // Fare input file name
+    const stdair::Filename_T lFareInputFilename ("../samples/fare01.csv");
     
     // Output log File
     const std::string lLogFilename ("SimulationTestSuite.log");
@@ -43,8 +49,8 @@ void SimulationTestSuite::simpleSimulationHelper() {
                                          "localhost", "3306",
                                          "sim_dsim");
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
-                                    lScheduleInputFilename,
-                                    lDemandInputFilename);
+                                    lScheduleInputFilename, lODInputFilename,
+                                    lDemandInputFilename, lFareInputFilename);
 
     // Perform a simulation
     dsimService.simulate();
