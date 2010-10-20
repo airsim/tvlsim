@@ -32,6 +32,12 @@ const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME ("../../test/samples/dema
 /** Default name and location for the (CSV) schedule input file. */
 const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME ("../../test/samples/schedule01.csv");
 
+/** Default name and location for the (CSV) O&D input file. */
+const std::string K_DSIM_DEFAULT_OND_INPUT_FILENAME ("../../test/samples/ond01.csv");
+
+/** Default name and location for the (CSV) fare input file. */
+const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME ("../../test/samples/fare01.csv");
+    
 /** Default query string. */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
 
@@ -97,8 +103,10 @@ const int K_DSIM_EARLY_RETURN_STATUS = 99;
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[], 
                        std::string& ioQueryString,
-                       stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioDemandInputFilename,
+                       stdair::Filename_T& ioScheduleInputFilename,
+                       stdair::Filename_T& ioOnDInputFilename,
+                       stdair::Filename_T& ioFareInputFilename,
                        std::string& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
@@ -125,11 +133,17 @@ int readConfiguration (int argc, char* argv[],
   boost::program_options::options_description config ("Configuration");
   config.add_options()
     ("demand,d",
-     boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME),
+     boost::program_options::value< std::string >(&ioDemandInputFilename)->default_value(K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME),
      "(CVS) input file for the demand distributions")
     ("schedule,s",
-     boost::program_options::value< std::string >(&ioDemandInputFilename)->default_value(K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME),
+     boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME),
      "(CVS) input file for the schedules")
+    ("ond,o",
+     boost::program_options::value< std::string >(&ioOnDInputFilename)->default_value(K_DSIM_DEFAULT_OND_INPUT_FILENAME),
+     "(CVS) input file for the O&D definitions")
+    ("fare,f",
+     boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
+     "(CVS) input file for the fares")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
@@ -198,15 +212,25 @@ int readConfiguration (int argc, char* argv[],
     return K_DSIM_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("schedule")) {
-    ioScheduleInputFilename = vm["schedule"].as< std::string >();
-    std::cout << "Schedule input filename is: " << ioScheduleInputFilename
-              << std::endl;
-  }
-
   if (vm.count ("demand")) {
     ioDemandInputFilename = vm["demand"].as< std::string >();
     std::cout << "Demand input filename is: " << ioDemandInputFilename
+              << std::endl;
+  }
+
+  if (vm.count ("ond")) {
+    ioOnDInputFilename = vm["ond"].as< std::string >();
+    std::cout << "O&D input filename is: " << ioOnDInputFilename << std::endl;
+  }
+
+  if (vm.count ("fare")) {
+    ioFareInputFilename = vm["fare"].as< std::string >();
+    std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
+  }
+
+  if (vm.count ("schedule")) {
+    ioScheduleInputFilename = vm["schedule"].as< std::string >();
+    std::cout << "Schedule input filename is: " << ioScheduleInputFilename
               << std::endl;
   }
 
@@ -254,12 +278,18 @@ int main (int argc, char* argv[]) {
     // Query
     std::string lQuery;
 
-    // Schedule input file name
-    stdair::Filename_T lScheduleInputFilename;
-
     // Demand input file name
     stdair::Filename_T lDemandInputFilename;
 
+    // Schedule input file name
+    stdair::Filename_T lScheduleInputFilename;
+
+    // O&D input filename
+    std::string lOnDInputFilename;
+    
+    // Fare input filename
+    std::string lFareInputFilename;
+    
     // Output log File
     std::string lLogFilename;
 
@@ -275,8 +305,9 @@ int main (int argc, char* argv[]) {
     
     // Call the command-line option parser
     const int lOptionParserStatus = 
-      readConfiguration (argc, argv, lQuery, lScheduleInputFilename,
-                         lDemandInputFilename, lLogFilename,
+      readConfiguration (argc, argv, lQuery, lDemandInputFilename,
+                         lScheduleInputFilename, lOnDInputFilename,
+                         lFareInputFilename, lLogFilename,
                          lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
     if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -296,8 +327,8 @@ int main (int argc, char* argv[]) {
     // Initialise the simulation context
     const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
-                                    lScheduleInputFilename,
-                                    lDemandInputFilename);
+                                    lScheduleInputFilename, lOnDInputFilename,
+                                    lFareInputFilename, lDemandInputFilename);
 
     // Perform a simulation
     dsimService.simulate();
