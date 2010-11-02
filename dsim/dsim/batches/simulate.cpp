@@ -273,71 +273,67 @@ int readConfiguration (int argc, char* argv[],
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
-  try {
+  // Query
+  std::string lQuery;
 
-    // Query
-    std::string lQuery;
+  // Demand input file name
+  stdair::Filename_T lDemandInputFilename;
 
-    // Demand input file name
-    stdair::Filename_T lDemandInputFilename;
+  // Schedule input file name
+  stdair::Filename_T lScheduleInputFilename;
 
-    // Schedule input file name
-    stdair::Filename_T lScheduleInputFilename;
-
-    // O&D input filename
-    std::string lOnDInputFilename;
+  // O&D input filename
+  std::string lOnDInputFilename;
     
-    // Fare input filename
-    std::string lFareInputFilename;
+  // Fare input filename
+  std::string lFareInputFilename;
     
-    // Output log File
-    std::string lLogFilename;
+  // Output log File
+  std::string lLogFilename;
 
-    // SQL database parameters
-    std::string lDBUser;
-    std::string lDBPasswd;
-    std::string lDBHost;
-    std::string lDBPort;
-    std::string lDBDBName;
+  // SQL database parameters
+  std::string lDBUser;
+  std::string lDBPasswd;
+  std::string lDBHost;
+  std::string lDBPort;
+  std::string lDBDBName;
                        
-    // Airline code
-    stdair::AirlineCode_T lAirlineCode ("BA");
+  // Airline code
+  stdair::AirlineCode_T lAirlineCode ("BA");
     
-    // Call the command-line option parser
-    const int lOptionParserStatus = 
-      readConfiguration (argc, argv, lQuery, lDemandInputFilename,
-                         lScheduleInputFilename, lOnDInputFilename,
-                         lFareInputFilename, lLogFilename,
-                         lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
+  // Call the command-line option parser
+  const int lOptionParserStatus = 
+    readConfiguration (argc, argv, lQuery, lDemandInputFilename,
+                       lScheduleInputFilename, lOnDInputFilename,
+                       lFareInputFilename, lLogFilename,
+                       lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
-    if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
-      return 0;
-    }
+  if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
+    return 0;
+  }
     
-    // Set the database parameters
-    stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
-                                   lDBDBName);
+  // Set the database parameters
+  stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
+                                 lDBDBName);
     
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
 
-    // Initialise the simulation context
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
-                                    lScheduleInputFilename, lOnDInputFilename,
-                                    lFareInputFilename, lDemandInputFilename);
+  // Initialise the simulation context
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
+                                  lScheduleInputFilename, lOnDInputFilename,
+                                  lFareInputFilename, lDemandInputFilename);
 
-    // Perform a simulation
-    dsimService.simulate();
+  // Perform a simulation
+  dsimService.simulate();
 
-    // DEBUG
-    // Display the airlines stored in the database
-    dsimService.displayAirlineListFromDB();
-
-  } CATCH_ALL_EXCEPTIONS
+  // DEBUG
+  // Display the airlines stored in the database
+  dsimService.displayAirlineListFromDB();
 
   return 0;	
 }
