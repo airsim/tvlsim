@@ -45,28 +45,21 @@ void SimulationTestSuite::simpleSimulationHelper() {
     
     // Initialise the simulation context
     const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    const stdair::BasDBParams lDBParams ("dsim", "dsim",
-                                         "localhost", "3306",
+    const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
                                          "sim_dsim");
     DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
                                     lScheduleInputFilename, lODInputFilename,
-                                    lDemandInputFilename, lFareInputFilename);
+                                    lFareInputFilename, lDemandInputFilename);
 
     // Perform a simulation
     dsimService.simulate();
-    
+
   } catch (const DSIM::RootException& otexp) {
-    std::cerr << "Standard exception: " << otexp.what() << std::endl;
-    return;
+    std::cerr << "DSim exception: " << otexp.what() << std::endl;
     
   } catch (const std::exception& stde) {
     std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return;
-    
-  } catch (...) {
-    return;
   }
-  
 }
 
 // //////////////////////////////////////////////////////////////////////
