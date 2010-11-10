@@ -52,7 +52,8 @@ struct store_cabin_code {
   store_cabin_code (FLIGHT_PERIOD& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (char iChar) const { 
+  void operator() (char iChar, boost::spirit::qi::unused_type,
+                   boost::spirit::qi::unused_type) const { 
     _flightPeriod._cabinCode = iChar;
     // std::cout << "Cabin code: " << lCabinCode << std::endl;
   }

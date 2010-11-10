@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 check_PROGRAMS = employee_parser action_parser complex_parser \
 	num_list1_parser roman_parser sum_parser \
-	schedule_parser stream_iterator_parser levenshtein
+	schedule_parser stream_iterator_parser
 
 employee_parser_SOURCES = employee_parser.cpp
 employee_parser_CXXFLAGS = $(BOOST_CFLAGS)

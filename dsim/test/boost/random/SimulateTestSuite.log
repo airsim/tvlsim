@@ -19,7 +19,7 @@ Simulation#; Sum of Lambdas; Total nb of events; Random draw (following normal l
 Simulation#; Sum of Lambdas; Total nb of events; Random draw (following normal law);
 9; 299.178; 303; 276.597; 
 Statistics for sum of Lambdas (min, max, mean, variance);
-299.178, 299.178, 299.178, 8.5123e-12; 
+299.178, 299.178, 299.178, 0; 
 Statistics for total nb of events (min, max, mean, variance);
 286, 336, 301.3, 193.41; 
 Statistics for random draws (min, max, mean, variance);
