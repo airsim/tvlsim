@@ -495,6 +495,7 @@ AC_CONFIG_FILES(
 	test/boost/mpl/Makefile
 	test/boost/random/Makefile
 	test/boost/spirit/Makefile
+	test/boost/spiritQi/Makefile
 	test/boost/serialization/Makefile
 	test/boost/signals/Makefile
 	test/boost/smart_pointers/Makefile
