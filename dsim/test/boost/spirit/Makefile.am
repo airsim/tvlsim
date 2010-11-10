@@ -3,44 +3,38 @@ include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
 
-check_PROGRAMS = full_calculator functor_parser number_parser \
-	parameter_parser spirit_parser subrule_parser \
-	schedule_parser search_string_parser levenshtein
+check_PROGRAMS = employee_parser action_parser complex_parser \
+	num_list1_parser roman_parser sum_parser \
+	schedule_parser stream_iterator_parser levenshtein
 
-full_calculator_SOURCES = full_calculator.cpp
-full_calculator_CXXFLAGS = $(BOOST_CFLAGS)
-full_calculator_LDADD = $(BOOST_LIBS)
+employee_parser_SOURCES = employee_parser.cpp
+employee_parser_CXXFLAGS = $(BOOST_CFLAGS)
+employee_parser_LDADD = $(BOOST_LIBS)
 
-functor_parser_SOURCES = functor_parser.cpp
-functor_parser_CXXFLAGS = $(BOOST_CFLAGS)
-functor_parser_LDADD = $(BOOST_LIBS)
+action_parser_SOURCES = action_parser.cpp
+action_parser_CXXFLAGS = $(BOOST_CFLAGS)
+action_parser_LDADD = $(BOOST_LIBS)
 
-number_parser_SOURCES = number_parser.cpp
-number_parser_CXXFLAGS = $(BOOST_CFLAGS)
-number_parser_LDADD = $(BOOST_LIBS)
+complex_parser_SOURCES = complex_parser.cpp
+complex_parser_CXXFLAGS = $(BOOST_CFLAGS)
+complex_parser_LDADD = $(BOOST_LIBS)
 
-parameter_parser_SOURCES = parameter_parser.cpp
-parameter_parser_CXXFLAGS = $(BOOST_CFLAGS)
-parameter_parser_LDADD = $(BOOST_LIBS)
+num_list1_parser_SOURCES = num_list1_parser.cpp
+num_list1_parser_CXXFLAGS = $(BOOST_CFLAGS)
+num_list1_parser_LDADD = $(BOOST_LIBS)
 
-spirit_parser_SOURCES = spirit_parser.cpp
-spirit_parser_CXXFLAGS = $(BOOST_CFLAGS)
-spirit_parser_LDADD = $(BOOST_LIBS)
+roman_parser_SOURCES = roman_parser.cpp
+roman_parser_CXXFLAGS = $(BOOST_CFLAGS)
+roman_parser_LDADD = $(BOOST_LIBS)
 
-subrule_parser_SOURCES = subrule_parser.cpp
-subrule_parser_CXXFLAGS = $(BOOST_CFLAGS)
-subrule_parser_LDADD = $(BOOST_LIBS)
+sum_parser_SOURCES = sum_parser.cpp
+sum_parser_CXXFLAGS = $(BOOST_CFLAGS)
+sum_parser_LDADD = $(BOOST_LIBS)
 
 schedule_parser_SOURCES = schedule_parser.cpp
 schedule_parser_CXXFLAGS = $(BOOST_CFLAGS)
 schedule_parser_LDADD = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB)
 
-search_string_parser_SOURCES = search_string_parser.cpp
-search_string_parser_CXXFLAGS = $(BOOST_CFLAGS)
-search_string_parser_LDADD = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB)
-
-levenshtein_SOURCES = levenshtein.cpp
-levenshtein_LDADD =
-
-EXTRA_DIST = test_full_calculator.sh test_parameter_parser.sh \
-		test_schedule_parser.sh
+stream_iterator_parser_SOURCES = stream_iterator_parser.cpp
+stream_iterator_parser_CXXFLAGS = $(BOOST_CFLAGS)
+stream_iterator_parser_LDADD = $(BOOST_LIBS) $(BOOST_DATE_TIME_LIB)
