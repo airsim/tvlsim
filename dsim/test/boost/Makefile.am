@@ -6,6 +6,6 @@ MAINTAINERCLEANFILES = Makefile.in
 
 ##
 SUBDIRS = accumulators asio filesystem intrusive mpi mpl \
-	serialization signals spirit smart_pointers
+	serialization signals spirit spiritQi smart_pointers
 
 EXTRA_DIST =
