@@ -890,7 +890,7 @@ int main (int argc, char* argv[]) {
     lFlightPeriod.display();
 
     std::cout << "-------------------------" << std::endl;
-    if (info.full) {
+    if (info.hit) {
       std::cout << "Parsing succeeded" << std::endl;
       
     } else {
