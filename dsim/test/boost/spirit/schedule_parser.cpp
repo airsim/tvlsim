@@ -886,17 +886,27 @@ int main (int argc, char* argv[]) {
                             boost::spirit::classic::space_p);
 
     // DEBUG
-    std::cout << "Flight Period:" << std::endl;
-    lFlightPeriod.display();
+    //std::cout << "Flight Period:" << std::endl;
+    //lFlightPeriod.display();
 
-    std::cout << "-------------------------" << std::endl;
+    const std::string hasBeenFullyReadStr = (info.full == true)?"":"not ";
+
     if (info.hit) {
-      std::cout << "Parsing succeeded" << std::endl;
+      std::cout << "Parsing of fare input file: " << lFilename
+                << " succeeded: read " << info.length
+                << " characters. \nThe input file has "
+                << hasBeenFullyReadStr
+                << "been fully read. Stop point: " << info.stop
+                << std::endl;
       
     } else {
-      std::cout << "Parsing failed" << std::endl;
+      std::cout << "Parsing of fare input file: " << lFilename
+                << " failed: read " << info.length
+                << " characters. The input file has "
+                << hasBeenFullyReadStr
+                << "been fully read. Stop point: " << info.stop
+                << std::endl;
     }
-    std::cout << "-------------------------" << std::endl;
 
   } catch (const std::exception& stde) {
     std::cerr << "Standard exception: " << stde.what() << std::endl;
