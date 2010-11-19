@@ -5,6 +5,8 @@
 #include <fstream>
 #include <set>
 #include <vector>
+#include <algorithm>
+#include <string>
 // Boost (Extended STL)
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -13,13 +15,16 @@
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
+#include <boost/spirit/include/qi_core.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
+#include <boost/spirit/include/classic_position_iterator.hpp>
 #include <boost/lambda/lambda.hpp>
 
 
-typedef std::string::const_iterator iterator_t;
+
+typedef std::string::iterator iterator_t;
 
 /** LegCabin-Details. */
 struct Cabin_T {
@@ -771,7 +776,7 @@ boost::spirit::qi::uint_parser<int, 10, 1, 4> uint1_4_p;
 ////////////////////////////////////////////////////////////////////////////
 template <typename ITERATOR, typename FLIGHT_PERIOD>
 struct FlightPeriodParser : 
-  boost::spirit::qi::grammar<ITERATOR, boost::spirit::ascii::space_type > {
+  boost::spirit::qi::grammar<ITERATOR, boost::spirit::qi::locals<std::string>, boost::spirit::ascii::space_type> {
 
   typedef store_airline_code<FLIGHT_PERIOD> store_airline_code_t;
   typedef store_flight_number<FLIGHT_PERIOD> store_flight_number_t;
@@ -802,12 +807,17 @@ struct FlightPeriodParser :
     using boost::spirit::qi::lexeme;
     using boost::spirit::qi::repeat;
     using boost::spirit::qi::double_;
-    using boost::spirit::qi::_1;
+    using boost::spirit::qi::on_error;
+    using boost::spirit::qi::fail;
+    using boost::spirit::qi::eol;
     using boost::phoenix::ref;
+    using boost::phoenix::construct;
+    using boost::phoenix::val;
+    using namespace boost::spirit::qi::labels;
 
-    start = (comment | flight_period) ;
+    start = *(comment | flight_period);
 
-    comment = lexeme[ (repeat(2)[char_("/")]) ] >> *(char_);
+    comment = lexeme[ (repeat(2)[char_("/")])  >> +(char_ - eol) >> eol ];
 
     flight_period = flight_key
       >> +( ';' >> leg )
@@ -897,15 +907,14 @@ struct FlightPeriodParser :
     segment_cabin_details = char_("A-Z")[store_segment_cabin_code_t(_flightPeriod)]
       >> ';' >> (repeat(1,26)[char_("A-Z")])[store_classes_t(_flightPeriod)]
       ;
-
-  }
+ }
  
-  boost::spirit::qi::rule<ITERATOR, boost::spirit::ascii::space_type> start,
-                 comment, flight_period, flight_key, airline_code, flight_number,
-                 date, dow, leg, leg_key, leg_details, time, date_offset,
-                 cabin_details, segment, segment_key, general_segments,
-                 specific_segments, full_segment_cabin_details,
-                 segment_cabin_details, flight_period_end;
+  boost::spirit::qi::rule<ITERATOR, boost::spirit::qi::locals<std::string>, boost::spirit::ascii::space_type> start,
+    comment, flight_period, flight_key, airline_code,
+    flight_number, date, dow, leg, leg_key, leg_details,
+    time, date_offset, cabin_details, segment, segment_key,
+    general_segments, specific_segments, full_segment_cabin_details,
+    segment_cabin_details, flight_period_end;
   
 };
 
@@ -913,9 +922,9 @@ struct FlightPeriodParser :
 ////////////////////////////////////////////////////////////////////////////
 //  Main program
 ////////////////////////////////////////////////////////////////////////////
-int main (int argc, char* argv[]) {
- 
-  try {
+int main () {
+
+  try{
     char const* filename = "world_schedule.csv";
 
     std::ifstream in(filename, std::ios_base::in);
@@ -926,34 +935,30 @@ int main (int argc, char* argv[]) {
       return 1;
     }
 
-    typedef FlightPeriodParser<std::string::const_iterator, FlightPeriod_T> lFlightPeriodParser;
-    lFlightPeriodParser flightParser; // Our grammar
- 
-    std::string::const_iterator iter;
-    std::string::const_iterator end;
- 
-    std::string line;
-    bool r = true;
-    using boost::spirit::ascii::space;
+    typedef std::istreambuf_iterator<char> base_iterator_type;  
+    base_iterator_type in_begin(in);  
 
- 
-    while (r && std::getline(in, line)) {
-      iter = line.begin();
-      end = line.end();
-      r = phrase_parse(iter, end, flightParser, space);
-      if (iter != end) {
-        r = false;
-      } 
-    }
-    std::cout << "-------------------------\n";
-    if (r && iter == end) {
-      std::cout << "Parsing succeeded\n";
-    } else {
+    // Convert input iterator to forward iterator, usable by spirit parser  
+    typedef boost::spirit::multi_pass<base_iterator_type> forward_iterator_type;  
+    forward_iterator_type fwd_begin =  boost::spirit::make_default_multi_pass(in_begin);  
+    forward_iterator_type fwd_end;
+
+    // Define our grammar
+    typedef FlightPeriodParser<forward_iterator_type, FlightPeriod_T> lFlightPeriodParser;
+    lFlightPeriodParser flightParser; 
+
+    // Parse input file
+    bool r = boost::spirit::qi::phrase_parse(fwd_begin, fwd_end, flightParser, boost::spirit::ascii::space );
+
+    std::cout << "-------------------------------------------------------------------------------\n";
+    if (!r || fwd_begin != fwd_end) {
       std::cout << "Parsing failed\n";
+    } else {
+      std::cout << "Parsing succeeded\n";
     }
-    std::cout << "-------------------------\n";
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
+    std::cout << "-------------------------------------------------------------------------------\n";
+  } catch (const std::exception& e) {
+    std::cerr << "Exception: " << e.what() << std::endl;
     return -1;
   }
   return 0;
