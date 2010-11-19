@@ -726,7 +726,7 @@ boost::spirit::qi::uint_parser<int, 10, 1, 4> uint1_4_p;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Our calculator grammar 
+//  Our flight-period grammar 
 //
 ///////////////////////////////////////////////////////////////////////////////
     /**
@@ -776,7 +776,7 @@ boost::spirit::qi::uint_parser<int, 10, 1, 4> uint1_4_p;
 ////////////////////////////////////////////////////////////////////////////
 template <typename ITERATOR, typename FLIGHT_PERIOD>
 struct FlightPeriodParser : 
-  boost::spirit::qi::grammar<ITERATOR, boost::spirit::qi::locals<std::string>, boost::spirit::ascii::space_type> {
+  boost::spirit::qi::grammar<ITERATOR, boost::spirit::ascii::space_type> {
 
   typedef store_airline_code<FLIGHT_PERIOD> store_airline_code_t;
   typedef store_flight_number<FLIGHT_PERIOD> store_flight_number_t;
@@ -909,8 +909,8 @@ struct FlightPeriodParser :
       ;
  }
  
-  boost::spirit::qi::rule<ITERATOR, boost::spirit::qi::locals<std::string>, boost::spirit::ascii::space_type> start,
-    comment, flight_period, flight_key, airline_code,
+  boost::spirit::qi::rule<ITERATOR, boost::spirit::ascii::space_type>
+  start, comment, flight_period, flight_key, airline_code,
     flight_number, date, dow, leg, leg_key, leg_details,
     time, date_offset, cabin_details, segment, segment_key,
     general_segments, specific_segments, full_segment_cabin_details,
@@ -925,16 +925,18 @@ struct FlightPeriodParser :
 int main () {
 
   try{
-    char const* filename = "world_schedule.csv";
 
-    std::ifstream in(filename, std::ios_base::in);
-
+    // File to be parsed
+    std::ifstream in("world_schedule.csv", std::ios_base::in);
+    
+    // Open the file
     if (!in) {
-      std::cerr << "Error: Could not open input file: "
-                << filename << std::endl;
+      std::cerr << "Error: Could not open input file: world_schedule.csv"
+                << std::endl;
       return 1;
     }
-
+    
+    // Create an input iterator
     typedef std::istreambuf_iterator<char> base_iterator_type;  
     base_iterator_type in_begin(in);  
 
@@ -952,14 +954,18 @@ int main () {
 
     std::cout << "-------------------------------------------------------------------------------\n";
     if (!r || fwd_begin != fwd_end) {
-      std::cout << "Parsing failed\n";
+      std::cout << "Parsing of schedule input failed"
+                << std::endl;
     } else {
-      std::cout << "Parsing succeeded\n";
+      std::cout << "Parsing of schedule input succeeded"
+                << std::endl;
     }
     std::cout << "-------------------------------------------------------------------------------\n";
   } catch (const std::exception& e) {
-    std::cerr << "Exception: " << e.what() << std::endl;
-    return -1;
+    std::cerr << "Exception: "
+              << e.what()
+              << std::endl;
+    return 1;
   }
   return 0;
 }
