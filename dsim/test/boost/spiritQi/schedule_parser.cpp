@@ -23,8 +23,15 @@
 #include <boost/lambda/lambda.hpp>
 
 
+// ////////////////////////////////////////////////////////////////////////////
+//
+//  Namespace aliases and type definitions
+//
+///////////////////////////////////////////////////////////////////////////////
+namespace bp  = boost::phoenix;
+namespace bsa = boost::spirit::ascii;
+namespace bsq = boost::spirit::qi;
 
-typedef std::string::iterator iterator_t;
 
 /** LegCabin-Details. */
 struct Cabin_T {
@@ -311,14 +318,13 @@ struct FlightPeriod_T {
 ///////////////////////////////////////////////////////////////////////////////
 
 /** Store the parsed airline code. */
-template <typename FLIGHT_PERIOD>
 struct store_airline_code {
-  store_airline_code (FLIGHT_PERIOD& ioFlightPeriod)
+  store_airline_code (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     std::string lAirlineCode (iChar.begin(), iChar.end());
     _flightPeriod._airlineCode = lAirlineCode;
     // std::cout << "Airline code: " << lAirlineCode << std::endl;
@@ -327,34 +333,32 @@ struct store_airline_code {
       _flightPeriod._legList.clear();
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the parsed flight number. */
-template <typename FLIGHT_PERIOD>
 struct store_flight_number {
-  store_flight_number (FLIGHT_PERIOD& ioFlightPeriod)
+  store_flight_number (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
   
   void operator() (unsigned int iNumber,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     _flightPeriod._flightNumber = iNumber;
     //std::cout << "Flight number: " << iNumber << std::endl;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the start of the date range. */
-template <typename FLIGHT_PERIOD>
 struct store_date_range_start {
-  store_date_range_start (FLIGHT_PERIOD& ioFlightPeriod)
+  store_date_range_start (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     _flightPeriod._dateRangeStart = _flightPeriod.getDate();
     //std::cout << "Date Range Start: "
     // << _flightPeriod._dateRangeStart << std::endl;
@@ -363,18 +367,17 @@ struct store_date_range_start {
     _flightPeriod._itSeconds = 0;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the end of the date range. */
-template <typename FLIGHT_PERIOD>
 struct store_date_range_end {
-  store_date_range_end (FLIGHT_PERIOD& ioFlightPeriod)
+  store_date_range_end (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
   
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     _flightPeriod._dateRangeEnd = _flightPeriod.getDate();
     //std::cout << "Date Range End: "
     // << _flightPeriod._dateRangeEnd << std::endl;
@@ -387,31 +390,29 @@ struct store_date_range_end {
 };
 
 /** Store the DOW (day of the Week). */
-template <typename FLIGHT_PERIOD>
 struct store_dow {
-  store_dow (FLIGHT_PERIOD& ioFlightPeriod)
+  store_dow (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
 
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     std::string lDow (iChar.begin(), iChar.end());
     _flightPeriod._dow = lDow;
     //std::cout << "DOW: " << lDow << std::endl;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the parsed board point. */
-template <typename FLIGHT_PERIOD>
 struct store_board_point {
-  store_board_point (FLIGHT_PERIOD& ioFlightPeriod)
+  store_board_point (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
   
   void operator() (std::vector<char> iChar,
-                  boost::spirit::qi::unused_type,
-                  boost::spirit::qi::unused_type) const { 
+                  bsq::unused_type,
+                  bsq::unused_type) const { 
     std::string lBoardPoint (iChar.begin(), iChar.end());
     //std::cout << "Board point: " << lBoardPoint << std::endl;
 
@@ -432,18 +433,17 @@ struct store_board_point {
     _flightPeriod.addAirport (lBoardPoint);
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
   
 /** Store the parsed off point. */
-template <typename FLIGHT_PERIOD>
 struct store_off_point {
-  store_off_point (FLIGHT_PERIOD& ioFlightPeriod)
+  store_off_point (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
 
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     std::string lOffPoint (iChar.begin(), iChar.end());
     _flightPeriod._itLeg._offPoint = lOffPoint;
     //std::cout << "Off point: " << lOffPoint << std::endl;
@@ -452,18 +452,17 @@ struct store_off_point {
     _flightPeriod.addAirport (lOffPoint);
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the board time. */
-template <typename FLIGHT_PERIOD>
 struct store_board_time {
-  store_board_time (FLIGHT_PERIOD& ioFlightPeriod)
+  store_board_time (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     _flightPeriod._itLeg._boardTime = _flightPeriod.getTime();
 
     //std::cout << "Board time: "
@@ -476,18 +475,17 @@ struct store_board_time {
     _flightPeriod._dateOffSet = 0;
   }
   
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the off time. */
-template <typename FLIGHT_PERIOD>
 struct store_off_time {
-  store_off_time (FLIGHT_PERIOD& ioFlightPeriod)
+  store_off_time (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     _flightPeriod._itLeg._offTime = _flightPeriod.getTime();
 
     //std::cout << "Off time: "
@@ -502,18 +500,17 @@ struct store_off_time {
       _flightPeriod._itLeg._boardDateOffSet = lDateOffSet;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the elapsed time. */
-template <typename FLIGHT_PERIOD>
 struct store_elapsed_time {
-  store_elapsed_time (FLIGHT_PERIOD& ioFlightPeriod)
+  store_elapsed_time (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const {
 
     _flightPeriod._itLeg._elapsed = _flightPeriod.getTime();
 
@@ -529,34 +526,32 @@ struct store_elapsed_time {
     _flightPeriod._itLeg._offDateOffSet = lDateOffSet;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the parsed cabin code. */
-template <typename FLIGHT_PERIOD>
 struct store_cabin_code {
-  store_cabin_code (FLIGHT_PERIOD& ioFlightPeriod)
+  store_cabin_code (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
   void operator() (char iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     _flightPeriod._itCabin._cabinCode = iChar;
     //std::cout << "Cabin code: " << _flightPeriod._itCabin._cabinCode << std::endl;
   }
     
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the parsed capacity. */
-template <typename FLIGHT_PERIOD>
 struct store_capacity {
-  store_capacity (FLIGHT_PERIOD& ioFlightPeriod)
+  store_capacity (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
   void operator() (double iReal,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {  
+                   bsq::unused_type,
+                   bsq::unused_type) const {  
     _flightPeriod._itCabin._capacity = iReal; 
     //std::cout << "Capacity: " << iReal << std::endl;
     
@@ -567,19 +562,18 @@ struct store_capacity {
     _flightPeriod._itLeg._cabinList.push_back (_flightPeriod._itCabin);
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store whether or not all the segments are the same. */
-template <typename FLIGHT_PERIOD>
 struct store_segment_specificity {
-  store_segment_specificity (FLIGHT_PERIOD& ioFlightPeriod)
+  store_segment_specificity (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {
   }
 
   void operator() (char iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const { 
+                   bsq::unused_type,
+                   bsq::unused_type) const { 
     if (iChar == '0') {
       _flightPeriod._areSegmentDefinitionsSpecific = false;
     } else {
@@ -598,72 +592,68 @@ struct store_segment_specificity {
     _flightPeriod.buildSegments();
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
       
 /** Store the board point of the segment. */
-template <typename FLIGHT_PERIOD>
 struct store_segment_board_point {
-  store_segment_board_point (FLIGHT_PERIOD& ioFlightPeriod)
+  store_segment_board_point (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {
   }
 
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     std::string lBoardPoint (iChar.begin(), iChar.end());
     _flightPeriod._itSegment._boardPoint = lBoardPoint;
     //std::cout << "Board point: " << lBoardPoint << std::endl;
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the off point of the segment. */
-template <typename FLIGHT_PERIOD>
 struct store_segment_off_point {
-  store_segment_off_point (FLIGHT_PERIOD& ioFlightPeriod)
+  store_segment_off_point (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {
   }
 
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     std::string lOffPoint (iChar.begin(), iChar.end());
     _flightPeriod._itSegment._offPoint = lOffPoint;
     //std::cout << "Off point: " << lOffPoint << std::endl;
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the cabin code of the segment. */
-template <typename FLIGHT_PERIOD>
 struct store_segment_cabin_code {
-  store_segment_cabin_code (FLIGHT_PERIOD& ioFlightPeriod)
+  store_segment_cabin_code (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {
   }
     
   void operator() (char iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     _flightPeriod._itSegmentCabin._cabinCode = iChar; 
     //std::cout << "Cabin code: " << iChar << std::endl;
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 /** Store the classes of the segment-cabin. */
-template <typename FLIGHT_PERIOD>
 struct store_classes {
-  store_classes (FLIGHT_PERIOD& ioFlightPeriod)
+  store_classes (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {
   }
 
   void operator() (std::vector<char> iChar,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     std::string lClasses (iChar.begin(), iChar.end());
     _flightPeriod._itSegmentCabin._classes = lClasses;
     //std::cout << "Classes: " << lClasses << std::endl;
@@ -681,18 +671,17 @@ struct store_classes {
     }
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
   
 /** Mark the end of the flight-period parsing. */
-template <typename FLIGHT_PERIOD>
 struct do_end_flight {
-  do_end_flight (FLIGHT_PERIOD& ioFlightPeriod)
+  do_end_flight (FlightPeriod_T& ioFlightPeriod)
     : _flightPeriod (ioFlightPeriod) {}
     
-  void operator() (boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type,
-                   boost::spirit::qi::unused_type) const {
+  void operator() (bsq::unused_type,
+                   bsq::unused_type,
+                   bsq::unused_type) const {
     //std::cout << "End of Flight-Period " << std::endl;
 
     assert (_flightPeriod._legAlreadyDefined == true);
@@ -707,22 +696,23 @@ struct do_end_flight {
 
   }
 
-  FLIGHT_PERIOD& _flightPeriod;
+  FlightPeriod_T& _flightPeriod;
 };
 
 // /////////// Utilities /////////////
 
 /** 1-digit-integer parser */
-boost::spirit::qi::int_parser<unsigned int, 10, 1, 1> int1_p;
+bsq::int_parser<unsigned int, 10, 1, 1> int1_p;
 
 /** 2-digit-integer parser */
-boost::spirit::qi::uint_parser<int, 10, 2, 2> uint2_p;
+bsq::uint_parser<int, 10, 2, 2> uint2_p;
 
 /** 4-digit-integer parser */
-boost::spirit::qi::uint_parser<int, 10, 4, 4> uint4_p;
+bsq::uint_parser<int, 10, 4, 4> uint4_p;
 
 /** Up-to-4-digit-integer parser */
-boost::spirit::qi::uint_parser<int, 10, 1, 4> uint1_4_p;
+bsq::uint_parser<int, 10, 1, 4> uint1_4_p;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -774,116 +764,87 @@ boost::spirit::qi::uint_parser<int, 10, 1, 4> uint1_4_p;
 ////////////////////////////////////////////////////////////////////////////
 //  Parser
 ////////////////////////////////////////////////////////////////////////////
-template <typename ITERATOR, typename FLIGHT_PERIOD>
+template <typename ITERATOR>
 struct FlightPeriodParser : 
-  boost::spirit::qi::grammar<ITERATOR, boost::spirit::ascii::space_type> {
+  bsq::grammar<ITERATOR, bsa::space_type> {
 
-  typedef store_airline_code<FLIGHT_PERIOD> store_airline_code_t;
-  typedef store_flight_number<FLIGHT_PERIOD> store_flight_number_t;
-  typedef store_date_range_start<FLIGHT_PERIOD> store_date_range_start_t;
-  typedef store_date_range_end<FLIGHT_PERIOD> store_date_range_end_t;
-  typedef store_dow<FLIGHT_PERIOD> store_dow_t;
-  typedef store_board_point<FLIGHT_PERIOD> store_board_point_t;
-  typedef store_off_point<FLIGHT_PERIOD> store_off_point_t;
-  typedef store_board_time<FLIGHT_PERIOD> store_board_time_t;
-  typedef store_off_time<FLIGHT_PERIOD> store_off_time_t;
-  typedef store_elapsed_time<FLIGHT_PERIOD> store_elapsed_time_t;
-  typedef store_cabin_code<FLIGHT_PERIOD> store_cabin_code_t;
-  typedef store_capacity<FLIGHT_PERIOD> store_capacity_t;
-  typedef store_segment_specificity<FLIGHT_PERIOD> store_segment_specificity_t;
-  typedef store_segment_board_point<FLIGHT_PERIOD> store_segment_board_point_t;
-  typedef store_segment_off_point<FLIGHT_PERIOD> store_segment_off_point_t;
-  typedef store_segment_cabin_code<FLIGHT_PERIOD> store_segment_cabin_code_t;
-  typedef store_classes<FLIGHT_PERIOD> store_classes_t;
-  typedef do_end_flight<FLIGHT_PERIOD> do_end_flight_t;
-
-  FLIGHT_PERIOD _flightPeriod;
+  FlightPeriod_T _flightPeriod;
     
   FlightPeriodParser () :
     FlightPeriodParser::base_type(start) {
 
-    using boost::spirit::ascii::string;
-    using boost::spirit::ascii::char_;
-    using boost::spirit::qi::lexeme;
-    using boost::spirit::qi::repeat;
-    using boost::spirit::qi::double_;
-    using boost::spirit::qi::on_error;
-    using boost::spirit::qi::fail;
-    using boost::spirit::qi::eol;
-    using boost::phoenix::ref;
-    using boost::phoenix::construct;
-    using boost::phoenix::val;
-    using namespace boost::spirit::qi::labels;
-
     start = *(comment | flight_period);
 
-    comment = lexeme[ (repeat(2)[char_("/")])  >> +(char_ - eol) >> eol ];
+    comment = (bsq::lexeme[ (bsq::repeat(2)[bsa::char_("/")]) >> +(bsa::char_ - bsq::eol) >> bsq::eol ]
+               | bsq::lexeme[ (bsa::char_("/") >> bsa::char_("*") >> +(bsa::char_ - bsa::char_("*")) >> bsa::char_("*") >> bsa::char_("/")) ])
+               ;
 
     flight_period = flight_key
       >> +( ';' >> leg )
       >> +( ';' >> segment )
-      >> flight_period_end[do_end_flight_t(_flightPeriod)]
+      >> flight_period_end[do_end_flight(_flightPeriod)]
       ;
 
     flight_period_end = ';';
 
     flight_key = airline_code
       >> ';' >> flight_number
-      >> ';' >> date[store_date_range_start_t(_flightPeriod)] 
-      >> ';' >> date[store_date_range_end_t(_flightPeriod)] 
+      >> ';' >> date[store_date_range_start(_flightPeriod)] 
+      >> ';' >> date[store_date_range_end(_flightPeriod)] 
       >> ';' >> dow
       ;
  
     airline_code =
-      lexeme[ (repeat(2)[char_("A-Z")])[store_airline_code_t(_flightPeriod)] ];
+       bsq::lexeme[ (bsq::repeat(2)[bsa::char_("A-Z")])[store_airline_code(_flightPeriod)] ];
        
-    flight_number = uint1_4_p[store_flight_number_t(_flightPeriod)];
+    flight_number = uint1_4_p[store_flight_number(_flightPeriod)];
       
-    date = lexeme[ uint4_p[ref(_flightPeriod._itYear) = _1]
-        >> '-' >> uint2_p[ref(_flightPeriod._itMonth) = _1]
-        >> '-' >> uint2_p[ref(_flightPeriod._itDay) = _1] ]
-        ;
-
+    date =  bsq::lexeme[ uint4_p[bp::ref(_flightPeriod._itYear) = bsq::labels::_1]
+                         >> '-' >> uint2_p[bp::ref(_flightPeriod._itMonth) =bsq::labels::_1]
+                         >> '-' >> uint2_p[bp::ref(_flightPeriod._itDay) = bsq::labels::_1] ]
+      ;
+    
     dow =
-      lexeme[ (repeat(7)[char_("0-1")])[store_dow_t(_flightPeriod)] ]
+       bsq::lexeme[ (bsq::repeat(7)[bsa::char_("0-1")])[store_dow(_flightPeriod)] ]
         ;
 
     leg = leg_key >> ';' >> leg_details >> +( ';' >> cabin_details )
         ;
 	 
     leg_key =
-      lexeme[ (repeat(3)[char_("A-Z")])[store_board_point_t(_flightPeriod)] ]
+       bsq::lexeme[ (bsq::repeat(3)[bsa::char_("A-Z")])[store_board_point(_flightPeriod)] ]
       >> ';'
-      >> lexeme[ (repeat(3)[char_("A-Z")])[store_off_point_t(_flightPeriod)] ]
+      >>  bsq::lexeme[ (bsq::repeat(3)[bsa::char_("A-Z")])[store_off_point(_flightPeriod)] ]
       ;  
           
     leg_details =
-      time[store_board_time_t(_flightPeriod)]
+      time[store_board_time(_flightPeriod)]
       >> -(date_offset)
       >> ';' 
-      >> time[store_off_time_t(_flightPeriod)]
+      >> time[store_off_time(_flightPeriod)]
       >> -(date_offset)
       >> ';'
-      >> time[store_elapsed_time_t(_flightPeriod)]
+      >> time[store_elapsed_time(_flightPeriod)]
       ;
 
-    time = lexeme[ uint2_p[ref(_flightPeriod._itHours) = _1]
-      >> ':' >> uint2_p[ref(_flightPeriod._itMinutes) = _1]
-      >> !(':' >> (uint2_p)[ref(_flightPeriod._itSeconds) = _1]) ]
+    time =  bsq::lexeme[ uint2_p[bp::ref(_flightPeriod._itHours) = bsq::labels::_1]
+                   >> ':' >> uint2_p[bp::ref(_flightPeriod._itMinutes) = bsq::labels::_1]
+                   >> !(':' >> (uint2_p)[bp::ref(_flightPeriod._itSeconds) = bsq::labels::_1]) ]
       ;
 
-    date_offset = char_('/')
-      >> (char_("+") | char_("-"))
-      >> int1_p[ref(_flightPeriod._dateOffSet) = _1]
+    date_offset = bsa::char_('/')
+      >> (bsa::char_("+") | bsa::char_("-"))
+      >> int1_p[bp::ref(_flightPeriod._dateOffSet) = bsq::labels::_1]
       ;    
 
-    cabin_details = char_("A-Z") [store_cabin_code_t(_flightPeriod)]
-      >> ';' >> double_[store_capacity_t(_flightPeriod)]
+    cabin_details = bsa::char_("A-Z") [store_cabin_code(_flightPeriod)]
+      >> ';' >> bsq::
+      double_[store_capacity(_flightPeriod)]
       ;
 
-    segment_key = (repeat(3)[char_("A-Z")])[store_segment_board_point_t(_flightPeriod)]
+    segment_key = (bsq::repeat(3)[bsa::char_("A-Z")])[store_segment_board_point(_flightPeriod)]
       >> ';'
-      >> (repeat(3)[char_("A-Z")])[store_segment_off_point_t(_flightPeriod)]
+      >> (bsq::repeat(3)[bsa::char_("A-Z")])[store_segment_off_point(_flightPeriod)]
       ;
 
     segment =
@@ -891,12 +852,12 @@ struct FlightPeriodParser :
       ;
     
     general_segments = 
-      char_('0')[store_segment_specificity_t(_flightPeriod)]
+      bsa::char_('0')[store_segment_specificity(_flightPeriod)]
       >> +(';' >> segment_cabin_details)
       ;
 
     specific_segments = 
-      char_('1')[store_segment_specificity_t(_flightPeriod)]
+      bsa::char_('1')[store_segment_specificity(_flightPeriod)]
       >> +(';' >> segment_key >> full_segment_cabin_details)
       ;
         
@@ -904,12 +865,12 @@ struct FlightPeriodParser :
       +(';' >> segment_cabin_details)
       ;
       
-    segment_cabin_details = char_("A-Z")[store_segment_cabin_code_t(_flightPeriod)]
-      >> ';' >> (repeat(1,26)[char_("A-Z")])[store_classes_t(_flightPeriod)]
+    segment_cabin_details = bsa::char_("A-Z")[store_segment_cabin_code(_flightPeriod)]
+      >> ';' >> (bsq::repeat(1,26)[bsa::char_("A-Z")])[store_classes(_flightPeriod)]
       ;
  }
  
-  boost::spirit::qi::rule<ITERATOR, boost::spirit::ascii::space_type>
+  bsq::rule<ITERATOR, bsa::space_type>
   start, comment, flight_period, flight_key, airline_code,
     flight_number, date, dow, leg, leg_key, leg_details,
     time, date_offset, cabin_details, segment, segment_key,
@@ -922,50 +883,49 @@ struct FlightPeriodParser :
 ////////////////////////////////////////////////////////////////////////////
 //  Main program
 ////////////////////////////////////////////////////////////////////////////
-int main () {
+int main (int argc, char* argv[]) {
 
-  try{
-
-    // File to be parsed
-    std::ifstream in("world_schedule.csv", std::ios_base::in);
+  // File to be parsed
+  std::ifstream fileToBeParsed("world_schedule.csv", std::ios_base::in);
     
-    // Open the file
-    if (!in) {
-      std::cerr << "Error: Could not open input file: world_schedule.csv"
-                << std::endl;
-      return 1;
-    }
-    
-    // Create an input iterator
-    typedef std::istreambuf_iterator<char> base_iterator_type;  
-    base_iterator_type in_begin(in);  
-
-    // Convert input iterator to forward iterator, usable by spirit parser  
-    typedef boost::spirit::multi_pass<base_iterator_type> forward_iterator_type;  
-    forward_iterator_type fwd_begin =  boost::spirit::make_default_multi_pass(in_begin);  
-    forward_iterator_type fwd_end;
-
-    // Define our grammar
-    typedef FlightPeriodParser<forward_iterator_type, FlightPeriod_T> lFlightPeriodParser;
-    lFlightPeriodParser flightParser; 
-
-    // Parse input file
-    bool r = boost::spirit::qi::phrase_parse(fwd_begin, fwd_end, flightParser, boost::spirit::ascii::space );
-
-    std::cout << "-------------------------------------------------------------------------------\n";
-    if (!r || fwd_begin != fwd_end) {
-      std::cout << "Parsing of schedule input failed"
-                << std::endl;
-    } else {
-      std::cout << "Parsing of schedule input succeeded"
-                << std::endl;
-    }
-    std::cout << "-------------------------------------------------------------------------------\n";
-  } catch (const std::exception& e) {
-    std::cerr << "Exception: "
-              << e.what()
+  // Open the file
+  if (fileToBeParsed == false) {
+    std::cerr << "Error: Could not open input file: world_schedule.csv"
               << std::endl;
     return 1;
   }
+    
+  // Create an input iterator
+  typedef std::istreambuf_iterator<char> base_iterator_type;  
+  base_iterator_type inputBegin(fileToBeParsed);  
+
+  // Convert input iterator to forward iterator, usable by spirit parser  
+  typedef boost::spirit::multi_pass<base_iterator_type> forward_iterator_type;  
+  forward_iterator_type iter =  boost::spirit::make_default_multi_pass(inputBegin);  
+  forward_iterator_type end;
+
+  // Define our grammar
+  typedef FlightPeriodParser<forward_iterator_type> lFlightPeriodParser;
+  lFlightPeriodParser flightParser; 
+
+  // Parse input file
+  const bool hasParsingBeenSuccesful =
+    bsq::phrase_parse(iter, end, flightParser, bsa::space);
+
+  std::cout << "-------------------------------------------------------------------------------\n";
+  if (hasParsingBeenSuccesful == false) {
+    std::cout << "Parsing of schedule input failed"
+              << std::endl;
+  }
+  if  (iter != end) {
+    std::cout << "Parsing of schedule input failed"
+              << std::endl;
+  }
+  if (hasParsingBeenSuccesful == true && iter == end) {
+    std::cout << "Parsing of schedule input succeeded"
+              << std::endl;
+  }
+  std::cout << "-------------------------------------------------------------------------------\n";
+    
   return 0;
 }
