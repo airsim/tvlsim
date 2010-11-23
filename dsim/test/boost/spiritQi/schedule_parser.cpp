@@ -1,11 +1,6 @@
 // STL
-#include <istream>
-#include <sstream>
-#include <iostream>
 #include <fstream>
 #include <set>
-#include <vector>
-#include <algorithm>
 #include <string>
 // Boost (Extended STL)
 #include <boost/date_time/posix_time/posix_time.hpp>
