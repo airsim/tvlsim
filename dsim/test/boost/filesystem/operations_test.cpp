@@ -10,10 +10,14 @@
 #include <cstring> // for strncmp, etc.
 #include <ctime>
 #include <cstdlib> // for system()
+
 // Boost
+#include <boost/version.hpp> // To check whether which version API is needed
 #include <boost/config/warning_disable.hpp>
+
 //  See deprecated_test for tests of deprecated features
 #define BOOST_FILESYSTEM_NO_DEPRECATED
+
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/cerrno.hpp>
@@ -68,7 +72,11 @@ namespace
     std::ofstream f( ph.file_string().c_str() );
     if ( !f )
       throw fs::filesystem_error( "operations_test create_file",
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+      ph, error_code(errno, system_category()) );
+#else // BOOST_VERSION
       ph, error_code(errno, system_category) );
+#endif // BOOST_VERSION
     if ( !contents.empty() ) f << contents;
   }
 
@@ -77,7 +85,11 @@ namespace
     std::ifstream f( ph.file_string().c_str() );
     if ( !f )
       throw fs::filesystem_error( "operations_test verify_file",
-        ph, error_code(errno, system_category) );
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+      ph, error_code(errno, system_category()) );
+#else // BOOST_VERSION
+      ph, error_code(errno, system_category) );
+#endif // BOOST_VERSION
     std::string contents;
     f >> contents;
     if ( contents != expected )

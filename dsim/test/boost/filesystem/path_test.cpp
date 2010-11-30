@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cassert>
 // Boost
+#include <boost/version.hpp> // To check whether which version API is needed
 #include <boost/filesystem/operations.hpp>
 #include <boost/utility.hpp>
 
@@ -77,7 +78,13 @@ namespace {
   void exception_tests()
   {
     const std::string str_1("string-1");
+
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+    boost::system::error_code ec( 12345, boost::system::system_category());
+#else // BOOST_VERSION
     boost::system::error_code ec( 12345, boost::system::system_category);
+#endif // BOOST_VERSION
+    
     try { throw fs::filesystem_error( str_1, ec ); }
     catch ( const fs::filesystem_error & ex )
       {

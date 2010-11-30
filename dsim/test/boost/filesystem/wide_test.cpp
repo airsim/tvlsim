@@ -4,30 +4,50 @@
 //  License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //  See library home page at http://www.boost.org/libs/filesystem
-// STL
-#include <iostream>
-#include <iomanip>
-#include <ios>
-#include <string>
-#include <cerrno>
+
 // Boost
+#include <boost/version.hpp> // To check whether which version API is needed
 #include <boost/config/warning_disable.hpp>
+
 //  See deprecated_test for tests of deprecated features
-#define BOOST_FILESYSTEM_NO_DEPRECATED
+#ifndef BOOST_FILESYSTEM_NO_DEPRECATED 
+# define BOOST_FILESYSTEM_NO_DEPRECATED
+#endif
+#ifndef BOOST_SYSTEM_NO_DEPRECATED 
+# define BOOST_SYSTEM_NO_DEPRECATED
+#endif
+
 #include <boost/filesystem/config.hpp>
 
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+# ifdef BOOST_FILESYSTEM2_NARROW_ONLY
+#   error This compiler or standard library does not support wide-character strings or paths
+# endif
+#else // BOOST_VERSION
 # ifdef BOOST_FILESYSTEM_NARROW_ONLY
 #   error This compiler or standard library does not support wide-character strings or paths
 # endif
+#endif // BOOST_VERSION
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/detail/lightweight_test.hpp>
 
-#include "utf8_codecvt_facet.hpp"
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#  include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
+#else // BOOST_VERSION
+#  include "utf8_codecvt_facet.hpp"
+#endif // BOOST_VERSION
 
 namespace fs = boost::filesystem;
+
+// STL
+#include <iostream>
+#include <iomanip>
+#include <ios>
+#include <string>
+#include <cerrno>
 
 #include "lpath.hpp"
 
@@ -47,7 +67,11 @@ namespace {
     if ( !f )
       throw fs::basic_filesystem_error<Path>( "wide_test create_file",
                                               ph,
-                                              boost::system::error_code( errno, boost::system::errno_ecat ) );
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+        boost::system::error_code( errno, boost::system::generic_category() ) );
+#else // BOOST_VERSION
+        boost::system::error_code( errno, boost::system::errno_ecat ) );
+#endif // BOOST_VERSION
     if ( !contents.empty() ) f << contents;
   }
 
@@ -105,8 +129,8 @@ namespace {
     const wchar_t * from_next;
     char * to_next;
     if ( convertor.out( 
-                       state, src.c_str(), src.c_str()+src.size(), from_next, work.get(),
-                       work.get()+work_size, to_next ) != std::codecvt_base::ok )
+      state, src.c_str(), src.c_str()+src.size(), from_next, work.get(),
+      work.get()+work_size, to_next ) != std::codecvt_base::ok )
       boost::throw_exception( std::runtime_error("to_external conversion error") );
     *to_next = '\0';
     return std::string( work.get() );
@@ -114,7 +138,7 @@ namespace {
 
 } // unnamed namespace
 
-//  main  ------------------------------------------------------------------------------//
+//  main  --------------------------------------------------------------------//
 
 int main( int argc, char * /*argv*/[] )
 {

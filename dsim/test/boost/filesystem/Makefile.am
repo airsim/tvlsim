@@ -39,7 +39,7 @@ path_test_LDADD =
 path_test_LDFLAGS = $(BOOST_LIBS) $(BOOST_SYSTEM_LIB) $(BOOST_FILESYSTEM_LIB)
 
 #
-wide_test_SOURCES = wide_test.cpp
+wide_test_SOURCES = wide_test.cpp utf8_codecvt_facet.cpp
 wide_test_CXXFLAGS = $(BOOST_CFLAGS)
 wide_test_LDADD =
 wide_test_LDFLAGS = $(BOOST_LIBS) $(BOOST_SYSTEM_LIB) $(BOOST_FILESYSTEM_LIB)
@@ -52,9 +52,8 @@ operations_test_LDFLAGS = \
 	$(BOOST_LIBS) $(BOOST_SYSTEM_LIB) $(BOOST_FILESYSTEM_LIB)
 
 #
-fstream_test_SOURCES = fstream_test.cpp
+fstream_test_SOURCES = fstream_test.cpp utf8_codecvt_facet.cpp
 fstream_test_CXXFLAGS = $(BOOST_CFLAGS)
 fstream_test_LDADD =
 fstream_test_LDFLAGS = \
 	$(BOOST_LIBS) $(BOOST_SYSTEM_LIB) $(BOOST_FILESYSTEM_LIB)
-

@@ -8,10 +8,19 @@
 
 //  See library home page at http://www.boost.org/libs/filesystem
 
+// Boost
+#include <boost/version.hpp> // To check whether which version API is needed
+
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#include <boost/filesystem/v2/path.hpp>
+#else // BOOST_VERSION
 #include <boost/filesystem/path.hpp>
+#endif // BOOST_VERSION
+
 #include <cwchar>      // for std::mbstate_t
 #include <string>
 #include <ios>         // for std::streamoff
+
 
 namespace std
 {
@@ -93,7 +102,11 @@ namespace user
 
 namespace boost
 {
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+  namespace filesystem2
+#else // BOOST_VERSION
   namespace filesystem
+#endif // BOOST_VERSION
   {
     template<> struct is_basic_path<user::lpath>
       { static const bool value = true; };
