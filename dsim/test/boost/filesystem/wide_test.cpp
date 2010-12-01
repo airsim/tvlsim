@@ -13,9 +13,11 @@
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED 
 # define BOOST_FILESYSTEM_NO_DEPRECATED
 #endif
+#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
 #ifndef BOOST_SYSTEM_NO_DEPRECATED 
 # define BOOST_SYSTEM_NO_DEPRECATED
-#endif
+#endif // BOOST_SYSTEM_NO_DEPRECATED
+#endif // BOOST_VERSION
 
 #include <boost/filesystem/config.hpp>
 
