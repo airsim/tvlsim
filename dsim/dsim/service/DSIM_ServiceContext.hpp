@@ -9,7 +9,7 @@
 // Boost
 #include <boost/shared_ptr.hpp>
 // StdAir
-#include <stdair/STDAIR_Types.hpp>
+#include <stdair/stdair_service_types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/bom/ConfigurationParameters.hpp>

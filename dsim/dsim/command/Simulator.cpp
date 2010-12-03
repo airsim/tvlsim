@@ -7,7 +7,7 @@
 #include <vector>
 #include <exception>
 // StdAir
-#include <stdair/STDAIR_Types.hpp>
+#include <stdair/stdair_demand_types.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>

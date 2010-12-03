@@ -5,14 +5,14 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // StdAir
-#include <stdair/STDAIR_Types.hpp>
+#include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_service_types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
-// Forward declarations.
+// Forward declarations
 namespace stdair {
   class AirlineFeatureSet;
-  class STDAIR_Service;
   struct BasLogParams;
   struct BasDBParams;
 }
