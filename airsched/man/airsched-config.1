@@ -1,0 +1,34 @@
+.TH Airsched 1 "13 July 2010"
+.SH NAME
+airsched-config - script to get version number and compiler flags of the installed Airsched library
+.SH SYNOPSIS
+.B airsched-config
+[\-\-prefix]  [\-\-version] [\-\-libs] [\-\-cflags]
+.SH DESCRIPTION
+.PP
+\fIairsched-config\fP is a tool that is used by configure to determine
+the compiler and linker flags that should be used to compile
+and link programs that use \fIAirsched\fP. It is also used internally
+by the .m4 macros, that are included with \fIAirsched\fP, for GNU autoconf.
+.
+.SH OPTIONS
+\fIairsched-config\fP accepts the following options:
+.TP 8
+.B  \-\-version
+Print the currently installed version of \fIAirsched\fP on the standard output.
+.TP 8
+.B  \-\-libs
+Print the linker flags that are necessary to link with the \fIAirsched\fP library
+.TP 8
+.B  \-\-cflags
+Print the compiler flags that are necessary to compile with the \fIAirsched\fP library
+.TP 8
+.B  \-\-prefix
+Show the Airsched installation prefix.
+.SH SEE ALSO
+.BR boost-config (1)
+.SH COPYRIGHT
+Copyright \(co  2010 Denis Arnaud
+
+See the COPYING file for more information on the (LGPLv2) license, or
+directly on Internet: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
