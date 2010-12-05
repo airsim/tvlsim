@@ -1,0 +1,11 @@
+#ifndef __TRAVELCCM_BAS_BASCONST_TRAVELCCM_SERVICE_HPP
+#define __TRAVELCCM_BAS_BASCONST_TRAVELCCM_SERVICE_HPP
+
+// //////////////////////////////////////////////////////////////////////
+// Import section
+// //////////////////////////////////////////////////////////////////////
+
+namespace TRAVELCCM {
+
+}
+#endif // __TRAVELCCM_BAS_BASCONST_TRAVELCCM_SERVICE_HPP
