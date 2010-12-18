@@ -45,6 +45,7 @@ namespace SIMFQT {
        _fareRule._classCode = "";
        _fareRule._airlineCodeList.clear();
        _fareRule._classCodeList.clear(); 
+       _fareRule._itSeconds = 0; 
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -362,8 +363,8 @@ namespace SIMFQT {
                                 boost::spirit::qi::unused_type,
                                 boost::spirit::qi::unused_type) const {
 
-      // Generation of the fare rule object.
       STDAIR_LOG_DEBUG ("Do End");
+      // Generation of the fare rule object.
       FareRuleGenerator::createFareRule (_bomRoot, _fareRule);
     }  
 
@@ -454,11 +455,11 @@ namespace SIMFQT {
       
       timeRangeEnd = time[storeEndRangeTime(_fareRule)];
 
-      time = bsq::lexeme
+      time =  bsq::lexeme
         [hour_p[boost::phoenix::ref(_fareRule._itHours) = bsq::labels::_1]
-         >> ':'
-         >> minute_p[boost::phoenix::ref(_fareRule._itMinutes) = bsq::labels::_1]
-         >> !(':' >> (second_p)[boost::phoenix::ref(_fareRule._itSeconds) = bsq::labels::_1]) ];
+        >> ':'
+        >> minute_p[boost::phoenix::ref(_fareRule._itMinutes) = bsq::labels::_1]      
+        >> - (':' >> second_p[boost::phoenix::ref(_fareRule._itSeconds) = bsq::labels::_1]) ];
       
       position = bsq::repeat(3)[bsa::char_("A-Z")][storePOS(_fareRule)];
             

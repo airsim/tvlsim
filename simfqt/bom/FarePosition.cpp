@@ -1,0 +1,30 @@
+// //////////////////////////////////////////////////////////////////////
+// Import section
+// //////////////////////////////////////////////////////////////////////
+// STL
+#include <cassert>
+#include <sstream>
+// StdAir
+#include <stdair/basic/BasConst_General.hpp>
+#include <stdair/service/Logger.hpp>
+// SIMFQT
+#include <simfqt/bom/FarePosition.hpp>
+
+namespace SIMFQT {
+
+  // ////////////////////////////////////////////////////////////////////
+  FarePosition::FarePosition (const Key_T& iKey)
+    : _key (iKey), _parent (NULL)  {
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  FarePosition::~FarePosition () {
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  std::string FarePosition::toString() const {
+    std::ostringstream oStr;
+    oStr << describeKey();
+    return oStr.str();
+  }
+}

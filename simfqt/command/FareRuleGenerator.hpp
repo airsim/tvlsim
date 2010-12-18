@@ -36,7 +36,7 @@ namespace SIMFQT {
     /** Generate the fare objects corresponding to the given
         fareRule and add them to the given BomRoot. */
     static void createFareRule (stdair::BomRoot&,
-                                const FareRuleStruct&);
+                                FareRuleStruct&);
   };
 
 }

@@ -11,25 +11,23 @@
 namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
-  Price_T FareQuoter::
-  priceQuote (const FareQuoteID_T& iFareQuoteID,
-              const stdair::AirlineCode_T& iAirlineCode, const PartySize_T& iPartySize) {
-    Price_T oPrice = 0.0;
+  void FareQuoter::
+  priceQuote (stdair::TravelSolutionStruct& ioTravelSolution, 
+	      stdair::BomRoot& iBomRoot) {
 
-    try {
+    Price_T lPrice = 1000.0;
+    ioTravelSolution.setFare(lPrice);
+    try { 
 
       // DEBUG
-      STDAIR_LOG_DEBUG ("The price is " << oPrice
-                        << " EUR for the travel request for the airline "
-                        << iAirlineCode << " for " << iPartySize
-                        << " passengers.");
+      STDAIR_LOG_DEBUG ("The price is " << lPrice
+                        << " EUR for the travel request for the airline ");
     
     } catch (const std::exception& lStdError) {
       STDAIR_LOG_ERROR ("Error: " << lStdError.what());
       throw QuotingException();
     }
 
-    return oPrice;
   }
 
 }

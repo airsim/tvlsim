@@ -8,6 +8,7 @@
 #include <stdair/stdair_basic_types.hpp>
 // SimFQT
 #include <simfqt/SIMFQT_Types.hpp>
+#include <stdair/bom/TravelSolutionTypes.hpp>
 
 // Forward declarations.
 namespace stdair {
@@ -76,7 +77,6 @@ namespace SIMFQT {
     /** Default copy constructor. */
     SIMFQT_Service (const SIMFQT_Service&);
 
-
     /** Initialise the (SIMFQT) service context (i.e., the
         SIMFQT_ServiceContext object). */
     void initServiceContext ();
@@ -100,7 +100,14 @@ namespace SIMFQT {
         <br>The CSV file, describing the airline fares for the
         simulator, is parsed and the inventories are generated accordingly.
         @param const stdair::Filename_T& Filename of the input fare file. */
-    void init (const stdair::Filename_T& iFareInputFilename);
+    void init (const stdair::Filename_T& iFareInputFilename); 
+    
+    /** Calculate the fares corresponding to a given list of travel 
+	solutions.
+        <br>The stdair::Fare_T attribute of each travel solution of the list 
+	is calculated.
+        @param stdair::TravelSolutionList_T& List of travel solution. */
+    void getFares (stdair::TravelSolutionList_T&);
 
     /** Finalise. */
     void finalise ();

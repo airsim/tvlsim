@@ -23,16 +23,62 @@ namespace SIMFQT {
  
     /** Default constructor. */
     FareRuleStruct ();
-
+    
     /** Get the date from the staging details. */
     stdair::Date_T getDate() const;
 
     /** Get the time from the staging details. */
-    stdair::Duration_T getTime() const;
-    
+    stdair::Duration_T getTime() const;    
+
     /** Display of the structure. */
-    const std::string describe() const;
-    
+    const std::string describe() const;  
+
+    /** Get the size of the airline code list. */
+    const unsigned int getAirlineListSize () const {
+      return _airlineCodeList.size();
+    }
+
+    /** Get the size of the class code list. */
+    const unsigned int getClassCodeListSize () const {
+      return _classCodeList.size();
+    } 
+  
+    /** Get the first airline code. */
+    const stdair::AirlineCode_T& getFirstAirlineCode () const;
+
+    /** Initialise the internal iterators on airline code:
+	The current iterator is set on the first airline code,
+	the next iterator is set on the second one. */
+    void beginAirline ();
+
+    /** States whether or not the end of the (airline code)
+        list has been reached. */
+    bool hasNotReachedEndAirline () const;
+
+    /** Get the current element (airline code). */
+    stdair::AirlineCode_T getCurrentAirlineCode () const;
+
+    /** Iterate for one element (airline code): 
+        increment both internal iterators on Buckets. */
+    void iterateAirline ();
+
+    /** Initialise the internal iterators on class code:
+	The current iterator is set on the first class code,
+	the next iterator is set on the second one. */
+    void beginClassCode ();
+
+    /** States whether or not the end of the (class code)
+        list has been reached. */
+    bool hasNotReachedEndClassCode () const;
+
+    /** Get the current element (class code). */
+    stdair::ClassCode_T getCurrentClassCode () const;
+
+    /** Iterate for one element (classCode): 
+        increment both internal iterators on Buckets. */
+    void iterateClassCode ();
+
+  public:
     // ////////////////// Attributes /////////////////
     /** Staging Date. */
     stdair::year_t _itYear;
@@ -43,10 +89,12 @@ namespace SIMFQT {
     //long _itHours;
     stdair::hour_t _itHours;
     stdair::minute_t _itMinutes;
-    stdair::second_t _itSeconds;
+    stdair::second_t _itSeconds;   
 
-    
-    unsigned long int _nbOfAirlines;
+    /** Iterator for the current airline code list. */
+    stdair::AirlineCodeList_T::iterator _itCurrentAirlineCode;
+    /** Iterator for the current class code list. */
+    stdair::ClassCodeList_T::iterator _itCurrentClassCode;
     
     /** Fare ID. */
     SIMFQT::FareQuoteID_T _fareId;
@@ -70,7 +118,7 @@ namespace SIMFQT {
     stdair::Duration_T _timeRangeEnd;
     
      /** Point-of-sale. */
-    stdair::AirlineCode_T _pos;
+    stdair::CityCode_T _pos;
     
     /** Channel distribution. */
     stdair::ChannelLabel_T _channel;
@@ -101,6 +149,9 @@ namespace SIMFQT {
 
     /** Airline Code List*/
     stdair::AirlineCodeList_T _airlineCodeList;
+
+    /** Numbers of different Airline Codes*/
+    unsigned long int _nbOfAirlines;
     
     /** Class Code List*/
     stdair::ClassCodeList_T _classCodeList;

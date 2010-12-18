@@ -11,6 +11,7 @@
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
 // Simfqt
 #include <simfqt/basic/BasConst_SIMFQT_Service.hpp>
 #include <simfqt/factory/FacSimfqtServiceContext.hpp>
@@ -178,6 +179,32 @@ namespace SIMFQT {
 
     // Initialise the fare parser
     FareParser::fareRuleGeneration (iFareInputFilename, lBomRoot);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMFQT_Service::
+  getFares (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+
+    // Retrieve the Simfqt service context
+    assert (_simfqtServiceContext != NULL);
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
+      *_simfqtServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+    assert (lSTDAIR_Service_ptr != NULL);
+    
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // will be attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
+
+    // Initialise the fare parser  
+    for (stdair::TravelSolutionList_T::iterator itTravelSolution =
+           ioTravelSolutionList.begin();
+         itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
+      FareQuoter::priceQuote (*itTravelSolution, lBomRoot);
+    }
   }
   
 }
