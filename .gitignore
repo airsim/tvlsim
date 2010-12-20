@@ -8,6 +8,6 @@ config
 configure
 doc
 man
-dsim
+config.h.in*
 test
 
