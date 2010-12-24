@@ -250,6 +250,14 @@ int main (int argc, char* argv[]) {
                                         lOnDInputFilename,
                                         lFareInputFilename);
 
+  stdair::TravelSolutionList_T lTravelSolutionList;  
+  stdair::TravelSolutionStruct lTravelSolutionStruct;
+  lTravelSolutionList.push_back(lTravelSolutionStruct);  
+  // Get a fare
+  simcrsService.getFareQuote (lTravelSolutionList); 
+  // DEBUG
+  std::cout << "The price given by the fare quoter is: " << lTravelSolutionList .front().getFare() << " Euros" << std::endl; 
+
   // Make a booking
   //simcrsService.sell (lAirlineCode, lPartySize);
 

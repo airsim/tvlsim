@@ -310,7 +310,7 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
-  getFare (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+  getFareQuote (stdair::TravelSolutionList_T& ioTravelSolutionList) {
      
     if (_simcrsServiceContext == NULL) {
       throw NonInitialisedServiceException();
@@ -321,20 +321,25 @@ namespace SIMCRS {
     try {
       
       // Retrieve the CRS code
-      const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
+      const CRSCode_T& lCRSCode = 
+	lSIMCRS_ServiceContext.getCRSCode(); 
 
-      // // TODO: optimise this part.
-      // // Retrieve the map/list of AIRINV_Services
-      // const AIRINV_ServicePtr_Map_T& lAIRINV_ServiceMap =
-      //   lSIMCRS_ServiceContext.getAIRINV_ServiceMap ();
+      // Get a reference on the SIMFQT service handler
+      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =  
+	lSIMCRS_ServiceContext.getSIMFQT_Service();  
+      assert (lSIMFQT_Service_ptr != NULL);
       
       // // Delegate the action to the dedicated command
-      // stdair::BasChronometer lAvailabilityRetrievalChronometer;
-      // lAvailabilityRetrievalChronometer.start();
-      // DistributionManager::getAvailability (lAIRINV_ServiceMap,
-      //                                       lCRSCode, ioTravelSolutionList);
-      // // const double lAvailabilityRetrievalMeasure =
-      //   lAvailabilityRetrievalChronometer.elapsed();
+      stdair::BasChronometer lAvailabilityRetrievalChronometer;
+      lAvailabilityRetrievalChronometer.start();
+      lSIMFQT_Service_ptr->getFares (ioTravelSolutionList);
+
+      // DEBUG 
+      // const double lAvailabilityRetrievalMeasure =
+      //	lAvailabilityRetrievalChronometer.elapsed(); 
+      // STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
+      //                   << lTravelSolutionRetrievingMeasure << " - "
+      //                   << lSIMFQT_ServiceContext.display());   
             
     } catch (const std::exception& error) {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());

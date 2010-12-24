@@ -94,7 +94,7 @@ namespace SIMCRS {
     stdair::TravelSolutionList_T getTravelSolutions (const stdair::BookingRequestStruct&);
     
     /** Get the fare for each travel solution in the list.. */
-    void getFare (stdair::TravelSolutionList_T&);
+    void getFareQuote (stdair::TravelSolutionList_T&);
 
     /** Get the availability for each travel solution in the list.. */
     void getAvailability (stdair::TravelSolutionList_T&);
