@@ -92,7 +92,7 @@ namespace DSIM {
       ioSIMCRS_Service.getTravelSolutions (iBookingRequest);
     if (lTravelSolutionList.empty() == false) {
       // Get the fare quote for each travel solution.
-      ioSIMCRS_Service.getFare(lTravelSolutionList);
+      ioSIMCRS_Service.getFareQuote (lTravelSolutionList);
       
       // Get the availability for each travel solution.
       ioSIMCRS_Service.getAvailability (lTravelSolutionList);
