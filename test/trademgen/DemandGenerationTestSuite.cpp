@@ -12,6 +12,7 @@
 #include <stdair/service/Logger.hpp>
 // Trademgen
 #include <trademgen/TRADEMGEN_Service.hpp>
+#include <trademgen/config/trademgen-paths.hpp>
 // TraDemGen Test Suite
 #include <test/trademgen/DemandGenerationTestSuite.hpp>
 
@@ -23,14 +24,11 @@
 void DemandGenerationTestSuite::simpleEventGenerationHelper() {
 
   // Input file name
-  stdair::Filename_T lInputFilename ("../samples/demand01.csv");
+  stdair::Filename_T lInputFilename (STDAIR_SAMPLE_DIR "/demand01.csv");
 
   // Output log File
   std::string lLogFilename ("DemandGenerationTestSuite.log");
   
-  // Airline code
-  stdair::AirlineCode_T lAirlineCode ("BA");
-    
   // Set the log parameters
   std::ofstream logOutputFile;
   // open and clean the log outputfile
