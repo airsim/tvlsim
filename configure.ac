@@ -31,48 +31,43 @@ AC_SUBST(GENERIC_LIBRARY_VERSION)
 UPLOAD_COMMAND="ncftpput -v upload.sourceforge.net /incoming"
 AC_SUBST(UPLOAD_COMMAND)
 
+# Check for host and disable building a shared library in Windows
+AC_CANONICAL_HOST
+case $host in
+  *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*) 
+    AC_DISABLE_SHARED
+    AC_ENABLE_STATIC
+    ;;
+  *)  
+    AC_ENABLE_SHARED
+    AC_DISABLE_STATIC
+    ;;
+esac
+
 # Checks for programs
+save_CFLAGS="$CFLAGS"
 save_CXXFLAGS="$CXXFLAGS"
+save_FFLAGS="$FFLAGS"
 AC_PROG_CXX
 AC_PROG_CXXCPP
 CXXFLAGS="$save_CXXFLAGS"
+CFLAGS="$save_CFLAGS"
+FFLAGS="$save_FFLAGS"
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-# Check for host and disable building a shared library in Windows
-AC_CANONICAL_HOST
-case $host in
-  *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*) 
-#    AC_DISABLE_SHARED
-#    AC_ENABLE_STATIC
-    ;;
-  *)  
-#    AC_ENABLE_SHARED
-#    AC_DISABLE_STATIC
-    ;;
-esac
-
 # Set default language to C++
 AC_LANG([C++])
-
-# Check for debug switch
-AC_ARG_ENABLE(debug,
-              [AS_HELP_STRING([--enable-debug],
-                              [build additional debugging library])])
-test "x$enable_debug" != xyes && enable_debug=no
-AM_CONDITIONAL([ENABLE_DEBUG], [test "x$enable_debug" = xyes])
 
 # Check for exceptions switch
 AC_ARG_ENABLE(exceptions,
               [AS_HELP_STRING([--enable-exceptions],
-                              [enable exceptions handling mechanizm])],
-              [AC_DEFINE([DSIM_EXCEPTIONS], [1],
+                              [enable exceptions handling mechanism])],
+              [AC_DEFINE([TRADEMGEN_EXCEPTIONS], [1],
                          [Define if you want exceptions handling])])
-test "x$enable_exceptions" != xyes && enable_exceptions=no
-test "x$ax_cv_boost_date_time" != xno && enable_exceptions=yes
-
+test "x$enable_exceptions" != xno && enable_exceptions=yes
 
 # Check for info pages
 AC_ARG_ENABLE(info-doc, 
@@ -110,7 +105,6 @@ fi
 if test -z "${CXXFLAGS}"; then
    CXXFLAGS="-g -Wall"
 fi
-
 
 # -----------------------------------------------------------------------------
 # Support for ExtraCC (Extra-CruiseControl): http://sf.net/projects/extracc
@@ -180,7 +174,7 @@ AC_SUBST(MYSQL_LIBS)
 # --------------------------------------------------------------------
 # Support for SOCI http://soci.sourceforge.net
 # --------------------------------------------------------------------
-AX_SOCI
+AX_SOCI([3.0])
 AC_SUBST(SOCI_VERSION)
 AC_SUBST(SOCI_CFLAGS)
 AC_SUBST(SOCI_LIBS)
