@@ -1,12 +1,10 @@
-## test sub-directory
+## test sub-directory of the DSim project
 include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
 
 ##
-SUBDIRS = boost samples \
-	trademgen airsched airrac rmol airinv avlcal simfqt simcrs \
-	travelccm dsim
+SUBDIRS = boost trademgen simcrs travelccm dsim
 
 EXTRA_DIST =
 

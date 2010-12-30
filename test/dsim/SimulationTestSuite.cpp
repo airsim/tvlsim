@@ -12,6 +12,7 @@
 #include <dsim/DSIM_Service.hpp>
 // Dsim Test Suite
 #include <test/dsim/SimulationTestSuite.hpp>
+#include <dsim/config/dsim-paths.hpp>
 
 // //////////////////////////////////////////////////////////////////////
 // Test is based on ...
@@ -23,16 +24,16 @@ void SimulationTestSuite::simpleSimulationHelper() {
   try {
     
     // Schedule input file name
-    const std::string lScheduleInputFilename ("../samples/schedule01.csv");
+    const std::string lScheduleInputFilename (STDAIR_SAMPLE_DIR "/schedule01.csv");
     
     // O&D input file name
-    const std::string lODInputFilename ("../samples/ond01.csv");
+    const std::string lODInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
 
     // Demand input file name
-    const stdair::Filename_T lDemandInputFilename ("../samples/demand01.csv");
+    const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR "/demand01.csv");
 
     // Fare input file name
-    const stdair::Filename_T lFareInputFilename ("../samples/fare01.csv");
+    const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
     
     // Output log File
     const std::string lLogFilename ("SimulationTestSuite.log");

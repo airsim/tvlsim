@@ -15,6 +15,7 @@ all-local: dsim-paths.hpp
 dsim-paths.hpp: Makefile
 	@echo '#ifndef __DSIM_PATHS_HPP' > $@
 	@echo '#define __DSIM_PATHS_HPP' >> $@
+	@echo >> $@
 	@echo '#define PACKAGE "dsim"' >> $@
 	@echo '#define PACKAGE_NAME "DSIM"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
@@ -23,4 +24,7 @@ dsim-paths.hpp: Makefile
 	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
 	@echo '#define DATADIR "$(datadir)"' >> $@
 	@echo '#define DOCDIR "$(docdir)"' >> $@
+	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
+	@echo >> $@
 	@echo '#endif // __DSIM_PATHS_HPP' >> $@
+	@echo >> $@

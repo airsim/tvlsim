@@ -31,7 +31,7 @@ EXTRA_DIST =
 
 # Build in these directories:
 SUBDIRS = trademgen airsched airrac rmol airinv avlcal simfqt simcrs \
-	travelccm dsim $(HTML_DOC_DIR) $(TEST_DIR)
+	travelccm dsim samples $(HTML_DOC_DIR) $(TEST_DIR)
 
 
 # Configuration helpers
