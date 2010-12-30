@@ -27,6 +27,7 @@
 #include <trademgen/basic/RandomGenerationContext.hpp>
 #include <trademgen/basic/DictionaryManager.hpp>
 #include <trademgen/bom/BomManager.hpp>
+#include <trademgen/config/trademgen-paths.hpp>
 
 
 // //////// Type definitions ///////
@@ -38,7 +39,7 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_TRADEMGEN_DEFAULT_LOG_FILENAME ("trademgen.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_TRADEMGEN_DEFAULT_INPUT_FILENAME ("../../test/samples/demand01.csv");
+const std::string K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/demand01.csv");
 
 /** Default name and location for the (CSV) output file. */
 const std::string K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME ("request.csv");

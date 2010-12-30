@@ -14,6 +14,7 @@ all-local: trademgen-paths.hpp
 trademgen-paths.hpp: Makefile
 	@echo '#ifndef __@PACKAGE_NAME@_PATHS_HPP' > $@
 	@echo '#define __@PACKAGE_NAME@_PATHS_HPP' >> $@
+	@echo >> $@
 	@echo '#define PACKAGE "trademgen"' >> $@
 	@echo '#define PACKAGE_NAME "@PACKAGE_NAME@"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
@@ -22,5 +23,8 @@ trademgen-paths.hpp: Makefile
 	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
 	@echo '#define DATADIR "$(datadir)"' >> $@
 	@echo '#define DOCDIR "$(docdir)"' >> $@
+	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
+	@echo >> $@
 	@echo '#endif // __@PACKAGE_NAME@_PATHS_HPP' >> $@
+	@echo >> $@
 
