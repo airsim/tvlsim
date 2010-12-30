@@ -3,11 +3,14 @@ INSTALL
 Makefile.in
 aclocal.m4
 autom4te.cache
-batches
+batches/dsim
 config
 configure
 doc
 man
 config.h.in*
-test
+test/dsim/*.log
+test/dsim/*.xml
+test/trademgen/*.log
+test/trademgen/*.xml
 
