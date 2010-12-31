@@ -69,6 +69,13 @@ AC_ARG_ENABLE(exceptions,
                          [Define if you want exceptions handling])])
 test "x$enable_exceptions" != xno && enable_exceptions=yes
 
+# Set the data directory for DSim
+pkgdatadir="${datadir}/dsim"
+AC_SUBST(pkgdatadir)
+# Set the directory for data samples exported by DSim
+sampledir="${pkgdatadir}/samples"
+AC_SUBST(sampledir)
+
 # Check for info pages
 AC_ARG_ENABLE(info-doc, 
               [AS_HELP_STRING([--disable-info-doc],
@@ -137,8 +144,6 @@ AC_SUBST(MPIGEN_LIBS)
 
 # -----------------------------------------------------------
 # MPICH2: http://www.mcs.anl.gov/research/projects/mpich2
-# Note: Boost.MPI depends on MPICH2 by default, rather than 
-#       on OpenMPI
 # -----------------------------------------------------------
 #AX_MPICH2
 #AC_SUBST(MPIGEN_VERSION)
@@ -618,7 +623,7 @@ ${MPICH2_OUTPUT}
     o EXTRACC_CFLAGS ....... : ${EXTRACC_CFLAGS}
     o EXTRACC_LIBS ......... : ${EXTRACC_LIBS}
 
-  - CPPUNIT ................ :
+  - CppUnit ................ :
     o CPPUNIT_VERSION ...... : ${CPPUNIT_VERSION}
     o CPPUNIT_CFLAGS ....... : ${CPPUNIT_CFLAGS}
     o CPPUNIT_LIBS ......... : ${CPPUNIT_LIBS}
