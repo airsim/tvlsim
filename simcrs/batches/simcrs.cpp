@@ -12,6 +12,7 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/service/Logger.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Service.hpp>
 #include <simcrs/config/simcrs-paths.hpp>
@@ -21,19 +22,19 @@
 const std::string K_SIMCRS_DEFAULT_LOG_FILENAME ("simcrs.log");
 
 /** Default name and location for the (CSV) schedule input file. */
-const std::string K_SIMCRS_DEFAULT_SCHEDULE_INPUT_FILENAME ("../../test/samples/schedule01.csv");
+const std::string K_SIMCRS_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/schedule01.csv");
 
 /** Default name and location for the (CSV) O&D input file. */
-const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME ("../../test/samples/ond01.csv");
+const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
 
 /** Default name and location for the (CSV) fare input file. */
-const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME ("../../test/samples/fare01.csv");
+const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare01.csv");
     
 
 /** Default name and location for the Xapian database. */
 const std::string K_SIMCRS_DEFAULT_DB_USER ("dsim");
 const std::string K_SIMCRS_DEFAULT_DB_PASSWD ("dsim");
-const std::string K_SIMCRS_DEFAULT_DB_DBNAME ("dsim");
+const std::string K_SIMCRS_DEFAULT_DB_DBNAME ("sim_dsim");
 const std::string K_SIMCRS_DEFAULT_DB_HOST ("localhost");
 const std::string K_SIMCRS_DEFAULT_DB_PORT ("3306");
 
@@ -217,12 +218,6 @@ int main (int argc, char* argv[]) {
   // CRS code
   std::string lCRSCode ("1P");
     
-  // Airline code
-  // std::string lAirlineCode ("BA");
-    
-  // Number of passengers in the travelling group
-  // stdair::PartySize_T lPartySize = 5;
-    
   // Call the command-line option parser
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, lScheduleInputFilename, lOnDInputFilename,
@@ -250,16 +245,25 @@ int main (int argc, char* argv[]) {
                                         lOnDInputFilename,
                                         lFareInputFilename);
 
+  // Create an empty travel solution
+  // TODO: fill the travel solution from the input parameters
   stdair::TravelSolutionList_T lTravelSolutionList;  
-  stdair::TravelSolutionStruct lTravelSolutionStruct;
-  lTravelSolutionList.push_back(lTravelSolutionStruct);  
-  // Get a fare
+  stdair::TravelSolutionStruct lEmptyTS;
+  lTravelSolutionList.push_back (lEmptyTS);  
+
+  // Price the travel solution
   simcrsService.getFareQuote (lTravelSolutionList); 
+
   // DEBUG
-  std::cout << "The price given by the fare quoter is: " << lTravelSolutionList .front().getFare() << " Euros" << std::endl; 
+  const stdair::TravelSolutionStruct& lTravelSolution =
+    lTravelSolutionList.front();
+  STDAIR_LOG_DEBUG ("The price given by the fare quoter is: "
+                    << lTravelSolution.getFare() << " Euros");
 
   // Make a booking
-  //simcrsService.sell (lAirlineCode, lPartySize);
+  // const std::string lAirlineCode ("SV");
+  // const stdair::PartySize_T lPartySize = 5;
+  // simcrsService.sell (lAirlineCode, lPartySize);
 
   return 0;
 }
