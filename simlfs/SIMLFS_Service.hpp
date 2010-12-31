@@ -44,7 +44,7 @@ namespace SIMLFS {
         @param const stdair::BasDBParams& Parameters for the database access.
         @param const stdair::Filename_T& Filename of the input fare file. */
     SIMLFS_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                      const stdair::Filename_T& iFareInputFilename);
+                    const stdair::Filename_T& iFareInputFilename);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
@@ -55,7 +55,7 @@ namespace SIMLFS {
         @param const stdair::Date_T& Date for the beginning of analysis.
         @param const stdair::Filename_T& Filename of the input fare file. */
     SIMLFS_Service (const stdair::BasLogParams&,
-                      const stdair::Filename_T& iFareInputFilename);
+                    const stdair::Filename_T& iFareInputFilename);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
