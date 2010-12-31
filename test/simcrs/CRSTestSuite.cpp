@@ -8,8 +8,10 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/service/Logger.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Service.hpp>
+#include <simcrs/config/simcrs-paths.hpp>
 // SimCRS Test Suite
 #include <test/simcrs/CRSTestSuite.hpp>
 
@@ -20,56 +22,52 @@
 // //////////////////////////////////////////////////////////////////////
 void CRSTestSuite::simpleCRSHelper() {
 
-  try {
+  // CRS code
+  const std::string lCRSCode ("1P");
     
-    // CRS code
-    std::string lCRSCode ("1P");
-    
-    // Airline code
-    std::string lAirlineCode ("BA");
-    
-    // Number of passengers in the travelling group
-    // stdair::PartySize_T lPartySize = 5;
-    
-    // Output log File
-    std::string lLogFilename ("CRSTestSuite.log");
+  // Output log File
+  const std::string lLogFilename ("CRSTestSuite.log");
 
-    // Schedule input filename
-    std::string lScheduleFilename ("../samples/schedule01.csv");
+  // Schedule input filename
+  const std::string lScheduleFilename (STDAIR_SAMPLE_DIR "/schedule01.csv");
     
-    // O&D input filename
-    std::string lOnDFilename ("../samples/ond01.csv");
+  // O&D input filename
+  const std::string lOnDFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
     
-    // Fare input filename
-    std::string lFareFilename ("../samples/fare01.csv");
+  // Fare input filename
+  const std::string lFareFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
     
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // Open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
     
-    // Initialise the list of classes/buckets
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
-                                          lScheduleFilename, lOnDFilename,
-                                          lFareFilename);
+  // Initialise the list of classes/buckets
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
+                                        lScheduleFilename, lOnDFilename,
+                                        lFareFilename);
 
-    // Make a booking
-    //simcrsService.sell (lAirlineCode, lPartySize);
-    
-  } catch (const SIMCRS::RootException& otexp) {
-    std::cerr << "Standard exception: " << otexp.what() << std::endl;
-    return;
-    
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return;
-    
-  } catch (...) {
-    return;
-  }
-  
+  // Create an empty travel solution
+  // TODO: fill the travel solution from the input parameters
+  stdair::TravelSolutionList_T lTravelSolutionList;  
+  stdair::TravelSolutionStruct lEmptyTS;
+  lTravelSolutionList.push_back (lEmptyTS);  
+
+  // Price the travel solution
+  simcrsService.getFareQuote (lTravelSolutionList); 
+
+  // DEBUG
+  const stdair::TravelSolutionStruct& lTravelSolution =
+    lTravelSolutionList.front();
+  STDAIR_LOG_DEBUG ("The price given by the fare quoter is: "
+                    << lTravelSolution.getFare() << " Euros");
+
+  // Make a booking
+  // const std::string lAirlineCode ("SV");
+  // const stdair::PartySize_T lPartySize = 5;
+  // simcrsService.sell (lAirlineCode, lPartySize);
 }
 
 // //////////////////////////////////////////////////////////////////////
