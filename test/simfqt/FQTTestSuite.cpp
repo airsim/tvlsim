@@ -10,6 +10,7 @@
 #include <simfqt/SIMFQT_Service.hpp>
 // SimFQT Test Suite
 #include <test/simfqt/FQTTestSuite.hpp>
+#include <simfqt/config/simfqt-paths.hpp>
 
 // //////////////////////////////////////////////////////////////////////
 // Test is based on ...
@@ -18,39 +19,26 @@
 // //////////////////////////////////////////////////////////////////////
 void FQTTestSuite::simpleFQTHelper() {
 
-  try {
+  // Fare input file name
+  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
     
-    // Fare input file name
-    stdair::Filename_T lFareInputFilename ("../samples/fare01.csv");
-    
-    // Airline code
-    //std::string lAirlineCode ("SV");
-    
-    // Number of passengers in the travelling group
-    //SIMFQT::PartySize_T lPartySize = 5;
-    
-    // Output log File
-    std::string lLogFilename ("FQTTestSuite.log");
+  // Output log File
+  const std::string lLogFilename ("FQTTestSuite.log");
 
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // Open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
     
-    // Initialise the list of classes/buckets
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    SIMFQT::SIMFQT_Service simfqtService (lLogParams, lFareInputFilename);
+  // Initialise the list of classes/buckets
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  SIMFQT::SIMFQT_Service simfqtService (lLogParams, lFareInputFilename);
 
-    // Perform a price quotation
-    //simfqtService.priceQuote (lAirlineCode, lPartySize);
-    
-  } catch (const SIMFQT::RootException& otexp) {
-    std::cerr << "SimFQT exception: " << otexp.what() << std::endl;
-    
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-  }
+  // Perform a price quotation
+  // const std::string lAirlineCode ("SV");
+  // const STDAIR::PartySize_T lPartySize = 5;
+  // simfqtService.priceQuote (lAirlineCode, lPartySize);
 }
 
 // //////////////////////////////////////////////////////////////////////

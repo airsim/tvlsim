@@ -18,5 +18,6 @@ test/rmol/*_results.xml
 test/rmol/*_results.xml
 test/rmol/*_results.xml
 test/simcrs/*_results.xml
+test/simfqt/*_results.xml
 test/travelccm/*_results.xml
 
