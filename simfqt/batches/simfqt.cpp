@@ -16,6 +16,7 @@
 #include <stdair/service/Logger.hpp>
 // Simfqt
 #include <simfqt/SIMFQT_Service.hpp>
+#include <simfqt/config/simfqt-paths.hpp>
 
 // //////// Type definitions ///////
 typedef std::vector<std::string> WordList_T;
@@ -26,7 +27,7 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_SIMFQT_DEFAULT_LOG_FILENAME ("simfqt.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_SIMFQT_DEFAULT_FARE_INPUT_FILENAME ("../../test/samples/fare01.csv");
+const std::string K_SIMFQT_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare01.csv");
 
 /** Default query string. */
 const std::string K_SIMFQT_DEFAULT_QUERY_STRING ("my good old query");
