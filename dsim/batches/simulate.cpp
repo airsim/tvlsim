@@ -11,9 +11,10 @@
 #include <boost/tokenizer.hpp>
 #include <boost/program_options.hpp>
 // StdAir
-#include <stdair/STDAIR_Types.hpp>
+#include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
+#include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/config/dsim-paths.hpp>
@@ -298,9 +299,6 @@ int main (int argc, char* argv[]) {
   std::string lDBPort;
   std::string lDBDBName;
                        
-  // Airline code
-  stdair::AirlineCode_T lAirlineCode ("BA");
-    
   // Call the command-line option parser
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, lQuery, lDemandInputFilename,

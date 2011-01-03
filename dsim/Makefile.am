@@ -1,4 +1,4 @@
-# dsim
+# Top of the source directory for the DSim project
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/core/sources.mk
 
@@ -6,7 +6,7 @@ include $(srcdir)/core/sources.mk
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = basic bom factory command service config core
+SUBDIRS = basic bom factory command service config core batches
 
 EXTRA_DIST = config_msvc.h
 
