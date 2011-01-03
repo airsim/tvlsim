@@ -22,7 +22,7 @@ libdsim_la_LIBADD = \
 libdsim_la_LDFLAGS = \
 	$(BOOST_DATE_TIME_LIB) $(BOOST_PROGRAM_OPTIONS_LIB) \
 	$(BOOST_FILESYSTEM_LIB) $(STDAIR_LIBS) \
-	$(top_builddir)/simcrs/core/libsimcrs.la \ \
+	$(top_builddir)/simcrs/core/libsimcrs.la \
 	$(top_builddir)/trademgen/core/libtrademgen.la \
 	-version-info $(GENERIC_LIBRARY_VERSION)
 
