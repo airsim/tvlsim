@@ -45,7 +45,7 @@ const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
 /** Default name and location for the Xapian database. */
 const std::string K_DSIM_DEFAULT_DB_USER ("dsim");
 const std::string K_DSIM_DEFAULT_DB_PASSWD ("dsim");
-const std::string K_DSIM_DEFAULT_DB_DBNAME ("dsim");
+const std::string K_DSIM_DEFAULT_DB_DBNAME ("sim_dsim");
 const std::string K_DSIM_DEFAULT_DB_HOST ("localhost");
 const std::string K_DSIM_DEFAULT_DB_PORT ("3306");
 
