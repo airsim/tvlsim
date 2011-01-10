@@ -330,15 +330,15 @@ namespace SIMCRS {
       assert (lSIMFQT_Service_ptr != NULL);
       
       // // Delegate the action to the dedicated command
-      stdair::BasChronometer lAvailabilityRetrievalChronometer;
-      lAvailabilityRetrievalChronometer.start();
+      stdair::BasChronometer lFareQuoteRetrievalChronometer;
+      lFareQuoteRetrievalChronometer.start();
       lSIMFQT_Service_ptr->getFares (ioTravelSolutionList);
 
       // DEBUG 
-      // const double lAvailabilityRetrievalMeasure =
-      //	lAvailabilityRetrievalChronometer.elapsed(); 
+      // const double lFareQuoteRetrievalMeasure =
+      //	lFareQuoteRetrievalChronometer.elapsed(); 
       // STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
-      //                   << lTravelSolutionRetrievingMeasure << " - "
+      //                   << lFareQuoteRetrievingMeasure << " - "
       //                   << lSIMFQT_ServiceContext.display());   
             
     } catch (const std::exception& error) {
