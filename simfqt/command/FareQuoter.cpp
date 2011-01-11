@@ -58,7 +58,7 @@ namespace SIMFQT {
 	std::string lFirstSegmentDateKey = lSegmentDateKeyList.front(); 
 
 	// Parse the first segment-date key into a vector of strings.  
-	std::vector<std::string> lResultParsing;
+	std::vector<std::string> lResultParsing(4, " ");
 	const bool hasParsingBeenSuccesful = 
 	  parseSegmentDateKey(lFirstSegmentDateKey.begin(), 
 			      lFirstSegmentDateKey.end(),
