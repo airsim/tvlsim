@@ -53,36 +53,38 @@ namespace SIMFQT {
       stdair::KeyList_T lSegmentDateKeyList = 
 	ioTravelSolution.getSegmentDateKeyList();
 
-      // Get the first segment-date key of the traval solution. 
-      std::string lFirstSegmentDateKey = lSegmentDateKeyList.front(); 
+      if (!lSegmentDateKeyList.empty()) { 
+	// Get the first segment-date key of the traval solution. 
+	std::string lFirstSegmentDateKey = lSegmentDateKeyList.front(); 
 
-      // Parse the first segment-date key into a vector of strings.  
-      std::vector<std::string> lResultParsing;
-      const bool hasParsingBeenSuccesful = 
-	parseSegmentDateKey(lFirstSegmentDateKey.begin(), 
-			    lFirstSegmentDateKey.end(),
-			    lResultParsing);
+	// Parse the first segment-date key into a vector of strings.  
+	std::vector<std::string> lResultParsing;
+	const bool hasParsingBeenSuccesful = 
+	  parseSegmentDateKey(lFirstSegmentDateKey.begin(), 
+			      lFirstSegmentDateKey.end(),
+			      lResultParsing);
 
-      if (hasParsingBeenSuccesful) {  
+	if (hasParsingBeenSuccesful) {  
 
-	// Get the Airport pair string of the travel solution.
-	std::ostringstream lAirportPairStr; 
-	lAirportPairStr << lResultParsing.back() << std::endl; 
+	  // Get the Airport pair string of the travel solution.
+	  std::ostringstream lAirportPairStr; 
+	  lAirportPairStr << lResultParsing.back() << std::endl; 
 
-	// Search for the fare rules having the same origin and destination 
-	// airport as the travel solution
-	const AirportPair* lAirportPair_ptr = stdair::BomManager::
-	  getObjectPtr<AirportPair> (iBomRoot, lAirportPairStr.str());  
-	assert (lAirportPair_ptr != NULL); 
+	  // Search for the fare rules having the same origin and destination 
+	  // airport as the travel solution
+	  const AirportPair* lAirportPair_ptr = stdair::BomManager::
+	    getObjectPtr<AirportPair> (iBomRoot, lAirportPairStr.str());  
+	  assert (lAirportPair_ptr != NULL); 
 
-	// Set a random price (for now) to the traval solution.
-	Price_T lPrice  = 600.0;
-	ioTravelSolution.setFare(lPrice);     
+	  // Set a random price (for now) to the traval solution.
+	  Price_T lPrice  = 600.0;
+	  ioTravelSolution.setFare(lPrice);     
 	
-	// DEBUG
-	STDAIR_LOG_DEBUG ("The price is " << lPrice
-			  << " EUR for the travel request for the airline "
-			  << lResultParsing.front());
+	  // DEBUG
+	  STDAIR_LOG_DEBUG ("The price is " << lPrice
+			    << " EUR for the travel request for the airline "
+			    << lResultParsing.front());
+	}
 
       }
      
