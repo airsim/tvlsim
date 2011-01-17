@@ -88,11 +88,12 @@ namespace DSIM {
                       const stdair::BookingRequestStruct& iBookingRequest) {
     // Retrieve a list of travel solutions corresponding the given
     // booking request.
-    stdair::TravelSolutionList_T lTravelSolutionList =
-      ioSIMCRS_Service.getTravelSolutions (iBookingRequest);
-    if (lTravelSolutionList.empty() == false) {
+    stdair::SegmentPathList_T lSegmentPathList =
+      ioSIMCRS_Service.getSegmentPathList (iBookingRequest);
+    if (lSegmentPathList.empty() == false) {
       // Get the fare quote for each travel solution.
-      ioSIMCRS_Service.getFareQuote (lTravelSolutionList);
+      stdair::TravelSolutionList_T lTravelSolutionList = 
+	ioSIMCRS_Service.getFareQuote (iBookingRequest, lSegmentPathList);
       
       // Get the availability for each travel solution.
       ioSIMCRS_Service.getAvailability (lTravelSolutionList);
