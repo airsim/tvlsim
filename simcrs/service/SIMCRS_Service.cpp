@@ -269,8 +269,8 @@ namespace SIMCRS {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::TravelSolutionList_T SIMCRS_Service::
-  getTravelSolutions (const stdair::BookingRequestStruct& iBookingRequest) {
+  stdair::SegmentPathList_T SIMCRS_Service::
+  getSegmentPathList (const stdair::BookingRequestStruct& iBookingRequest) {
      
     if (_simcrsServiceContext == NULL) {
       throw NonInitialisedServiceException();
@@ -278,7 +278,7 @@ namespace SIMCRS {
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
 
-    stdair::TravelSolutionList_T oTravelSolutionList;
+    stdair::SegmentPathList_T oSegmentPathList;
     
     try {
       
@@ -288,16 +288,16 @@ namespace SIMCRS {
       assert (lAIRSCHED_Service_ptr != NULL);
             
       // Delegate the booking to the dedicated service
-      stdair::BasChronometer lTravelSolutionRetrievingChronometer;
-      lTravelSolutionRetrievingChronometer.start();
-      lAIRSCHED_Service_ptr->getTravelSolutions (oTravelSolutionList,
-                                                 iBookingRequest);
+      stdair::BasChronometer lSegmentPathRetrievingChronometer;
+      lSegmentPathRetrievingChronometer.start();
+      lAIRSCHED_Service_ptr->buildSegmentPathList (oSegmentPathList,
+						   iBookingRequest);
       
       // DEBUG 
-      // const double lTravelSolutionRetrievingMeasure =
-      //  lTravelSolutionRetrievingChronometer.elapsed();
+      // const double lSegmentPathRetrievingMeasure =
+      //  lSegmentPathRetrievingChronometer.elapsed();
       // STDAIR_LOG_DEBUG ("Travel solution retrieving: "
-      //                   << lTravelSolutionRetrievingMeasure << " - "
+      //                   << lSegmentPathRetrievingMeasure << " - "
       //                   << lSIMCRS_ServiceContext.display());
 
     } catch (const std::exception& error) {
@@ -305,18 +305,21 @@ namespace SIMCRS {
       throw BookingException();
     }
 
-    return oTravelSolutionList;
+    return oSegmentPathList;
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
-  getFareQuote (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+  stdair::TravelSolutionList_T SIMCRS_Service::
+  getFareQuote (const stdair::BookingRequestStruct& iBookingRequest,
+                const stdair::SegmentPathList_T& iSegmentPathList) {
      
     if (_simcrsServiceContext == NULL) {
       throw NonInitialisedServiceException();
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
+
+    stdair::TravelSolutionList_T oTravelSolutionList;
 
     try {
       
@@ -332,7 +335,8 @@ namespace SIMCRS {
       // // Delegate the action to the dedicated command
       stdair::BasChronometer lFareQuoteRetrievalChronometer;
       lFareQuoteRetrievalChronometer.start();
-      lSIMFQT_Service_ptr->getFares (ioTravelSolutionList);
+      lSIMFQT_Service_ptr->getFares (oTravelSolutionList, iBookingRequest,
+				     iSegmentPathList);
 
       // DEBUG 
       // const double lFareQuoteRetrievalMeasure =
@@ -345,6 +349,8 @@ namespace SIMCRS {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());
       throw AvailabilityRetrievalException();
     }    
+
+    return oTravelSolutionList;
   }
 
   // ////////////////////////////////////////////////////////////////////
