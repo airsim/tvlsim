@@ -15,6 +15,7 @@
 // Forward declarations
 namespace stdair {
   class BomRoot;
+  struct BookingRequestStruct;
 }
 
 namespace SIMFQT {
@@ -25,7 +26,10 @@ namespace SIMFQT {
   private:
 
     /** Quote (with a price) a travel request. */
-    static void priceQuote (stdair::TravelSolutionStruct&, stdair::BomRoot&);
+    static void priceQuote (const stdair::SegmentPath_T&,
+                            stdair::TravelSolutionList_T&,
+                            const stdair::BookingRequestStruct&,
+                            stdair::BomRoot&);
 
   private:
     /** Constructors. */

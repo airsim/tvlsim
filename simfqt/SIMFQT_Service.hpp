@@ -13,6 +13,7 @@
 // Forward declarations.
 namespace stdair {
   class STDAIR_Service;
+  struct BookingRequestStruct;
   struct BasLogParams;
   struct BasDBParams;
 }
@@ -32,7 +33,9 @@ namespace SIMFQT {
 	<br>The stdair::Fare_T attribute of each travel solution of the list 
 	is calculated.
 	@param stdair::TravelSolutionList_T& List of travel solution. */
-    void getFares (stdair::TravelSolutionList_T&);
+    void getFares (stdair::TravelSolutionList_T&,
+                   const stdair::BookingRequestStruct&,
+                   const stdair::SegmentPathList_T&);
 
   public:
     // ////////////////// Constructors and Destructors //////////////////    

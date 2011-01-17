@@ -8,6 +8,7 @@
 #include <stdair/basic/BasParserTypes.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/bom/key_types.hpp>
@@ -44,18 +45,16 @@ namespace SIMFQT {
   
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (stdair::TravelSolutionStruct& ioTravelSolution, 
-	      stdair::BomRoot& iBomRoot) {
-
+  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
+              stdair::TravelSolutionList_T& ioTravelSolutionList,
+              const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::BomRoot& iBomRoot) {
+    
     try {   
 
-      // Get the list of segment-date keys of the traval solution. 
-      stdair::KeyList_T lSegmentDateKeyList = 
-	ioTravelSolution.getSegmentDateKeyList();
-
-      if (!lSegmentDateKeyList.empty()) { 
+      if (!iSegmentPath.empty()) { 
 	// Get the first segment-date key of the traval solution. 
-	std::string lFirstSegmentDateKey = lSegmentDateKeyList.front(); 
+	std::string lFirstSegmentDateKey = iSegmentPath.front(); 
 
 	// Parse the first segment-date key into a vector of strings.  
 	std::vector<std::string> lResultParsing(4, " ");
@@ -78,7 +77,7 @@ namespace SIMFQT {
 
 	  // Set a random price (for now) to the traval solution.
 	  Price_T lPrice  = 600.0;
-	  ioTravelSolution.setFare(lPrice);     
+	  //ioTravelSolution.setFare(lPrice);     
 	
 	  // DEBUG
 	  STDAIR_LOG_DEBUG ("The price is " << lPrice
