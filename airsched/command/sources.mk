@@ -8,7 +8,7 @@ airsched_cmd_h_sources = \
 		$(top_srcdir)/airsched/command/SegmentPathGenerator.hpp \
 		$(top_srcdir)/airsched/command/InventoryGenerator.hpp \
 		$(top_srcdir)/airsched/command/OnDPeriodGenerator.hpp \
-		$(top_srcdir)/airsched/command/TravelSolutionProvider.hpp
+		$(top_srcdir)/airsched/command/SegmentPathProvider.hpp
 airsched_cmd_cc_sources = \
 		$(top_srcdir)/airsched/command/Simulator.cpp \
 		$(top_srcdir)/airsched/command/FileMgr.cpp \
@@ -19,4 +19,4 @@ airsched_cmd_cc_sources = \
 		$(top_srcdir)/airsched/command/OnDParserHelper.cpp \
 		$(top_srcdir)/airsched/command/InventoryGenerator.cpp \
 		$(top_srcdir)/airsched/command/OnDPeriodGenerator.cpp \
-		$(top_srcdir)/airsched/command/TravelSolutionProvider.cpp
+		$(top_srcdir)/airsched/command/SegmentPathProvider.cpp

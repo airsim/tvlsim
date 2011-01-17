@@ -20,7 +20,7 @@
 #include <airsched/command/ScheduleParser.hpp>
 #include <airsched/command/OnDParser.hpp>
 #include <airsched/command/SegmentPathGenerator.hpp>
-#include <airsched/command/TravelSolutionProvider.hpp>
+#include <airsched/command/SegmentPathProvider.hpp>
 #include <airsched/command/InventoryGenerator.hpp>
 #include <airsched/service/AIRSCHED_ServiceContext.hpp>
 #include <airsched/AIRSCHED_Service.hpp>
@@ -309,8 +309,8 @@ namespace AIRSCHED {
 
   // ////////////////////////////////////////////////////////////////////
   void AIRSCHED_Service::
-  getTravelSolutions (stdair::TravelSolutionList_T& ioTravelSolutionList,
-                      const stdair::BookingRequestStruct& iBookingRequest) {
+  buildSegmentPathList (stdair::SegmentPathList_T& ioSegmentPathList,
+			const stdair::BookingRequestStruct& iBookingRequest) {
     if (_airschedServiceContext == NULL) {
       throw NonInitialisedServiceException();
     }
@@ -324,8 +324,8 @@ namespace AIRSCHED {
     
     const stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
     
-    TravelSolutionProvider::getTravelSolutions (ioTravelSolutionList,
-                                                lBomRoot, iBookingRequest);
+    SegmentPathProvider::buildSegmentPathList (ioSegmentPathList,
+					       lBomRoot, iBookingRequest);
   }
 
 }
