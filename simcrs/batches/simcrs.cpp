@@ -12,6 +12,7 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Service.hpp>
@@ -245,14 +246,39 @@ int main (int argc, char* argv[]) {
                                         lOnDInputFilename,
                                         lFareInputFilename);
 
-  // Create an empty travel solution
-  // TODO: fill the travel solution from the input parameters
-  stdair::TravelSolutionList_T lTravelSolutionList;  
-  stdair::TravelSolutionStruct lEmptyTS;
-  lTravelSolutionList.push_back (lEmptyTS);  
-
+  // Create an empty booking request structure
+  // TODO: fill the booking request structure from the input parameters
+  const stdair::AirportCode_T lOrigin ("NCE");
+  const stdair::AirportCode_T lDestination ("BOS");
+  const stdair::AirportCode_T lPOS ("NYC");
+  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Jan, 20);
+  const stdair::Date_T lRequestDate (2011, boost::gregorian::Jan, 12);
+  const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
+  const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
+  const stdair::CabinCode_T lPreferredCabin ("Eco");
+  const stdair::NbOfSeats_T lPartySize (1);
+  const stdair::ChannelLabel_T lChannel ("D");
+  const stdair::TripType_T lTripType ("RI");
+  const stdair::DayDuration_T lStayDuration (7);
+  const stdair::FrequentFlyer_T lFrequentFlyerType ("M");
+  const stdair::Duration_T lPreferredDepartureTime (boost::posix_time::hours(10));
+  const stdair::WTP_T lWTP (1000.0);
+  const stdair::PriceValue_T lValueOfTime (100.0);
+  const stdair::BookingRequestStruct lBookingRequest (lOrigin, lDestination,
+                                                      lPOS,
+                                                      lPreferredDepartureDate,
+                                                      lRequestDateTime,
+                                                      lPreferredCabin,
+                                                      lPartySize, lChannel,
+                                                      lTripType, lStayDuration,
+                                                      lFrequentFlyerType,
+                                                      lPreferredDepartureTime,
+                                                      lWTP, lValueOfTime);
+  const stdair::SegmentPathList_T lSegmentPath;
+  
   // Price the travel solution
-  //simcrsService.getFareQuote (lTravelSolutionList); 
+  stdair::TravelSolutionList_T lTravelSolutionList =
+    simcrsService.getFareQuote (lBookingRequest, lSegmentPath);
 
   // DEBUG
   const stdair::TravelSolutionStruct& lTravelSolution =
