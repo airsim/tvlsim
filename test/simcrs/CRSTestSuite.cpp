@@ -56,7 +56,7 @@ void CRSTestSuite::simpleCRSHelper() {
   lTravelSolutionList.push_back (lEmptyTS);  
 
   // Price the travel solution
-  simcrsService.getFareQuote (lTravelSolutionList); 
+  //simcrsService.getFareQuote (lTravelSolutionList); 
 
   // DEBUG
   const stdair::TravelSolutionStruct& lTravelSolution =

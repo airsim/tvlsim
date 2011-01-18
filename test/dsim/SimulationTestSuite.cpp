@@ -53,7 +53,7 @@ void SimulationTestSuite::simpleSimulationHelper() {
                                     lFareInputFilename, lDemandInputFilename);
 
     // Perform a simulation
-    dsimService.simulate();
+    //dsimService.simulate();
 
   } catch (const DSIM::RootException& otexp) {
     std::cerr << "DSim exception: " << otexp.what() << std::endl;
