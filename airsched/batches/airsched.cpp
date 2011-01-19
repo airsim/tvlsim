@@ -20,7 +20,6 @@
 #include <airsched/batches/BookingRequestParser.hpp>
 #include <airsched/config/airsched-paths.hpp>
 
-
 // //////// Type definitions ///////
 typedef std::vector<std::string> WordList_T;
 
@@ -30,7 +29,7 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_AIRSCHED_DEFAULT_LOG_FILENAME ("airsched.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_AIRSCHED_DEFAULT_INPUT_FILENAME ("../../test/samples/schedule03.csv");
+const std::string K_AIRSCHED_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/schedule03.csv");
 
 /** Default for the input type. It can be either built-in or provided by an
     input file. That latter must then be given with the -i option. */
