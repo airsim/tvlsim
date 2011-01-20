@@ -11,8 +11,9 @@
 namespace AVLCAL {
 
   // //////////////////////////////////////////////////////////////////////
-  void AvailabilityCalculator::avlCalculate (const AirlineCode_T& iAirlineCode,
-                                             const PartySize_T& iPartySize) {
+  void AvailabilityCalculator::
+  avlCalculate (const stdair::AirlineCode_T& iAirlineCode,
+                const stdair::PartySize_T& iPartySize) {
 
     try {
 

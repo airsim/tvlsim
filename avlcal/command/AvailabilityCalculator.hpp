@@ -4,6 +4,8 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
 // Avlcal
 #include <avlcal/AVLCAL_Types.hpp>
 
@@ -15,7 +17,8 @@ namespace AVLCAL {
   private:
 
     /** Perform a seat availability calculation. */
-    static void avlCalculate (const AirlineCode_T&, const PartySize_T&);
+    static void avlCalculate (const stdair::AirlineCode_T&,
+                              const stdair::PartySize_T&);
 
   private:
     /** Constructors. */

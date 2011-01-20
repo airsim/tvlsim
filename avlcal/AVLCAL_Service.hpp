@@ -21,7 +21,7 @@ namespace AVLCAL {
   public:
     // /////////// Business Methods /////////////
     /** Perform a seat availability calculation. */
-    void avlCalculate (const PartySize_T&);
+    void avlCalculate (const stdair::PartySize_T&);
 
     
     // ////////// Constructors and destructors //////////
@@ -32,7 +32,7 @@ namespace AVLCAL {
         that log outputs can be directed onto that stream.       
         @param const stdair::BasLogParams& Parameters for the output log stream.
         @param AirlineCode_T& Code of the owner airline. */
-    AVLCAL_Service (const stdair::BasLogParams&, const AirlineCode_T&);
+    AVLCAL_Service (const stdair::BasLogParams&, const stdair::AirlineCode_T&);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
@@ -44,7 +44,7 @@ namespace AVLCAL {
         is itself being initialised by another library service such as
         SIMCRS_Service).
         @param AirlineCode_T& Code of the owner airline. */
-    AVLCAL_Service (const AirlineCode_T&);
+    AVLCAL_Service (const stdair::AirlineCode_T&);
 
     /** Destructor. */
     ~AVLCAL_Service();
