@@ -7,54 +7,19 @@
 // STL
 #include <exception>
 #include <string>
+// StdAir
+#include <stdair/stdair_exceptions.hpp>
 
 namespace SIMCRS {
 
   // ///////// Exceptions ///////////
-  class RootException : public std::exception {
+  class BookingException : public stdair::RootException {
   };
 
-  class FileNotFoundException : public RootException {
-  };
-  
-  class NonInitialisedServiceException : public RootException {
+  class AvailabilityRetrievalException : public stdair::RootException {
   };
 
-  class MemoryAllocationException : public RootException {
-  };
-
-  class ObjectNotFoundException : public RootException {
-  };
-
-  class SQLDatabaseException : public RootException {
-  };
-
-  class SQLDatabaseConnectionImpossibleException : public SQLDatabaseException {
-  };
-
-  class BookingException : public RootException {
-  };
-
-  class AvailabilityRetrievalException : public RootException {
-  };
-
-
-  // /////////////// Log /////////////
-  /** Level of logs. */
-  namespace LOG {
-    typedef enum {
-      CRITICAL = 0,
-      ERROR,
-      NOTIFICATION,
-      WARNING,
-      DEBUG,
-      VERBOSE,
-      LAST_VALUE
-    } EN_LogLevel;
-  }
-
-
-  // //////// Type definitions /////////
+  // //////// Type definitions specific to SimCRS /////////
   /** CRS code. */
   typedef std::string CRSCode_T;
   
