@@ -12,7 +12,7 @@
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/bom/key_types.hpp>
-// SIMFQT
+// SimFQT
 #include <simfqt/command/FareQuoter.hpp>
 #include <simfqt/bom/AirportPair.hpp>
 
@@ -76,7 +76,7 @@ namespace SIMFQT {
 	  assert (lAirportPair_ptr != NULL); 
 
 	  // Set a random price (for now) to the traval solution.
-	  Price_T lPrice  = 600.0;
+      stdair::PriceValue_T lPrice  = 600.0;
 	  //ioTravelSolution.setFare(lPrice);     
 	
 	  // DEBUG
