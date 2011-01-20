@@ -4,7 +4,9 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// Simlfs
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
+// SimLFS
 #include <simlfs/SIMLFS_Types.hpp>
 
 namespace SIMLFS {
@@ -15,8 +17,8 @@ namespace SIMLFS {
   private:
 
     /** Quote (with a price) a travel request. */
-    static Price_T priceQuote (const FareQuoteID_T&,
-                               const AirlineCode_T&, const PartySize_T&);
+    static stdair::PriceValue_T priceQuote (const stdair::AirlineCode_T&,
+                                            const stdair::PartySize_T&);
 
   private:
     /** Constructors. */

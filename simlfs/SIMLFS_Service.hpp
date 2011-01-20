@@ -29,7 +29,8 @@ namespace SIMLFS {
   public:
     // /////////// Business Methods /////////////
     /** Perform a price quotation for the travel request. */
-    Price_T priceQuote (const AirlineCode_T&, const PartySize_T&);
+    stdair::PriceValue_T priceQuote (const stdair::AirlineCode_T&,
+                                     const stdair::PartySize_T&);
 
     
     // ////////////////// Constructors and Destructors //////////////////    
