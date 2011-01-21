@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////////////////
-#ifndef __SIMFQT_BOM_FARERULETYPES_HPP
-#define __SIMFQT_BOM_FARERULETYPES_HPP
+#ifndef __SIMFQT_BOM_FARERULEFEATURESTYPES_HPP
+#define __SIMFQT_BOM_FARERULEFEATURESTYPES_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -14,16 +14,16 @@
 namespace SIMFQT {
 
   // Forward declarations.
-  class FareRule;
+  class FareRuleFeatures;
   
   /** Define the fare-rule list. */
-  typedef std::list<FareRule*> FareRuleList_T;
+  typedef std::list<FareRuleFeatures*> FareRuleFeaturesList_T;
 
   /** Define the fare-rule map. */
-  typedef std::map<const stdair::MapKey_T, FareRule*> FareRuleMap_T;
+  typedef std::map<const stdair::MapKey_T, FareRuleFeatures*> FareRuleFeaturesMap_T;
 
   /** Define the list of pair<MapKey_T, FareRule>. */
-  typedef std::pair<stdair::MapKey_T, FareRule*> FareRuleWithKey_T;
-  typedef std::list<FareRuleWithKey_T> FareRuleDetailedList_T;
+  typedef std::pair<stdair::MapKey_T, FareRuleFeatures*> FareRuleFeaturesWithKey_T;
+  typedef std::list<FareRuleFeaturesWithKey_T> FareRuleFeaturesDetailedList_T;
 }
-#endif // __SIMFQT_BOM_FARERULETYPES_HPP
+#endif // __SIMFQT_BOM_FARERULEFEATURESTYPES_HPP
