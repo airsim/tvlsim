@@ -27,5 +27,19 @@ namespace SIMFQT {
     oStr << describeKey();
     return oStr.str();
   }
+  
+  // ////////////////////////////////////////////////////////////////////
+  bool FareDatePeriod::
+  isDepartureDateValid (const stdair::Date_T& iFlightDate) const {
+
+    // Check if the departure date is within the date range.
+    const stdair::DatePeriod_T& lPeriod = getDatePeriod ();
+    if (lPeriod.contains (iFlightDate) == false) {
+      return false;
+    }
+
+    return true;
+  }
+  
 }
 

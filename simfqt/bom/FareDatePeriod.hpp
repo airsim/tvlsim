@@ -52,6 +52,12 @@ namespace SIMFQT {
     }
     stdair::BomAbstract* const getParent() const { return _parent; }
     const  stdair::HolderMap_T& getHolderMap() const { return _holderMap; }
+
+  public:
+    // ////////////// Business methods ///////////////
+    /** Check if the given departure date is included in the departure period
+        of the segment path. */
+    bool isDepartureDateValid (const stdair::Date_T&) const;
     
   protected:
     /** Default constructors. */
