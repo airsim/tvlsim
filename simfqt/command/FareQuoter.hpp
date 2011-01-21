@@ -29,7 +29,8 @@ namespace SIMFQT {
     static void priceQuote (const stdair::SegmentPath_T&,
                             stdair::TravelSolutionList_T&,
                             const stdair::BookingRequestStruct&,
-                            stdair::BomRoot&);
+                            const stdair::BomRoot&);
+
 
   private:
     /** Constructors. */

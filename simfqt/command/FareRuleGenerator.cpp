@@ -111,9 +111,10 @@ namespace SIMFQT {
     const stdair::Fare_T& lFare = 
       iFareRuleStruct._fare; 
     const FareRuleFeaturesKey lFareRuleFeaturesKey (lTimeRangeStart, lTimeRangeEnd,
-						    lAdvancePurchase, lSaturdayStay,
-						    lChangeFees, lNonRefundable,
-						    lMinimumStay, lFare);  
+						    lChannel, lAdvancePurchase,
+                                                    lSaturdayStay, lChangeFees,
+                                                    lNonRefundable, lMinimumStay,
+                                                    lFare);  
 
     // Create ther fare rule object and link it to the FareDatePeriod object.  
     FareRuleFeatures* lFareRuleFeatures_ptr = stdair::BomManager::
@@ -148,12 +149,13 @@ namespace SIMFQT {
       const SegmentFeaturesKey lSegmentFeaturesKey (lAirlineCode, lClassCode); 
         
       SegmentFeatures* lSegmentFeatures_ptr =
-         &stdair::FacBom<SegmentFeatures>::instance().create (lSegmentFeaturesKey); 
+         &stdair::FacBom<SegmentFeatures>::instance().create (lSegmentFeaturesKey);
+      stdair::FacBomManager::
+	instance().addToListAndMap (*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
       stdair::FacBomManager::
 	instance().linkWithParent(*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
       }
- 
-    //const stdair::ChannelLabel_T& lChannel = iFareRuleStruct._channel;
+
   }
         
 }
