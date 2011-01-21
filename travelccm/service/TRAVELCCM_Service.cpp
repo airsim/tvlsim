@@ -231,26 +231,30 @@ namespace TRAVELCCM {
     // add travel solutions to the travelsolution holder
     // AF404, NCE-LHR, 01-JUN-09 12:00 -> 14:00 (02:00), Eco
     addTravelSolution ("NCE","LHR", stdair::Date_T(2009,05,1),
-                       Duration_T(12,00,00),
-                       Duration_T(14,00,00), Duration_T(02,00,00), false,
+                       stdair::Duration_T(12,00,00),
+                       stdair::Duration_T(14,00,00),
+                       stdair::Duration_T(02,00,00), false,
                        "AF", "ECO", 404, 200, 0, false, false, "T1");
     
     // AF404, NCE-LHR, 01-JUN-09 12:00 -> 14:00 (02:00), Eco
     addTravelSolution ("NCE","LHR", stdair::Date_T(2009,05,1),
-                       Duration_T(12,00,00),
-                       Duration_T(14,00,00), Duration_T(02,00,00), true, "AF",
+                       stdair::Duration_T(12,00,00),
+                       stdair::Duration_T(14,00,00),
+                       stdair::Duration_T(02,00,00), true, "AF",
                        "ECO", 404, 200, 0, false, false, "T2");
     
     // BA404, NCE-LHR, 01-JUN-09 12:00 -> 14:00 (02:00), Eco
     addTravelSolution ("NCE","LHR", stdair::Date_T(2009,06,1),
-                       Duration_T(12,00,00),
-                       Duration_T(14,00,00), Duration_T(02,00,00), false, "BA",
+                       stdair::Duration_T(12,00,00),
+                       stdair::Duration_T(14,00,00),
+                       stdair::Duration_T(02,00,00), false, "BA",
                        "ECO", 404, 200, 0, true, false, "T3");
     
     // BA404, NCE-LHR, 01-JUN-09 12:00 -> 14:00 (02:00), Eco
     addTravelSolution ("NCE","LHR", stdair::Date_T(2009,06,1),
-                       Duration_T(12,00,00),
-                       Duration_T(14,00,00), Duration_T(02,00,00), true, "BA",
+                       stdair::Duration_T(12,00,00),
+                       stdair::Duration_T(14,00,00),
+                       stdair::Duration_T(02,00,00), true, "BA",
                        "ECO", 404, 200, 0, true, false, "T4");
 
     _travelccmServiceContext->createPassenger (stdair::PassengerType::LEISURE);
@@ -258,8 +262,8 @@ namespace TRAVELCCM {
 
     /** Add a request for the passenger */
     stdair::Date_T date(2009, 6, 1);
-    Duration_T duration(8, 30, 0);
-    DateTime_T dateTime(date, duration);
+    stdair::Duration_T duration(8, 30, 0);
+    stdair::DateTime_T dateTime(date, duration);
     addRequest (false, true, false, "NONE", "NONE", dateTime);
 
     /** Add the restrictions stem from the previous request */
@@ -291,7 +295,8 @@ namespace TRAVELCCM {
     // Call the underlying Use Case (command)
     stdair::BasChronometer lSimulateChronometer;
     lSimulateChronometer.start();
-    const bool isNotVoid = Simulator::simulate (passenger, travelSolutionHolder);
+    const bool isNotVoid =
+      Simulator::simulate (passenger, travelSolutionHolder);
 
     const double lSimulateMeasure = lSimulateChronometer.elapsed();
     

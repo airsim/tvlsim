@@ -41,12 +41,12 @@ namespace TRAVELCCM {
 
     /** Another method to return if the date time given in argument is in the \
         departure window - given in argument too - of the customer */
-    static bool isBetweenDateTheDepartureWindow (DateTime_T iDateTime,
-                                          DateTimePair_T iDateTimePair);
+    static bool isBetweenDateTheDepartureWindow (stdair::DateTime_T iDateTime,
+                                                 DateTimePair_T iDateTimePair);
 
     /** get the duration pair corresponding to a given duration put in
         argument */
-    const DurationPair_T getDurationPair(const Duration_T&) const;
+    const DurationPair_T getDurationPair (const stdair::Duration_T&) const;
 
     // ////////// Business methods /////////
   private:

@@ -105,10 +105,10 @@ namespace TRAVELCCM {
   void TRAVELCCM_ServiceContext::
   addTravelSolution (const std::string& iDepartureAirport,
                      const std::string& iArrivalAirport,
-                     const Date_T& iDepartureDate,
-                     const Duration_T& iDepartureTime,
-                     const Duration_T& iArrivalTime,
-                     const Duration_T& iDuration,
+                     const stdair::Date_T& iDepartureDate,
+                     const stdair::Duration_T& iDepartureTime,
+                     const stdair::Duration_T& iArrivalTime,
+                     const stdair::Duration_T& iDuration,
                      const bool iRefundability,
                      const std::string& iAirlineCode,
                      const std::string& iCabinCode,
@@ -153,7 +153,7 @@ namespace TRAVELCCM {
   // //////////////////////////////////////////////////////////////////////
   void TRAVELCCM_ServiceContext::
   addRestriction (const std::string& iRestrictionType,
-                  const DateTime_T iDepartureTime) {
+                  const stdair::DateTime_T iDepartureTime) {
     Restriction& aRestriction =
       FacRestriction::instance().create (iRestrictionType, iDepartureTime);
     
@@ -165,7 +165,8 @@ namespace TRAVELCCM {
   void TRAVELCCM_ServiceContext::
   addAndLinkRequest (bool refundability, bool changeability,
                      bool saturdayNightStay, std::string preferredAirline,
-                     std::string preferredCabin, DateTime_T departureTime) {
+                     std::string preferredCabin,
+                     stdair::DateTime_T departureTime) {
     Request& aRequest =
       FacRequest::instance().create(refundability, changeability,
                                     saturdayNightStay, preferredAirline,
@@ -248,7 +249,7 @@ namespace TRAVELCCM {
     const bool saturdayNightStay = request.getSaturdayNightStay();
     const std::string& preferredAirline = request.getPreferredAirline();
     const std::string& preferredCabin = request.getPreferredCabin();
-    const DateTime_T& departureTime = request.getDepartureTime();
+    const stdair::DateTime_T& departureTime = request.getDepartureTime();
 
     if (passengerType.getType() == stdair::PassengerType::BUSINESS) {
       // there is always a departure time request so we always add a time

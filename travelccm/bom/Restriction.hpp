@@ -6,7 +6,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// TRAVELCCM 
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
+// TravelCCM 
 #include <travelccm/bom/BomAbstract.hpp>
 #include <travelccm/TRAVELCCM_Types.hpp>
 
@@ -59,7 +61,7 @@ namespace TRAVELCCM {
 
     /** Get the preferred date time of the restriction -for the departure
      or the arrival; not decided yet*/
-    const DateTime_T getPreferredDateTime() const;
+    const stdair::DateTime_T getPreferredDateTime() const;
     
     /* return if the travel solution put in argument meets the current
        restriction */
@@ -83,7 +85,7 @@ namespace TRAVELCCM {
     
     /** Constructor used for the construction of "time" restrictions. */
     Restriction (const std::string& iRestrictionType,
-                 const DateTime_T& iDateTime);
+                 const stdair::DateTime_T& iDateTime);
 
     /** Destructor. */
     virtual ~Restriction();
@@ -96,14 +98,14 @@ namespace TRAVELCCM {
     std::string _restrictionType;
     
     /** Field used only if the restriction is of type preferredAirline. */
-    std::string _preferredAirline;
+    stdair::AirlineCode_T _preferredAirline;
     
     /** Field used only if the restriction is of type preferredCabin. */
     std::string _preferredCabin;
     
     /** Field used only if the restriction is of type timePreference.
         Define an accurate time (date +time). */
-    DateTime_T _preferredDepartureTime; //could be arrival too...
+    stdair::DateTime_T _preferredDepartureTime; //could be arrival too...
   };
 
 }

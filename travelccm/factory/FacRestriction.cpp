@@ -71,7 +71,7 @@ namespace TRAVELCCM {
 
    // ////////////////////////////////////////////////////////////////////
   Restriction& FacRestriction::create (std::string restrictionType,
-                                       DateTime_T departureTime) {
+                                       stdair::DateTime_T departureTime) {
     Restriction* aRestriction_ptr = NULL;
 
     aRestriction_ptr = new Restriction (restrictionType, departureTime);
@@ -86,7 +86,7 @@ namespace TRAVELCCM {
   // /////////////////////////////////////////////////////////////////////
   void FacRestriction::
   addRestriction (RestrictionHolder& ioRestrictionHolder,
-                     Restriction& ioRestriction) {
+                  Restriction& ioRestriction) {
     ioRestrictionHolder.addRestriction(ioRestriction);
   }
   

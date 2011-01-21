@@ -1,26 +1,25 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// C
-#include <assert.h>
 // STL
-#include <iostream>
+#include <cassert>
+#include <sstream>
 #include <iomanip>
-// TRAVELCCM 
+// TravelCCM 
 #include <travelccm/bom/Request.hpp>
 
 namespace TRAVELCCM {
 
   // //////////////////////////////////////////////////////////////////////
   Request::Request (bool refundability, bool changeability,
-                    bool saturdayNightStay, std::string preferredAirline,
-                    std::string preferredCabin, DateTime_T departureTime) {
-    _refundability = refundability;
-    _changeability = changeability;
-    _saturdayNightStay = saturdayNightStay;
-    _preferredAirline = preferredAirline;
-    _preferredCabin = preferredCabin;
-    _departureTime = departureTime;
+                    bool saturdayNightStay,
+                    stdair::AirlineCode_T preferredAirline,
+                    stdair::CabinCode_T preferredCabin,
+                    stdair::DateTime_T departureTime)
+    : _refundability (refundability), _changeability (changeability),
+      _saturdayNightStay (saturdayNightStay),
+      _preferredAirline (preferredAirline), _preferredCabin (preferredCabin),
+      _departureTime (departureTime) {
   }
   
   // /////////////////////////////////////////////////////////////////////
@@ -85,7 +84,7 @@ namespace TRAVELCCM {
   }
 
   // ///////////////////////////////////////////////////////////////////////
-  const DateTime_T Request::getDepartureTime() const {
+  const stdair::DateTime_T Request::getDepartureTime() const {
     return _departureTime;
   }
 
@@ -115,4 +114,3 @@ namespace TRAVELCCM {
   }
 
 }
-

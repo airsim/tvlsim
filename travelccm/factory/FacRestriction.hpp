@@ -34,7 +34,7 @@ namespace TRAVELCCM {
     Restriction& create ();
     Restriction& create (std::string);
     Restriction& create (std::string, std::string);
-    Restriction& create (std::string, DateTime_T);
+    Restriction& create (std::string, stdair::DateTime_T);
 
     /* add a restriction in the list of restrictionHolder */
     void  addRestriction (RestrictionHolder& ioRestrictionHolder,

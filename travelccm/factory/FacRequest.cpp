@@ -47,7 +47,7 @@ namespace TRAVELCCM {
                                bool saturdayNightStay,
                                std::string preferredAirline,
                                std::string preferredCabin,
-                               DateTime_T departureTime) {
+                               stdair::DateTime_T departureTime) {
     Request* aRequest_ptr = NULL;
     
     aRequest_ptr = new Request (refundability, changeability, saturdayNightStay,

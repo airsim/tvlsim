@@ -59,15 +59,15 @@ namespace TRAVELCCM {
     /** all the get methods for the different fields */
     const std::string  getDepartureAirport() const;
     const std::string  getArrivalAirport() const;
-    const DateTime_T  getDepartureDateTime() const;
-    const Date_T  getDepartureDate() const;
-    const Duration_T getDepartureTime() const;
-    const Duration_T getArrivalTime() const;
-    const Duration_T getDuration() const;
+    const stdair::DateTime_T  getDepartureDateTime() const;
+    const stdair::Date_T  getDepartureDate() const;
+    const stdair::Duration_T getDepartureTime() const;
+    const stdair::Duration_T getArrivalTime() const;
+    const stdair::Duration_T getDuration() const;
     const bool getRefundable() const;
-    const std::string getAirlineName() const;
-    const std::string getCabin() const;
-    const int  getFlightNumber() const;
+    const stdair::AirlineCode_T getAirlineName() const;
+    const stdair::CabinCode_T getCabin() const;
+    const stdair::FlightNumber_T  getFlightNumber() const;
     const double getFare() const;
     const int  getNumberOfLags() const;
     const bool getSaturdayNightStay() const;
@@ -101,38 +101,38 @@ namespace TRAVELCCM {
     /** Default constructors. */
     TravelSolution ();
     TravelSolution (const TravelSolution&);
-    TravelSolution (const std::string& iDepartureAirport,
-                    const std::string& iArrivalAirport,
-                    const Date_T& iDepartureDate,
-                    const Duration_T& iDepartureTime,
-                    const Duration_T& iArrivalTime,
-                    const Duration_T& iDuration,
+    TravelSolution (const stdair::AirportCode_T& iDepartureAirport,
+                    const stdair::AirportCode_T& iArrivalAirport,
+                    const stdair::Date_T& iDepartureDate,
+                    const stdair::Duration_T& iDepartureTime,
+                    const stdair::Duration_T& iArrivalTime,
+                    const stdair::Duration_T& iDuration,
                     const bool iRefundability,
-                    const std::string& iAirlineCode,
-                    const std::string& iCabinCode,
-                    const int& iFlightNumber,
-                    const double& iFare, int& iStopsNumber,
+                    const stdair::AirlineCode_T& iAirlineCode,
+                    const stdair::CabinCode_T& iCabinCode,
+                    const stdair::FlightNumber_T& iFlightNumber,
+                    const stdair::Fare_T& iFare, int& iStopsNumber,
                     bool iSNS, bool iChangeability, const std::string& id);
 
     /** Destructor. */
     virtual ~TravelSolution();
 
   private:
-    /** all the characteristics of a flight required to implement a customer
+    /** All the characteristics of a flight required to implement a customer
         choice model, that is its leg, its schedule, its refundability,
         the airline, the cabin, the fare, the lags, saturday night stay,
         the change fee... */
     stdair::AirportCode_T _departureAirport;
     stdair::AirportCode_T _arrivalAirport;
     stdair::Date_T _departureDate;
-    Duration_T _departureTime;
-    Duration_T _arrivalTime;
-    Duration_T _duration;
+    stdair::Duration_T _departureTime;
+    stdair::Duration_T _arrivalTime;
+    stdair::Duration_T _duration;
     bool _refundable;
-    std::string _airlineName;
-    std::string _cabinName;
-    int _flightNumber;
-    double _fare;
+    stdair::AirlineCode_T _airlineName;
+    stdair::CabinCode_T _cabinName;
+    stdair::FlightNumber_T _flightNumber;
+    stdair::Fare_T _fare;
     int _numberOfLags;
     bool _saturdayNightStay;
     bool _changeable;
