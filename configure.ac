@@ -11,6 +11,10 @@ AM_INIT_AUTOMAKE
 AM_PATH_CPPUNIT(1.10)
 AM_CONDITIONAL([HAVE_CPPUNIT], [test "x$CPPUNIT_LIBS" != x])
 
+# Package name
+PACKAGE_PRETTY_NAME="DSim"
+AC_SUBST(PACKAGE_PRETTY_NAME)
+
 # Shared library versioning for the main library
 GENERIC_LIBRARY_VERSION="99:99:99"
 #                        | | |
@@ -116,10 +120,6 @@ fi
 # -----------------------------------------------------------------------------
 # Support for ExtraCC (Extra-CruiseControl): http://sf.net/projects/extracc
 # -----------------------------------------------------------------------------
-# Note: the ExtraCC is now imported as a Subversion external reference,
-#       thus directly accessible within the extracppunit directory.
-#       When that library will be widely avaible on Linux distributions,
-#       the external reference can be removed and the following line uncommented.
 AM_PATH_EXTRACC
 AC_SUBST(EXTRACC_VERSION)
 AC_SUBST(EXTRACC_CFLAGS)

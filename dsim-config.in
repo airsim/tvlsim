@@ -1,26 +1,28 @@
 #!/bin/sh
 
 prefix=@prefix@
-exec_prefix=@exec_prefix@
-exec_prefix_set=no
+exec_prefix=${prefix}
 libdir=@libdir@
 includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+pkgdatadir=@pkgdatadir@
+sampledir=@sampledir@
+docdir=@docdir@
+mandir=@mandir@
+infodir=@infodir@
 
 usage()
 {
   cat <<EOF
-Usage: reac-config [OPTION]
+Usage: @PACKAGE@-config [OPTION]
 
 Known values for OPTION are:
 
-  --prefix        print libitpp installation prefix
-  --exec-prefix   print libitpp installation exec prefix
+  --prefix        print @PACKAGE_PRETTY_NAME@ installation prefix
+  --sampledir     print where the (CSV) sample files are located
   --libs          print library linking information
-  --libs-opt      print optimised library linking information
-  --libs-debug    print debug library linking information
   --cflags        print pre-processor and compiler flags
-  --cflags-opt    print optimised pre-processor and compiler flags
-  --cflags-debug  print debug pre-processor and compiler flags
   --help          display this help and exit
   --version       output version information
 EOF
@@ -31,6 +33,9 @@ if test $# -eq 0; then
   usage 1
 fi
 
+cflags=false
+libs=false
+
 while test $# -gt 0; do
   case "$1" in
   -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
@@ -40,46 +45,42 @@ while test $# -gt 0; do
   case $1 in
     --prefix=*)
       prefix=$optarg
-      if test $exec_prefix_set = no ; then
-        exec_prefix=$optarg
-      fi
       ;;
+
     --prefix)
       echo $prefix
       ;;
-    --exec-prefix=*)
-      exec_prefix=$optarg
-      exec_prefix_set=yes
+
+    --sampledir)
+      echo $sampledir
       ;;
-    --exec-prefix)
-      echo $exec_prefix
-      ;;
+
     --version)
       echo @VERSION@
       ;;
+
     --help)
       usage 0
       ;;
+
     --cflags)
-      echo @BOOST_CFLAGS@ -I${includedir}
+      if [ "${prefix}" != "/usr" ]; then
+        echo -I${includedir}
+      else
+        echo
+      fi
       ;;
-    --cflags-opt)
-      echo @BOOST_CFLAGS@ -I${includedir} @CXXFLAGS_OPT@
-      ;;
-    --cflags-debug)
-      echo @BOOST_CFLAGS@ -I${includedir} @CXXFLAGS_DEBUG@
-      ;;
+
     --libs)
-      echo @BOOST_LIBS@ @BOOST_DATE_TIME_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ -L${libdir} -l@PACKAGE@ @LDFLAGS@ @LIBS@
+      if [ "${prefix}" != "/usr" ]; then
+        echo -L${libdir} -l@PACKAGE@
+      else
+        echo -l@PACKAGE@
+      fi
       ;;
-    --libs-opt)
-      echo @BOOST_LIBS@ @BOOST_DATE_TIME_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ -L${libdir} -l@PACKAGE@ @LDFLAGS@ @LIBS@
-      ;;
-    --libs-debug)
-      echo @BOOST_LIBS@ @BOOST_DATE_TIME_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ -L${libdir} -l@PACKAGE_DEBUG@ @LDFLAGS@ @LIBS@
-      ;;
+
     *)
-      echo "${usage}" 1>&2
+      usage
       exit 1
       ;;
   esac
