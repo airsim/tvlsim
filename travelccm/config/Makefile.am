@@ -14,6 +14,7 @@ all-local: travelccm-paths.hpp
 travelccm-paths.hpp: Makefile
 	@echo '#ifndef __TRAVELCCM_PATHS_HPP' > $@
 	@echo '#define __TRAVELCCM_PATHS_HPP' >> $@
+	@echo >> $@
 	@echo '#define PACKAGE "travelccm"' >> $@
 	@echo '#define PACKAGE_NAME "TRAVELCCM"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
@@ -22,4 +23,7 @@ travelccm-paths.hpp: Makefile
 	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
 	@echo '#define DATADIR "$(datadir)"' >> $@
 	@echo '#define DOCDIR "$(docdir)"' >> $@
+	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
+	@echo >> $@
 	@echo '#endif // __TRAVELCCM_PATHS_HPP' >> $@
+	@echo >> $@

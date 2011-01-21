@@ -8,17 +8,16 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/program_options.hpp>
-// TRAVELCCM
+// TravelCCM
 #include <travelccm/TRAVELCCM_Service.hpp>
 #include <travelccm/config/travelccm-paths.hpp>
-
 
 // //////// Constants //////
 /** Default name and location for the log file. */
 const std::string K_TRAVELCCM_DEFAULT_LOG_FILENAME ("travelccm.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_TRAVELCCM_DEFAULT_INPUT_FILENAME ("class.csv");
+const std::string K_TRAVELCCM_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ccm_01.csv");
 
 /** Default number of random draws to be generated (best if over 100). */
 const int K_TRAVELCCM_DEFAULT_RANDOM_DRAWS = 100000;
@@ -125,52 +124,43 @@ int readConfiguration (int argc, char* argv[], int& lRandomDraws,
 
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
-  try {
     
-    // Number of random draws to be generated (best if greater than 100)
-    int lRandomDraws = 0;
-    
-    // Input file name
-    std::string lInputFilename;
-
-    // Output log File
-    std::string lLogFilename;
-
-    // Call the command-line option parser
-    const int lOptionParserStatus = 
-      readConfiguration (argc, argv, lRandomDraws, lInputFilename, lLogFilename);
-
-    if (lOptionParserStatus == K_TRAVELCCM_EARLY_RETURN_STATUS) {
-      return 0;
-    }
-
-    // Check wether or not a (CSV) input file should be read
-    bool hasInputFile = false;
-    if (lInputFilename.empty() == false) {
-      hasInputFile = true;
-    }
-
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // Open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
-    
-    // Initialise the service context
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    const TRAVELCCM::TravelCCMType lCCMType (TRAVELCCM::TravelCCMType::PREF_BASED);
-    TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams, lCCMType);
-
-    // Start a mini-simulation
-    travelccmService.simulate();
-    
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return -1;
-    
-  } catch (...) {
-    return -1;
+  // Number of random draws to be generated (best if greater than 100)
+  int lRandomDraws = 0;
+  
+  // Input file name
+  std::string lInputFilename;
+  
+  // Output log File
+  std::string lLogFilename;
+  
+  // Call the command-line option parser
+  const int lOptionParserStatus = 
+    readConfiguration (argc, argv, lRandomDraws, lInputFilename, lLogFilename);
+  
+  if (lOptionParserStatus == K_TRAVELCCM_EARLY_RETURN_STATUS) {
+    return 0;
   }
+  
+  // Check wether or not a (CSV) input file should be read
+  bool hasInputFile = false;
+  if (lInputFilename.empty() == false) {
+    hasInputFile = true;
+  }
+  
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
+  
+  // Initialise the service context
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  const TRAVELCCM::TravelCCMType lCCMType(TRAVELCCM::TravelCCMType::PREF_BASED);
+  TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams, lCCMType);
+  
+  // Start a mini-simulation
+  travelccmService.simulate();
   
   return 0;	
 }
