@@ -27,3 +27,4 @@ namespace SIMFQT {
   typedef std::list<FareRuleFeaturesWithKey_T> FareRuleFeaturesDetailedList_T;
 }
 #endif // __SIMFQT_BOM_FARERULEFEATURESTYPES_HPP
+

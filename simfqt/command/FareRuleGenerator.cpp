@@ -155,7 +155,7 @@ namespace SIMFQT {
       stdair::FacBomManager::
 	instance().linkWithParent(*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
       }
-
   }
         
 }
+

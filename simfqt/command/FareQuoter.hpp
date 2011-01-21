@@ -42,3 +42,4 @@ namespace SIMFQT {
 
 }
 #endif // __SIMFQT_CMD_FAREQUOTER_HPP
+
