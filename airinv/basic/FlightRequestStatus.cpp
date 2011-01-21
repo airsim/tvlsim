@@ -44,9 +44,12 @@ namespace AIRINV {
     if (_code == LAST_VALUE) {
       const std::string& lLabels = describeLabels();
       STDAIR_LOG_ERROR ("The flight request status '" << iCode
-                        << "' is not known. Known flightType codes: "
+                        << "' is not known. Known flight request status: "
                         << lLabels);
-      throw CodeConversionException();
+      throw stdair::CodeConversionException ("The flight request status '"
+                                             + iCode
+                                             + "' is not known. Known flight request status: "
+                                             + lLabels);
     }
   }
   

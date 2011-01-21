@@ -250,7 +250,8 @@ namespace AIRINV {
                                     const stdair::PartySize_T& iPartySize) {
     
     if (_airinvMasterServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
     }
     assert (_airinvMasterServiceContext != NULL);
 

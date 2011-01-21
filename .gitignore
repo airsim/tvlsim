@@ -9,15 +9,5 @@ configure
 doc
 man
 config.h.in*
-test/dsim/*_results.xml
-test/trademgen/*_results.xml
-test/airrac/*_results.xml
-test/airsched/*_results.xml
-test/avlcal/*_results.xml
-test/rmol/*_results.xml
-test/rmol/*_results.xml
-test/rmol/*_results.xml
-test/simcrs/*_results.xml
-test/simfqt/*_results.xml
-test/travelccm/*_results.xml
+*_results.xml
 

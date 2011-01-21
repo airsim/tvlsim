@@ -44,7 +44,9 @@ namespace AIRINV {
       STDAIR_LOG_ERROR ("The flight type code '" << iCode
                         << "' is not known. Known flight type codes: "
                         << lLabels);
-      throw CodeConversionException();
+      throw stdair::CodeConversionException ("The flight type code '" + iCode
+                                             + "' is not known. Known flight type codes: "
+                                             + lLabels);
     }
   }
   

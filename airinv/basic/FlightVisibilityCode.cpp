@@ -45,7 +45,10 @@ namespace AIRINV {
       STDAIR_LOG_ERROR ("The flight visibility code '" << iCode
                         << "' is not known. Known flight visibility codes: "
                         << lLabels);
-      throw CodeConversionException();
+      throw stdair::CodeConversionException ("The flight visibility code '"
+                                             + iCode
+                                             + "' is not known. Known flight visibility codes: "
+                                             + lLabels);
     }
   }
   

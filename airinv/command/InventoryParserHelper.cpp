@@ -1104,11 +1104,12 @@ namespace AIRINV {
         
     } else {
       STDAIR_LOG_ERROR ("Parsing of inventory input file: " << _filename
-                       << " failed: read " << info.length
-                       << " characters. The input file has "
-                       << hasBeenFullyReadStr
-                       << "been fully read. Stop point: " << info.stop);
-      throw ParserException();
+                        << " failed: read " << info.length
+                        << " characters. The input file has "
+                        << hasBeenFullyReadStr
+                        << "been fully read. Stop point: " << info.stop);
+      throw stdair::ParserException ("Parsing of inventory input file: "
+                                     + _filename + " failed.");
     }
 
     return oResult;

@@ -24,9 +24,9 @@ int main (int argc, char* argv[]) {
     // stdair::TravelSolutionStruct lTravelSolution;
     
     // Input file name
-    stdair::Filename_T lInputFilename ("../../test/samples/invdump01.csv");
-    stdair::Filename_T lScheduleInputFilename ("../../test/samples/schedule01.csv");
-    stdair::Filename_T lODInputFilename ("../../test/samples/ond01.csv");
+    stdair::Filename_T lInputFilename (STDAIR_SAMPLE_DIR "/invdump01.csv");
+    stdair::Filename_T lScheduleInputFilename (STDAIR_SAMPLE_DIR "/schedule01.csv");
+    stdair::Filename_T lODInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
 
     // Output log File
     stdair::Filename_T lLogFilename ("airinv.log");

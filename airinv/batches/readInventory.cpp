@@ -28,7 +28,7 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_AIRINV_DEFAULT_LOG_FILENAME ("readInventory.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_AIRINV_DEFAULT_INPUT_FILENAME ("../../test/samples/invdump01.csv");
+const std::string K_AIRINV_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/invdump01.csv");
 
 
 // //////////////////////////////////////////////////////////////////////
@@ -167,50 +167,36 @@ int readConfiguration (int argc, char* argv[],
 // /////////////// M A I N /////////////////
 int main (int argc, char* argv[]) {
 
-  try {
-
-    // Airline code
-    const std::string lAirlineCode ("SV");
+  // Airline code
+  const std::string lAirlineCode ("SV");
     
-    // Input file name
-    stdair::Filename_T lInputFilename;
+  // Input file name
+  stdair::Filename_T lInputFilename;
 
-    // Output log File
-    stdair::Filename_T lLogFilename;
-
-    // Call the command-line option parser
-    const int lOptionParserStatus = 
-      readConfiguration (argc, argv, lInputFilename, lLogFilename);
-
-    if (lOptionParserStatus == K_AIRINV_EARLY_RETURN_STATUS) {
-      return 0;
-    }
-
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // Open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
-
-    // Initialise the Airinv service object
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    // AIRINV::AIRINV_Service airinvService (lLogParams, lAirlineCode,
-    //                                       lInputFilename);
-
-    // Close the Log outputFile
-    logOutputFile.close();
-
-  } catch (const AIRINV::RootException& otexp) {
-    std::cerr << "Standard exception: " << otexp.what() << std::endl;
-    return -1;
-    
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return -1;
-    
-  } catch (...) {
-    return -1;
+  // Output log File
+  stdair::Filename_T lLogFilename;
+  
+  // Call the command-line option parser
+  const int lOptionParserStatus = 
+    readConfiguration (argc, argv, lInputFilename, lLogFilename);
+  
+  if (lOptionParserStatus == K_AIRINV_EARLY_RETURN_STATUS) {
+    return 0;
   }
-
+  
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
+  
+  // Initialise the Airinv service object
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  // AIRINV::AIRINV_Service airinvService (lLogParams, lAirlineCode,
+  //                                       lInputFilename);
+  
+  // Close the Log outputFile
+  logOutputFile.close();
+  
   return 0;
 }

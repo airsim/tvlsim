@@ -5,14 +5,11 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <exception>
-#include <string>
 #include <map>
 // Boost
 #include <boost/shared_ptr.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 // StdAir
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/stdair_basic_types.hpp>
 
 namespace AIRINV {
@@ -21,37 +18,14 @@ namespace AIRINV {
   class AIRINV_Service;
 
   // ///////// Exceptions ///////////
-  class RootException : public std::exception {
+  class SegmentDateNotFoundException : public stdair::ParserException {
+  public:
+    /** Constructor. */
+    SegmentDateNotFoundException (const std::string& iWhat)
+      : stdair::ParserException (iWhat) {}
   };
 
-  class NonInitialisedServiceException : public RootException {
-  };
-
-  class MemoryAllocationException : public RootException {
-  };
-
-  class ObjectNotFoundException : public RootException {
-  };
-
-  class ParserException : public RootException {
-  };
-
-  class CodeConversionException : public ParserException {
-  };
-
-  class CodeDuplicationException : public ParserException {
-  };
-
-  class SegmentDateNotFoundException : public ParserException {
-  };
-
-  class SQLDatabaseException : public RootException {
-  };
-
-  class SQLDatabaseConnectionImpossibleException : public SQLDatabaseException {
-  };
-
-  class BookingException : public RootException {
+  class BookingException : public stdair::RootException {
   };
 
 
