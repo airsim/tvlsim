@@ -3,7 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
+#include <istream>
 #include <sstream>
 // Avlcal
 #include <avlcal/basic/BasConst_AVLCAL_Service.hpp>
@@ -18,7 +18,7 @@ namespace AVLCAL {
 
   // //////////////////////////////////////////////////////////////////////
   AVLCAL_ServiceContext::
-  AVLCAL_ServiceContext (const AirlineCode_T& iAirlineCode)
+  AVLCAL_ServiceContext (const stdair::AirlineCode_T& iAirlineCode)
     : _airlineCode (iAirlineCode) {
   }
 

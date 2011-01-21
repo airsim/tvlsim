@@ -44,8 +44,10 @@ namespace TRAVELCCM {
 
   // ////////////////////////////////////////////////////////////////////
   TravelSolution& FacTravelSolution::
-  create (std::string dAirport, std::string aAirport, Date_T depDate,
-          Duration_T depTime, Duration_T arTime, Duration_T dur,
+  create (std::string dAirport, std::string aAirport,
+          stdair::Date_T depDate,
+          stdair::Duration_T depTime, stdair::Duration_T arTime,
+          stdair::Duration_T dur,
           bool Ref, std::string airline, std::string cabin,
           int flightNum, double fare, int lagsNum, bool SNS,
           bool change, std::string id) {

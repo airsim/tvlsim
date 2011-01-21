@@ -6,11 +6,11 @@
 // Boost
 #include <boost/make_shared.hpp>
 // StdAir
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/service/Logger.hpp>
-#include <stdair/stdair_exceptions.hpp>
 #include <stdair/STDAIR_Service.hpp>
 // SimLFS
 #include <simlfs/basic/BasConst_SIMLFS_Service.hpp>
@@ -35,7 +35,7 @@ namespace SIMLFS {
   // ////////////////////////////////////////////////////////////////////
   SIMLFS_Service::
   SIMLFS_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                    const stdair::Filename_T& iFareInputFilename)
+                  const stdair::Filename_T& iFareInputFilename)
     : _simlfsServiceContext (NULL) {
 
     // Initialise the service context
@@ -43,8 +43,7 @@ namespace SIMLFS {
     
     // Retrieve the Simlfs service context
     assert (_simlfsServiceContext != NULL);
-    SIMLFS_ServiceContext& lSIMLFS_ServiceContext =
-      *_simlfsServiceContext;
+    SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
     
     // Store the STDAIR service object within the (SIMLFS) service context
     lSIMLFS_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
@@ -73,7 +72,7 @@ namespace SIMLFS {
   // ////////////////////////////////////////////////////////////////////
   SIMLFS_Service::
   SIMLFS_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::Filename_T& iFareInputFilename) 
+                  const stdair::Filename_T& iFareInputFilename) 
     : _simlfsServiceContext (NULL) {
     
     // Initialise the service context
@@ -113,8 +112,7 @@ namespace SIMLFS {
 
     // Retrieve the Simlfs service context
     assert (_simlfsServiceContext != NULL);
-    SIMLFS_ServiceContext& lSIMLFS_ServiceContext =
-      *_simlfsServiceContext;
+    SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
     
     // Initialise the STDAIR service handler
     // Note that the track on the object memory is kept thanks to the Boost
@@ -132,8 +130,7 @@ namespace SIMLFS {
 
     // Retrieve the Simlfs service context
     assert (_simlfsServiceContext != NULL);
-    SIMLFS_ServiceContext& lSIMLFS_ServiceContext =
-      *_simlfsServiceContext;
+    SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
     
     // Initialise the STDAIR service handler
     // Note that the track on the object memory is kept thanks to the Boost
@@ -175,12 +172,13 @@ namespace SIMLFS {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  Price_T SIMLFS_Service::priceQuote (const AirlineCode_T& iAirlineCode,
-                                      const PartySize_T& iPartySize) {
-    Price_T oPrice = 0.0;
+  stdair::PriceValue_T SIMLFS_Service::
+  priceQuote (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::PartySize_T& iPartySize) {
+    stdair::PriceValue_T oPrice = 0.0;
     
     if (_simlfsServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException("The SimLFS service has not been initialised");
     }
     assert (_simlfsServiceContext != NULL);
     SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;

@@ -3,7 +3,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
+#include <sstream>
+#include <istream>
+#include <ostream>
 #include <iomanip>
 // StdAir
 #include <stdair/service/Logger.hpp>
@@ -94,31 +96,32 @@ namespace TRAVELCCM {
   // /////////////////////////////////////////////////////////////////////
   const DateTimePair_T Passenger::getDepartureWindow() const {
     assert (_request != NULL);
-    DateTime_T departureTime = _request->getDepartureTime();
-    Duration_T lowerBound = getLowerBound(departureTime);
-    Duration_T upperBound = getUpperBound(departureTime);
+    stdair::DateTime_T departureTime = _request->getDepartureTime();
+    stdair::Duration_T lowerBound = getLowerBound(departureTime);
+    stdair::Duration_T upperBound = getUpperBound(departureTime);
     
-    DateTime_T lowerBoundDateTime = departureTime - lowerBound;
-    DateTime_T upperBoundDateTime = departureTime + upperBound;
+    stdair::DateTime_T lowerBoundDateTime = departureTime - lowerBound;
+    stdair::DateTime_T upperBoundDateTime = departureTime + upperBound;
     
     DateTimePair_T oDateTimePair (lowerBoundDateTime, upperBoundDateTime);
     return oDateTimePair;
   }
 
   // /////////////////////////////////////////////////////////////////////
-  const Duration_T Passenger::getLowerBound (DateTime_T departureTime) const {
+  const stdair::Duration_T Passenger::
+  getLowerBound (stdair::DateTime_T departureTime) const {
 
     // Retrieve the lower time duration, that is up to which amount of
     // time before the passenger is ready to leave
     const DurationPair_T lowerPair = getLowerPair(departureTime);
-    const Duration_T lowerDurationTime = lowerPair.first;
+    const stdair::Duration_T lowerDurationTime = lowerPair.first;
     
-    // retrieve the upper time duration
+    // Retrieve the upper time duration
     const DurationPair_T upperPair = getUpperPair(departureTime);
-    const Duration_T upperDurationTime = upperPair.first;
+    const stdair::Duration_T upperDurationTime = upperPair.first;
     
-    const Duration_T timeOfDay = departureTime.time_of_day();
-    // calculus of the lower bound of the departure window
+    const stdair::Duration_T timeOfDay = departureTime.time_of_day();
+    // Calculus of the lower bound of the departure window
     // we use a linear regression to determine the lower bound of the departure
     // window.
     // we put all the time durations in seconds to determine the ratio:
@@ -128,28 +131,29 @@ namespace TRAVELCCM {
     double ratio = ((double)timeOfDayInSeconds - (double)lowestHourInSeconds) /
       ((double)uppestHourInSeconds - (double)lowestHourInSeconds);
 
-    const Duration_T oDurationTime =
-      computeMiddleDuration(lowerDurationTime.total_seconds(),
-                            upperDurationTime.total_seconds(), ratio);
+    const stdair::Duration_T oDurationTime =
+      computeMiddleDuration (lowerDurationTime.total_seconds(),
+                             upperDurationTime.total_seconds(), ratio);
 
     return oDurationTime;
   }
 
   // /////////////////////////////////////////////////////////////////////
-  const Duration_T Passenger::getUpperBound (DateTime_T departureTime) const {
+  const stdair::Duration_T Passenger::
+  getUpperBound (stdair::DateTime_T departureTime) const {
     
     // Retrieve the lower time duration, that is up to which amount of
     // time after the passenger is ready to leave 
     const DurationPair_T lowerPair = getLowerPair(departureTime);
-    const Duration_T lowerDurationTime = lowerPair.second;
+    const stdair::Duration_T lowerDurationTime = lowerPair.second;
 
     // retrieve the upper time duration
     const DurationPair_T upperPair = getUpperPair(departureTime);
-    const Duration_T upperDurationTime = upperPair.second;
+    const stdair::Duration_T upperDurationTime = upperPair.second;
     
-    const Duration_T timeOfDay = departureTime.time_of_day();
+    const stdair::Duration_T timeOfDay = departureTime.time_of_day();
 
-    // calculus of the upper bound of the departure window
+    // Calculus of the upper bound of the departure window
     // we use a linear regression to determine the upper boudn of the departure
     // window.
     // we put all the time durations in seconds to determine the ratio:
@@ -158,54 +162,57 @@ namespace TRAVELCCM {
     long timeOfDayInSeconds = timeOfDay.total_seconds();
     double ratio = ((double)timeOfDayInSeconds - (double)lowestHourInSeconds) /
       ((double)uppestHourInSeconds - (double)lowestHourInSeconds);
-    const Duration_T& oDurationTime =
-      computeMiddleDuration(lowerDurationTime.total_seconds(),
-                            upperDurationTime.total_seconds(), ratio);
+    const stdair::Duration_T& oDurationTime =
+      computeMiddleDuration (lowerDurationTime.total_seconds(),
+                             upperDurationTime.total_seconds(), ratio);
     return oDurationTime;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const Duration_T Passenger::
+  const stdair::Duration_T Passenger::
   computeMiddleDuration (long firstDurationInSeconds,
                          long secondDurationInSeconds, double ratio) {
-    double finalResultInSeconds = (1 - ratio) * firstDurationInSeconds +
+    const double finalResultInSeconds = (1 - ratio) * firstDurationInSeconds +
       ratio * secondDurationInSeconds;
-    const Duration_T oDurationTime =
-      boost::posix_time::seconds((int)finalResultInSeconds);
+    const stdair::Duration_T oDurationTime =
+      boost::posix_time::seconds ((int) finalResultInSeconds);
     return oDurationTime;
   }
     
   // //////////////////////////////////////////////////////////////////////
-  const DurationPair_T Passenger::getLowerPair(DateTime_T departureTime) const {
+  const DurationPair_T Passenger::
+  getLowerPair (stdair::DateTime_T departureTime) const {
     assert (_departureTimePreferencePattern != NULL);
     
     // get the lower and upper bounds of the window
-    const Duration_T timeOfDay = departureTime.time_of_day();
+    const stdair::Duration_T timeOfDay = departureTime.time_of_day();
     const long nbOfHours = timeOfDay.hours();
 
-    /* from the number of hours, we retrieve the lower bound
+    /* From the number of hours, we retrieve the lower bound
        in the map in DepartureTimePreferencePattern */
-    const Duration_T lowerBound (nbOfHours, 0, 0);
-    
+    const stdair::Duration_T lowerBound (nbOfHours, 0, 0);
+    assert (_departureTimePreferencePattern != NULL);
     const DurationPair_T lowerPair =
-      _departureTimePreferencePattern->getDurationPair(lowerBound);
+      _departureTimePreferencePattern->getDurationPair (lowerBound);
     
     return lowerPair;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const DurationPair_T Passenger::getUpperPair (DateTime_T departureTime) const {
+  const DurationPair_T Passenger::
+  getUpperPair (stdair::DateTime_T departureTime) const {
     assert (_departureTimePreferencePattern != NULL);
     
-    // get the lower and upper bounds of the window
-    const Duration_T timeOfDay = departureTime.time_of_day();
+    // Get the lower and upper bounds of the window
+    const stdair::Duration_T timeOfDay = departureTime.time_of_day();
     const long nbOfHours = timeOfDay.hours();
 
-    /* from the number of hours, we retrieve the upper bound
+    /* From the number of hours, we retrieve the upper bound
        in the map in DepartureTimePreferencePattern */
-    const Duration_T upperBound (nbOfHours + 1, 0, 0);
+    const stdair::Duration_T upperBound (nbOfHours + 1, 0, 0);
+    assert (_departureTimePreferencePattern != NULL);
     const DurationPair_T& upperPair =
-      _departureTimePreferencePattern->getDurationPair(upperBound);
+      _departureTimePreferencePattern->getDurationPair (upperBound);
     return upperPair;
   }
 

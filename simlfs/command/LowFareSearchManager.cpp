@@ -11,10 +11,10 @@
 namespace SIMLFS {
 
   // //////////////////////////////////////////////////////////////////////
-  Price_T LowFareSearchManager::
-  priceQuote (const FareQuoteID_T& iFareQuoteID,
-              const AirlineCode_T& iAirlineCode, const PartySize_T& iPartySize) {
-    Price_T oPrice = 0.0;
+  stdair::PriceValue_T LowFareSearchManager::
+  priceQuote (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::PartySize_T& iPartySize) {
+    stdair::PriceValue_T oPrice = 0.0;
 
     try {
 

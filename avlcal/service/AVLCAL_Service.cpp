@@ -28,7 +28,7 @@ namespace AVLCAL {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  AVLCAL_Service::AVLCAL_Service (const AirlineCode_T& iAirlineCode)
+  AVLCAL_Service::AVLCAL_Service (const stdair::AirlineCode_T& iAirlineCode)
     : _avlcalServiceContext (NULL) {
 
     // Initialise the context
@@ -37,7 +37,7 @@ namespace AVLCAL {
 
   // //////////////////////////////////////////////////////////////////////
   AVLCAL_Service::AVLCAL_Service (const stdair::BasLogParams& iLogParams,
-                                  const AirlineCode_T& iAirlineCode)
+                                  const stdair::AirlineCode_T& iAirlineCode)
     : _avlcalServiceContext (NULL) {
     
     // Set the log file
@@ -59,7 +59,7 @@ namespace AVLCAL {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void AVLCAL_Service::init (const AirlineCode_T& iAirlineCode) {
+  void AVLCAL_Service::init (const stdair::AirlineCode_T& iAirlineCode) {
     // Initialise the context
     AVLCAL_ServiceContext& lAVLCAL_ServiceContext = 
       FacAvlcalServiceContext::instance().create (iAirlineCode);
@@ -72,10 +72,10 @@ namespace AVLCAL {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void AVLCAL_Service::avlCalculate (const PartySize_T& iPartySize) {
+  void AVLCAL_Service::avlCalculate (const stdair::PartySize_T& iPartySize) {
     
     if (_avlcalServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The AvlCal service has not been initialised");
     }
     assert (_avlcalServiceContext != NULL);
     AVLCAL_ServiceContext& lAVLCAL_ServiceContext= *_avlcalServiceContext;
@@ -83,7 +83,7 @@ namespace AVLCAL {
     try {
       
       // Retrieve the airline code
-      const AirlineCode_T& lAirlineCode =
+      const stdair::AirlineCode_T& lAirlineCode =
         lAVLCAL_ServiceContext.getAirlineCode();
       
       // Delegate the booking to the dedicated command

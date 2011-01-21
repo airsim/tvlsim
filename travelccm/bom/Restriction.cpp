@@ -38,7 +38,7 @@ namespace TRAVELCCM {
 
   // /////////////////////////////////////////////////////////////////////
   Restriction:: Restriction (const std::string& iRestrictionType,
-                             const DateTime_T& iDateTime)
+                             const stdair::DateTime_T& iDateTime)
     : _restrictionType (iRestrictionType) {
 
     if (iRestrictionType == "timePreference") {
@@ -110,7 +110,7 @@ namespace TRAVELCCM {
   }
 
    // /////////////////////////////////////////////////////////////////////
-  const DateTime_T Restriction::getPreferredDateTime() const {
+  const stdair::DateTime_T Restriction::getPreferredDateTime() const {
     return  _preferredDepartureTime;
   }
   

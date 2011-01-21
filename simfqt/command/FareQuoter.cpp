@@ -13,7 +13,7 @@
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/bom/key_types.hpp>
-// SIMFQT
+// SimFQT
 #include <simfqt/command/FareQuoter.hpp>
 #include <simfqt/bom/AirportPair.hpp>
 #include <simfqt/bom/FarePosition.hpp>
@@ -110,8 +110,8 @@ namespace SIMFQT {
           // Get the request date-time.
           const stdair::DateTime_T lRequestDateTime = iBookingRequest.getRequestDateTime();
 
-          // set a random (for now) price.
-          Price_T lPrice  = 600.0;
+          // Set a random (for now) price.
+          stdair::PriceValue_T lPrice  = 600.0;
           stdair::DayDuration_T lAdvancePurchase;
           stdair::SaturdayStay_T lSaturdayStay;
           stdair::ChangeFees_T lChangeFees;

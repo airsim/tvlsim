@@ -8,7 +8,7 @@
 #include <string>
 // StdAir
 #include <stdair/stdair_service_types.hpp>
-// Simlfs
+// SimLFS
 #include <simlfs/SIMLFS_Types.hpp>
 #include <simlfs/service/ServiceAbstract.hpp>
 
@@ -41,7 +41,6 @@ namespace SIMLFS {
     // /////// Construction / initialisation ////////
     /** Constructors. */
     SIMLFS_ServiceContext ();
-    SIMLFS_ServiceContext (const FareQuoteID_T&);
     SIMLFS_ServiceContext (const SIMLFS_ServiceContext&);
 
     /** Destructor. */

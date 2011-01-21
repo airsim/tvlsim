@@ -15,6 +15,7 @@ all-local: avlcal-paths.hpp
 avlcal-paths.hpp: Makefile
 	@echo '#ifndef __AVLCAL_PATHS_HPP' > $@
 	@echo '#define __AVLCAL_PATHS_HPP' >> $@
+	@echo >> $@
 	@echo '#define PACKAGE "avlcal"' >> $@
 	@echo '#define PACKAGE_NAME "AVLCAL"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
@@ -23,5 +24,8 @@ avlcal-paths.hpp: Makefile
 	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
 	@echo '#define DATADIR "$(datadir)"' >> $@
 	@echo '#define DOCDIR "$(docdir)"' >> $@
+	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
+	@echo >> $@
 	@echo '#endif // __AVLCAL_PATHS_HPP' >> $@
+	@echo >> $@
 

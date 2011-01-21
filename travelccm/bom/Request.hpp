@@ -4,9 +4,10 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// TYPES
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
+// TravelCCM 
 #include <travelccm/TRAVELCCM_Types.hpp>
-// TRAVELCCM 
 #include <travelccm/bom/BomAbstract.hpp>
 
 namespace TRAVELCCM {
@@ -37,7 +38,7 @@ namespace TRAVELCCM {
     const std::string describeShortKey() const;
 
     /** Get the departure time of the request */
-    const DateTime_T getDepartureTime() const;
+    const stdair::DateTime_T getDepartureTime() const;
 
     /** Get the refundability of the desired ticket */
     const bool getRefundability() const;
@@ -49,10 +50,10 @@ namespace TRAVELCCM {
     const bool getSaturdayNightStay() const;
 
     /** Get the preferred airline */
-    const std::string getPreferredAirline() const;
+    const stdair::AirlineCode_T getPreferredAirline() const;
 
     /** Get the preferred cabin */
-    const std::string getPreferredCabin() const;
+    const stdair::CabinCode_T getPreferredCabin() const;
 
     /** Get the number of restrictions taken into account, that is the number
         of private fields of this class */
@@ -67,8 +68,13 @@ namespace TRAVELCCM {
     Request ();
     Request (const Request&);
     Request (bool _refundability, bool _changeability, bool _saturdayNightStay,
-             std::string _preferredAirline, std::string _preferredCabin,
-             DateTime_T _departureTime);
+             stdair::AirlineCode_T _preferredAirline,
+             stdair::CabinCode_T _preferredCabin,
+             stdair::DateTime_T _departureTime);
+    
+    /** Destructor. */
+    virtual ~Request();
+
     
   private:
     /* different fields that describe the characteristics of the ticket wanted
@@ -77,14 +83,11 @@ namespace TRAVELCCM {
     bool _refundability;
     bool _changeability;
     bool _saturdayNightStay;
-    std::string _preferredAirline;
-    std::string _preferredCabin;
-    DateTime_T _departureTime;
-    // to add: number of stops, unwanted airline
-    
-    /** Destructor. */
-    virtual ~Request();
+    stdair::AirlineCode_T _preferredAirline;
+    stdair::CabinCode_T _preferredCabin;
+    stdair::DateTime_T _departureTime;
 
+    // TODO: add number of stops, unwanted airline
   };
 
 }

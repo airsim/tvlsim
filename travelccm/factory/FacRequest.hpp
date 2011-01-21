@@ -32,7 +32,8 @@ namespace TRAVELCCM {
     Request& create ();
     Request& create (bool refundability, bool changeability,
                      bool saturdayNightStay, std::string preferredAirline,
-                     std::string preferredCabin, DateTime_T departureTime);
+                     std::string preferredCabin,
+                     stdair::DateTime_T departureTime);
 
   protected:
     /** Default Constructor.

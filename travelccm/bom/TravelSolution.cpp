@@ -5,10 +5,9 @@
 #include <cassert>
 #include <sstream>
 #include <iomanip>
-#include <iomanip>
 // StdAir
 #include <stdair/service/Logger.hpp>
-// TRAVELCCM 
+// TravelCCM 
 #include <travelccm/bom/TravelSolution.hpp>
 #include <travelccm/bom/Restriction.hpp>
 #include <travelccm/bom/Passenger.hpp>
@@ -18,38 +17,28 @@
 namespace TRAVELCCM {
 
   // ////////////////////////////////////////////////////////////////////
-  TravelSolution::TravelSolution (const std::string& iDepartureAirport,
-                                  const std::string& iArrivalAirport,
-                                  const Date_T& iDepartureDate,
-                                  const Duration_T& iDepartureTime,
-                                  const Duration_T& iArrivalTime,
-                                  const Duration_T& iDuration,
-                                  const bool iRefundability,
-                                  const std::string& iAirlineCode,
-                                  const std::string& iCabinCode,
-                                  const int& iFlightNumber,
-                                  const double& iFare, int& iStopsNumber,
-                                  bool iSNS, bool iChangeability,
-                                  const std::string& iId){
-
-     _departureAirport = iDepartureAirport;
-     _arrivalAirport = iArrivalAirport;
-     _departureDate = iDepartureDate;
-     _departureTime = iDepartureTime;
-     _arrivalTime = iArrivalTime;
-     _duration = iDuration;
-     _refundable = iRefundability;
-     _airlineName = iAirlineCode;
-     _cabinName = iCabinCode;
-     _flightNumber = iFlightNumber;
-     _fare = iFare;
-     _numberOfLags = iStopsNumber;
-     _saturdayNightStay = iSNS;
-     _changeable = iChangeability;
-     id = iId;
-    
-
-    }
+  TravelSolution::
+  TravelSolution (const stdair::AirportCode_T& iDepartureAirport,
+                  const stdair::AirportCode_T& iArrivalAirport,
+                  const stdair::Date_T& iDepartureDate,
+                  const stdair::Duration_T& iDepartureTime,
+                  const stdair::Duration_T& iArrivalTime,
+                  const stdair::Duration_T& iDuration,
+                  const bool iRefundability,
+                  const stdair::AirlineCode_T& iAirlineCode,
+                  const stdair::CabinCode_T& iCabinCode,
+                  const stdair::FlightNumber_T& iFlightNumber,
+                  const stdair::Fare_T& iFare, int& iStopsNumber,
+                  bool iSNS, bool iChangeability,
+                  const std::string& iId)
+    :  _departureAirport (iDepartureAirport), _arrivalAirport (iArrivalAirport),
+       _departureDate (iDepartureDate), _departureTime (iDepartureTime),
+       _arrivalTime (iArrivalTime), _duration (iDuration),
+       _refundable (iRefundability), _airlineName (iAirlineCode),
+       _cabinName (iCabinCode), _flightNumber (iFlightNumber),
+       _fare (iFare), _numberOfLags (iStopsNumber),
+       _saturdayNightStay (iSNS), _changeable (iChangeability), id (iId) {
+     }
 
   // /////////////////////////////////////////////////////////////////////
   TravelSolution::TravelSolution () {
@@ -120,30 +109,30 @@ namespace TRAVELCCM {
   }
 
   // /////////////////////////////////////////////////////////////////////
-  const DateTime_T TravelSolution::getDepartureDateTime() const {
-    Date_T date = getDepartureDate();
-    Duration_T time = getDepartureTime();
-    DateTime_T dateTime (date, time);
+  const stdair::DateTime_T TravelSolution::getDepartureDateTime() const {
+    stdair::Date_T date = getDepartureDate();
+    stdair::Duration_T time = getDepartureTime();
+    stdair::DateTime_T dateTime (date, time);
     return dateTime;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const Date_T TravelSolution::getDepartureDate() const {
+  const stdair::Date_T TravelSolution::getDepartureDate() const {
     return _departureDate;
   }
   
   // //////////////////////////////////////////////////////////////////////
-  const Duration_T TravelSolution::getDepartureTime() const {
+  const stdair::Duration_T TravelSolution::getDepartureTime() const {
     return _departureTime;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const Duration_T TravelSolution::getArrivalTime() const {
+  const stdair::Duration_T TravelSolution::getArrivalTime() const {
     return _arrivalTime;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const Duration_T TravelSolution::getDuration() const {
+  const stdair::Duration_T TravelSolution::getDuration() const {
     return _duration;
   }
 
@@ -153,27 +142,27 @@ namespace TRAVELCCM {
   } 
 
   // //////////////////////////////////////////////////////////////////////
-  const std::string TravelSolution::getAirlineName() const {
+  const stdair::AirlineCode_T TravelSolution::getAirlineName() const {
     return _airlineName;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const std::string TravelSolution::getCabin() const {
+  const stdair::CabinCode_T TravelSolution::getCabin() const {
     return _cabinName;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const int  TravelSolution::getFlightNumber() const {
+  const stdair::FlightNumber_T TravelSolution::getFlightNumber() const {
     return _flightNumber;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  const double  TravelSolution::getFare() const {
+  const stdair::Fare_T TravelSolution::getFare() const {
     return _fare;
   }
   
   // //////////////////////////////////////////////////////////////////////
-  const int  TravelSolution::getNumberOfLags() const {
+  const int TravelSolution::getNumberOfLags() const {
     return _numberOfLags;
   }
 
@@ -195,16 +184,16 @@ namespace TRAVELCCM {
   // //////////////////////////////////////////////////////////////////////
   const bool TravelSolution::
   isCheaper (const TravelSolution& iComparedTravelSolution) const {
-    double currentFare = getFare();
-    double comparedFare = iComparedTravelSolution.getFare();
+    const stdair::Fare_T currentFare = getFare();
+    const stdair::Fare_T comparedFare = iComparedTravelSolution.getFare();
     return (comparedFare < currentFare);
   }
 
   // //////////////////////////////////////////////////////////////////////
   const bool TravelSolution::
   hasTheSamePrice (const TravelSolution& iComparedTravelSolution) const {
-    double currentFare = getFare();
-    double comparedFare = iComparedTravelSolution.getFare();
+    const stdair::Fare_T currentFare = getFare();
+    const stdair::Fare_T comparedFare = iComparedTravelSolution.getFare();
     return (comparedFare == currentFare);
   }
   
@@ -212,66 +201,70 @@ namespace TRAVELCCM {
   bool TravelSolution::
   restrictionMeetsTravelSolution (const Restriction& iRestriction,
                                   const Passenger& iPassenger) const {
-    /** need to consider all the different kind of restrictions in a
+    /** Need to consider all the different kind of restrictions in a
         separate way
     */
-    /** restrictions which are to be implemented next: time preference? ,
+    /** Restrictions which are to be implemented next: time preference? ,
         changeability, number of stops (flight duration), saturday night stay?
     */
-    if (iRestriction.getRestrictionType() == "refundability")
-      {
-      if (getRefundable())
+    if (iRestriction.getRestrictionType() == "refundability") {
+      if (getRefundable()) {
         return true;
-      else
+      } else {
         return false;
       }
-    else if (iRestriction.getRestrictionType() == "preferredAirline")
-      {
-        // be careful on how you write the airline (airline code or no?)
-        if (getAirlineName() == iRestriction.getPreferredAirline())
-          return true;
-        else
-          return false;
-      }
-    else if (iRestriction.getRestrictionType() == "preferredCabin")
-      {
-        /* today we look for the perfect match. A better solution would be
-           to allow the overclassing */
-        if (getCabin() == iRestriction.getPreferredCabin())
-          return true;
-        else
-          return false;
-      }
-    else if (iRestriction.getRestrictionType() == "saturdayStay")
-      {
-        if (getSaturdayNightStay())
-          return true;
-        else
-          return false;
-      }
-    else if (iRestriction.getRestrictionType() == "timePreference")
-      {
-        /** the most difficult restriction to implement. Here is only one
-            solution, not perfect, to deal with it. */
-        DateTime_T dateTime = getDepartureDateTime();
-        DateTimePair_T passengerWindow = iPassenger.getDepartureWindow();
+    }
 
-        DateTime_T lowerBound = passengerWindow.first;
-        DateTime_T upperBound = passengerWindow.second;
-        
-        bool travelSolutionIsInTheDepartureWindow =
-          DepartureTimePreferencePattern::isBetweenDateTheDepartureWindow(dateTime, passengerWindow);
-        
-        if (travelSolutionIsInTheDepartureWindow) {
-          return true;
-        }
-        else {
-          return false;
-        }
+    if (iRestriction.getRestrictionType() == "preferredAirline") {
+      // Be careful on how you write the airline (airline code or no?)
+      if (getAirlineName() == iRestriction.getPreferredAirline()) {
+        return true;
+      } else {
+        return false;
       }
-    /** the function return true by default in order not to loose any
+    }
+    
+    if (iRestriction.getRestrictionType() == "preferredCabin") {
+      /* Today we look for the perfect match. A better solution would be
+         to allow the overclassing */
+      if (getCabin() == iRestriction.getPreferredCabin()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (iRestriction.getRestrictionType() == "saturdayStay") {
+      if (getSaturdayNightStay()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (iRestriction.getRestrictionType() == "timePreference") {
+      /** The most difficult restriction to implement. Here is only one
+          solution, not perfect, to deal with it. */
+      stdair::DateTime_T dateTime = getDepartureDateTime();
+      DateTimePair_T passengerWindow = iPassenger.getDepartureWindow();
+      
+      stdair::DateTime_T lowerBound = passengerWindow.first;
+      stdair::DateTime_T upperBound = passengerWindow.second;
+        
+      const bool travelSolutionIsInTheDepartureWindow =
+        DepartureTimePreferencePattern::
+        isBetweenDateTheDepartureWindow (dateTime, passengerWindow);
+      
+      if (travelSolutionIsInTheDepartureWindow) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
+    /** The function return true by default in order not to loose any
         correct travel solution */
-    else return true;
+    return true;
   }
 
   // ///////////////////////////////////////////////////////////////////////

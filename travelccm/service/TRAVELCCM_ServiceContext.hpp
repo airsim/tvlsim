@@ -86,10 +86,10 @@ namespace TRAVELCCM {
     /** Add a travel solution to the TravelSolutionHolder */
     void addTravelSolution (const std::string& iDepartureAirport,
                             const std::string& iArrivalAirport,
-                            const Date_T& iDepartureDate,
-                            const Duration_T& iDepartureTime,
-                            const Duration_T& iArrivalTime,
-                            const Duration_T& iDuration,
+                            const stdair::Date_T& iDepartureDate,
+                            const stdair::Duration_T& iDepartureTime,
+                            const stdair::Duration_T& iArrivalTime,
+                            const stdair::Duration_T& iDuration,
                             const bool iRefubdability,
                             const std::string& iAirlineCode,
                             const std::string& iCabinCode,
@@ -102,12 +102,14 @@ namespace TRAVELCCM {
     void addRestriction (const std::string& iRestrictionType,
                          const std::string& iNamePreference);
     void addRestriction (const std::string& iRestrictionType,
-                         const DateTime_T iDepartureTime);
+                         const stdair::DateTime_T iDepartureTime);
 
     /** Add a request and link it to the passenger. */
     void addAndLinkRequest (bool refundability, bool changeability,
-                            bool saturdayNightStay, std::string preferredAirline,
-                            std::string preferredCabin, DateTime_T departureTime);
+                            bool saturdayNightStay,
+                            std::string preferredAirline,
+                            std::string preferredCabin,
+                            stdair::DateTime_T departureTime);
     
     /** Read the input data from a file */
     void readFromInputFile (const std::string& iInputFileName);

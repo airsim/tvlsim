@@ -60,18 +60,18 @@ namespace TRAVELCCM {
     /** Get the two points in the map of DepartureTimePreferencePattern which
         are just under the desired departure time of the passenger (in order to
         use a linear regression) */
-    const DurationPair_T getLowerPair(DateTime_T departureTime) const;
+    const DurationPair_T getLowerPair (stdair::DateTime_T departureTime) const;
 
     /** Get the two points in the map of DepartureTimePreferencePattern which
         are just above the desired departure time of the passenger (in order to
         use a linear regression) */
-    const DurationPair_T getUpperPair(DateTime_T departureTime) const;
+    const DurationPair_T getUpperPair (stdair::DateTime_T departureTime) const;
 
     /** Get the lower time duration associated to the passenger */
-    const Duration_T getLowerBound(DateTime_T departureTime) const;
+    const stdair::Duration_T getLowerBound (stdair::DateTime_T departureTime) const;
 
     /** Get the upper time duration associated to the passenger */
-    const Duration_T getUpperBound(DateTime_T departureTime) const;
+    const stdair::Duration_T getUpperBound (stdair::DateTime_T departureTime) const;
 
     /** To get the departure window of the passenger, that is the time interval
         in which he is ready to leave */
@@ -89,7 +89,7 @@ namespace TRAVELCCM {
     // //// Functions used to lighten the operations on the duration times ////
     /** Retrieve the middle duration time regarding the formula:
         (1 - ratio) * 1stDT + ratio * 2ndDT */
-    static const Duration_T computeMiddleDuration (long, long, double);
+    static const stdair::Duration_T computeMiddleDuration (long, long, double);
 
     /** Add a restriction to the restriction holder. */
     void addRestriction (const Restriction&);
@@ -117,4 +117,3 @@ namespace TRAVELCCM {
 
 }
 #endif  //__TRAVELCCM_BOM_PASSENGER_HPP
-

@@ -10,6 +10,7 @@
 #include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
 // Standard Airline Object Model
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
@@ -170,7 +171,9 @@ namespace SIMCRS {
     if (doesExistAndIsReadable == false) {
       STDAIR_LOG_ERROR ("The schedule input file, '" << iScheduleInputFilename
                         << "', can not be retrieved on the file-system");
-      throw FileNotFoundException();
+      throw stdair::FileNotFoundException("The schedule input file, '"
+                                          + iScheduleInputFilename
+                                          + "', can not be retrieved on the file-system");
     }
 
     // Initialise the children AirSched service context
@@ -273,7 +276,7 @@ namespace SIMCRS {
   getSegmentPathList (const stdair::BookingRequestStruct& iBookingRequest) {
      
     if (_simcrsServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
@@ -314,7 +317,7 @@ namespace SIMCRS {
                 const stdair::SegmentPathList_T& iSegmentPathList) {
      
     if (_simcrsServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
@@ -357,7 +360,7 @@ namespace SIMCRS {
   void SIMCRS_Service::
   getAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
     if (_simcrsServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
@@ -368,7 +371,7 @@ namespace SIMCRS {
                             const stdair::PartySize_T& iPartySize) {
     
     if (_simcrsServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;

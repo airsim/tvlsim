@@ -3,7 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
+#include <istream>
 #include <sstream>
 // Simlfs
 #include <simlfs/basic/BasConst_SIMLFS_Service.hpp>
@@ -12,8 +12,7 @@
 namespace SIMLFS {
   
   // //////////////////////////////////////////////////////////////////////
-  SIMLFS_ServiceContext::
-  SIMLFS_ServiceContext (const SIMLFS_ServiceContext&) {
+  SIMLFS_ServiceContext::SIMLFS_ServiceContext (const SIMLFS_ServiceContext&) {
     assert (false);
   }
 

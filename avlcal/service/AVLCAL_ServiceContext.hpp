@@ -6,6 +6,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
 // Avlcal
 #include <avlcal/AVLCAL_Types.hpp>
 #include <avlcal/service/ServiceAbstract.hpp>
@@ -18,14 +20,14 @@ namespace AVLCAL {
   public:
     // ///////// Getters //////////
     /** Get the airline code. */
-    const AirlineCode_T& getAirlineCode () const {
+    const stdair::AirlineCode_T& getAirlineCode () const {
       return _airlineCode;
     }
 
     
     // ///////// Setters //////////
     /** Set the airline code. */
-    void setAirlineCode (const AirlineCode_T& iAirlineCode) {
+    void setAirlineCode (const stdair::AirlineCode_T& iAirlineCode) {
       _airlineCode = iAirlineCode;
     }
 
@@ -42,7 +44,7 @@ namespace AVLCAL {
     // /////// Construction / initialisation ////////
     /** Constructors. */
     AVLCAL_ServiceContext ();
-    AVLCAL_ServiceContext (const AirlineCode_T& iAirlineCode);
+    AVLCAL_ServiceContext (const stdair::AirlineCode_T& iAirlineCode);
     AVLCAL_ServiceContext (const AVLCAL_ServiceContext&);
 
     /** Destructor. */
@@ -51,7 +53,7 @@ namespace AVLCAL {
   private:
     // //////////// Attributes //////////////////
     /** Airline code. */
-    AirlineCode_T _airlineCode;
+    stdair::AirlineCode_T _airlineCode;
   };
 
 }
