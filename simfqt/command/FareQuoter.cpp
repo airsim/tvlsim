@@ -20,6 +20,7 @@
 #include <simfqt/bom/FareDatePeriod.hpp>
 #include <simfqt/bom/FareRuleFeatures.hpp>
 #include <simfqt/bom/SegmentFeatures.hpp>
+#include <simfqt/SIMFQT_Types.hpp>
 
 namespace SIMFQT {  
 
@@ -69,6 +70,8 @@ namespace SIMFQT {
 			      lResultParsing);
         
 	if (hasParsingBeenSuccesful) {
+
+          assert(lResultParsing.size() == 4);
           
           // Create a new travel solution.
           stdair::TravelSolutionStruct lTravelSolution;
@@ -77,12 +80,18 @@ namespace SIMFQT {
 	  // Get the Airport pair string of the segment path.
 	  std::ostringstream lAirportPairStr; 
 	  lAirportPairStr << lResultParsing.back() << std::endl;
+          std::string lAirportPairString = lResultParsing.back();
 
 	  // Search for the fare rules having the same origin and destination 
 	  // airport as the travel solution
 	  const AirportPair* lAirportPair_ptr = stdair::BomManager::
 	    getObjectPtr<AirportPair> (iBomRoot, lAirportPairStr.str());  
-	  assert (lAirportPair_ptr != NULL);
+	  if (lAirportPair_ptr == NULL) {
+            STDAIR_LOG_ERROR ("No available fare rule for the couple Origin-Destination "
+                              << lAirportPairString);
+            throw AirportPairNotFoundException ("No available fare rule for the couple Origin-Destination "
+                                                + lAirportPairString);
+          }
           
           // Get the position of the booking request.
           const stdair::CityCode_T& lPosition = iBookingRequest.getPOS();
@@ -93,8 +102,14 @@ namespace SIMFQT {
           const FarePosition* lFarePosition_ptr = stdair::BomManager::
             getObjectPtr<FarePosition> (*lAirportPair_ptr, 
                                         lFarePositionKey.toString());
-          assert (lFarePosition_ptr != NULL);
-
+          if (lFarePosition_ptr == NULL) {
+            STDAIR_LOG_ERROR ("No available fare rule corresponding to the position "
+                              << lPosition << " and to the couple Origin-Destination "
+                              << lAirportPairString);
+            throw PositionNotFoundException ("No available fare rule for the position "
+                                             + lPosition);
+          }
+          
           // Get the date of the segment path.
           const stdair::Date_T lSPDate(boost::gregorian::from_simple_string(lResultParsing.at(2)));
 
@@ -149,7 +164,18 @@ namespace SIMFQT {
                   assert (lcurrentSegmentFeatures_ptr != NULL);
                   
                   if (lcurrentSegmentFeatures_ptr->getAirlineCode() == lAirlineCode) {
+                    
                     lPrice  = 1200.0;
+                    
+                    // Set the travel solution price.
+                    lTravelSolution.setFare(lPrice);
+
+                    // DEBUG
+                    STDAIR_LOG_DEBUG ("The price is " << lTravelSolution.getFare()
+                                      << " EUR for the travel request for the airline "
+                                      << lResultParsing.front());
+
+                    ioTravelSolutionList.push_back (lTravelSolution); 
                   }
                 
                 }
@@ -159,16 +185,6 @@ namespace SIMFQT {
             }
             
           }
-
-          // Set the travel solution price.
-          lTravelSolution.setFare(lPrice);  
-	
-          // DEBUG
-          STDAIR_LOG_DEBUG ("The price is " << lTravelSolution.getFare()
-                            << " EUR for the travel request for the airline "
-                            << lResultParsing.front());
-
-          ioTravelSolutionList.push_back (lTravelSolution);
           
         }
           
