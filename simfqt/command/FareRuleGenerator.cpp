@@ -11,7 +11,7 @@
 // SIMFQT
 #include <simfqt/bom/FareRuleStruct.hpp>
 #include <simfqt/bom/AirportPair.hpp>
-#include <simfqt/bom/FarePosition.hpp>
+#include <simfqt/bom/FarePosChannel.hpp>
 #include <simfqt/bom/FareDatePeriod.hpp>
 #include <simfqt/bom/FareRuleFeatures.hpp>
 #include <simfqt/bom/SegmentFeatures.hpp>
@@ -46,26 +46,28 @@ namespace SIMFQT {
     }
     assert (lAirportPair_ptr != NULL);    
 
-    // Set the fare-position primary key.
+    // Set the position-channel primary key.
     const stdair::CityCode_T& lPosition = 
-      iFareRuleStruct._pos; 
-    const FarePositionKey lFarePositionKey (lPosition);  
+      iFareRuleStruct._pos;
+    const stdair::ChannelLabel_T& lChannel = 
+      iFareRuleStruct._channel;
+    const FarePosChannelKey lFarePosChannelKey (lPosition, lChannel);  
 
     // If the FarePositionKey object corresponding to the fare rule set
     // having the same city code does not exist, create it and link it
     // to the AirportPair object.     
-    FarePosition* lFarePosition_ptr = stdair::BomManager::
-      getObjectPtr<FarePosition> (*lAirportPair_ptr, 
-				  lFarePositionKey.toString());
-    if (lFarePosition_ptr == NULL) {
-      lFarePosition_ptr =
-        &stdair::FacBom<FarePosition>::instance().create (lFarePositionKey);
+    FarePosChannel* lFarePosChannel_ptr = stdair::BomManager::
+      getObjectPtr<FarePosChannel> (*lAirportPair_ptr, 
+                                    lFarePosChannelKey.toString());
+    if (lFarePosChannel_ptr == NULL) {
+      lFarePosChannel_ptr =
+        &stdair::FacBom<FarePosChannel>::instance().create (lFarePosChannelKey);
       stdair::FacBomManager::
-	instance().addToListAndMap (*lAirportPair_ptr, *lFarePosition_ptr);
+	instance().addToListAndMap (*lAirportPair_ptr, *lFarePosChannel_ptr);
       stdair::FacBomManager::
-	instance().linkWithParent (*lAirportPair_ptr, *lFarePosition_ptr);
+	instance().linkWithParent (*lAirportPair_ptr, *lFarePosChannel_ptr);
     }
-    assert (lFarePosition_ptr != NULL);   
+    assert (lFarePosChannel_ptr != NULL);   
 
     // Set the fare date-period primary key.
     const stdair::Date_T& lDateRangeStart = 
@@ -76,28 +78,26 @@ namespace SIMFQT {
     const FareDatePeriodKey lFareDatePeriodKey (lDatePeriod);
 
     // If the FareDatePeriodeKey object corresponding to the fare rule set
-    // having the same city code does not exist, create it and link it
-    // to the FarePosition object.     
+    // having the same city code and the same channel does not exist,
+    // create it and link it to the FarePosChannel object.     
     FareDatePeriod* lFareDatePeriod_ptr = stdair::BomManager::
-      getObjectPtr<FareDatePeriod> (*lFarePosition_ptr, 
+      getObjectPtr<FareDatePeriod> (*lFarePosChannel_ptr, 
 				    lFareDatePeriodKey.toString());
     if (lFareDatePeriod_ptr == NULL) {
       lFareDatePeriod_ptr =
         &stdair::FacBom<FareDatePeriod>::instance().create (lFareDatePeriodKey);
       stdair::FacBomManager::
-        instance().addToListAndMap (*lFarePosition_ptr, *lFareDatePeriod_ptr);
+        instance().addToListAndMap (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
       stdair::FacBomManager::
-      instance().linkWithParent (*lFarePosition_ptr, *lFareDatePeriod_ptr);
+      instance().linkWithParent (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
     }
-    assert (lFareDatePeriod_ptr != NULL);   
-    
+    assert (lFareDatePeriod_ptr != NULL);
+   
     // Generate all FareRules
-    const stdair::Duration_T& lTimeRangeStart = 
-      iFareRuleStruct._timeRangeStart;
-    const stdair::Duration_T& lTimeRangeEnd = 
-      iFareRuleStruct._timeRangeEnd;
-    const stdair::ChannelLabel_T& lChannel = 
-      iFareRuleStruct._channel;
+    const stdair::Time_T& lTimeRangeStart
+      = iFareRuleStruct._timeRangeStart;
+    const stdair::Time_T& lTimeRangeEnd
+      = iFareRuleStruct._timeRangeEnd;
     const stdair::DayDuration_T& lAdvancePurchase = 
       iFareRuleStruct._advancePurchase;
     const stdair::SaturdayStay_T& lSaturdayStay = 
@@ -110,11 +110,9 @@ namespace SIMFQT {
       iFareRuleStruct._minimumStay;
     const stdair::Fare_T& lFare = 
       iFareRuleStruct._fare; 
-    const FareRuleFeaturesKey lFareRuleFeaturesKey (lTimeRangeStart, lTimeRangeEnd,
-						    lChannel, lAdvancePurchase,
-                                                    lSaturdayStay, lChangeFees,
-                                                    lNonRefundable, lMinimumStay,
-                                                    lFare);  
+    const FareRuleFeaturesKey lFareRuleFeaturesKey (lTimeRangeStart, lTimeRangeEnd, lAdvancePurchase, lSaturdayStay,
+                                                    lChangeFees, lNonRefundable,
+                                                    lMinimumStay, lFare);  
 
     // Create ther fare rule object and link it to the FareDatePeriod object.  
     FareRuleFeatures* lFareRuleFeatures_ptr = stdair::BomManager::
