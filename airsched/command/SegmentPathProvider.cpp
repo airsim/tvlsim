@@ -116,10 +116,12 @@ namespace AIRSCHED {
         stdair::BomManager::getParent<stdair::FlightPeriod>(*lSegmentPeriod_ptr);
       const stdair::Inventory& lInventory =
         stdair::BomManager::getParent<stdair::Inventory> (lFlightPeriod);
+      const stdair::Duration_T lBoardingTime = lSegmentPeriod_ptr->getBoardingTime();
       std::ostringstream oStr;
       oStr << lInventory.getAirlineCode()
            << ", " << lFlightPeriod.getFlightNumber()
            << ", " << lReferenceFlightDate
+           << ", " << lBoardingTime
            << ", " << lSegmentPeriod_ptr->getBoardingPoint()
            << "-" << lSegmentPeriod_ptr->getOffPoint();
 
