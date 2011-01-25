@@ -9,9 +9,6 @@
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 
-// Simfqt
-#include <simfqt/SIMFQT_Types.hpp>
-
 // Forward declarations
 namespace stdair {
   class BomRoot;
