@@ -5,37 +5,38 @@
 #include <ostream>
 #include <sstream>
 // STDAIR
-#include <simfqt/bom/FarePositionKey.hpp>
+#include <simfqt/bom/FarePosChannelKey.hpp>
 
 namespace SIMFQT  {
 
   // ////////////////////////////////////////////////////////////////////
-  FarePositionKey::FarePositionKey (const stdair::CityCode_T& iPosition)
-    : _position (iPosition) {
+  FarePosChannelKey::FarePosChannelKey (const stdair::CityCode_T& iPosition,
+                                        const stdair::ChannelLabel_T& iChannel)
+    : _position (iPosition), _channel(iChannel) {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  FarePositionKey::FarePositionKey (const FarePositionKey& iKey)
-    : _position (iKey._position) {
+  FarePosChannelKey::FarePosChannelKey (const FarePosChannelKey& iKey)
+    : _position (iKey._position), _channel (iKey._channel) {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  FarePositionKey::~FarePositionKey () {
+  FarePosChannelKey::~FarePosChannelKey () {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void FarePositionKey::toStream (std::ostream& ioOut) const {
-    ioOut << "FarePositionKey: " << toString() << std::endl;
+  void FarePosChannelKey::toStream (std::ostream& ioOut) const {
+    ioOut << "FarePosChannelKey: " << toString() << std::endl;
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void FarePositionKey::fromStream (std::istream& ioIn) {
+  void FarePosChannelKey::fromStream (std::istream& ioIn) {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const std::string FarePositionKey::toString() const {
+  const std::string FarePosChannelKey::toString() const {
     std::ostringstream oStr;
-    oStr << _position << std::endl; 
+    oStr << _position << "," << _channel << std::endl; 
     return oStr.str();
   }
 

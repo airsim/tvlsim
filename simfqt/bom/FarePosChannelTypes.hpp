@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////////////////
-#ifndef __SIMFQT_BOM_FAREPOSITIONTYPES_HPP
-#define __SIMFQT_BOM_FAREPOSITIONTYPES_HPP
+#ifndef __SIMFQT_BOM_FAREPOSCHANNELTYPES_HPP
+#define __SIMFQT_BOM_FAREPOSCHANNELTYPES_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -14,16 +14,16 @@
 namespace SIMFQT {
 
   // Forward declarations.
-  class FarePosition;
+  class FarePosChannel;
   
   /** Define the fare-position list. */
-  typedef std::list<FarePosition*> FarePositionList_T;
+  typedef std::list<FarePosChannel*> FarePosChannelList_T;
 
   /** Define the fare-position map. */
-  typedef std::map<const stdair::MapKey_T, FarePosition*> FarePositionMap_T;
+  typedef std::map<const stdair::MapKey_T, FarePosChannel*> FarePosChannelMap_T;
 
   /** Define the list of pair<MapKey_T, FarePosition>. */
-  typedef std::pair<stdair::MapKey_T, FarePosition*> FarePositionWithKey_T;
-  typedef std::list<FarePositionWithKey_T> FarePositionDetailedList_T;
+  typedef std::pair<stdair::MapKey_T, FarePosChannel*> FarePosChannelWithKey_T;
+  typedef std::list<FarePosChannelWithKey_T> FarePosChannelDetailedList_T;
 }
-#endif // __SIMFQT_BOM_FAREPOSITIONTYPES_HPP
+#endif // __SIMFQT_BOM_FAREPOSCHANNELTYPES_HPP

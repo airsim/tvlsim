@@ -1,32 +1,37 @@
-#ifndef __SIMFQT_BOM_FAREPOSITIONKEY_HPP
-#define __SIMFQT_BOM_FAREPOSITIONKEY_HPP
+#ifndef __SIMFQT_BOM_FAREPOSCHANNELKEY_HPP
+#define __SIMFQT_BOM_FAREPOSCHANNELKEY_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // SIMFQT
 #include <stdair/bom/KeyAbstract.hpp>
-#include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_types.hpp>
 
 namespace SIMFQT  {
   /** Key of fare position. */
-  struct FarePositionKey : public stdair::KeyAbstract {
+  struct FarePosChannelKey : public stdair::KeyAbstract {
 
   private:
     // /////////// Default constructor //////////
-    FarePositionKey () { };
+    FarePosChannelKey () { };
   public:
     // /////////// Construction ///////////
     /** Constructors. */
-    FarePositionKey (const stdair::CityCode_T&);
-    FarePositionKey (const FarePositionKey&);
+    FarePosChannelKey (const stdair::CityCode_T&, const stdair::ChannelLabel_T&);
+    FarePosChannelKey (const FarePosChannelKey&);
     /** Destructor. */
-    ~FarePositionKey ();
+    ~FarePosChannelKey ();
     
     // /////////// Getter //////////
     /** Get the position. */
     const stdair::CityCode_T& getPosition() const {
       return _position;
+    }
+   
+    /** Get the channel. */
+    const stdair::ChannelLabel_T& getChannel() const {
+      return _channel;
     }
     
     // /////////// Display support methods /////////
@@ -48,7 +53,11 @@ namespace SIMFQT  {
     /** City code position */
     stdair::CityCode_T _position;
 
+    /** Booking channel
+        (D=direct, I=indirect, N=oNline, F=oFfline). */
+    stdair::ChannelLabel_T _channel;
+
   };
 
 }
-#endif // __SIMFQT_BOM_FAREPOSITIONKEY_HPP
+#endif // __SIMFQT_BOM_FAREPOSCHANNELKEY_HPP

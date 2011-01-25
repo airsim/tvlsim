@@ -1,5 +1,5 @@
-#ifndef __SIMFQT_BOM_FAREPOSITION_HPP
-#define __SIMFQT_BOM_FAREPOSITION_HPP
+#ifndef __SIMFQT_BOM_FAREPOSCHANNEL_HPP
+#define __SIMFQT_BOM_FAREPOSCHANNEL_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -7,8 +7,8 @@
 // STDAIR
 #include <stdair/bom/BomAbstract.hpp>
 // SIMFQT
-#include <simfqt/bom/FarePositionKey.hpp>
-#include <simfqt/bom/FarePositionTypes.hpp>
+#include <simfqt/bom/FarePosChannelKey.hpp>
+#include <simfqt/bom/FarePosChannelTypes.hpp>
 
 // Forward declaration
 namespace stdair {
@@ -19,14 +19,14 @@ namespace stdair {
 namespace SIMFQT {
 
   /** Class representing the actual attributes for a fare position . */
-  class FarePosition : public stdair::BomAbstract {
+  class FarePosChannel : public stdair::BomAbstract {
     template <typename BOM> friend class stdair::FacBom;
     friend class stdair::FacBomManager;
 
   public:
     // Type definitions.
     /** Definition allowing to retrieve the associated BOM key type. */
-    typedef FarePositionKey Key_T;
+    typedef FarePosChannelKey Key_T;
   
   public:
     // /////////// Display support methods /////////
@@ -47,18 +47,21 @@ namespace SIMFQT {
   public:
     // ////////// Getters ////////////
     const Key_T& getKey() const { return _key; }
-    const stdair::CityCode_T& getFarePosition() const {
+    const stdair::CityCode_T& getPosition() const {
       return _key.getPosition();
+    }
+    const stdair::ChannelLabel_T& getChannel() const {
+      return _key.getChannel();
     }
     stdair::BomAbstract* const getParent() const { return _parent; }
     const  stdair::HolderMap_T& getHolderMap() const { return _holderMap; }
     
   protected:
     /** Default constructors. */
-    FarePosition (const Key_T&);
-    FarePosition (const FarePosition&);
+    FarePosChannel (const Key_T&);
+    FarePosChannel (const FarePosChannel&);
     /** Destructor. */
-    ~FarePosition();
+    ~FarePosChannel();
 
   protected:
     // Attributes
@@ -69,5 +72,5 @@ namespace SIMFQT {
   };
 
 }
-#endif // __SIMFQT_BOM_FAREPOSITION_HPP
+#endif // __SIMFQT_BOM_FAREPOSCHANNEL_HPP
 

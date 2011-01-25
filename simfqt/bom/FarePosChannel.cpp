@@ -8,21 +8,21 @@
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/service/Logger.hpp>
 // SIMFQT
-#include <simfqt/bom/FarePosition.hpp>
+#include <simfqt/bom/FarePosChannel.hpp>
 
 namespace SIMFQT {
 
   // ////////////////////////////////////////////////////////////////////
-  FarePosition::FarePosition (const Key_T& iKey)
+  FarePosChannel::FarePosChannel (const Key_T& iKey)
     : _key (iKey), _parent (NULL)  {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  FarePosition::~FarePosition () {
+  FarePosChannel::~FarePosChannel () {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  std::string FarePosition::toString() const {
+  std::string FarePosChannel::toString() const {
     std::ostringstream oStr;
     oStr << describeKey();
     return oStr.str();
