@@ -49,6 +49,46 @@ namespace SIMFQT {
     const Key_T& getKey() const { return _key; }
     stdair::BomAbstract* const getParent() const { return _parent; }
     const  stdair::HolderMap_T& getHolderMap() const { return _holderMap; }
+
+    /** Get the time range start. */
+    const stdair::Duration_T& getTimeRangeStart() const {
+      return _key.getTimeRangeStart();
+    }
+
+    /** Get the time range end. */
+    const stdair::Duration_T& getTimeRangeEnd() const {
+      return _key.getTimeRangeEnd();
+    }
+
+    /** Get the fare day duration. */
+    const stdair::DayDuration_T& getAdvancePurchase() const {
+      return _key.getAdvancePurchase();
+    }
+
+    /** Get the fare saturday stay option. */
+    const stdair::SaturdayStay_T& getSaturdayStay() const {
+      return _key.getSaturdayStay();
+    }   
+
+    /** Get the change fees criterion. */
+    const stdair::ChangeFees_T& getChangeFees() const {
+      return _key.getChangeFees();
+    }
+
+    /** Get the refundable option. */
+    const stdair::NonRefundable_T& getRefundableOption() const {
+      return _key.getRefundableOption();
+    }
+
+    /** Get the minimum stay. */
+    const stdair::DayDuration_T& getMinimumStay() const {
+      return _key.getMinimumStay();
+    }
+
+    /** Get the fare. */
+    const stdair::Fare_T& getFare() const {
+      return _key.getFare();
+    }
     
   protected:
     /** Default constructors. */

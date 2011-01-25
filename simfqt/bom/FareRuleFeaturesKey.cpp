@@ -12,7 +12,6 @@ namespace SIMFQT  {
    // ////////////////////////////////////////////////////////////////////
   FareRuleFeaturesKey::FareRuleFeaturesKey (const stdair::Duration_T& iTimeRangeStart,
                                             const stdair::Duration_T& iTimeRangeEnd,
-                                            const stdair::ChannelLabel_T& iChannel,
                                             const stdair::DayDuration_T& iAdvancePurchase,
                                             const stdair::SaturdayStay_T& iSaturdayStay,
                                             const stdair::ChangeFees_T& iChangeFees,
@@ -20,17 +19,15 @@ namespace SIMFQT  {
                                             const stdair::DayDuration_T& iMinimumStay,
                                             const stdair::Fare_T& iFare)
     : _timeRangeStart(iTimeRangeStart), _timeRangeEnd(iTimeRangeEnd),
-      _channel(iChannel), _advancePurchase(iAdvancePurchase),
-      _saturdayStay(iSaturdayStay), _changeFees(iChangeFees),
-      _nonRefundable(iNonRefundable), _minimumStay(iMinimumStay),
-      _fare(iFare) {
+      _advancePurchase(iAdvancePurchase),_saturdayStay(iSaturdayStay),
+      _changeFees(iChangeFees), _nonRefundable(iNonRefundable),
+      _minimumStay(iMinimumStay), _fare(iFare) {
   }
 
   // ////////////////////////////////////////////////////////////////////
   FareRuleFeaturesKey::FareRuleFeaturesKey (const FareRuleFeaturesKey& iKey)
     :  _timeRangeStart(iKey.getTimeRangeStart()), 
        _timeRangeEnd(iKey.getTimeRangeEnd()),
-       _channel(iKey.getBookingChannel()),
        _advancePurchase(iKey.getAdvancePurchase()), 
        _saturdayStay(iKey.getSaturdayStay()),
        _changeFees(iKey.getChangeFees()), 
@@ -56,10 +53,9 @@ namespace SIMFQT  {
   const std::string FareRuleFeaturesKey::toString() const {
     std::ostringstream oStr;
     oStr << _timeRangeStart << "-" << _timeRangeEnd << "-"
-	 << _channel << "-" << _advancePurchase << "-"
-         << _saturdayStay << "-"  << _changeFees << "-"
-         << _nonRefundable << "-" << _minimumStay << "-"
-         << _fare << "-";
+	 << _advancePurchase << "-"<< _saturdayStay << "-"
+         << _changeFees << "-" << _nonRefundable << "-"
+         << _minimumStay << "-" << _fare;
     return oStr.str();
   }
 

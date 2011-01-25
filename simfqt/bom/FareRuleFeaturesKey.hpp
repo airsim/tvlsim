@@ -21,10 +21,9 @@ namespace SIMFQT  {
     // /////////// Construction ///////////
     /** Constructors. */
     FareRuleFeaturesKey (const stdair::Duration_T&, const stdair::Duration_T&,
-                         const stdair::ChannelLabel_T&, const stdair::DayDuration_T&,
-                         const stdair::SaturdayStay_T&, const stdair::ChangeFees_T&,
-                         const stdair::NonRefundable_T&, const stdair::DayDuration_T&,
-                         const stdair::Fare_T&);
+                         const stdair::DayDuration_T&,const stdair::SaturdayStay_T&,
+                         const stdair::ChangeFees_T&, const stdair::NonRefundable_T&,
+                         const stdair::DayDuration_T&, const stdair::Fare_T&);
     FareRuleFeaturesKey (const FareRuleFeaturesKey&);
     /** Destructor. */
     ~FareRuleFeaturesKey ();  
@@ -38,11 +37,6 @@ namespace SIMFQT  {
     /** Get the time range end. */
     const stdair::Duration_T& getTimeRangeEnd() const {
       return _timeRangeEnd;
-    }
-
-    /** Get the reservation channel. */
-    const stdair::ChannelLabel_T& getBookingChannel() const {
-      return _channel;
     }
 
     /** Get the fare day duration. */
@@ -99,10 +93,6 @@ namespace SIMFQT  {
         for this fare rule.*/
     stdair::Duration_T _timeRangeEnd;
 
-    /** Booking channel
-        (D=direct, I=indirect, N=oNline, F=oFfline). */
-    stdair::ChannelLabel_T _channel;
-     
     /** Number of days that the ticket is sold before the
 	flightDate.*/
     stdair::DayDuration_T _advancePurchase;
