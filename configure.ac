@@ -157,6 +157,7 @@ AX_BOOST([1.33])
 AC_SUBST(BOOST_VERSION)
 AC_SUBST(BOOST_CFLAGS)
 AC_SUBST(BOOST_LIBS)
+AC_SUBST(BOOST_UNIT_TEST_FRAMEWORK_LIB)
 AC_SUBST(BOOST_DATE_TIME_LIB)
 AC_SUBST(BOOST_PROGRAM_OPTIONS_LIB)
 AC_SUBST(BOOST_FILESYSTEM_LIB)
@@ -479,6 +480,7 @@ AC_CONFIG_FILES(
 	samples/Makefile
 	test/Makefile
 	test/boost/Makefile
+	test/boost/unit_test/Makefile
 	test/boost/accumulators/Makefile
 	test/boost/asio/Makefile
 	test/boost/asio/httpd/Makefile
@@ -586,6 +588,7 @@ ${MPICH2_OUTPUT}
     o BOOST_VERSION ........ : ${BOOST_VERSION}
     o BOOST_CFLAGS ......... : ${BOOST_CFLAGS}
     o BOOST_LIBS ........... : ${BOOST_LIBS}
+    o BOOST_UTF_LIB ........ : ${BOOST_UNIT_TEST_FRAMEWORK_LIB}
     o BOOST_DATE_TIME_LIB .. : ${BOOST_DATE_TIME_LIB}
     o BOOST_PO_LIB ......... : ${BOOST_PROGRAM_OPTIONS_LIB}
     o BOOST_FILESYSTEM_LIB . : ${BOOST_FILESYSTEM_LIB}
