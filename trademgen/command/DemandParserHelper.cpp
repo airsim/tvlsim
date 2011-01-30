@@ -123,7 +123,9 @@ namespace TRADEMGEN {
       if (hasInsertBeenSuccessfull == false) {
         STDAIR_LOG_ERROR ("The same POS code ('" << _demand._itPosCode
                           << "') has probably been given twice");
-        throw CodeDuplicationException();
+        throw stdair::CodeDuplicationException ("The same POS code ('"
+                                                + _demand._itPosCode
+                                                + "') has probably been given twice");
       }
       
       //STDAIR_LOG_DEBUG ("PosProbMass: " << iReal);
@@ -156,7 +158,9 @@ namespace TRADEMGEN {
         STDAIR_LOG_ERROR ("The same channel type code ('"
                           << _demand._itChannelCode
                           << "') has probably been given twice");
-        throw CodeDuplicationException();
+        throw stdair::CodeDuplicationException ("The same channel type code ('"
+                                                + _demand._itChannelCode
+                                                + "') has probably been given twice");
       }
       
       //STDAIR_LOG_DEBUG ("ChannelProbMass: " << iReal);
@@ -189,7 +193,9 @@ namespace TRADEMGEN {
         STDAIR_LOG_ERROR ("The same trip type code ('"
                           << _demand._itTripCode
                           << "') has probably been given twice");
-        throw CodeDuplicationException();
+        throw stdair::CodeDuplicationException ("The same trip type code ('"
+                                                + _demand._itTripCode
+                                                + "') has probably been given twice");
       }
       
       //STDAIR_LOG_DEBUG ("TripProbMass: " << iReal);
@@ -219,9 +225,11 @@ namespace TRADEMGEN {
         insert (StayDurationProbabilityMassFunction_T::
                 value_type (_demand._itStayDuration, iReal)).second;
       if (hasInsertBeenSuccessfull == false) {
-        STDAIR_LOG_ERROR ("The same stay duration ('" << _demand._itStayDuration
-                          << "') has probably been given twice");
-        throw CodeDuplicationException();
+        std::ostringstream oStr;
+        oStr << "The same stay duration ('" << _demand._itStayDuration
+             << "') has probably been given twice";
+        STDAIR_LOG_ERROR (oStr.str());
+        throw stdair::CodeDuplicationException (oStr.str());
       }
       
       // STDAIR_LOG_DEBUG ("StayProbMass: " << iReal);
@@ -253,7 +261,9 @@ namespace TRADEMGEN {
         STDAIR_LOG_ERROR ("The same Frequent Flyer code ('"
                           << _demand._itFFCode
                           << "') has probably been given twice");
-        throw CodeDuplicationException();
+        throw stdair::CodeDuplicationException("The same Frequent Flyer code ('"
+                                               + _demand._itFFCode
+                                               + "') has probably been given twice");
       }
       
       //STDAIR_LOG_DEBUG ("FfProbMass: " << iReal);
@@ -805,12 +815,13 @@ namespace TRADEMGEN {
                        << "been fully read. Stop point: " << info.stop);
         
     } else {
-      STDAIR_LOG_ERROR ("Parsing of demand input file: " << _filename
-                       << " failed: read " << info.length
-                       << " characters. The input file has "
-                       << hasBeenFullyReadStr
-                       << "been fully read. Stop point: " << info.stop);
-      throw ParserException();
+      std::ostringstream oStr;
+      oStr << "Parsing of demand input file: " << _filename << " failed: read "
+           << info.length << " characters. The input file has "
+           << hasBeenFullyReadStr << "been fully read. Stop point: "
+           << info.stop;
+      STDAIR_LOG_ERROR (oStr.str());
+      throw stdair::ParserException (oStr.str());
     }
 
     return oResult;

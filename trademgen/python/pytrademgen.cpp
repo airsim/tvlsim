@@ -56,11 +56,11 @@ namespace TRADEMGEN {
                           << "' returned '" << std::endl;
 
         // DEBUG
-        *_logOutputStream << "Trademgen output: "
+        *_logOutputStream << "TraDemGen output: "
                           << oStream.str() << std::endl;
 
-      } catch (const RootException& eTrademgenError) {
-        *_logOutputStream << "Trademgen error: "  << eTrademgenError.what()
+      } catch (const stdair::RootException& eTrademgenError) {
+        *_logOutputStream << "TraDemGen error: "  << eTrademgenError.what()
                           << std::endl;
         
       } catch (const std::exception& eStdError) {
@@ -130,7 +130,7 @@ namespace TRADEMGEN {
         // DEBUG
         *_logOutputStream << "Python wrapper initialised" << std::endl;
         
-      } catch (const RootException& eTrademgenError) {
+      } catch (const stdair::RootException& eTrademgenError) {
         *_logOutputStream << "Trademgen error: "  << eTrademgenError.what()
                           << std::endl;
         

@@ -100,6 +100,15 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_Service::~TRADEMGEN_Service () {
+    // Retrieve the Trademgen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -203,7 +212,8 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   void TRADEMGEN_Service::displayAirlineListFromDB () const {
     if (_trademgenServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The TraDemGen service has "
+                                                    "not been initialised");
     }
     assert (_trademgenServiceContext != NULL);
     // TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
@@ -265,7 +275,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   const stdair::NbOfRequests_T& TRADEMGEN_Service::
-  getTotalNumberOfRequestsToBeGenerated (const DemandStreamKey& iKey) const {
+  getTotalNumberOfRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T& iKey) const {
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
@@ -281,8 +291,7 @@ namespace TRADEMGEN {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
     // Delegate the call to the dedicated command
-    return DemandManager::getTotalNumberOfRequestsToBeGenerated(lBomRoot,
-                                                                iKey.toString());
+    return DemandManager::getTotalNumberOfRequestsToBeGenerated(lBomRoot, iKey);
   }
 
   // ////////////////////////////////////////////////////////////////////

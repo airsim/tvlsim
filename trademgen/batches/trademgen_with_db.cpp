@@ -36,7 +36,7 @@ const std::string K_TRADEMGEN_DEFAULT_QUERY_STRING ("my good old query");
 /** Default parameters for the database connection. */
 const std::string K_TRADEMGEN_DEFAULT_DB_USER ("dsim");
 const std::string K_TRADEMGEN_DEFAULT_DB_PASSWD ("dsim");
-const std::string K_TRADEMGEN_DEFAULT_DB_DBNAME ("dsim");
+const std::string K_TRADEMGEN_DEFAULT_DB_DBNAME ("sim_dsim");
 const std::string K_TRADEMGEN_DEFAULT_DB_HOST ("localhost");
 const std::string K_TRADEMGEN_DEFAULT_DB_PORT ("3306");
 
@@ -129,10 +129,10 @@ int readConfiguration (int argc, char* argv[],
      "Filepath for the logs")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_TRADEMGEN_DEFAULT_DB_USER),
-     "SQL database hostname (e.g., dsim)")
+     "SQL database user (e.g., dsim)")
     ("passwd,p",
      boost::program_options::value< std::string >(&ioDBPasswd)->default_value(K_TRADEMGEN_DEFAULT_DB_PASSWD),
-     "SQL database hostname (e.g., dsim)")
+     "SQL database password (e.g., dsim)")
     ("host,H",
      boost::program_options::value< std::string >(&ioDBHost)->default_value(K_TRADEMGEN_DEFAULT_DB_HOST),
      "SQL database hostname (e.g., localhost)")
@@ -141,7 +141,7 @@ int readConfiguration (int argc, char* argv[],
      "SQL database port (e.g., 3306)")
     ("dbname,m",
      boost::program_options::value< std::string >(&ioDBDBName)->default_value(K_TRADEMGEN_DEFAULT_DB_DBNAME),
-     "SQL database name (e.g., dsim)")
+     "SQL database name (e.g., sim_dsim)")
     ("query,q",
      boost::program_options::value< WordList_T >(&lWordList)->multitoken(),
      "Query word list")
@@ -236,68 +236,55 @@ int readConfiguration (int argc, char* argv[],
 
 // /////////////// M A I N /////////////////
 int main (int argc, char* argv[]) {
-  try {
 
-    // Query
-    std::string lQuery;
+  // Query
+  std::string lQuery;
 
-    // Input file name
-    stdair::Filename_T lInputFilename;
+  // Input file name
+  stdair::Filename_T lInputFilename;
 
-    // Output log File
-    std::string lLogFilename;
+  // Output log File
+  std::string lLogFilename;
 
-    // SQL database parameters
-    std::string lDBUser;
-    std::string lDBPasswd;
-    std::string lDBHost;
-    std::string lDBPort;
-    std::string lDBDBName;
-                       
-    // Airline code
-    stdair::AirlineCode_T lAirlineCode ("BA");
-    
-    // Call the command-line option parser
-    const int lOptionParserStatus = 
-      readConfiguration (argc, argv, lQuery, lInputFilename, lLogFilename,
-                         lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
+  // SQL database parameters
+  std::string lDBUser;
+  std::string lDBPasswd;
+  std::string lDBHost;
+  std::string lDBPort;
+  std::string lDBDBName;
+  
+  // Airline code
+  const stdair::AirlineCode_T lAirlineCode ("BA");
+  
+  // Call the command-line option parser
+  const int lOptionParserStatus = 
+    readConfiguration (argc, argv, lQuery, lInputFilename, lLogFilename,
+                       lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
-    if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
-      return 0;
-    }
-    
-    // Set the database parameters
-    stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
-                                   lDBDBName);
-    
-    // Set the log parameters
-    std::ofstream logOutputFile;
-    // open and clean the log outputfile
-    logOutputFile.open (lLogFilename.c_str());
-    logOutputFile.clear();
-
-    // Initialise the TraDemGen service object
-    const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-    TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams,
-                                                   lInputFilename);
-
-    // Query the database
-    trademgenService.displayAirlineListFromDB();
-
-    // Close the Log outputFile
-    logOutputFile.close();
-
-  } catch (const TRADEMGEN::RootException& otexp) {
-    std::cerr << "Standard exception: " << otexp.what() << std::endl;
-    return -1;
-    
-  } catch (const std::exception& stde) {
-    std::cerr << "Standard exception: " << stde.what() << std::endl;
-    return -1;
-    
-  } catch (...) {
-    return -1;
+  if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
+    return 0;
   }
   
+  // Set the database parameters
+  stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
+                                 lDBDBName);
+  
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
+  
+  // Initialise the TraDemGen service object
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams,
+                                                 lInputFilename);
+
+  // Query the database
+  trademgenService.displayAirlineListFromDB();
+
+  // Close the Log outputFile
+  logOutputFile.close();
+
   return 0;
 }

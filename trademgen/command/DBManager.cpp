@@ -38,7 +38,7 @@ namespace TRADEMGEN {
 
     } catch (std::exception const& lException) {
       STDAIR_LOG_ERROR ("Error: " << lException.what());
-      throw SQLDatabaseException();
+      throw stdair::SQLDatabaseException (lException.what());
     }
   }
 
@@ -84,7 +84,7 @@ namespace TRADEMGEN {
 
     } catch (std::exception const& lException) {
       STDAIR_LOG_ERROR ("Error: " << lException.what());
-      throw SQLDatabaseException();
+      throw stdair::SQLDatabaseException (lException.what());
     }
   }
 
@@ -106,7 +106,7 @@ namespace TRADEMGEN {
       
     } catch (std::exception const& lException) {
       STDAIR_LOG_ERROR ("Error: " << lException.what());
-      throw SQLDatabaseException();
+      throw stdair::SQLDatabaseException (lException.what());
     }
 
     return hasStillData;
@@ -144,7 +144,7 @@ namespace TRADEMGEN {
       
     } catch (std::exception const& lException) {
       STDAIR_LOG_ERROR ("Error: " << lException.what());
-      throw SQLDatabaseException();
+      throw stdair::SQLDatabaseException (lException.what());
     }
   }
 
@@ -177,7 +177,7 @@ namespace TRADEMGEN {
       
     } catch (std::exception const& lException) {
       STDAIR_LOG_ERROR ("Error: " << lException.what());
-      throw SQLDatabaseException();
+      throw stdair::SQLDatabaseException (lException.what());
     }
 
     return oHasRetrievedAirline;
