@@ -44,15 +44,13 @@
 
 <b>External Libraries:</b>
 <ul>
-<li><a href="http://www.gnu.org/software/gsl">GSL</a></li>
 <li><a href="http://www.boost.org">Boost</a></li>
-<li><a href="http://www.python.org">Python</a></li>
 <li><a href="http://openmpi-project.org">OpenMPI</a></li>
 <li><a href="http://soci.sourceforge.net">SOCI</a></li>
 <li><a href="http://www.mysql.org">MySQL Client</a></li>
 <li><a href="http://xerces-c.apache.org">Xerces C++</a></li>
-<li><a href="http://sourceforge.net/projects/extracc">Extra-CC</a></li>
-<li><a href="http://cppunit.sourceforge.net">CPPUnit</a></li>
+<li><a href="http://www.stdair.org">StdAir</a></li>
+<li><a href="http://www.python.org">Python</a></li>
 </ul>
 
 </div>
@@ -69,23 +67,22 @@ Management (RMOL: http://sourceforge.net/projects/rmol/) libraries.
 
 DSim makes an extensive use of existing open-source libraries for
 increased functionality, speed and accuracy. In particular <a
-href="http://www.boost.org">Boost</a> (<em>C++ STL Extensions</em>) library is
-used.
+href="http://www.boost.org">Boost</a> (<em>C++ STL Extensions</em>)
+library is used.
 
 The DSim library originates from the department of Operational
-Research and Innovation (ORI) at <a
-href="http://www.amadeus.com">Amadeus</a>, Sophia Antipolis,
-France. DSim is released under the terms of the <a
-href="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public
-License</a> (LGPLv2) for you to enjoy.
+Research and Innovation (ORI) at <a href="http://www.amadeus.com">Amadeus</a>,
+Sophia Antipolis, France. DSim is released under the terms of the
+<a href="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General 
+Public License</a> (LGPLv2) for you to enjoy.
 
 DSim should work on
 <a href="http://en.wikipedia.org/wiki/GNU/Linux">GNU/Linux</a>,
 <a href="http://www.sun.com/software/solaris/">Sun Solaris</a>,
 Microsoft Windows (with <a href="http://www.cygwin.com/">Cygwin</a>,
 <a href="http://www.mingw.org/">MinGW/MSYS</a>, or 
-<a href="http://msdn.microsoft.com/visualc/">Microsoft Visual C++ .NET</a>) and
-<a href="http://www.apple.com/macosx/">Mac OS X</a> operating systems.
+<a href="http://msdn.microsoft.com/visualc/">Microsoft Visual C++ .NET</a>) 
+and <a href="http://www.apple.com/macosx/">Mac OS X</a> operating systems.
 
 \htmlonly
 </div>
