@@ -17,7 +17,7 @@ namespace TRAVELCCM {
   class CustomerChoiceException : public stdair::RootException {
   };
 
-  // //////// Type definitions specific to SimFQT /////////
+  // //////// Type definitions specific to TravelCCM /////////
   /** Define an identity of a pattern. */
   typedef std::string PatternId_T;
 
