@@ -16,7 +16,7 @@
 // StdAir
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
-#include <stdair/bom/BomRoot.hpp>
+#include <stdair/basic/BasFileMgr.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/DSIM_Service.hpp>
