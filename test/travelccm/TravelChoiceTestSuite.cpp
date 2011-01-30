@@ -1,27 +1,74 @@
+/*!
+ * \page TravelChoiceTestSuite_cpp Command-Line Test to Demonstrate How To Test the Travel CCM Project
+ * \code
+ */
+// //////////////////////////////////////////////////////////////////////
+// Import section
+// //////////////////////////////////////////////////////////////////////
 // STL
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <string>
-// CPPUNIT
-#include <extracppunit/CppUnitCore.hpp>
+// Boost Unit Test Framework (UTF)
+#define BOOST_TEST_MODULE StdAirTest
+#include <boost/test/unit_test.hpp>
+// StdAir
+#include <stdair/basic/BasLogParams.hpp>
+#include <stdair/basic/BasDBParams.hpp>
+#include <stdair/basic/BasFileMgr.hpp>
 // TravelCCM
 #include <travelccm/TRAVELCCM_Service.hpp>
 #include <travelccm/config/travelccm-paths.hpp>
-// TravelCCM Test Suite
-#include <test/travelccm/TravelChoiceTestSuite.hpp>
 
-// //////////////////////////////////////////////////////////////////////
-void testTravelChoiceHelper() {
+namespace boost_utf = boost::unit_test;
 
-  // Output log File
-  const std::string lLogFilename ("TravelChoiceTestSuite.log");
-    
-  // Number of random draws to be generated (best if greater than 100)
-  // const int K = 100000;
-  
+/**
+ * Configuration for the Boost Unit Test Framework (UTF)
+ */
+struct UnitTestConfig {
+  /** Constructor. */
+  UnitTestConfig() : _test_log ("TravelChoiceTestSuite_results.xml")  {
+    boost_utf::unit_test_log.set_stream (_test_log);
+    boost_utf::unit_test_log.set_format (boost_utf::XML);
+  }
+  /** Destructor. */
+  ~UnitTestConfig() {
+    boost_utf::unit_test_log.set_stream (std::cout);
+  }
+  /** Log file */  
+  std::ofstream _test_log;
+};
+
+
+// /////////////// Main: Unit Test Suite //////////////
+
+// Set the UTF configuration (re-direct the output to a specific file)
+BOOST_GLOBAL_FIXTURE (UnitTestConfig);
+
+// Start the test suite
+BOOST_AUTO_TEST_SUITE (master_test_suite)
+
+/**
+ * Test a simple simulation
+ */
+BOOST_AUTO_TEST_CASE (simple_simulation_test) {
+
   // Input file name
-  // const std::string inputFileName (STDAIR_SAMPLE_DIR "/ccm_02.csv");
-  // const bool hasInputFile = true;
+  /*
+    const stdair::Filename_T inputFileName (STDAIR_SAMPLE_DIR "/ccm_02.csv");
   
+  // Check that the file path given as input corresponds to an actual file
+  const bool doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lInputFilename
+                       << "' input file can not be open and read");
+  */
+  
+  // Output log File
+  const stdair::Filename_T lLogFilename ("TravelChoiceTestSuite.log");
+    
   // Set the log parameters
   std::ofstream logOutputFile;
   // Open and clean the log outputfile
@@ -34,23 +81,18 @@ void testTravelChoiceHelper() {
   TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams, lCCMType);
   
   // Start a mini-simulation
-  travelccmService.simulate();
+  BOOST_CHECK_NO_THROW (travelccmService.simulate());
+
+  // TODO: add much more tests
+  //
+
+  // Close the log file
+  logOutputFile.close();
 }
 
-// //////////////////////////////////////////////////////////////////////
-void TravelChoiceTestSuite::testTravelChoice() {
-  CPPUNIT_ASSERT_NO_THROW (testTravelChoiceHelper(););
-}
+// End the test suite
+BOOST_AUTO_TEST_SUITE_END()
 
-// //////////////////////////////////////////////////////////////////////
-// void TravelChoiceTestSuite::errorCase () {
-//  CPPUNIT_ASSERT (false);
-// }
-
-// //////////////////////////////////////////////////////////////////////
-TravelChoiceTestSuite::TravelChoiceTestSuite () {
-  _describeKey << "Running test on TRAVEL-CCM Optimisation function";  
-}
-
-// /////////////// M A I N /////////////////
-CPPUNIT_MAIN()
+/*!
+ * \endcode
+ */

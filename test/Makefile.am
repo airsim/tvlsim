@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 # to Boost Unit Test Framework (from ExtraCC/CPUnit)
 # TODO: migrate all the other components
 #SUBDIRS = boost trademgen simcrs travelccm dsim
-SUBDIRS = boost dsim
+SUBDIRS = boost trademgen travelccm dsim
 
 EXTRA_DIST =
 
