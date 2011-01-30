@@ -69,6 +69,34 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Fare input file name
   const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
     
+  // Check that the file path given as input corresponds to an actual file
+  bool doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lScheduleInputFilename
+                       << "' input file can not be open and read");
+
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lODInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lODInputFilename
+                       << "' input file can not be open and read");
+
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lDemandInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lDemandInputFilename
+                       << "' input file can not be open and read");
+
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lFareInputFilename
+                       << "' input file can not be open and read");
+
   // Output log File
   const stdair::Filename_T lLogFilename ("SimulationTestSuite.log");
 
