@@ -117,14 +117,6 @@ if test -z "${CXXFLAGS}"; then
    CXXFLAGS="-g -Wall"
 fi
 
-# -----------------------------------------------------------------------------
-# Support for ExtraCC (Extra-CruiseControl): http://sf.net/projects/extracc
-# -----------------------------------------------------------------------------
-AM_PATH_EXTRACC
-AC_SUBST(EXTRACC_VERSION)
-AC_SUBST(EXTRACC_CFLAGS)
-AC_SUBST(EXTRACC_LIBS)
-
 # -----------------------------------------------------------
 # Python: http://www.python.org
 # -----------------------------------------------------------
@@ -154,45 +146,21 @@ AC_SUBST(MPIGEN_LIBS)
 # Support for Boost (Extension of the STL): http://www.boost.org
 # ---------------------------------------------------------------
 AX_BOOST([1.33])
-AC_SUBST(BOOST_VERSION)
-AC_SUBST(BOOST_CFLAGS)
-AC_SUBST(BOOST_LIBS)
-AC_SUBST(BOOST_UNIT_TEST_FRAMEWORK_LIB)
-AC_SUBST(BOOST_DATE_TIME_LIB)
-AC_SUBST(BOOST_PROGRAM_OPTIONS_LIB)
-AC_SUBST(BOOST_FILESYSTEM_LIB)
-AC_SUBST(BOOST_THREAD_LIB)
-AC_SUBST(BOOST_PYTHON_LIB)
-AC_SUBST(BOOST_SIGNALS_LIB)
-AC_SUBST(BOOST_IOSTREAMS_LIB)
-AC_SUBST(BOOST_ASIO_LIB)
-AC_SUBST(BOOST_MPI_LIB)
-AC_SUBST(BOOST_MPI_PYTHON_LIB)
 
 # --------------------------------------------------------------------
 # Support for MySQL (C client API): http://www.mysql.org
 # --------------------------------------------------------------------
 AX_MYSQL
-AC_SUBST(MYSQL_VERSION)
-AC_SUBST(MYSQL_CFLAGS)
-AC_SUBST(MYSQL_LIBS)
 
 # --------------------------------------------------------------------
 # Support for SOCI http://soci.sourceforge.net
 # --------------------------------------------------------------------
 AX_SOCI([3.0])
-AC_SUBST(SOCI_VERSION)
-AC_SUBST(SOCI_CFLAGS)
-AC_SUBST(SOCI_LIBS)
 
 # -----------------------------------------------------------------------------
 # Support for StdAir (): http://sf.net/projects/stdair
 # -----------------------------------------------------------------------------
 AM_PATH_STDAIR([0.10.0])
-AC_SUBST(STDAIR_VERSION)
-AC_SUBST(STDAIR_CFLAGS)
-AC_SUBST(STDAIR_LIBS)
-AC_SUBST(STDAIR_SAMPLE_DIR)
 
 # --------------------------------------------------------------------
 # Support for TRAVEL-CCM (CCM Open Library): http://sf.net/projects/travel-ccm
@@ -591,6 +559,7 @@ ${MPICH2_OUTPUT}
     o BOOST_UTF_LIB ........ : ${BOOST_UNIT_TEST_FRAMEWORK_LIB}
     o BOOST_DATE_TIME_LIB .. : ${BOOST_DATE_TIME_LIB}
     o BOOST_PO_LIB ......... : ${BOOST_PROGRAM_OPTIONS_LIB}
+    o BOOST_SYSTEM_LIB ..... : ${BOOST_SYSTEM_LIB}
     o BOOST_FILESYSTEM_LIB . : ${BOOST_FILESYSTEM_LIB}
     o BOOST_THREAD_LIB ..... : ${BOOST_THREAD_LIB}
     o BOOST_PYTHON_LIB ..... : ${BOOST_PYTHON_LIB}
@@ -599,6 +568,9 @@ ${MPICH2_OUTPUT}
     o BOOST_MPI_PYTHON_LIB . : ${BOOST_MPI_PYTHON_LIB}
     o BOOST_IOSTREAMS_LIB .. : ${BOOST_IOSTREAMS_LIB}
     o BOOST_SIGNALS_LIB .... : ${BOOST_SIGNALS_LIB}
+    o BOOST_SERIAL_LIB ..... : ${BOOST_SERIALIZATION_LIB}
+    o BOOST_WSERIAL_LIB .... : ${BOOST_WSERIALIZATION_LIB}
+    o BOOST_REGEX_LIB ...... : ${BOOST_REGEX_LIB}
 
   - MySQL .................. :
     o MYSQL_VERSION ........ : ${MYSQL_VERSION}
@@ -620,16 +592,6 @@ ${MPICH2_OUTPUT}
     o STDAIR_CFLAGS ........ : ${STDAIR_CFLAGS}
     o STDAIR_LIBS .......... : ${STDAIR_LIBS}
     o STDAIR_SAMPLE_DIR .... : ${STDAIR_SAMPLE_DIR}
-
-  - ExtraCC ................ :
-    o EXTRACC_VERSION ...... : ${EXTRACC_VERSION}
-    o EXTRACC_CFLAGS ....... : ${EXTRACC_CFLAGS}
-    o EXTRACC_LIBS ......... : ${EXTRACC_LIBS}
-
-  - CppUnit ................ :
-    o CPPUNIT_VERSION ...... : ${CPPUNIT_VERSION}
-    o CPPUNIT_CFLAGS ....... : ${CPPUNIT_CFLAGS}
-    o CPPUNIT_LIBS ......... : ${CPPUNIT_LIBS}
 
 ------------------------------------------------------------------------------
 Now type 'make && make check' to build and test $PACKAGE-$VERSION library

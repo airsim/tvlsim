@@ -15,7 +15,6 @@ Source0:        http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.
 
 BuildRequires:  boost-devel
 BuildRequires:  soci-mysql-devel
-BuildRequires:  extracc-devel
 
 
 %description

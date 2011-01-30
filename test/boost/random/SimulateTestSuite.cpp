@@ -16,13 +16,30 @@
 // Boost Accumulators
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
-// Extra-CPPUnit
-#include <extracppunit/CppUnitCore.hpp>
-// Test Suite
-#include <test/boost/random/SimulateTestSuite.hpp>
+// Boost Unit Test Framework (UTF)
+#define BOOST_TEST_MODULE StdAirTest
+#include <boost/test/unit_test.hpp>
 
 // using namespace boost;
 namespace ba = boost::accumulators;
+namespace boost_utf = boost::unit_test;
+
+/**
+ * Configuration for the Boost Unit Test Framework (UTF)
+ */
+struct UnitTestConfig {
+  /** Constructor. */
+  UnitTestConfig() : _test_log ("SimulationTestSuite_results.xml")  {
+    boost_utf::unit_test_log.set_stream (_test_log);
+    boost_utf::unit_test_log.set_format (boost_utf::XML);
+  }
+  /** Destructor. */
+  ~UnitTestConfig() {
+    boost_utf::unit_test_log.set_stream (std::cout);
+  }
+  /** Log file */  
+  std::ofstream _test_log;
+};
 
 // ////////// Type definitions //////////
 /** Type definition for a random number generator base (mt19937). */
@@ -157,11 +174,21 @@ double calculateDailyRate (const boost::gregorian::date iStartDate,
   return lambda;
 }
 
-// //////////////////////////////////////////////////////////////////////
-void testSimulateHelper() {
+// /////////////// Main: Unit Test Suite //////////////
+
+// Set the UTF configuration (re-direct the output to a specific file)
+BOOST_GLOBAL_FIXTURE (UnitTestConfig);
+
+// Start the test suite
+BOOST_AUTO_TEST_SUITE (master_test_suite)
+
+/**
+ * Test a simple simulation
+ */
+BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
   // Output log File
-  std::string lLogFilename ("SimulateTestSuite.log");
+  const std::string lLogFilename ("SimulateTestSuite.log");
     
   // Set the log parameters
   std::ofstream logOutputFile;
@@ -352,21 +379,19 @@ void testSimulateHelper() {
                 << ba::variance (lGaussianVariateAcc) << "; "
                 << std::endl;
 
-  // Checking that the number of daily events follows a distribution
-  if (ba::mean (lTotalEventNumberAcc)
-      < lFinalDemandMean - lFinalDemandStandardDeviation
-      || ba::mean (lTotalEventNumberAcc)
-      > lFinalDemandMean + lFinalDemandStandardDeviation) {
-    throw simulation_exception ("The mean of the total number of events is not in the expected range");
-  }
+  // Checking that the number of daily events follows a distribution:
+  // the mean of the total number of events must be within in the expected range
+  BOOST_CHECK_LE (ba::mean (lTotalEventNumberAcc),
+                  lFinalDemandMean - lFinalDemandStandardDeviation);
+  BOOST_CHECK_GE (ba::mean (lTotalEventNumberAcc),
+                  lFinalDemandMean + lFinalDemandStandardDeviation);
 
-  // Checking that the random draws follow a normal distribution
-  if (ba::mean (lGaussianVariateAcc)
-      < lFinalDemandMean - lFinalDemandStandardDeviation
-      || ba::mean (lGaussianVariateAcc)
-      > lFinalDemandMean + lFinalDemandStandardDeviation) {
-    throw simulation_exception ("The mean of the total number of events is not in the expected range");
-  }
+  // Checking that the random draws follow a normal distribution:
+  // the mean of the total number of events must be within the expected range
+  BOOST_CHECK_LE (ba::mean (lGaussianVariateAcc),
+                  lFinalDemandMean - lFinalDemandStandardDeviation);
+  BOOST_CHECK_GE (ba::mean (lGaussianVariateAcc),
+                  lFinalDemandMean + lFinalDemandStandardDeviation);
     
   // TODO: check that the average number of events corresponds to the given
   // input
@@ -375,20 +400,5 @@ void testSimulateHelper() {
   logOutputFile.close();
 }
 
-// //////////////////////////////////////////////////////////////////////
-void SimulateTestSuite::testSimulate() {
-  CPPUNIT_ASSERT_NO_THROW (testSimulateHelper(););
-}
-
-// //////////////////////////////////////////////////////////////////////
-// void SimulateTestSuite::errorCase () {
-//  CPPUNIT_ASSERT (false);
-// }
-
-// //////////////////////////////////////////////////////////////////////
-SimulateTestSuite::SimulateTestSuite () {
-  _describeKey << "Running test on random generation for simulation";  
-}
-
-// /////////////// M A I N /////////////////
-CPPUNIT_MAIN()
+// End the test suite
+BOOST_AUTO_TEST_SUITE_END()
