@@ -20,10 +20,38 @@ namespace SIMFQT {
       : stdair::ObjectNotFoundException (iWhat) {}
   };
 
-  class PositionNotFoundException : public stdair::ObjectNotFoundException {
+  class PosOrChannelNotFoundException : public stdair::ObjectNotFoundException {
   public:
     /** Constructor. */
-    PositionNotFoundException (const std::string& iWhat)
+    PosOrChannelNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FlightDateNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FlightDateNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FlightTimeNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FlightTimeNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FeaturesNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FeaturesNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+  
+  class AirlineNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    AirlineNotFoundException (const std::string& iWhat)
       : stdair::ObjectNotFoundException (iWhat) {}
   };
 
