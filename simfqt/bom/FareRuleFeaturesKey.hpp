@@ -20,8 +20,7 @@ namespace SIMFQT  {
   public:
     // /////////// Construction ///////////
     /** Constructors. */
-    FareRuleFeaturesKey (const stdair::Duration_T&, const stdair::Duration_T&,
-                         const stdair::DayDuration_T&,const stdair::SaturdayStay_T&,
+    FareRuleFeaturesKey (const stdair::DayDuration_T&,const stdair::SaturdayStay_T&,
                          const stdair::ChangeFees_T&, const stdair::NonRefundable_T&,
                          const stdair::DayDuration_T&, const stdair::Fare_T&);
     FareRuleFeaturesKey (const FareRuleFeaturesKey&);
@@ -29,16 +28,6 @@ namespace SIMFQT  {
     ~FareRuleFeaturesKey ();  
 
     // /////////// Getters //////////
-    /** Get the time range start. */
-    const stdair::Duration_T& getTimeRangeStart() const {
-      return _timeRangeStart;
-    }
-
-    /** Get the time range end. */
-    const stdair::Duration_T& getTimeRangeEnd() const {
-      return _timeRangeEnd;
-    }
-
     /** Get the fare day duration. */
     const stdair::DayDuration_T& getAdvancePurchase() const {
       return _advancePurchase;
@@ -85,14 +74,6 @@ namespace SIMFQT  {
 
   private:
     // Attributes   
-    /** Start time from the time range available
-         for this fare rule.*/
-    stdair::Duration_T _timeRangeStart;
-     
-    /** End time from the time range available
-        for this fare rule.*/
-    stdair::Duration_T _timeRangeEnd;
-
     /** Number of days that the ticket is sold before the
 	flightDate.*/
     stdair::DayDuration_T _advancePurchase;
