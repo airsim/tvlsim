@@ -9,6 +9,9 @@ simfqt_bom_h_sources = \
 	$(top_srcdir)/simfqt/bom/FareDatePeriodKey.hpp \
 	$(top_srcdir)/simfqt/bom/FareDatePeriodTypes.hpp \
 	$(top_srcdir)/simfqt/bom/FareDatePeriod.hpp \
+	$(top_srcdir)/simfqt/bom/FareTimePeriodKey.hpp \
+	$(top_srcdir)/simfqt/bom/FareTimePeriodTypes.hpp \
+	$(top_srcdir)/simfqt/bom/FareTimePeriod.hpp \
 	$(top_srcdir)/simfqt/bom/FareRuleFeaturesKey.hpp \
 	$(top_srcdir)/simfqt/bom/FareRuleFeaturesTypes.hpp \
 	$(top_srcdir)/simfqt/bom/FareRuleFeatures.hpp \
@@ -23,6 +26,8 @@ simfqt_bom_cc_sources = \
 	$(top_srcdir)/simfqt/bom/FarePosChannel.cpp \
 	$(top_srcdir)/simfqt/bom/FareDatePeriodKey.cpp \
 	$(top_srcdir)/simfqt/bom/FareDatePeriod.cpp \
+	$(top_srcdir)/simfqt/bom/FareTimePeriodKey.cpp \
+	$(top_srcdir)/simfqt/bom/FareTimePeriod.cpp \
 	$(top_srcdir)/simfqt/bom/FareRuleFeaturesKey.cpp \
 	$(top_srcdir)/simfqt/bom/FareRuleFeatures.cpp \
 	$(top_srcdir)/simfqt/bom/SegmentFeaturesKey.cpp \
