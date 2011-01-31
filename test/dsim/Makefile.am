@@ -18,9 +18,7 @@ TESTS = $(check_PROGRAMS)
 XFAIL_TESTS = $(fail_PRG)
 
 SimulationTestSuite_SOURCES = SimulationTestSuite.cpp
-SimulationTestSuite_CXXFLAGS = $(BOOST_CFLAGS) \
-	-DBOOST_TEST_MAIN -DBOOST_TEST_DYN_LINK \
-	$(STDAIR_CFLAGS)
+SimulationTestSuite_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 SimulationTestSuite_LDADD =
 SimulationTestSuite_LDFLAGS = $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) \
 	$(STDAIR_LIBS) \

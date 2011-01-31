@@ -1,5 +1,5 @@
 /*!
- * \page SimulationTestSuite_cpp Command-Line Test to Demonstrate How To Use DSim
+ * \page SimulationTestSuite_cpp Command-Line Test to Demonstrate How To Test DSim
  * \code
  */
 // //////////////////////////////////////////////////////////////////////
@@ -7,10 +7,11 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <iostream>
-#include <sstream>
 #include <fstream>
 #include <string>
 // Boost Unit Test Framework (UTF)
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE StdAirTest
 #include <boost/test/unit_test.hpp>
 // StdAir
@@ -29,9 +30,11 @@ namespace boost_utf = boost::unit_test;
  */
 struct UnitTestConfig {
   /** Constructor. */
-  UnitTestConfig() : _test_log ("SimulationTestSuite_results.xml")  {
+  UnitTestConfig() : _test_log ("SimulationTestSuite_utfresults.xml")  {
     boost_utf::unit_test_log.set_stream (_test_log);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
+    boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
+    //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
   }
   /** Destructor. */
   ~UnitTestConfig() {
