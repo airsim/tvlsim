@@ -12,6 +12,8 @@
 #include <string>
 #include <cmath>
 // Boost Unit Test Framework (UTF)
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE CRSTestSuite
 #include <boost/test/unit_test.hpp>
 // StdAir
@@ -32,9 +34,10 @@ namespace boost_utf = boost::unit_test;
  */
 struct UnitTestConfig {
   /** Constructor. */
-  UnitTestConfig() : _test_log ("CRSTestSuite_results.xml")  {
+  UnitTestConfig() : _test_log ("CRSTestSuite_utfresults.xml")  {
     boost_utf::unit_test_log.set_stream (_test_log);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
+    boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
   }
   /** Destructor. */
   ~UnitTestConfig() {
