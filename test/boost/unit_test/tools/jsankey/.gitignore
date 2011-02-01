@@ -1,0 +1,13 @@
+tmp
+INSTALL
+Makefile.in
+aclocal.m4
+autom4te.cache
+batches/dsim
+config
+configure
+doc
+man
+config.h.in*
+*_results.xml
+
