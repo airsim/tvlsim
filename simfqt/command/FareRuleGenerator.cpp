@@ -13,6 +13,7 @@
 #include <simfqt/bom/AirportPair.hpp>
 #include <simfqt/bom/FarePosChannel.hpp>
 #include <simfqt/bom/FareDatePeriod.hpp>
+#include <simfqt/bom/FareTimePeriod.hpp>
 #include <simfqt/bom/FareRuleFeatures.hpp>
 #include <simfqt/bom/SegmentFeatures.hpp>
 #include <simfqt/command/FareRuleGenerator.hpp>
@@ -78,8 +79,7 @@ namespace SIMFQT {
     const FareDatePeriodKey lFareDatePeriodKey (lDatePeriod);
 
     // If the FareDatePeriodeKey object corresponding to the fare rule set
-    // having the same city code and the same channel does not exist,
-    // create it and link it to the FarePosChannel object.     
+    // does not exist, create it and link it to the FarePosChannel object.     
     FareDatePeriod* lFareDatePeriod_ptr = stdair::BomManager::
       getObjectPtr<FareDatePeriod> (*lFarePosChannel_ptr, 
 				    lFareDatePeriodKey.toString());
@@ -93,11 +93,30 @@ namespace SIMFQT {
     }
     assert (lFareDatePeriod_ptr != NULL);
    
-    // Generate all FareRules
+    // Set the fare time-period primary key.
     const stdair::Time_T& lTimeRangeStart
       = iFareRuleStruct._timeRangeStart;
     const stdair::Time_T& lTimeRangeEnd
       = iFareRuleStruct._timeRangeEnd;
+    const FareTimePeriodKey lFareTimePeriodKey (lTimeRangeStart,
+                                                lTimeRangeEnd);
+
+    // If the FareTimePeriodeKey object corresponding to the fare rule set
+    // does not exist, create it and link it to the FarePosChannel object.     
+    FareTimePeriod* lFareTimePeriod_ptr = stdair::BomManager::
+      getObjectPtr<FareTimePeriod> (*lFareDatePeriod_ptr, 
+				    lFareTimePeriodKey.toString());
+    if (lFareTimePeriod_ptr == NULL) {
+      lFareTimePeriod_ptr =
+        &stdair::FacBom<FareTimePeriod>::instance().create (lFareTimePeriodKey);
+      stdair::FacBomManager::
+        instance().addToListAndMap (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
+      stdair::FacBomManager::
+      instance().linkWithParent (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
+    }
+    assert (lFareTimePeriod_ptr != NULL);
+
+    // Generate the FareRule
     const stdair::DayDuration_T& lAdvancePurchase = 
       iFareRuleStruct._advancePurchase;
     const stdair::SaturdayStay_T& lSaturdayStay = 
@@ -110,22 +129,22 @@ namespace SIMFQT {
       iFareRuleStruct._minimumStay;
     const stdair::Fare_T& lFare = 
       iFareRuleStruct._fare; 
-    const FareRuleFeaturesKey lFareRuleFeaturesKey (lTimeRangeStart, lTimeRangeEnd, lAdvancePurchase, lSaturdayStay,
+    const FareRuleFeaturesKey lFareRuleFeaturesKey (lAdvancePurchase, lSaturdayStay,
                                                     lChangeFees, lNonRefundable,
                                                     lMinimumStay, lFare);  
 
     // Create ther fare rule object and link it to the FareDatePeriod object.  
     FareRuleFeatures* lFareRuleFeatures_ptr = stdair::BomManager::
-      getObjectPtr<FareRuleFeatures> (*lFareDatePeriod_ptr, 
+      getObjectPtr<FareRuleFeatures> (*lFareTimePeriod_ptr, 
 				      lFareRuleFeaturesKey.toString());
     if (lFareRuleFeatures_ptr == NULL) {
       lFareRuleFeatures_ptr =
 	&stdair::FacBom<FareRuleFeatures>::instance().create (lFareRuleFeaturesKey);
       assert(lFareRuleFeatures_ptr != NULL); 
       stdair::FacBomManager::
-	instance().addToListAndMap (*lFareDatePeriod_ptr, *lFareRuleFeatures_ptr);
+	instance().addToListAndMap (*lFareTimePeriod_ptr, *lFareRuleFeatures_ptr);
       stdair::FacBomManager::
-	instance().linkWithParent (*lFareDatePeriod_ptr, *lFareRuleFeatures_ptr);  
+	instance().linkWithParent (*lFareTimePeriod_ptr, *lFareRuleFeatures_ptr);  
     }
     assert(lFareRuleFeatures_ptr != NULL); 
 
