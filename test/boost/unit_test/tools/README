@@ -1,0 +1,25 @@
+
+=================================
+Boost.Test XML Reports for Continuous Integration (CI)
+See: http://www.alittlemadness.com/2009/04/07/boosttest-xml-reports-for-continuous-integration/
+(part of C++ Unit Testing With Boost.Test:
+ http://www.alittlemadness.com/2009/03/31/c-unit-testing-with-boosttest/ )
+
+Boost.Test Tutorial Sample Code
+See: http://www.alittlemadness.com/2009/06/18/boosttest-tutorial-sample-code/
+
+http://github.com/jsankey/boost.test-examples/
+
+The easiest way to access the code if you have git is to clone:
+$ git clone git://github.com/jsankey/boost.test-examples.git
+
+=================================
+Converting Boost.Test XML logs to HTML with XSL
+See: http://stackoverflow.com/questions/2969131/anyone-have-an-xsl-to-convert-boost-test-xml-logs-to-a-presentable-format
+
+Use the following command-line options: '--report_format=xml --report_level=detailed'
+With this method you only want to capture the stderr output.
+The contents of stdout (at least the way we use Boost.Test) will break things.
+
+Denis Arnaud (February 2011)
+
