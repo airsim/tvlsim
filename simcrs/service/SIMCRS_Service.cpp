@@ -273,7 +273,7 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::SegmentPathList_T SIMCRS_Service::
-  getSegmentPathList (const stdair::BookingRequestStruct& iBookingRequest) {
+  calculateSegmentPathList (const stdair::BookingRequestStruct& iBookingRequest) {
      
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
@@ -313,8 +313,8 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::TravelSolutionList_T SIMCRS_Service::
-  getFareQuote (const stdair::BookingRequestStruct& iBookingRequest,
-                const stdair::SegmentPathList_T& iSegmentPathList) {
+  fareQuote (const stdair::BookingRequestStruct& iBookingRequest,
+             const stdair::SegmentPathList_T& iSegmentPathList) {
      
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
@@ -358,7 +358,7 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
-  getAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+  calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
     }

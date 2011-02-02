@@ -248,16 +248,16 @@ int main (int argc, char* argv[]) {
 
   // Create an empty booking request structure
   // TODO: fill the booking request structure from the input parameters
-  const stdair::AirportCode_T lOrigin ("NCE");
-  const stdair::AirportCode_T lDestination ("BOS");
-  const stdair::AirportCode_T lPOS ("NYC");
-  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Jan, 20);
-  const stdair::Date_T lRequestDate (2011, boost::gregorian::Jan, 12);
+  const stdair::AirportCode_T lOrigin ("SIN");
+  const stdair::AirportCode_T lDestination ("BKK");
+  const stdair::AirportCode_T lPOS ("SIN");
+  const stdair::Date_T lPreferredDepartureDate(2010, boost::gregorian::Jan, 30);
+  const stdair::Date_T lRequestDate (2010, boost::gregorian::Jan, 22);
   const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
   const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
   const stdair::CabinCode_T lPreferredCabin ("Eco");
   const stdair::NbOfSeats_T lPartySize (1);
-  const stdair::ChannelLabel_T lChannel ("D");
+  const stdair::ChannelLabel_T lChannel ("IN");
   const stdair::TripType_T lTripType ("RI");
   const stdair::DayDuration_T lStayDuration (7);
   const stdair::FrequentFlyer_T lFrequentFlyerType ("M");
@@ -274,11 +274,12 @@ int main (int argc, char* argv[]) {
                                                       lFrequentFlyerType,
                                                       lPreferredDepartureTime,
                                                       lWTP, lValueOfTime);
-  const stdair::SegmentPathList_T lSegmentPath;
+  const stdair::SegmentPathList_T lSegmentPath =
+    simcrsService.calculateSegmentPathList(lBookingRequest);
   
   // Price the travel solution
   stdair::TravelSolutionList_T lTravelSolutionList =
-    simcrsService.getFareQuote (lBookingRequest, lSegmentPath);
+    simcrsService.fareQuote (lBookingRequest, lSegmentPath);
 
   // DEBUG
   const stdair::TravelSolutionStruct& lTravelSolution =
