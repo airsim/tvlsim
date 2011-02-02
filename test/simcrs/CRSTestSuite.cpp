@@ -138,17 +138,18 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
                                                       lFrequentFlyerType,
                                                       lPreferredDepartureTime,
                                                       lWTP, lValueOfTime);
-  const stdair::SegmentPathList_T lSegmentPath;
+  const stdair::SegmentPathList_T lSegmentPath =
+    simcrsService.calculateSegmentPathList(lBookingRequest);
   
   // Price the travel solution
   stdair::TravelSolutionList_T lTravelSolutionList =
-    simcrsService.getFareQuote (lBookingRequest, lSegmentPath);
+    simcrsService.fareQuote (lBookingRequest, lSegmentPath);
 
   //
   const unsigned int lNbOfTravelSolutions = lTravelSolutionList.size();
 
   // TODO: change the expected number of travel solutions to the actual number
-  const unsigned int lExpectedNbOfTravelSolutions = 0;
+  const unsigned int lExpectedNbOfTravelSolutions = 2;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("Number of travel solutions for the booking request '"
