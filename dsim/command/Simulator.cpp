@@ -88,19 +88,22 @@ namespace DSIM {
                       const stdair::BookingRequestStruct& iBookingRequest) {
     // Retrieve a list of travel solutions corresponding the given
     // booking request.
-    stdair::SegmentPathList_T lSegmentPathList =
-      ioSIMCRS_Service.getSegmentPathList (iBookingRequest);
+    const stdair::SegmentPathList_T& lSegmentPathList =
+      ioSIMCRS_Service.calculateSegmentPathList (iBookingRequest);
     if (lSegmentPathList.empty() == false) {
       // Get the fare quote for each travel solution.
       stdair::TravelSolutionList_T lTravelSolutionList = 
-	ioSIMCRS_Service.getFareQuote (iBookingRequest, lSegmentPathList);
+        ioSIMCRS_Service.fareQuote (iBookingRequest, lSegmentPathList);
       
       // Get the availability for each travel solution.
-      ioSIMCRS_Service.getAvailability (lTravelSolutionList);
+      ioSIMCRS_Service.calculateAvailability (lTravelSolutionList);
 
       // Hardcode a travel solution choice.
-      stdair::TravelSolutionList_T::iterator itTS = lTravelSolutionList.begin();
+      stdair::TravelSolutionList_T::const_iterator itTS =
+        lTravelSolutionList.begin();
       const stdair::TravelSolutionStruct& lChosenTS = *itTS;
+
+      // DEBUG
       STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS);
       
       // Make a sale.
@@ -114,4 +117,3 @@ namespace DSIM {
   }
   
 }
-
