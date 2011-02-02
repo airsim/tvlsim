@@ -7,13 +7,13 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <iostream>
-#include <sstream>
 #include <fstream>
-#include <string>
 #include <map>
 #include <cmath>
 // Boost Unit Test Framework (UTF)
-#define BOOST_TEST_MODULE StdAirTest
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#define BOOST_TEST_MODULE DemandGenerationTest
 #include <boost/test/unit_test.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
@@ -24,7 +24,7 @@
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
-// Trademgen
+// TraDemGen
 #include <trademgen/TRADEMGEN_Service.hpp>
 #include <trademgen/bom/DemandStreamKey.hpp>
 #include <trademgen/config/trademgen-paths.hpp>
@@ -36,10 +36,13 @@ namespace boost_utf = boost::unit_test;
  */
 struct UnitTestConfig {
   /** Constructor. */
-  UnitTestConfig() : _test_log ("DemandGenerationTestSuite_results.xml")  {
+  UnitTestConfig() : _test_log ("DemandGenerationTestSuite_utfresults.xml")  {
     boost_utf::unit_test_log.set_stream (_test_log);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
+    boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
+    //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
   }
+  
   /** Destructor. */
   ~UnitTestConfig() {
     boost_utf::unit_test_log.set_stream (std::cout);

@@ -18,8 +18,7 @@ TESTS = $(check_PROGRAMS)
 XFAIL_TESTS = $(fail_PRG)
 
 DemandGenerationTestSuite_SOURCES = DemandGenerationTestSuite.cpp
-DemandGenerationTestSuite_CXXFLAGS = $(BOOST_CFLAGS)  \
-	-DBOOST_TEST_MAIN -DBOOST_TEST_DYN_LINK $(STDAIR_CFLAGS)
+DemandGenerationTestSuite_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 DemandGenerationTestSuite_LDADD = 
 DemandGenerationTestSuite_LDFLAGS = $(BOOST_LIBS) \
 	$(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(STDAIR_LIBS) \
