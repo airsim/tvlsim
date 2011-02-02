@@ -317,29 +317,30 @@ namespace SIMCRS {
              const stdair::SegmentPathList_T& iSegmentPathList) {
      
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
+    
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
     stdair::TravelSolutionList_T oTravelSolutionList;
 
     try {
       
       // Retrieve the CRS code
-      const CRSCode_T& lCRSCode = 
-	lSIMCRS_ServiceContext.getCRSCode(); 
+      // const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode(); 
 
       // Get a reference on the SIMFQT service handler
-      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =  
-	lSIMCRS_ServiceContext.getSIMFQT_Service();  
+      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+        lSIMCRS_ServiceContext.getSIMFQT_Service();  
       assert (lSIMFQT_Service_ptr != NULL);
       
       // // Delegate the action to the dedicated command
       stdair::BasChronometer lFareQuoteRetrievalChronometer;
       lFareQuoteRetrievalChronometer.start();
       lSIMFQT_Service_ptr->getFares (oTravelSolutionList, iBookingRequest,
-				     iSegmentPathList);
+                                     iSegmentPathList);
 
       // DEBUG 
       // const double lFareQuoteRetrievalMeasure =
@@ -360,10 +361,12 @@ namespace SIMCRS {
   void SIMCRS_Service::
   calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
+
+    //SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -371,16 +374,17 @@ namespace SIMCRS {
                             const stdair::PartySize_T& iPartySize) {
     
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
+    
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
     try {
       
       // Retrieve the CRS code
-      const CRSCode_T& lCRSCode =
-        lSIMCRS_ServiceContext.getCRSCode();
+      //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
 
       // // TODO: optimise this part.
       // // Retrieve the map/list of AIRINV_Services

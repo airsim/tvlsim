@@ -12,7 +12,7 @@
 // Boost Unit Test Framework (UTF)
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE StdAirTest
+#define BOOST_TEST_MODULE DSimTest
 #include <boost/test/unit_test.hpp>
 // StdAir
 #include <stdair/basic/BasLogParams.hpp>
@@ -118,9 +118,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lFareInputFilename, lDemandInputFilename);
   
   // Perform a simulation
-  // TODO: add the missing fare rules, so that there is no longer an exception
-  //BOOST_CHECK_NO_THROW (dsimService.simulate());
-  BOOST_CHECK_THROW (dsimService.simulate(), DSIM::SimulationException);
+  BOOST_CHECK_NO_THROW (dsimService.simulate());
 
   // Close the log file
   logOutputFile.close();

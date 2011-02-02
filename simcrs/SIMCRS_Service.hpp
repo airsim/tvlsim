@@ -90,11 +90,15 @@ namespace SIMCRS {
     
   public:
     // /////////// Business Methods /////////////
-    /** Construct the list of segment paths corresponding to the booking request. */
-    stdair::SegmentPathList_T calculateSegmentPathList (const stdair::BookingRequestStruct&);
+    /** Construct the list of segment paths corresponding to the
+        booking request. */
+    stdair::SegmentPathList_T
+    calculateSegmentPathList (const stdair::BookingRequestStruct&);
     
-    /** Construct a travel solution list by calculating the fare of each segment paths in the list. */
-    stdair::TravelSolutionList_T fareQuote (const stdair::BookingRequestStruct&, const stdair::SegmentPathList_T&);
+    /** Construct a travel solution list by calculating the fare of
+        each segment paths in the list. */
+    stdair::TravelSolutionList_T fareQuote (const stdair::BookingRequestStruct&,
+                                            const stdair::SegmentPathList_T&);
 
     /** Compute the availability for each travel solution in the list. */
     void calculateAvailability (stdair::TravelSolutionList_T&);
