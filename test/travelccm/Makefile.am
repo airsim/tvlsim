@@ -19,8 +19,7 @@ XFAIL_TESTS = $(fail_PRG)
 
 #
 TravelChoiceTestSuite_SOURCES = TravelChoiceTestSuite.cpp
-TravelChoiceTestSuite_CXXFLAGS= $(BOOST_CFLAGS)  \
-	-DBOOST_TEST_MAIN -DBOOST_TEST_DYN_LINK $(STDAIR_CFLAGS)
+TravelChoiceTestSuite_CXXFLAGS= $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 TravelChoiceTestSuite_LDADD = 
 TravelChoiceTestSuite_LDFLAGS = $(BOOST_LIBS) \
 	$(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(STDAIR_LIBS) \
