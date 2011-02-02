@@ -23,7 +23,6 @@
 #include <travelccm/config/travelccm-paths.hpp>
 
 namespace boost_utf = boost::unit_test;
-<<<<<<< HEAD
 
 /**
  * Configuration for the Boost Unit Test Framework (UTF)
@@ -35,20 +34,6 @@ struct UnitTestConfig {
     boost_utf::unit_test_log.set_format (boost_utf::XML);
     boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
     //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
-
-=======
-
-/**
- * Configuration for the Boost Unit Test Framework (UTF)
- */
-struct UnitTestConfig {
-  /** Constructor. */
-  UnitTestConfig() : _test_log ("TravelChoiceTestSuite_utfresults.xml")  {
-    boost_utf::unit_test_log.set_stream (_test_log);
-    boost_utf::unit_test_log.set_format (boost_utf::XML);
-    boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
-    //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
->>>>>>> trunk
   }
   /** Destructor. */
   ~UnitTestConfig() {
