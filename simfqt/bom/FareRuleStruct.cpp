@@ -3,7 +3,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <sstream>
+#include <fstream>
+#include <vector>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/service/Logger.hpp>
@@ -35,13 +36,13 @@ namespace SIMFQT {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::Date_T FareRuleStruct::getDate() const {
+  const stdair::Date_T FareRuleStruct::getDate() const {
     _itYear.check(); _itMonth.check(); _itDay.check();
     return stdair::Date_T (_itYear._value, _itMonth._value, _itDay._value);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::Duration_T FareRuleStruct::getTime() const {
+  const stdair::Duration_T FareRuleStruct::getTime() const {
     _itHours.check(); _itMinutes.check(); _itSeconds.check();
     return boost::posix_time::hours (_itHours._value)
       + boost::posix_time::minutes (_itMinutes._value)
@@ -52,19 +53,32 @@ namespace SIMFQT {
   // ////////////////////////////////////////////////////////////////////
   const std::string FareRuleStruct::describe () const {
     std::ostringstream ostr; 
-    ostr << _fareId << ": "
-	 << _origin << "-" << _destination << ", between"
-	 << _dateRangeStart << " to " << _dateRangeEnd << ", between  "
-	 << boost::posix_time::to_simple_string(_timeRangeStart)
-	 << " to "
-	 << boost::posix_time::to_simple_string(_timeRangeEnd) << ", "
-	 <<  _advancePurchase << ", " << _saturdayStay << ", "
-	 <<  _changeFees << ", " << _nonRefundable << ", "
-	 << _minimumStay << ", "
-	 << _fare << ", "
-	 << _classCode << ", "
-	 << _airlineCode << ", "
-	 << std::endl; 
+    ostr << "FareRule: " << _fareId << ", "
+	 << _origin << "-" << _destination
+         << ", POS(" << _pos << "), ["
+	 << _dateRangeStart << "/" << _dateRangeEnd << "] - ["
+	 << boost::posix_time::to_simple_string(_timeRangeStart) << "/"
+	 << boost::posix_time::to_simple_string(_timeRangeEnd) << "]\n    "
+         << "-Channel-    " << _channel << "\n    "
+         << "-Conditions- " << _saturdayStay << ", " <<  _changeFees << ", "
+         << _nonRefundable << ", " << _advancePurchase << ", "
+	 << _minimumStay << "\n    "
+         << "-Fare-       " << _fare << "\n           ";
+    assert (_airlineCodeList.size() == _classCodeList.size());
+    stdair::ClassCodeList_T::const_iterator lItCurrentClassCode =
+      _classCodeList.begin();
+    stdair::AirlineCode_T lAirlineCode; 
+    stdair::ClassCode_T lClassCode;
+    for (stdair::AirlineCodeList_T::const_iterator lItCurrentAirlineCode =
+           _airlineCodeList.begin();
+         lItCurrentAirlineCode != _airlineCodeList.end();
+         lItCurrentAirlineCode++) {
+      lAirlineCode = *lItCurrentAirlineCode;
+      lClassCode = *lItCurrentClassCode;
+      ostr << lAirlineCode << ", " << lClassCode << "        ";
+      lItCurrentClassCode++;
+    }
+    ostr << std::endl;
     return ostr.str();
   }
 
