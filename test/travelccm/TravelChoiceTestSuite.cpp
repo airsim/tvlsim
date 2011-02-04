@@ -29,7 +29,8 @@ namespace boost_utf = boost::unit_test;
  */
 struct UnitTestConfig {
   /** Constructor. */
-  UnitTestConfig() : _test_log ("TravelChoiceTestSuite_utfresults.xml")  {
+  UnitTestConfig() {
+    static std::ofstream _test_log ("TravelChoiceTestSuite_utfresults.xml");
     boost_utf::unit_test_log.set_stream (_test_log);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
     boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
@@ -37,10 +38,7 @@ struct UnitTestConfig {
   }
   /** Destructor. */
   ~UnitTestConfig() {
-    boost_utf::unit_test_log.set_stream (std::cout);
   }
-  /** Log file */  
-  std::ofstream _test_log;
 };
 
 
