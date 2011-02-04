@@ -270,8 +270,6 @@ namespace AIRINV {
            instance().addToListAndMap (lSegmentCabin, lFareFamily);
          stdair::FacBomManager::
            instance().linkWithParent (lSegmentCabin, lFareFamily);
-         // DEBUG
-         STDAIR_LOG_DEBUG ("Fare family: " << lFareFamily.describeKey());
       }
     } 
   }
