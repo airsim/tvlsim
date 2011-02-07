@@ -3,7 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <fstream>
+#include <sstream>
 #include <vector>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
@@ -36,13 +36,13 @@ namespace SIMFQT {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::Date_T FareRuleStruct::getDate() const {
+  stdair::Date_T FareRuleStruct::getDate() const {
     _itYear.check(); _itMonth.check(); _itDay.check();
     return stdair::Date_T (_itYear._value, _itMonth._value, _itDay._value);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::Duration_T FareRuleStruct::getTime() const {
+  stdair::Duration_T FareRuleStruct::getTime() const {
     _itHours.check(); _itMinutes.check(); _itSeconds.check();
     return boost::posix_time::hours (_itHours._value)
       + boost::posix_time::minutes (_itMinutes._value)

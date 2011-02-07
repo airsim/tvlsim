@@ -25,10 +25,10 @@ namespace SIMFQT {
     FareRuleStruct ();
     
     /** Get the date from the staging details. */
-    const stdair::Date_T getDate() const;
+    stdair::Date_T getDate() const;
 
     /** Get the time from the staging details. */
-    const stdair::Duration_T getTime() const;    
+    stdair::Duration_T getTime() const;    
 
     /** Display of the structure. */
     const std::string describe() const;  
