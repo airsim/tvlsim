@@ -104,7 +104,7 @@ namespace DSIM {
       const stdair::TravelSolutionStruct& lChosenTS = *itTS;
 
       // DEBUG
-      STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS);
+      STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS << "\n");
       
       // Make a sale.
       const stdair::NbOfSeats_T& lPartySize = iBookingRequest.getPartySize();
