@@ -281,11 +281,19 @@ int main (int argc, char* argv[]) {
   stdair::TravelSolutionList_T lTravelSolutionList =
     simcrsService.fareQuote (lBookingRequest, lSegmentPath);
 
-  // DEBUG
-  const stdair::TravelSolutionStruct& lTravelSolution =
+  // Choose a random travel solution: the first one.
+  const stdair::TravelSolutionStruct& lChosenTravelSolution =
     lTravelSolutionList.front();
-  STDAIR_LOG_DEBUG ("The price given by the fare quoter is: "
-                    << lTravelSolution.getFare() << " Euros");
+
+  // Get the segment path of the travel solution.
+  stdair::KeyList_T lsegmentDateKeyList =
+    lChosenTravelSolution.getSegmentDateKeyList();
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("The chosen travel solution is: "
+                    << lsegmentDateKeyList.front()
+                    << ", the fare is: "
+                    << lChosenTravelSolution.getFare() << " Euros.");
 
   // Make a booking
   // const std::string lAirlineCode ("SV");
