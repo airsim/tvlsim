@@ -472,10 +472,19 @@ namespace SIMFQT {
           ioTravelSolution.setFare(iPrice);
 
           // DEBUG
-          STDAIR_LOG_DEBUG ("The price is "
+          stdair::KeyList_T lsegmentDateKeyList =
+            ioTravelSolution.getSegmentDateKeyList();
+          STDAIR_LOG_DEBUG ("Segment path: " <<
+                            lsegmentDateKeyList.front()
+                            << "\n   A corresponding fare rule is:"
+                            << "\n     Fare:       "
                             << ioTravelSolution.getFare()
-                            << " EUR for the travel request for the airline "
-                            << iResultParsing.front());
+                            << "\n     Class:      "
+                            << lcurrentSegmentFeatures_ptr->getClassCode()
+                            << "\n     Conditions: "
+                            << iSaturdayStay << ", "
+                            << iChangeFees << ", "
+                            << iNonRefundable);
 
           ioTravelSolutionList.push_back (ioTravelSolution); 
         }
