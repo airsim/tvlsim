@@ -18,7 +18,6 @@ namespace stdair {
   struct BasDBParams;
   struct BookingRequestStruct;
   struct TravelSolutionStruct;
-  class AirlineFeatureSet;
 }
 
 namespace SIMCRS {
@@ -30,7 +29,7 @@ namespace SIMCRS {
   /** Interface for the SIMCRS Services. */
   class SIMCRS_Service {  
   public:
-    // ////////// Constructors and destructors //////////
+    // ////////////////// Constructors and Destructors //////////////////    
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
         for more details.
@@ -147,8 +146,8 @@ namespace SIMCRS {
     /** Initialise the AIRSCHED service with the given schedule file.
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file. */
-    void initAIRSCHEDService (const stdair::Filename_T&,
-                              const stdair::Filename_T&);
+    void initAIRSCHEDService (const stdair::Filename_T& iScheduleInputFilename,
+                              const stdair::Filename_T& iODInputFilename);
     
     /** Initialise the SIMFQT service with the given schedule file.
         @param const stdair::Filename_T& Filename of the input schedule file. */
@@ -168,7 +167,6 @@ namespace SIMCRS {
     // ///////// Service Context /////////
     /** Simcrs context. */
     SIMCRS_ServiceContext* _simcrsServiceContext;
-
   };
 }
 #endif // __SIMCRS_SVC_SIMCRS_SERVICE_HPP

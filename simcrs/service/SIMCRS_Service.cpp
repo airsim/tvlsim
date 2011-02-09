@@ -26,7 +26,7 @@
 #include <airsched/AIRSCHED_Service.hpp>
 // Fare Quote
 #include <simfqt/SIMFQT_Service.hpp>
-// Simcrs
+// SimCRS
 #include <simcrs/basic/BasConst_SIMCRS_Service.hpp>
 #include <simcrs/command/DistributionManager.hpp>
 #include <simcrs/factory/FacSimcrsServiceContext.hpp>
@@ -114,6 +114,11 @@ namespace SIMCRS {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::finalise () {
+    assert (_simcrsServiceContext != NULL);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::initServiceContext (const CRSCode_T& iCRSCode) {
     // Initialise the service context
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = 
@@ -179,9 +184,8 @@ namespace SIMCRS {
     // Initialise the children AirSched service context
     initAIRSCHEDService (iScheduleInputFilename, iODInputFilename);
 
-    // Initialise the children AirSched service context
+    // Initialise the children AirInv service context
     initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename);
-
 
     // Initialise the children SimFQT service context
     initSIMFQTService (iFareInputFilename);
@@ -263,20 +267,16 @@ namespace SIMCRS {
                                                          iODInputFilename);
 
     // Store the Airinv service object within the (SimCRS) service context
-    lSIMCRS_ServiceContext.setAIRINV_Master_Service (lAIRINV_Master_Service_ptr);
+    lSIMCRS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::finalise () {
-    assert (_simcrsServiceContext != NULL);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
   stdair::SegmentPathList_T SIMCRS_Service::
-  calculateSegmentPathList (const stdair::BookingRequestStruct& iBookingRequest) {
+  calculateSegmentPathList(const stdair::BookingRequestStruct& iBookingRequest){
      
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
@@ -328,26 +328,23 @@ namespace SIMCRS {
 
     try {
       
-      // Retrieve the CRS code
-      // const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode(); 
-
       // Get a reference on the SIMFQT service handler
       SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
         lSIMCRS_ServiceContext.getSIMFQT_Service();  
       assert (lSIMFQT_Service_ptr != NULL);
       
-      // // Delegate the action to the dedicated command
+      // Delegate the action to the dedicated command
       stdair::BasChronometer lFareQuoteRetrievalChronometer;
       lFareQuoteRetrievalChronometer.start();
       lSIMFQT_Service_ptr->getFares (oTravelSolutionList, iBookingRequest,
                                      iSegmentPathList);
 
       // DEBUG 
-      // const double lFareQuoteRetrievalMeasure =
-      //	lFareQuoteRetrievalChronometer.elapsed(); 
-      // STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
-      //                   << lFareQuoteRetrievingMeasure << " - "
-      //                   << lSIMFQT_ServiceContext.display());   
+      const double lFareQuoteRetrievalMeasure =
+      	lFareQuoteRetrievalChronometer.elapsed(); 
+      STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
+                        << lFareQuoteRetrievalMeasure << " - "
+                        << lSIMCRS_ServiceContext.display());   
             
     } catch (const std::exception& error) {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());
