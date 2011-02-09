@@ -7,11 +7,17 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
+#include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+// Airline Inventory
+#include <airinv/AIRINV_Master_Service.hpp>
+// Fare Quote
+#include <simfqt/SIMFQT_Service.hpp>
 // SimLFS
 #include <simlfs/basic/BasConst_SIMLFS_Service.hpp>
 #include <simlfs/command/LowFareSearchManager.hpp>
@@ -22,8 +28,7 @@
 namespace SIMLFS {
 
   // //////////////////////////////////////////////////////////////////////
-  SIMLFS_Service::SIMLFS_Service ()
-    : _simlfsServiceContext (NULL) {
+  SIMLFS_Service::SIMLFS_Service () : _simlfsServiceContext (NULL) {
     assert (false);
   }
 
@@ -35,6 +40,8 @@ namespace SIMLFS {
   // ////////////////////////////////////////////////////////////////////
   SIMLFS_Service::
   SIMLFS_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                  const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename)
     : _simlfsServiceContext (NULL) {
 
@@ -49,14 +56,16 @@ namespace SIMLFS {
     lSIMLFS_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
     // Initialise the context
-    init (iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
   SIMLFS_Service::
   SIMLFS_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::BasDBParams& iDBParams,
-                    const stdair::Filename_T& iFareInputFilename) 
+                  const stdair::BasDBParams& iDBParams,
+                  const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iODInputFilename,
+                  const stdair::Filename_T& iFareInputFilename) 
     : _simlfsServiceContext (NULL) {
     
     // Initialise the service context
@@ -66,12 +75,14 @@ namespace SIMLFS {
     initStdAirService (iLogParams, iDBParams);
     
     // Initialise the (remaining of the) context
-    init (iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
   SIMLFS_Service::
   SIMLFS_Service (const stdair::BasLogParams& iLogParams,
+                  const stdair::Filename_T& iScheduleInputFilename,
+                  const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename) 
     : _simlfsServiceContext (NULL) {
     
@@ -82,9 +93,8 @@ namespace SIMLFS {
     initStdAirService (iLogParams);
     
     // Initialise the (remaining of the) context
-    init (iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
   }
-
 
   // //////////////////////////////////////////////////////////////////////
   SIMLFS_Service::~SIMLFS_Service () {
@@ -143,8 +153,9 @@ namespace SIMLFS {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMLFS_Service::
-  init (const stdair::Filename_T& iFareInputFilename) {
+  void SIMLFS_Service::init (const stdair::Filename_T& iScheduleInputFilename,
+                             const stdair::Filename_T& iODInputFilename,
+                             const stdair::Filename_T& iFareInputFilename) {
 
     // Check that the file path given as input corresponds to an actual file
     const bool doesExistAndIsReadable =
@@ -154,53 +165,121 @@ namespace SIMLFS {
                         << "', can not be retrieved on the file-system");
       throw stdair::FileNotFoundException ("The fare input file, '"
                                            + iFareInputFilename
-                                           + "', can not be retrieved on the file-system");
+                                           + "', can not be retrieved on the "
+                                           + "file-system");
     }
 
-    // Retrieve the Simlfs service context
+    // Initialise the children AirInv service context
+    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename);
+
+    // Initialise the children SimFQT service context
+    initSIMFQTService (iFareInputFilename);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMLFS_Service::
+  initSIMFQTService (const stdair::Filename_T& iFareInputFilename) {
+    
+    // Retrieve the SimLFS service context
     assert (_simlfsServiceContext != NULL);
     SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
-
+    
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       lSIMLFS_ServiceContext.getSTDAIR_Service();
     assert (lSTDAIR_Service_ptr != NULL);
-    
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
+
+    // Initialise the SIMFQT service handler
+    // Note that the (Boost.)Smart Pointer keeps track of the references
+    // on the Service object, and deletes that object when it is no longer
+    // referenced (e.g., at the end of the process).
+    SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+      boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr,
+                                                  iFareInputFilename);
+
+    // Store the Simfqt service object within the (SimLFS) service context
+    lSIMLFS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  stdair::PriceValue_T SIMLFS_Service::
-  priceQuote (const stdair::AirlineCode_T& iAirlineCode,
-              const stdair::PartySize_T& iPartySize) {
-    stdair::PriceValue_T oPrice = 0.0;
+  // ////////////////////////////////////////////////////////////////////
+  void SIMLFS_Service::
+  initAIRINV_Master_Service (const stdair::Filename_T& iScheduleInputFilename,
+                             const stdair::Filename_T& iODInputFilename) {
     
+    // Retrieve the SimLFS service context
+    assert (_simlfsServiceContext != NULL);
+    SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
+    
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lSIMLFS_ServiceContext.getSTDAIR_Service();
+    assert (lSTDAIR_Service_ptr != NULL);
+
+    // Initialise the AIRINV service handler
+    // Note that the (Boost.)Smart Pointer keeps track of the references
+    // on the Service object, and deletes that object when it is no longer
+    // referenced (e.g., at the end of the process).
+    AIRINV_Master_ServicePtr_T lAIRINV_Master_Service_ptr =
+      boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr,
+                                                         iScheduleInputFilename,
+                                                         iODInputFilename);
+
+    // Store the Airinv service object within the (SimLFS) service context
+    lSIMLFS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  stdair::TravelSolutionList_T SIMLFS_Service::
+  fareQuote (const stdair::BookingRequestStruct& iBookingRequest,
+             const stdair::SegmentPathList_T& iSegmentPathList) {
+     
     if (_simlfsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException("The SimLFS service has not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimLFS service has "
+                                                    "not been initialised");
     }
     assert (_simlfsServiceContext != NULL);
     SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
 
+    stdair::TravelSolutionList_T oTravelSolutionList;
+
     try {
       
-      // Delegate the price quotation to the dedicated command
-      stdair::BasChronometer lPriceQuotingChronometer;
-      lPriceQuotingChronometer.start();
-      // oPrice = LowFareSearchManager::priceQuote (iAirlineCode, iPartySize);
-      // const double lPriceQuotingMeasure = lPriceQuotingChronometer.elapsed();
+      // Get a reference on the SIMFQT service handler
+      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+        lSIMLFS_ServiceContext.getSIMFQT_Service();  
+      assert (lSIMFQT_Service_ptr != NULL);
       
-      // // DEBUG
-      // STDAIR_LOG_DEBUG ("Price quoting: " << lPriceQuotingMeasure << " - "
-      //                   << lSIMLFS_ServiceContext.display());
+      // Delegate the action to the dedicated command
+      stdair::BasChronometer lFareQuoteRetrievalChronometer;
+      lFareQuoteRetrievalChronometer.start();
+      lSIMFQT_Service_ptr->getFares (oTravelSolutionList, iBookingRequest,
+                                     iSegmentPathList);
+
+      // DEBUG 
+      const double lFareQuoteRetrievalMeasure =
+      	lFareQuoteRetrievalChronometer.elapsed(); 
+      STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
+                        << lFareQuoteRetrievalMeasure << " - "
+                        << lSIMLFS_ServiceContext.display());   
 
     } catch (const std::exception& error) {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());
       throw QuotingException();
     }
 
-    return oPrice;
+    return oTravelSolutionList;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SIMLFS_Service::
+  calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+    if (_simlfsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimLFS service has "
+                                                    "not been initialised");
+    }
+    assert (_simlfsServiceContext != NULL);
+
+    //SIMLFS_ServiceContext& lSIMLFS_ServiceContext = *_simlfsServiceContext;
   }
   
 }

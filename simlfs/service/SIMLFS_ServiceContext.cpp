@@ -5,7 +5,10 @@
 #include <cassert>
 #include <istream>
 #include <sstream>
-// Simlfs
+// Standard Airline Object Model
+#include <stdair/STDAIR_Service.hpp>
+#include <stdair/service/Logger.hpp>
+// SimLFS
 #include <simlfs/basic/BasConst_SIMLFS_Service.hpp>
 #include <simlfs/service/SIMLFS_ServiceContext.hpp>
 
@@ -27,7 +30,7 @@ namespace SIMLFS {
   // //////////////////////////////////////////////////////////////////////
   const std::string SIMLFS_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "SIMLFS_ServiceContext: " << std::endl;
+    oStr << "SIMLFS_ServiceContext: no specific key";
     return oStr.str();
   }
 
