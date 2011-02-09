@@ -6,16 +6,17 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_service_types.hpp>
+#include <stdair/bom/TravelSolutionTypes.hpp>
 // SimFQT
 #include <simfqt/SIMFQT_Types.hpp>
-#include <stdair/bom/TravelSolutionTypes.hpp>
 
 // Forward declarations.
 namespace stdair {
   class STDAIR_Service;
-  struct BookingRequestStruct;
   struct BasLogParams;
   struct BasDBParams;
+  struct BookingRequestStruct;
 }
 
 namespace SIMFQT {
