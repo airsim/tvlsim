@@ -1,5 +1,6 @@
 ## test/simcrs sub-directory
 include $(top_srcdir)/Makefile.common
+include $(srcdir)/sources.mk
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -18,7 +19,7 @@ TESTS = $(check_PROGRAMS)
 XFAIL_TESTS = $(fail_PRG)
 
 #
-CRSTestSuite_SOURCES = CRSTestSuite.cpp
+CRSTestSuite_SOURCES = $(simcrs_test_bin_cc_sources)
 CRSTestSuite_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 CRSTestSuite_LDADD =
 CRSTestSuite_LDFLAGS = \
