@@ -34,9 +34,7 @@ namespace SIMCRS {
   // //////////////////////////////////////////////////////////////////////
   const std::string SIMCRS_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "SIMCRS_ServiceContext: " << std::endl
-         << "CRS code: " << _CRSCode
-         << std::endl;
+    oStr << "SIMCRS_ServiceContext - CRS code: " << _CRSCode;
     return oStr.str();
   }
 

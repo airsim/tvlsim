@@ -13,12 +13,12 @@
 
 // Forward declarations
 namespace stdair {
-  class AirlineFeatureSet;
   class STDAIR_Service;
   struct BasLogParams;
   struct BasDBParams;
-  struct TravelSolutionStruct;
   struct BookingRequestStruct;
+  struct TravelSolutionStruct;
+  class AirlineFeatureSet;
 }
 
 namespace SIMCRS {

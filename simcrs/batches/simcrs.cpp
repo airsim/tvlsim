@@ -11,6 +11,7 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
+#include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
@@ -55,7 +56,7 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
-                       std::string& ioLogFilename,
+                       stdair::Filename_T& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
@@ -198,16 +199,16 @@ int readConfiguration (int argc, char* argv[],
 int main (int argc, char* argv[]) {
 
   // Schedule input filename
-  std::string lScheduleInputFilename;
+  stdair::Filename_T lScheduleInputFilename;
     
   // O&D input filename
-  std::string lOnDInputFilename;
+  stdair::Filename_T lOnDInputFilename;
     
   // Fare input filename
-  std::string lFareInputFilename;
+  stdair::Filename_T lFareInputFilename;
     
   // Output log File
-  std::string lLogFilename;
+  stdair::Filename_T lLogFilename;
 
   // SQL database parameters
   std::string lDBUser;
@@ -217,7 +218,7 @@ int main (int argc, char* argv[]) {
   std::string lDBDBName;
                        
   // CRS code
-  std::string lCRSCode ("1P");
+  const SIMCRS::CRSCode_T lCRSCode ("1P");
     
   // Call the command-line option parser
   const int lOptionParserStatus = 
@@ -229,6 +230,33 @@ int main (int argc, char* argv[]) {
     return 0;
   }
     
+  // Check that the file path given as input corresponds to an actual file
+  bool doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
+  if (doesExistAndIsReadable == false) {
+    STDAIR_LOG_ERROR ("The '" << lScheduleInputFilename
+                      << "' input file can not be open and read");
+    return -1;
+  }
+
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lOnDInputFilename);
+  if (doesExistAndIsReadable == false) {
+    STDAIR_LOG_ERROR ("The '" << lOnDInputFilename
+                      << "' input file can not be open and read");
+    return -1;
+  }
+
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
+  if (doesExistAndIsReadable == false) {
+    STDAIR_LOG_ERROR ("The '" << lFareInputFilename
+                      << "' input file can not be open and read");
+    return -1;
+  }
+
   // Set the database parameters
   const stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
                                        lDBDBName);
@@ -256,7 +284,7 @@ int main (int argc, char* argv[]) {
   const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
   const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
   const stdair::CabinCode_T lPreferredCabin ("Eco");
-  const stdair::NbOfSeats_T lPartySize (1);
+  const stdair::PartySize_T lPartySize (3);
   const stdair::ChannelLabel_T lChannel ("IN");
   const stdair::TripType_T lTripType ("RI");
   const stdair::DayDuration_T lStayDuration (7);
@@ -275,7 +303,7 @@ int main (int argc, char* argv[]) {
                                                       lPreferredDepartureTime,
                                                       lWTP, lValueOfTime);
   const stdair::SegmentPathList_T lSegmentPath =
-    simcrsService.calculateSegmentPathList(lBookingRequest);
+    simcrsService.calculateSegmentPathList (lBookingRequest);
   
   // Price the travel solution
   stdair::TravelSolutionList_T lTravelSolutionList =
@@ -295,10 +323,8 @@ int main (int argc, char* argv[]) {
                     << ", the fare is: "
                     << lChosenTravelSolution.getFare() << " Euros.");
 
-  // Make a booking
-  // const std::string lAirlineCode ("SV");
-  // const stdair::PartySize_T lPartySize = 5;
-  // simcrsService.sell (lAirlineCode, lPartySize);
+  // Make a booking (reminder: party size is 3)
+  simcrsService.sell (lChosenTravelSolution, lPartySize);
 
   return 0;
 }

@@ -392,15 +392,23 @@ namespace SIMCRS {
       //   lSIMCRS_ServiceContext.getAIRINV_ServiceMap ();
       
       // // Delegate the booking to the dedicated command
-      // stdair::BasChronometer lSellChronometer;
-      // lSellChronometer.start();
+      stdair::BasChronometer lSellChronometer;
+      lSellChronometer.start();
+
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
+                        << " persons on the following travel solution: "
+                        << iTravelSolution.describe());
+      STDAIR_LOG_DEBUG ("Note: the sell is not yet fully implemented...");
+
+      // TODO: Finish to implement the sell
       // DistributionManager::sell (lAIRINV_ServiceMap,
       //                            lCRSCode, iTravelSolution, iPartySize);
       
       // DEBUG
-      // const double lSellMeasure = lSellChronometer.elapsed();
-      // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-      //                   << lSIMCRS_ServiceContext.display());
+      const double lSellMeasure = lSellChronometer.elapsed();
+      STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+                        << lSIMCRS_ServiceContext.display());
       
     } catch (const std::exception& error) {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());
