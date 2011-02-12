@@ -6,7 +6,7 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string>
 // Boost Unit Test Framework (UTF)
@@ -18,11 +18,17 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/service/Logger.hpp>
 // TravelCCM
 #include <travelccm/TRAVELCCM_Service.hpp>
 #include <travelccm/config/travelccm-paths.hpp>
 
 namespace boost_utf = boost::unit_test;
+
+// (Boost) Unit Test XML Report
+std::ofstream utfReportStream ("TravelChoiceTestSuite_utfresults.xml");
 
 /**
  * Configuration for the Boost Unit Test Framework (UTF)
@@ -30,8 +36,7 @@ namespace boost_utf = boost::unit_test;
 struct UnitTestConfig {
   /** Constructor. */
   UnitTestConfig() {
-    static std::ofstream _test_log ("TravelChoiceTestSuite_utfresults.xml");
-    boost_utf::unit_test_log.set_stream (_test_log);
+    boost_utf::unit_test_log.set_stream (utfReportStream);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
     boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
     //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
