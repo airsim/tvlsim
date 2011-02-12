@@ -31,14 +31,16 @@
 
 namespace boost_utf = boost::unit_test;
 
+// (Boost) Unit Test XML Report
+std::ofstream utfReportStream ("DemandGenerationTestSuite_utfresults.xml");
+
 /**
  * Configuration for the Boost Unit Test Framework (UTF)
  */
 struct UnitTestConfig {
   /** Constructor. */
   UnitTestConfig() {
-    static std::ofstream _test_log ("DemandGenerationTestSuite_utfresults.xml");
-    boost_utf::unit_test_log.set_stream (_test_log);
+    boost_utf::unit_test_log.set_stream (utfReportStream);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
     boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
     //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
@@ -50,8 +52,9 @@ struct UnitTestConfig {
 };
 
 // Specific type definitions
+typedef std::pair<stdair::Count_T, stdair::Count_T> NbOfEventsPair_T;
 typedef std::map<const stdair::DemandStreamKeyStr_T,
-                 const unsigned int> DemandStreamKeyMap_T;
+                 NbOfEventsPair_T> NbOfEventsByDemandStreamMap_T;
 
 
 // /////////////// Main: Unit Test Suite //////////////
@@ -90,115 +93,202 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
 
-  // Numbers of requests to be generated, depending on the demand streams
-  DemandStreamKeyMap_T lDemandStreamKeyMap;
-  lDemandStreamKeyMap.insert (DemandStreamKeyMap_T::
-                              value_type ("SIN-HND 2010-Feb-08 Y", 11));
-  lDemandStreamKeyMap.insert (DemandStreamKeyMap_T::
-                              value_type ("SIN-BKK 2010-Feb-08 Y", 10));
+  /**
+     Initialise the current number of generated events and the
+     expected total numbers of requests to be generated, depending on
+     the demand streams.
+     <br>The current number of generated events starts at one, for each demand
+     stream, because the initialisation step generates exactly one event
+     for each demand stream.
+  */
+  NbOfEventsByDemandStreamMap_T lNbOfEventsMap;
+  lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
+                         value_type ("SIN-HND 2010-Feb-08 Y",
+                                     NbOfEventsPair_T (1, 11)));
+  lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
+                         value_type ("SIN-BKK 2010-Feb-08 Y",
+                                     NbOfEventsPair_T (1, 10)));
+  // Total number of events, for all the demand streams: 21 (11 + 10)
+  const stdair::Count_T lTotalExpectedNbOfEvents (21);
   
   // /////////////////////////////////////////////////////
   // Event queue
   stdair::EventQueue lEventQueue = stdair::EventQueue();
-  // Browse the list of DemandStreams and Generate the first event for each
-  // DemandStream.
+
+  /**
+     Initialisation step.
+     <br>Generate the first event for each demand stream.
+  */
   trademgenService.generateFirstRequests (lEventQueue);
 
   /** Is queue empty */
   const bool isQueueEmpty = lEventQueue.isQueueEmpty();
   BOOST_CHECK_MESSAGE (isQueueEmpty == false,
-                       "The event queue should be full. You may check the "
+                       "The event queue should not be empty. You may check the "
                        << "input file: '" << lInputFilename << "'");
   
-  /** Queue size */
+  /** Queue size.
+      <br>At any moment, the size of the event queue represents the
+      number of independent demand/event streams. Indeed, each demand
+      stream generates the corresponding events one after
+      another. Therefore, each demand stream has always got a single
+      event in the event queue. */
   const stdair::Count_T lQueueSize = lEventQueue.getQueueSize();
   BOOST_CHECK_EQUAL (lQueueSize, 2);
+  BOOST_CHECK_MESSAGE (lQueueSize == 2,
+                       "The event queue should be made of 2 demand streams, "
+                       << " but it is not");
   
-  // Pop requests, get type, and generate next request of same type
-  stdair::Count_T i = 0;
-  while (lEventQueue.isQueueDone() == false && i < 20) {
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Before popping (" << i << ")" );
-    STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize () );
-    STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone () );
-    
-    stdair::EventStruct& lEventStruct = lEventQueue.popEvent ();
+  /**
+     Main loop.
+     <ul>
+     <li>Pop a request and get its associated type/demand stream.</li>
+     <li>Generate the next request for the same type/demand stream.</li>
+     </ul>
+  */
+  stdair::Count_T idx = 1;
+  while (lEventQueue.isQueueDone() == false && idx <= 50) {
 
-    // DEBUG
-    STDAIR_LOG_DEBUG ("After popping" );
-    STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize ());
-    STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone ());
+    // Get the next event from the event queue
+    const stdair::EventStruct& lEventStruct = lEventQueue.popEvent();
 
-    STDAIR_LOG_DEBUG ("Popped request " << i );
-    
+    // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
-      lEventStruct.getBookingRequest ();
+      lEventStruct.getBookingRequest();
     
     // DEBUG
-    STDAIR_LOG_DEBUG ("Poped booking request: " << lPoppedRequest.describe());
+    STDAIR_LOG_DEBUG ("[" << idx << "] Poped booking request: '"
+                      << lPoppedRequest.describe() << "'.");
     
     // Retrieve the corresponding demand stream
     const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
-      lEventStruct.getDemandStreamKey ();
-
-    // Get the total number of requests to be generated by the demand
-    // stream which corresponds to the given key
-    const stdair::NbOfRequests_T& lNbOfRequests =
-      trademgenService.getTotalNumberOfRequestsToBeGenerated (lDemandStreamKey);
-
-    // DEBUG
-    STDAIR_LOG_DEBUG ("TotalNumberOfRequestsToBeGenerated: "
-                      << lNbOfRequests << " for demand stream '"
-                      << lDemandStreamKey << "'");
+      lEventStruct.getDemandStreamKey();
 
     // Check that the number of booking requests to be generated are correct
-    const DemandStreamKeyMap_T::const_iterator itDemandStream =
-      lDemandStreamKeyMap.find (lDemandStreamKey);
-    BOOST_REQUIRE_MESSAGE (itDemandStream != lDemandStreamKeyMap.end(),
+    const NbOfEventsByDemandStreamMap_T::iterator itNbOfEventsMap =
+      lNbOfEventsMap.find (lDemandStreamKey);
+    BOOST_REQUIRE_MESSAGE (itNbOfEventsMap != lNbOfEventsMap.end(),
                            "The demand stream key '" << lDemandStreamKey
                            << "' is not expected in that test");
 
-    BOOST_CHECK_EQUAL (std::floor (lNbOfRequests + 0.5),
-                       itDemandStream->second);
-    BOOST_CHECK_MESSAGE (std::floor (lNbOfRequests + 0.5)
-                         == itDemandStream->second,
-                         "TotalNumberOfRequestsToBeGenerated: "
-                         << lNbOfRequests << " (=> "
-                         << std::floor (lNbOfRequests + 0.5)
-                         << ") for demand stream '" << lDemandStreamKey
-                         << "'. Expected value: " << itDemandStream->second);
-  
-    // Generate next request
+    /**
+       For that demand stream, retrieve:
+        <ul>
+        <li>The current number of events</li>
+        <li>The expected total number of events to be generated. That
+        number is just hard coded for that test (it does not correspond
+        to an automatically generated number)</li>
+        </ul>
+    */
+    const NbOfEventsPair_T& lNbOfEventsPair = itNbOfEventsMap->second;
+    stdair::Count_T lCurrentNbOfEvents = lNbOfEventsPair.first;
+    const stdair::Count_T& lExpectedTotalNbOfEvents = lNbOfEventsPair.second;
+
+    /**
+       The first time an event is popped from the queue for that demand stream,
+       check that the actual total number of requests to be generated (as
+       calculated by the demand stream itself during the initialisation
+       step), is equal to the expected number.
+    */
+    if (lCurrentNbOfEvents == 1) {
+      /**
+         Retrieve, from the demand stream, the total number of events
+         to be generated, so that that number can be compared to the
+         expected one.
+      */
+      const stdair::NbOfRequests_T& lNbOfRequests = trademgenService.
+        getTotalNumberOfRequestsToBeGenerated (lDemandStreamKey);
+
+      BOOST_CHECK_EQUAL (std::floor (lNbOfRequests + 0.5),
+                         lExpectedTotalNbOfEvents);
+      BOOST_CHECK_MESSAGE (std::floor (lNbOfRequests + 0.5)
+                           == lExpectedTotalNbOfEvents,
+                           "[" << lDemandStreamKey
+                           << "] Total number of requests to be generated: "
+                           << lNbOfRequests << " (=> "
+                           << std::floor (lNbOfRequests + 0.5)
+                           << "). Expected value: "
+                           << lExpectedTotalNbOfEvents);
+    }
+
+    // Assess whether more events should be generated for that demand stream
     const bool stillHavingRequestsToBeGenerated = 
       trademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
-    STDAIR_LOG_DEBUG ("stillHavingRequestsToBeGenerated: "
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "][" << lCurrentNbOfEvents
+                      << "/" << lExpectedTotalNbOfEvents
+                      << "] is now processed. "
+                      << "Still generate events for that demand stream? "
                       << stillHavingRequestsToBeGenerated);
-    
-    if (stillHavingRequestsToBeGenerated) {
+
+    // If there are still events to be generated for that demand stream,
+    // generate and add them to the event queue
+    if (stillHavingRequestsToBeGenerated == true) {
       const stdair::BookingRequestPtr_T lNextRequest_ptr =
         trademgenService.generateNextRequest (lDemandStreamKey);
       assert (lNextRequest_ptr != NULL);
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Added request: " << lNextRequest_ptr->describe());
+
+      /**
+         Sanity check
+         <br>The date-time of the next event must be greater than
+         the date-time of the current event.
+      */
+      const stdair::Duration_T lDuration =
+        lNextRequest_ptr->getRequestDateTime()
+        - lPoppedRequest.getRequestDateTime();
+      BOOST_REQUIRE_GT (lDuration.total_milliseconds(), 0);
+      BOOST_REQUIRE_MESSAGE (lDuration.total_milliseconds() > 0,
+                             "[" << lDemandStreamKey
+                             << "] The date-time of the generated event ("
+                             << lNextRequest_ptr->getRequestDateTime()
+                             << ") is lower than the date-time "
+                             << "of the current event ("
+                             << lPoppedRequest.getRequestDateTime() << ")");
       
-      stdair::EventStruct lNextEventStruct ("Request", lDemandStreamKey,
+      //
+      const stdair::EventType_T lEventTypeStr ("Request");
+      stdair::EventStruct lNextEventStruct (lEventTypeStr, lDemandStreamKey,
                                             lNextRequest_ptr);
-      lEventQueue.eraseLastUsedEvent ();
+
+      /**
+         Note that when adding an event in the event queue, the former can be
+         altered. It happends when an event already exists in the event queue
+         with exactly the same date-time stamp. In that case, the date-time
+         stamp is altered for the newly added event, so that the unicity on the
+         date-time stamp can be guaranteed.
+      */
       lEventQueue.addEvent (lNextEventStruct);
       
       // DEBUG
-      STDAIR_LOG_DEBUG ("After adding");
-      STDAIR_LOG_DEBUG ("Queue size: " << lEventQueue.getQueueSize ());
-      STDAIR_LOG_DEBUG ("Is queue done? " << lEventQueue.isQueueDone ());
-    }
+      STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "][" << lCurrentNbOfEvents
+                        << "/" << lExpectedTotalNbOfEvents
+                        << "] Added request: '" << lNextRequest_ptr->describe()
+                        << "'. Is queue done? " << lEventQueue.isQueueDone());
 
-    // DEBUG
-    STDAIR_LOG_DEBUG (std::endl);
+      // Keep, within the dedicated map, the current counters of events updated.
+      ++lCurrentNbOfEvents;
+      itNbOfEventsMap->second = NbOfEventsPair_T (lCurrentNbOfEvents,
+                                                  lExpectedTotalNbOfEvents);
+    }
+    
+    /**
+       Remove the last used event, so that, at any given moment, the
+       queue keeps only the active events.
+    */
+    lEventQueue.eraseLastUsedEvent ();
     
     // Iterate
-    ++i;
+    ++idx;
   }
 
+  //
+  BOOST_CHECK_EQUAL (idx, lTotalExpectedNbOfEvents);
+  BOOST_CHECK_MESSAGE (idx == lTotalExpectedNbOfEvents,
+                       "The total expected number of events is "
+                       << lTotalExpectedNbOfEvents << ", but " << idx
+                       << " events have been generated");
+  
   /** Reset the context of the demand streams for another demand generation
       without having to reparse the demand input file. */
   trademgenService.reset ();
