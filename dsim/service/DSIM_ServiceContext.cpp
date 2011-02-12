@@ -3,7 +3,6 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
 #include <sstream>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
@@ -29,9 +28,7 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   const std::string DSIM_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "DSIM_ServiceContext: " << std::endl
-         << "Simulator ID: " << _simulatorID
-         << std::endl;
+    oStr << "DSIM_ServiceContext: Simulator ID: " << _simulatorID;
     return oStr.str();
   }
 
