@@ -35,7 +35,7 @@ namespace AIRSCHED {
   // //////////////////////////////////////////////////////////////////////
   const std::string AIRSCHED_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "AIRSCHED_ServiceContext: " << std::endl;
+    oStr << "AIRSCHED_ServiceContext";
     return oStr.str();
   }
 
@@ -48,8 +48,7 @@ namespace AIRSCHED {
 
   // //////////////////////////////////////////////////////////////////////
   void AIRSCHED_ServiceContext::
-  readFromInputFile (const std::string& iInputFileName) {
-
+  readFromInputFile (const stdair::Filename_T& iInputFileName) {
     FileMgr::readAndProcessTravelSolutionInputFile (iInputFileName);
   }
 

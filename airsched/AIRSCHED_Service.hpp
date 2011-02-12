@@ -6,7 +6,7 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 // AirSched
 #include <airsched/AIRSCHED_Types.hpp>
@@ -16,6 +16,7 @@ namespace stdair {
   class STDAIR_Service;
   struct BasLogParams;
   struct BasDBParams;
+  struct BookingRequestStruct;
 }
 
 namespace AIRSCHED {
@@ -53,7 +54,8 @@ namespace AIRSCHED {
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file. */
     AIRSCHED_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                      const stdair::Filename_T&, const stdair::Filename_T&);
+                      const stdair::Filename_T& iScheduleInputFilename,
+                      const stdair::Filename_T& iODInputFilename);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
@@ -76,7 +78,8 @@ namespace AIRSCHED {
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file. */
     AIRSCHED_Service (const stdair::BasLogParams&,
-                      const stdair::Filename_T&, const stdair::Filename_T&);
+                      const stdair::Filename_T& iScheduleInputFilename,
+                      const stdair::Filename_T& iODInputFilename);
 
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
@@ -105,7 +108,8 @@ namespace AIRSCHED {
         @param const stdair::Filename_T& Filename of the input schedule file. 
         @param const stdair::Filename_T& Filename of the input O&D file. */
     AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                      const stdair::Filename_T&, const stdair::Filename_T&);
+                      const stdair::Filename_T& iScheduleInputFilename,
+                      const stdair::Filename_T& iODInputFilename);
     
     /** Destructor. */
     ~AIRSCHED_Service();
@@ -116,7 +120,7 @@ namespace AIRSCHED {
     /** Calculate and return a list of travel solutions corresponding to a given
         product demand. */
     void buildSegmentPathList (stdair::SegmentPathList_T&,
-			       const stdair::BookingRequestStruct&);
+                               const stdair::BookingRequestStruct&);
 
     /** Perform a small simulation, which uses the Customer Choice Model.
         <br>Currently, that method does nothing.*/
@@ -159,7 +163,8 @@ namespace AIRSCHED {
         simulator, is parsed and the inventories are generated accordingly.
         @param const stdair::Filename_T& Filename of the input schedule file. 
         @param const stdair::Filename_T& Filename of the input O&D file. */
-    void init (const stdair::Filename_T&, const stdair::Filename_T&);
+    void init (const stdair::Filename_T& iScheduleInputFilename,
+               const stdair::Filename_T& iODInputFilename);
         
     /** Finaliser. */
     void finalise ();

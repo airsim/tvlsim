@@ -4,8 +4,6 @@ include $(srcdir)/sources.mk
 
 ## Source directory
 
-MAINTAINERCLEANFILES = Makefile.in
-
 # Library (for the batches)
 lib_LTLIBRARIES = libairschedbatch.la
 
@@ -18,6 +16,11 @@ libairschedbatch_la_LDFLAGS =
 # Binaries (batches)
 bin_PROGRAMS = airsched
 
+#
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = ${bin_PROGRAMS:%=%.log}
+
+#
 airsched_SOURCES = $(airsched_batches_h_sources) $(airsched_batches_cc_sources)
 airsched_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 airsched_LDADD = 

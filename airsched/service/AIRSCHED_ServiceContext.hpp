@@ -60,7 +60,7 @@ namespace AIRSCHED {
     const std::string display() const;
         
     /** Read the input data from a file */
-    void readFromInputFile (const std::string& iInputFileName);
+    void readFromInputFile (const stdair::Filename_T& iInputFileName);
 
 
   private:
