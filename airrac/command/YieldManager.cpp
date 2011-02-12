@@ -4,8 +4,8 @@
 // STL
 #include <exception>
 // StdAir
-#include <stdair/service/Logger.hpp>
 //#include <stdair/bom/YieldStore.hpp>
+#include <stdair/service/Logger.hpp>
 // Airrac
 #include <airrac/AIRRAC_Types.hpp>
 #include <airrac/command/YieldManager.hpp>
@@ -26,7 +26,7 @@ namespace AIRRAC {
       
     } catch (const std::exception& lStdError) {
       STDAIR_LOG_ERROR ("Error: " << lStdError.what());
-      throw BookingException();
+      throw YielCalculationException();
     }
   }
 

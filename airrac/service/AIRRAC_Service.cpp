@@ -4,8 +4,6 @@
 // STL
 #include <cassert>
 // Boost
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
@@ -237,7 +235,8 @@ namespace AIRRAC {
   calculateYield (const stdair::TravelSolutionStruct& iTravelSolution) {
     
     if (_airracServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The AirRAC service has "
+                                            "not been initialised");
     }
     assert (_airracServiceContext != NULL);
     AIRRAC_ServiceContext& lAIRRAC_ServiceContext = *_airracServiceContext;
@@ -248,18 +247,18 @@ namespace AIRRAC {
       stdair::YieldStore& lYieldStore = lAIRRAC_ServiceContext.getYieldStore();
       
       // Delegate the booking to the dedicated command
-      stdair::BasChronometer lSellChronometer;
-      lSellChronometer.start();
+      stdair::BasChronometer lCalculationChronometer;
+      lCalculationChronometer.start();
       YieldManager::calculateYield (lYieldStore, iTravelSolution);
-      const double lSellMeasure = lSellChronometer.elapsed();
+      const double lCalculationMeasure = lCalculationChronometer.elapsed();
       
       // DEBUG
-      STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+      STDAIR_LOG_DEBUG ("Yield calculation: " << lCalculationMeasure << " - "
                         << lAIRRAC_ServiceContext.display());
 
     } catch (const std::exception& error) {
       STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw BookingException();
+      throw YielCalculationException();
     }
   }
   

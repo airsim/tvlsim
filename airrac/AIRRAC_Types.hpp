@@ -5,12 +5,11 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <exception>
-#include <string>
 #include <map>
 // Boost
 #include <boost/shared_ptr.hpp>
 // StdAir
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/stdair_basic_types.hpp>
 
 namespace AIRRAC {
@@ -19,37 +18,7 @@ namespace AIRRAC {
   class AIRRAC_Service;
 
   // ///////// Exceptions ///////////
-  class RootException : public std::exception {
-  };
-
-  class NonInitialisedServiceException : public RootException {
-  };
-
-  class MemoryAllocationException : public RootException {
-  };
-
-  class ObjectNotFoundException : public RootException {
-  };
-
-  class ParserException : public RootException {
-  };
-
-  class CodeConversionException : public ParserException {
-  };
-
-  class CodeDuplicationException : public ParserException {
-  };
-
-  class SegmentDateNotFoundException : public ParserException {
-  };
-
-  class SQLDatabaseException : public RootException {
-  };
-
-  class SQLDatabaseConnectionImpossibleException : public SQLDatabaseException {
-  };
-
-  class BookingException : public RootException {
+  class YielCalculationException : public stdair::RootException {
   };
 
   // //////// Type definitions /////////

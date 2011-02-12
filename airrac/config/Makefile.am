@@ -1,4 +1,4 @@
-# config
+# airrac/config
 include $(top_srcdir)/Makefile.common
 
 ## Source directory
@@ -15,6 +15,7 @@ all-local: airrac-paths.hpp
 airrac-paths.hpp: Makefile
 	@echo '#ifndef __AIRRAC_PATHS_HPP' > $@
 	@echo '#define __AIRRAC_PATHS_HPP' >> $@
+	@echo >> $@
 	@echo '#define PACKAGE "airrac"' >> $@
 	@echo '#define PACKAGE_NAME "AIRRAC"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
@@ -23,4 +24,7 @@ airrac-paths.hpp: Makefile
 	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
 	@echo '#define DATADIR "$(datadir)"' >> $@
 	@echo '#define DOCDIR "$(docdir)"' >> $@
+	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
+	@echo >> $@
 	@echo '#endif // __AIRRAC_PATHS_HPP' >> $@
+	@echo >> $@

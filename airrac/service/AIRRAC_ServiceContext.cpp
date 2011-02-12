@@ -24,9 +24,7 @@ namespace AIRRAC {
   // //////////////////////////////////////////////////////////////////////
   const std::string AIRRAC_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "AIRRAC_ServiceContext: " << std::endl
-         << "Airline code: " << _airlineCode
-         << std::endl;
+    oStr << "AIRRAC_ServiceContext: Airline code: " << _airlineCode;
     return oStr.str();
   }
 

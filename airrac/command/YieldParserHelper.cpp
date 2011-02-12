@@ -269,7 +269,8 @@ namespace AIRRAC {
                         << " characters. The input file has "
                         << hasBeenFullyReadStr
                         << "been fully read. Stop point: " << info.stop);
-      throw ParserException();
+      throw stdair::ParserException ("Parsing of yield store input file: "
+                                     + _filename + " failed");
     }
 
     return oResult;

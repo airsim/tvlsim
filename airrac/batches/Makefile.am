@@ -3,11 +3,13 @@ include $(top_srcdir)/Makefile.common
 
 ## Source directory
 
-MAINTAINERCLEANFILES = Makefile.in
-
 
 # Binaries (batches)
 bin_PROGRAMS = airrac
+
+#
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = ${bin_PROGRAMS:%=%_utfresults.xml} ${bin_PROGRAMS:%=%.log}
 
 #
 airrac_SOURCES = airrac.cpp
