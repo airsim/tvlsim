@@ -2,8 +2,6 @@
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
-MAINTAINERCLEANFILES = Makefile.in
-
 ##
 SUBDIRS =
 
@@ -12,6 +10,10 @@ EXTRA_DIST =
 ##
 nofail_PRG = CRSTestSuite
 fail_PRG =
+
+#
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = ${nofail_PRG:%=%_utfresults.xml} ${nofail_PRG:%=%.log}
 
 #
 check_PROGRAMS = $(nofail_PRG) $(fail_PRG)

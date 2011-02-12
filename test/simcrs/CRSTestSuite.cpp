@@ -6,7 +6,6 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -29,14 +28,16 @@
 
 namespace boost_utf = boost::unit_test;
 
+// (Boost) Unit Test XML Report
+std::ofstream utfReportStream ("CRSTestSuite_utfresults.xml");
+
 /**
  * Configuration for the Boost Unit Test Framework (UTF)
  */
 struct UnitTestConfig {
   /** Constructor. */
   UnitTestConfig() {
-    static std::ofstream _test_log ("CRSTestSuite_utfresults.xml");
-    boost_utf::unit_test_log.set_stream (_test_log);
+    boost_utf::unit_test_log.set_stream (utfReportStream);
     boost_utf::unit_test_log.set_format (boost_utf::XML);
     boost_utf::unit_test_log.set_threshold_level (boost_utf::log_test_units);
     //boost_utf::unit_test_log.set_threshold_level (boost_utf::log_successful_tests);
