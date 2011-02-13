@@ -34,20 +34,16 @@ namespace DSIM {
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation is starting");
 
-      // /////////////////////////////////////////////////////
-      // Event queue
-      stdair::EventQueue lEventQueue;
-
       /**
          Initialisation step.
          <br>Generate the first event for each demand stream.
       */
-      ioTRADEMGEN_Service.generateFirstRequests (lEventQueue);
+      ioTRADEMGEN_Service.generateFirstRequests();
   
       /** (Boost) progress display (current number of events, total
           number of events) for every demand stream. */
       stdair::ProgressDisplayMap_T lProgressDisplays;
-      lEventQueue.initProgressDisplays (lProgressDisplays);
+      ioTRADEMGEN_Service.initProgressDisplays (lProgressDisplays);
 
       /**
          Main loop.
@@ -57,10 +53,10 @@ namespace DSIM {
          </ul>
       */
       stdair::Count_T eventIdx = 1;
-      while (lEventQueue.isQueueDone() == false) {
+      while (ioTRADEMGEN_Service.isQueueDone() == false) {
 
         // Get the next event from the event queue
-        stdair::EventStruct& lEventStruct = lEventQueue.popEvent ();
+        const stdair::EventStruct& lEventStruct= ioTRADEMGEN_Service.popEvent();
 
         // Extract the corresponding demand/booking request
         const stdair::BookingRequestStruct& lPoppedRequest =
@@ -126,21 +122,15 @@ namespace DSIM {
              newly added event, so that the unicity on the date-time
              stamp can be guaranteed.
           */
-          lEventQueue.addEvent (lNextEventStruct);
+          ioTRADEMGEN_Service.addEvent (lNextEventStruct);
 
           // DEBUG
           STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
                             << lNextRequest_ptr->describe()
                             << "'. Is queue done? "
-                            << lEventQueue.isQueueDone());
+                            << ioTRADEMGEN_Service.isQueueDone());
         }
         
-        /**
-           Remove the last used event, so that, at any given moment, the
-           queue keeps only the active events.
-        */
-        lEventQueue.eraseLastUsedEvent ();
-
         // Iterate
         ++eventIdx;
       }
