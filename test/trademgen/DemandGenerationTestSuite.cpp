@@ -111,33 +111,30 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   // Total number of events, for all the demand streams: 21 (11 + 10)
   const stdair::Count_T lTotalExpectedNbOfEvents (21);
   
-  // /////////////////////////////////////////////////////
-  // Event queue
-  stdair::EventQueue lEventQueue;
-
   /**
      Initialisation step.
      <br>Generate the first event for each demand stream.
   */
-  trademgenService.generateFirstRequests (lEventQueue);
-
+  trademgenService.generateFirstRequests();
+      
   /** Is queue empty */
-  const bool isQueueEmpty = lEventQueue.isQueueEmpty();
-  BOOST_CHECK_MESSAGE (isQueueEmpty == false,
-                       "The event queue should not be empty. You may check the "
-                       << "input file: '" << lInputFilename << "'");
+  const bool isQueueDone = trademgenService.isQueueDone();
+  BOOST_REQUIRE_MESSAGE (isQueueDone == false,
+                         "The event queue should not be empty. You may check "
+                         << "the input file: '" << lInputFilename << "'");
   
   /** Queue size.
       <br>At any moment, the size of the event queue represents the
       number of independent demand/event streams. Indeed, each demand
       stream generates the corresponding events one after
       another. Therefore, each demand stream has always got a single
-      event in the event queue. */
+      event in the event queue.
   const stdair::Count_T lQueueSize = lEventQueue.getQueueSize();
   BOOST_CHECK_EQUAL (lQueueSize, 2);
   BOOST_CHECK_MESSAGE (lQueueSize == 2,
                        "The event queue should be made of 2 demand streams, "
                        << " but it is not");
+                        */
   
   /**
      Main loop.
@@ -147,10 +144,10 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
      </ul>
   */
   stdair::Count_T idx = 1;
-  while (lEventQueue.isQueueDone() == false && idx <= 50) {
+  while (trademgenService.isQueueDone() == false && idx <= 50) {
 
     // Get the next event from the event queue
-    const stdair::EventStruct& lEventStruct = lEventQueue.popEvent();
+    const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
 
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
@@ -258,25 +255,20 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
          stamp is altered for the newly added event, so that the unicity on the
          date-time stamp can be guaranteed.
       */
-      lEventQueue.addEvent (lNextEventStruct);
+      trademgenService.addEvent (lNextEventStruct);
       
       // DEBUG
       STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "][" << lCurrentNbOfEvents
                         << "/" << lExpectedTotalNbOfEvents
                         << "] Added request: '" << lNextRequest_ptr->describe()
-                        << "'. Is queue done? " << lEventQueue.isQueueDone());
+                        << "'. Is queue done? "
+                        << trademgenService.isQueueDone());
 
       // Keep, within the dedicated map, the current counters of events updated.
       ++lCurrentNbOfEvents;
       itNbOfEventsMap->second = NbOfEventsPair_T (lCurrentNbOfEvents,
                                                   lExpectedTotalNbOfEvents);
     }
-    
-    /**
-       Remove the last used event, so that, at any given moment, the
-       queue keeps only the active events.
-    */
-    lEventQueue.eraseLastUsedEvent ();
     
     // Iterate
     ++idx;
@@ -291,7 +283,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   
   /** Reset the context of the demand streams for another demand generation
       without having to reparse the demand input file. */
-  trademgenService.reset ();
+  trademgenService.reset();
 
   // Close the log file
   logOutputFile.close();
