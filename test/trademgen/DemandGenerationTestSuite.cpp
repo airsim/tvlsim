@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   
   // /////////////////////////////////////////////////////
   // Event queue
-  stdair::EventQueue lEventQueue = stdair::EventQueue();
+  stdair::EventQueue lEventQueue;
 
   /**
      Initialisation step.
@@ -247,8 +247,8 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                              << lPoppedRequest.getRequestDateTime() << ")");
       
       //
-      const stdair::EventType_T lEventTypeStr ("Request");
-      stdair::EventStruct lNextEventStruct (lEventTypeStr, lDemandStreamKey,
+      stdair::EventStruct lNextEventStruct (stdair::EventType::BKG_REQ,
+                                            lDemandStreamKey,
                                             lNextRequest_ptr);
 
       /**
