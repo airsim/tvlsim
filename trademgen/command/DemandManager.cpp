@@ -115,7 +115,7 @@ namespace TRADEMGEN {
           lDemandStream_ptr->generateNextRequest ();
         
         const DemandStreamKey& lKey = lDemandStream_ptr->getKey();
-        stdair::EventStruct lEventStruct ("Request",
+        stdair::EventStruct lEventStruct (stdair::EventType::BKG_REQ,
                                           lKey.toString(), lFirstRequest);
         ioEventQueue.addEvent (lEventStruct);
       }

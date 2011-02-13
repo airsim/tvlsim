@@ -241,7 +241,7 @@ int main (int argc, char* argv[]) {
     output << "Run number: " << runIdx << std::endl;
     
     // Event queue
-    stdair::EventQueue lEventQueue = stdair::EventQueue ();
+    stdair::EventQueue lEventQueue;
      
     /**
        Initialisation step.
@@ -249,6 +249,11 @@ int main (int argc, char* argv[]) {
     */
     trademgenService.generateFirstRequests (lEventQueue);
       
+    /** (Boost) progress display (current number of events, total
+        number of events) for every demand stream. */
+    stdair::ProgressDisplayMap_T lProgressDisplays;
+    lEventQueue.initProgressDisplays (lProgressDisplays);
+
     /**
        Main loop.
        <ul>
@@ -315,8 +320,8 @@ int main (int argc, char* argv[]) {
         }
 
         //
-        const stdair::EventType_T lEventTypeStr ("Request");
-        stdair::EventStruct lNextEventStruct (lEventTypeStr, lDemandStreamKey,
+        stdair::EventStruct lNextEventStruct (stdair::EventType::BKG_REQ,
+                                              lDemandStreamKey,
                                               lNextRequest_ptr);
 
         /**
