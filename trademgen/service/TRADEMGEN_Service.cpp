@@ -17,6 +17,8 @@
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/EventStruct.hpp>
+#include <stdair/bom/EventQueue.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/service/DBSessionManager.hpp>
@@ -173,7 +175,8 @@ namespace TRADEMGEN {
       
       throw DemandInputFileNotFoundException ("The demand file '"
                                               + iDemandInputFilename
-                                              + "' does not exist or can not be read");
+                                              + "' does not exist or can not "
+                                              + "be read");
     }
 
     // Retrieve the Trademgen service context
@@ -198,6 +201,13 @@ namespace TRADEMGEN {
     // will be attached
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
+    // Initialise the event queue
+    stdair::EventQueue& lEventQueue = DemandManager::initEventQueue (lBomRoot);
+
+    // Store a reference of the EventQueue object instance within the
+    // service context
+    lTRADEMGEN_ServiceContext.setEventQueue (lEventQueue);
+    
     // Initialise the demand generators
     DemandParser::generateDemand (iDemandInputFilename, lBomRoot,
                                   lSharedGenerator, lDefaultPOSProbabilityMass);
@@ -316,6 +326,26 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void TRADEMGEN_Service::generateFirstRequests () const {
+    // Retrieve the Trademgen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+    
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // will be attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
+
+    // Delegate the call to the dedicated command
+    DemandManager::generateFirstRequests (lBomRoot);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T TRADEMGEN_Service::
   generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey) const {
     // Retrieve the Trademgen service context
@@ -337,28 +367,74 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::
-  generateFirstRequests (stdair::EventQueue& ioQueue) const {
+  bool TRADEMGEN_Service::
+  addEvent (stdair::EventStruct& ioEventStruct) const {
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
-    // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service != NULL);
-    
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
 
-    // Delegate the call to the dedicated command
-    DemandManager::generateFirstRequests (ioQueue, lBomRoot);
+    // Inser the event structure within the dedicated queue
+    const bool hasInsertionBeenSuccessful = lQueue.addEvent (ioEventStruct);
+
+    //
+    return hasInsertionBeenSuccessful;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  stdair::EventStruct TRADEMGEN_Service::popEvent() const {
+    // Retrieve the Trademgen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    
+    // Extract the next event from the queue
+    const stdair::EventStruct oEventStruct = lQueue.popEvent();
+
+    //
+    return oEventStruct;
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::reset () {
+  bool TRADEMGEN_Service::isQueueDone() const {
+    // Retrieve the Trademgen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    
+    // Calculates whether the event queue has been fully emptied
+    const bool isQueueDone = lQueue.isQueueDone();
+
+    //
+    return isQueueDone;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void TRADEMGEN_Service::
+  initProgressDisplays (stdair::ProgressDisplayMap_T& ioProgressDisplayMap) const {
+    // Retrieve the Trademgen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    
+    // Initialise the map of Boost progress_display objects
+    lQueue.initProgressDisplays (ioProgressDisplayMap);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void TRADEMGEN_Service::reset() const {
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =

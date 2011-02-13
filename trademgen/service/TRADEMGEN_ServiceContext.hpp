@@ -6,11 +6,6 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Boost
-#include <boost/shared_ptr.hpp>
-// Boost Random
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
@@ -24,11 +19,14 @@
 namespace stdair {
   struct DemandCharacteristics;
   struct DemandDistribution;
+  class EventQueue;
 }
   
 namespace TRADEMGEN {
 
-  /** Class holding the context of the Trademgen services. */
+  /**
+   * @brief Class holding the context of the Trademgen services.
+   */
   class TRADEMGEN_ServiceContext : public ServiceAbstract {
     /** The TRADEMGEN_Service class should be the sole class to get access to
         ServiceContext content: general users do not want to bother
@@ -40,12 +38,13 @@ namespace TRADEMGEN {
     // /////// Construction / initialisation ////////
     /** Constructors. */
     TRADEMGEN_ServiceContext ();
-    TRADEMGEN_ServiceContext (const std::string&);
+    TRADEMGEN_ServiceContext (const std::string& iServiceName);
     TRADEMGEN_ServiceContext (const TRADEMGEN_ServiceContext&);
 
     /** Destructor. */
     ~TRADEMGEN_ServiceContext();
-      
+
+    
   private:
     // ///////// Getters //////////
     /** Get the pointer on the STDAIR service handler. */
@@ -53,6 +52,9 @@ namespace TRADEMGEN {
       return _stdairService;
     }
 
+    /** Get the pointer on the EventQueue instance. */
+    stdair::EventQueue& getEventQueue() const;
+    
     /** Get the shared uniform generator. */
     stdair::UniformGenerator_T& getUniformGenerator () {
       return _uniformGenerator;
@@ -70,6 +72,12 @@ namespace TRADEMGEN {
       _stdairService = ioSTDAIR_ServicePtr;
     }
 
+    /** Set the pointer on the EventQueue instance. */
+    void setEventQueue (stdair::EventQueue& ioEventQueue) {
+      _eventQueue = &ioEventQueue;
+    }
+
+    
   private:
     // ///////// Display Methods //////////
     /** Display the short TRADEMGEN_ServiceContext content. */
@@ -83,6 +91,8 @@ namespace TRADEMGEN {
     // ///////////// Children ////////////
     /** Standard Airline (StdAir) Service Handler. */
     stdair::STDAIR_ServicePtr_T _stdairService;
+    /** Pointer on the EventQueue instance. */
+    stdair::EventQueue* _eventQueue;
 
   private:
     // ////////////// Attributes ////////////////

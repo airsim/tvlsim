@@ -9,17 +9,19 @@
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
-// Trademgen
+#include <stdair/bom/EventTypes.hpp>
+// TraDemGen
 #include <trademgen/TRADEMGEN_Types.hpp>
 
-// Forward declarations.
+// Forward declarations
 namespace stdair {
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
   struct DemandCharacteristics;
   struct DemandDistribution;
-  struct EventQueue;
+  class EventQueue;
+  struct EventStruct;
 }
 
 namespace TRADEMGEN {
@@ -28,118 +30,203 @@ namespace TRADEMGEN {
   class TRADEMGEN_ServiceContext;
   struct DemandStreamKey;
   
-  /** Trademgen services. */
+  /**
+   * @brief class holding the services related to Travel Demand Generation.
+   */
   class TRADEMGEN_Service {
   public:
     // ////////////////// Constructors and Destructors //////////////////    
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>A reference on an output stream is given, so that log
-        outputs can be directed onto that stream.
-        <br>Moreover, database connection parameters are given, so that a
-        session can be created on the corresponding database.
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::BasDBParams& Parameters for the database access.
-        @param const stdair::Filename_T& Filename of the input demand file. */
+    /**
+       Constructor.
+       <br>The init() method is called; see the corresponding documentation
+       for more details.
+       <br>A reference on an output stream is given, so that log
+       outputs can be directed onto that stream.
+       <br>Moreover, database connection parameters are given, so that a
+       session can be created on the corresponding database.
+       @param const stdair::BasLogParams& Parameters for the output log stream.
+       @param const stdair::BasDBParams& Parameters for the database access.
+       @param const stdair::Filename_T& Filename of the input demand file.
+    */
     TRADEMGEN_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                        const stdair::Filename_T& iDemandInputFilename);
 
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>A reference on an output stream is given, so that log
-        outputs can be directed onto that stream.
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::Filename_T& Filename of the input demand file. */
+    /**
+       Constructor.
+       <br>The init() method is called; see the corresponding documentation
+       for more details.
+       <br>A reference on an output stream is given, so that log
+       outputs can be directed onto that stream.
+       @param const stdair::BasLogParams& Parameters for the output log stream.
+       @param const stdair::Filename_T& Filename of the input demand file.
+    */
     TRADEMGEN_Service (const stdair::BasLogParams&,
                        const stdair::Filename_T& iDemandInputFilename);
 
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>Moreover, as no reference on any output stream is given,
-        neither any database access parameter is given, it is assumed
-        that the StdAir log service has already been initialised with
-        the proper log output stream by some other methods in the
-        calling chain (for instance, when the TRADEMGEN_Service is
-        itself being initialised by another library service such as
-        SIMCRS_Service).
-        @param stdair::STDAIR_ServicePtr_T Handler on the STDAIR_Service.
-        @param const stdair::Filename_T& Filename of the input demand file. */
+    /**
+       Constructor.
+       <br>The init() method is called; see the corresponding documentation
+       for more details.
+       <br>Moreover, as no reference on any output stream is given,
+       neither any database access parameter is given, it is assumed
+       that the StdAir log service has already been initialised with
+       the proper log output stream by some other methods in the
+       calling chain (for instance, when the TRADEMGEN_Service is
+       itself being initialised by another library service such as
+       SIMCRS_Service).
+       @param stdair::STDAIR_ServicePtr_T Handler on the STDAIR_Service.
+       @param const stdair::Filename_T& Filename of the input demand file.
+    */
     TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T,
                        const stdair::Filename_T& iDemandInputFilename);
     
-    /** Destructor. */
+    /**
+     * Destructor.
+     */
     ~TRADEMGEN_Service();
     
 
     // ////////////////// Business support methods //////////////////    
-    /** Display the list of airlines, as held within the sample database. */
+    /**
+     * Display the list of airlines, as held within the sample database.
+     */
     void displayAirlineListFromDB() const;
 
-    /** Get the total number of requests to be generated by the demand
-        stream which corresponds to the given key. */
+    /**
+     * Get the total number of requests to be generated by the demand
+     * stream which corresponds to the given key.
+     */
     const stdair::NbOfRequests_T&
     getTotalNumberOfRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T&) const;
 
-    /** Check whether enough requests have already been generated for
-        the demand stream which corresponds to the given key. */
+    /**
+     * Check whether enough requests have already been generated for
+     * the demand stream which corresponds to the given key.
+     */
     const bool
     stillHavingRequestsToBeGenerated(const stdair::DemandStreamKeyStr_T&) const;
 
-    /** Browse the list of demand streams and generate the first
-        request of each stream. */
-    void generateFirstRequests (stdair::EventQueue&) const;
+    /**
+     * Browse the list of demand streams and generate the first
+     * request of each stream.
+     */
+    void generateFirstRequests() const;
 
-    /** Generate a request with the demand stream which corresponds to
-        the given key. */
+    /**
+     * Generate a request with the demand stream which corresponds to
+     * the given key.
+     */
     stdair::BookingRequestPtr_T
     generateNextRequest (const stdair::DemandStreamKeyStr_T&) const;
 
-    /** Reset the context of the demand streams for another demand generation
-        without having to reparse the demand input file. */
-    void reset ();
+    /**
+     * Add event.
+     * <br>If there already is an event with the same date-time, move
+     * the given event one nanosecond forward, and retry the insertion
+     * until it succeeds.
+     * <br>That method:
+     * <ul>
+     *   <li>first adds the event structure in the dedicated list,</li>
+     *   <li>then retrieves the corresponding demand stream,</li>
+     *   <li>and update accordingly the corresponding progress
+     *     statuses.</li>
+     * </ul>
+     * @param stdair::EventStruct& The reference on EventStruct is not
+     *   constant, because the EventStruct object can be altered: its
+     *   date-time stamp can be changed accordingly to the location
+     *   where it has been inserted in the event queue.
+     */
+    bool addEvent (stdair::EventStruct&) const;
+    
+    /**
+     * Pop the next coming (in time) event, and remove it from the
+     * event queue.
+     * <ul>
+     *   <li>The next coming (in time) event corresponds to the event
+     *     having the earliest date-time stamp. In other words, it is
+     *     the first/front element of the event queue.</li>
+     *   <li>That (first) event/element is then removed from the event
+     *     queue</li>
+     *   <li>The progress status is updated for the corresponding
+     *     demand stream.</li>
+     * </ul>
+     */
+    stdair::EventStruct popEvent() const;
+
+    /**
+     * States whether the event queue has reached the end.
+     * <br>For now, that method states whether the event queue is empty.
+     */
+    bool isQueueDone() const;
+
+    /**
+     * Initialise the (Boost) progress display objects, passed as parameter.
+     * <br>The maximum, for each progress display object, is set to
+     * be the expected total number of events.
+     */
+    void initProgressDisplays (stdair::ProgressDisplayMap_T&) const;
+    
+    /**
+     * Reset the context of the demand streams for another demand generation
+     * without having to reparse the demand input file.
+     */
+    void reset() const;
     
   private:
     // ////////////////// Constructors and Destructors //////////////////    
-    /** Default Constructors, which must not be used. */
-    TRADEMGEN_Service ();
-    /** Default copy constructor. */
+    /**
+     * Default Constructors, which must not be used.
+     */
+    TRADEMGEN_Service();
+    
+    /**
+     * Default copy constructor.
+     */
     TRADEMGEN_Service (const TRADEMGEN_Service&);
 
-    /** Initialise the (TRADEMGEN) service context (i.e., the
-        TRADEMGEN_ServiceContext object). */
+    /**
+     * Initialise the (TRADEMGEN) service context (i.e., the
+     * TRADEMGEN_ServiceContext object).
+     */
     void initServiceContext ();
 
-    /** Initialise the STDAIR service (including the log service).
-        <br>A reference on the root of the BOM tree, namely the BomRoot object,
-        is stored within the service context for later use.
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::BasDBParams& Parameters for the database access. */
+    /**
+     * Initialise the STDAIR service (including the log service).
+     * <br>A reference on the root of the BOM tree, namely the BomRoot object,
+     * is stored within the service context for later use.
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const stdair::BasDBParams& Parameters for the database access.
+     */
     void initStdAirService (const stdair::BasLogParams&,
                             const stdair::BasDBParams&);
     
-    /** Initialise the STDAIR service (including the log service).
-        <br>A reference on the root of the BOM tree, namely the BomRoot object,
-        is stored within the service context for later use.
-        @param const stdair::BasLogParams& Parameters for the output log
-               stream. */
+    /**
+     * Initialise the STDAIR service (including the log service).
+     * <br>A reference on the root of the BOM tree, namely the BomRoot object,
+     * is stored within the service context for later use.
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     */
     void initStdAirService (const stdair::BasLogParams&);
     
-    /** Initialise.
-        <br>The CSV file, describing the characteristics of the demand for the
-        simulator, is parsed and the demand streams are generated accordingly.
-        @param const stdair::Filename_T& Filename of the input demand file. */
+    /**
+     * Initialise.
+     * <br>The CSV file, describing the characteristics of the demand for the
+     * simulator, is parsed and the demand streams are generated accordingly.
+     * @param const stdair::Filename_T& Filename of the input demand file.
+     */
     void init (const stdair::Filename_T& iDemandInputFilename);
     
-    /** Finalise. */
+    /**
+     * Finalise.
+     */
     void finalise ();
 
     
   private:
     // ///////// Service Context /////////
-    /** Trademgen context. */
+    /**
+     * Trademgen context.
+     */
     TRADEMGEN_ServiceContext* _trademgenServiceContext;
   };
 

@@ -239,20 +239,17 @@ int main (int argc, char* argv[]) {
   for (NbOfRuns_T runIdx = 1; runIdx <= lNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
     output << "Run number: " << runIdx << std::endl;
-    
-    // Event queue
-    stdair::EventQueue lEventQueue;
-     
+
     /**
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    trademgenService.generateFirstRequests (lEventQueue);
+    trademgenService.generateFirstRequests();
       
     /** (Boost) progress display (current number of events, total
         number of events) for every demand stream. */
     stdair::ProgressDisplayMap_T lProgressDisplays;
-    lEventQueue.initProgressDisplays (lProgressDisplays);
+    trademgenService.initProgressDisplays (lProgressDisplays);
 
     /**
        Main loop.
@@ -262,10 +259,10 @@ int main (int argc, char* argv[]) {
        </ul>
     */
     stdair::Count_T eventIdx = 1;
-    while (lEventQueue.isQueueDone() == false) {
+    while (trademgenService.isQueueDone() == false) {
 
-      // Get the next event from the event queue
-      stdair::EventStruct& lEventStruct = lEventQueue.popEvent();
+      // Extract the next event from the event queue
+      const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
       
       // Extract the corresponding demand/booking request
       const stdair::BookingRequestStruct& lPoppedRequest =
@@ -332,20 +329,15 @@ int main (int argc, char* argv[]) {
            newly added event, so that the unicity on the date-time
            stamp can be guaranteed.
         */
-        lEventQueue.addEvent (lNextEventStruct);
+        trademgenService.addEvent (lNextEventStruct);
 
         // DEBUG
         STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
                           << lNextRequest_ptr->describe()
-                          << "'. Is queue done? " << lEventQueue.isQueueDone());
+                          << "'. Is queue done? "
+                          << trademgenService.isQueueDone());
       }
     
-      /**
-         Remove the last used event, so that, at any given moment, the
-         queue keeps only the active events.
-      */
-      lEventQueue.eraseLastUsedEvent ();
-
       // Iterate
       ++eventIdx;
     }
