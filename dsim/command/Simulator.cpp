@@ -41,9 +41,10 @@ namespace DSIM {
       ioTRADEMGEN_Service.generateFirstRequests();
   
       /** (Boost) progress display (current number of events, total
-          number of events) for every demand stream. */
+          number of events) for every demand stream.
       stdair::ProgressDisplayMap_T lProgressDisplays;
       ioTRADEMGEN_Service.initProgressDisplays (lProgressDisplays);
+       */
 
       /**
          Main loop.
@@ -52,18 +53,20 @@ namespace DSIM {
          <li>Generate the next request for the same type/demand stream.</li>
          </ul>
       */
-      stdair::Count_T eventIdx = 1;
       while (ioTRADEMGEN_Service.isQueueDone() == false) {
 
         // Get the next event from the event queue
         const stdair::EventStruct& lEventStruct= ioTRADEMGEN_Service.popEvent();
 
+        // DEBUG
+        STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
+      
         // Extract the corresponding demand/booking request
         const stdair::BookingRequestStruct& lPoppedRequest =
           lEventStruct.getBookingRequest ();
 
         // DEBUG
-        STDAIR_LOG_DEBUG ("[" << eventIdx << "] Poped booking request: '"
+        STDAIR_LOG_DEBUG ("Poped booking request: '"
                           << lPoppedRequest.describe() << "'.");
     
         // Play booking request
@@ -109,30 +112,12 @@ namespace DSIM {
             assert (false);
           }
 
-          //
-          stdair::EventStruct lNextEventStruct (stdair::EventType::BKG_REQ,
-                                                lDemandStreamKey,
-                                                lNextRequest_ptr);
-
-          /**
-             Note that when adding an event in the event queue, the
-             former can be altered. It happends when an event already
-             exists in the event queue with exactly the same date-time
-             stamp. In that case, the date-time stamp is altered for the
-             newly added event, so that the unicity on the date-time
-             stamp can be guaranteed.
-          */
-          ioTRADEMGEN_Service.addEvent (lNextEventStruct);
-
           // DEBUG
           STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
                             << lNextRequest_ptr->describe()
                             << "'. Is queue done? "
                             << ioTRADEMGEN_Service.isQueueDone());
         }
-        
-        // Iterate
-        ++eventIdx;
       }
             
       // DEBUG
