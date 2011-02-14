@@ -3,20 +3,19 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iosfwd>
-#include <ostream>
 #include <sstream>
 // Math
 #include <cmath>
-// STDAIR
+// StdAir
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasConst_Request.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
-// TRADEMGEN
+// TraDemGen
 #include <trademgen/bom/DemandStream.hpp>
 
 namespace TRADEMGEN {
+
   // ////////////////////////////////////////////////////////////////////
   DemandStream::
   DemandStream (const Key_T& iKey,
@@ -52,7 +51,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  DemandStream::~DemandStream () {
+  DemandStream::~DemandStream() {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -64,6 +63,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   void DemandStream::init() {
+    
     // Generate the number of requests
     const stdair::RealNumber_T lMu = _demandDistribution._meanNumberOfRequests;
     const stdair::RealNumber_T lSigma =
@@ -85,24 +85,30 @@ namespace TRADEMGEN {
   }  
 
   // ////////////////////////////////////////////////////////////////////
-  const bool DemandStream::stillHavingRequestsToBeGenerated () const {
+  const bool DemandStream::stillHavingRequestsToBeGenerated() const {
+    bool hasStillHavingRequestsToBeGenerated = true;
+    
     // Check whether enough requests have already been generated
     const stdair::Count_T lNbOfRequestsGeneratedSoFar =
       _randomGenerationContext._numberOfRequestsGeneratedSoFar;
+
     const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
       _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
 
     if (lRemainingNumberOfRequestsToBeGenerated <= 0) {
-      return false;
+      hasStillHavingRequestsToBeGenerated = false;
     }
-    return true;
+    
+    return hasStillHavingRequestsToBeGenerated;
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::DateTime_T DemandStream::generateTimeOfRequest () {
+  const stdair::DateTime_T DemandStream::generateTimeOfRequest() {
+    
     // Assert that there are requests to be generated.
     const stdair::Count_T lNbOfRequestsGeneratedSoFar =
       _randomGenerationContext._numberOfRequestsGeneratedSoFar;
+
     const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
       _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
     assert (lRemainingNumberOfRequestsToBeGenerated > 0);
@@ -115,34 +121,48 @@ namespace TRADEMGEN {
     const stdair::Probability_T lVariate =
       _requestDateTimeRandomGenerator.generateUniform01();
 
-    const stdair::Probability_T lCumulativeProbabilityThisRequest =
-      1.0 - (1.0 - lCumulativeProbabilitySoFar)
-      * pow(1 - lVariate, 1.0 / static_cast<float> (lRemainingNumberOfRequestsToBeGenerated));
+    //
+    const float lRemainingRate =
+      1.0 / static_cast<float> (lRemainingNumberOfRequestsToBeGenerated);
 
+    //
+    const stdair::Probability_T lComplementOfCumulativeProbabilitySoFar =
+      1.0 - lCumulativeProbabilitySoFar;
+      
+    //
+    const stdair::Probability_T lCumulativeProbabilityThisRequest =
+      1.0 -
+      lComplementOfCumulativeProbabilitySoFar * std::pow (1 - lVariate,
+                                                          lRemainingRate);
+
+    //
     const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
       _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);
 
-    // convert the number of days in number of seconds + number of milliseconds
+    // Convert the number of days in number of seconds + number of milliseconds
     const stdair::FloatDuration_T lNumberOfSeconds =
-      lNumberOfDaysBetweenDepartureAndThisRequest
-      * static_cast<float> (stdair::SECONDS_IN_ONE_DAY);
+      lNumberOfDaysBetweenDepartureAndThisRequest * stdair::SECONDS_IN_ONE_DAY;
 
-    const stdair::IntDuration_T lIntNumberOfSeconds = floor (lNumberOfSeconds);
+    //
+    const stdair::IntDuration_T lIntNumberOfSeconds =
+      std::floor (lNumberOfSeconds);
 
+    //
     const stdair::FloatDuration_T lNumberOfMilliseconds =
       (lNumberOfSeconds - lIntNumberOfSeconds)
-      * static_cast<float> (stdair::MILLISECONDS_IN_ONE_SECOND);
+      * stdair::MILLISECONDS_IN_ONE_SECOND;
 
+    // +1 is a trick to ensure that the next Event is strictly later
+    // than the current one
     const stdair::IntDuration_T lIntNumberOfMilliseconds =
-      floor(lNumberOfMilliseconds) + 1; // +1 is a trick to ensure that the next
-    // event is strictly later than the current one
+      std::floor (lNumberOfMilliseconds) + 1;
 
     const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
-      boost::posix_time::seconds(lIntNumberOfSeconds)
-      + boost::posix_time::millisec(lIntNumberOfMilliseconds);
+      boost::posix_time::seconds (lIntNumberOfSeconds)
+      + boost::posix_time::millisec (lIntNumberOfMilliseconds);
 
     const stdair::Time_T lHardcodedReferenceDepartureTime =
-      boost::posix_time::hours(8);
+      boost::posix_time::hours (8);
     
     const stdair::DateTime_T lDepartureDateTime =
       boost::posix_time::ptime (_key.getPreferredDepartureDate(),
@@ -154,6 +174,8 @@ namespace TRADEMGEN {
     // Update random generation context
     _randomGenerationContext._cumulativeProbabilitySoFar =
       lCumulativeProbabilityThisRequest;
+
+    //
     incrementGeneratedRequestsCounter ();
 
     // DEBUG

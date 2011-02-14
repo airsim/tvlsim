@@ -326,7 +326,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::generateFirstRequests () const {
+  stdair::Count_T TRADEMGEN_Service::generateFirstRequests() const {
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
@@ -342,7 +342,11 @@ namespace TRADEMGEN {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
     // Delegate the call to the dedicated command
-    DemandManager::generateFirstRequests (lBomRoot);
+    const stdair::Count_T& oExpectedTotalNbOfEvents =
+      DemandManager::generateFirstRequests (lBomRoot);
+
+    //
+    return oExpectedTotalNbOfEvents;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -367,24 +371,6 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  bool TRADEMGEN_Service::
-  addEvent (stdair::EventStruct& ioEventStruct) const {
-    // Retrieve the Trademgen service context
-    assert (_trademgenServiceContext != NULL);
-    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
-      *_trademgenServiceContext;
-
-    // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
-
-    // Inser the event structure within the dedicated queue
-    const bool hasInsertionBeenSuccessful = lQueue.addEvent (ioEventStruct);
-
-    //
-    return hasInsertionBeenSuccessful;
-  }
-  
-  // ////////////////////////////////////////////////////////////////////
   stdair::EventStruct TRADEMGEN_Service::popEvent() const {
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
@@ -395,7 +381,7 @@ namespace TRADEMGEN {
     stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
     
     // Extract the next event from the queue
-    const stdair::EventStruct oEventStruct = lQueue.popEvent();
+    const stdair::EventStruct& oEventStruct = lQueue.popEvent();
 
     //
     return oEventStruct;

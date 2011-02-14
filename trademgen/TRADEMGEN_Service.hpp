@@ -109,8 +109,10 @@ namespace TRADEMGEN {
     /**
      * Browse the list of demand streams and generate the first
      * request of each stream.
+     * @return stdair::Count_T The expected total number of events to
+     *         be generated
      */
-    void generateFirstRequests() const;
+    stdair::Count_T generateFirstRequests() const;
 
     /**
      * Generate a request with the demand stream which corresponds to
@@ -119,25 +121,6 @@ namespace TRADEMGEN {
     stdair::BookingRequestPtr_T
     generateNextRequest (const stdair::DemandStreamKeyStr_T&) const;
 
-    /**
-     * Add event.
-     * <br>If there already is an event with the same date-time, move
-     * the given event one nanosecond forward, and retry the insertion
-     * until it succeeds.
-     * <br>That method:
-     * <ul>
-     *   <li>first adds the event structure in the dedicated list,</li>
-     *   <li>then retrieves the corresponding demand stream,</li>
-     *   <li>and update accordingly the corresponding progress
-     *     statuses.</li>
-     * </ul>
-     * @param stdair::EventStruct& The reference on EventStruct is not
-     *   constant, because the EventStruct object can be altered: its
-     *   date-time stamp can be changed accordingly to the location
-     *   where it has been inserted in the event queue.
-     */
-    bool addEvent (stdair::EventStruct&) const;
-    
     /**
      * Pop the next coming (in time) event, and remove it from the
      * event queue.

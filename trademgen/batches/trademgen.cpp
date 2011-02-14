@@ -1,3 +1,6 @@
+// //////////////////////////////////////////////////////////////////////
+// Import section
+// //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
 #include <sstream>
@@ -244,12 +247,13 @@ int main (int argc, char* argv[]) {
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    trademgenService.generateFirstRequests();
+    const stdair::Count_T& nbOfEventsToBeGenerated =
+      trademgenService.generateFirstRequests();
       
     /** (Boost) progress display (current number of events, total
         number of events) for every demand stream. */
-    stdair::ProgressDisplayMap_T lProgressDisplays;
-    trademgenService.initProgressDisplays (lProgressDisplays);
+    //stdair::ProgressDisplayMap_T lProgressDisplays;
+    //trademgenService.initProgressDisplays (lProgressDisplays);
 
     /**
        Main loop.
@@ -258,19 +262,21 @@ int main (int argc, char* argv[]) {
        <li>Generate the next request for the same type/demand stream.</li>
        </ul>
     */
-    stdair::Count_T eventIdx = 1;
     while (trademgenService.isQueueDone() == false) {
 
       // Extract the next event from the event queue
       const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
+      
+      // DEBUG
+      STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
+                        << lEventStruct.describe() << "'.");
       
       // Extract the corresponding demand/booking request
       const stdair::BookingRequestStruct& lPoppedRequest =
         lEventStruct.getBookingRequest();
         
       // DEBUG
-      STDAIR_LOG_DEBUG ("[" << runIdx << "][" << eventIdx
-                        << "] Poped booking request: '"
+      STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped booking request: '"
                         << lPoppedRequest.describe() << "'.");
     
       // Dump the request into the dedicated CSV file
@@ -284,11 +290,6 @@ int main (int argc, char* argv[]) {
       const bool stillHavingRequestsToBeGenerated = 
         trademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
 
-      // Retrieve, from the demand stream, the total number of events
-      // to be generated
-      const stdair::NbOfRequests_T& lNbOfRequests = trademgenService.
-        getTotalNumberOfRequestsToBeGenerated (lDemandStreamKey);
-      
       // DEBUG
       STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
                         << "Still generate events for that demand stream? "
@@ -296,7 +297,7 @@ int main (int argc, char* argv[]) {
     
       // If there are still events to be generated for that demand stream,
       // generate and add them to the event queue
-      if (stillHavingRequestsToBeGenerated) {
+      if (stillHavingRequestsToBeGenerated == true) {
         
         stdair::BookingRequestPtr_T lNextRequest_ptr =
           trademgenService.generateNextRequest (lDemandStreamKey);
@@ -307,8 +308,8 @@ int main (int argc, char* argv[]) {
           lNextRequest_ptr->getRequestDateTime()
           - lPoppedRequest.getRequestDateTime();
         if (lDuration.total_milliseconds() < 0) {
-          STDAIR_LOG_ERROR ("[" << lDemandStreamKey << "] The date-time of the "
-                            << "generated event ("
+          STDAIR_LOG_ERROR ("[" << lDemandStreamKey
+                            << "] The date-time of the generated event ("
                             << lNextRequest_ptr->getRequestDateTime()
                             << ") is lower than the date-time "
                             << "of the current event ("
@@ -316,41 +317,24 @@ int main (int argc, char* argv[]) {
           assert (false);
         }
 
-        //
-        stdair::EventStruct lNextEventStruct (stdair::EventType::BKG_REQ,
-                                              lDemandStreamKey,
-                                              lNextRequest_ptr);
-
-        /**
-           Note that when adding an event in the event queue, the
-           former can be altered. It happends when an event already
-           exists in the event queue with exactly the same date-time
-           stamp. In that case, the date-time stamp is altered for the
-           newly added event, so that the unicity on the date-time
-           stamp can be guaranteed.
-        */
-        trademgenService.addEvent (lNextEventStruct);
-
         // DEBUG
         STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
                           << lNextRequest_ptr->describe()
                           << "'. Is queue done? "
                           << trademgenService.isQueueDone());
       }
-    
-      // Iterate
-      ++eventIdx;
     }
 
     // Add the number of events to the statistics accumulator
-    lStatAccumulator (eventIdx);
+    lStatAccumulator (nbOfEventsToBeGenerated);
     
     // Reset the service (including the event queue) for the next run
-    eventIdx = 0;
     trademgenService.reset();
   }
 
   // DEBUG
+  STDAIR_LOG_DEBUG ("End of the simulation. Let us see some statistics for the "
+                    << lNbOfRuns << " runs.");
   std::ostringstream oStr;
   stat_display (oStr, lStatAccumulator);
   STDAIR_LOG_DEBUG (oStr.str());
