@@ -107,15 +107,16 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                                      NbOfEventsPair_T (1, 11)));
   lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
                          value_type ("SIN-BKK 2010-Feb-08 Y",
-                                     NbOfEventsPair_T (1, 10)));
-  // Total number of events, for all the demand streams: 21 (11 + 10)
-  const stdair::Count_T lTotalExpectedNbOfEvents (21);
+                                     NbOfEventsPair_T (1, 9)));
+  // Total number of events, for all the demand streams: 20 (11 + 9)
+  const stdair::Count_T lTotalExpectedNbOfEvents (20);
   
   /**
      Initialisation step.
      <br>Generate the first event for each demand stream.
   */
-  trademgenService.generateFirstRequests();
+  const stdair::Count_T& nbOfEventsToBeGenerated =
+    trademgenService.generateFirstRequests();
       
   /** Is queue empty */
   const bool isQueueDone = trademgenService.isQueueDone();
@@ -144,17 +145,20 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
      </ul>
   */
   stdair::Count_T idx = 1;
-  while (trademgenService.isQueueDone() == false && idx <= 50) {
+  while (trademgenService.isQueueDone() == false) {
 
     // Get the next event from the event queue
     const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
 
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
+      
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       lEventStruct.getBookingRequest();
     
     // DEBUG
-    STDAIR_LOG_DEBUG ("[" << idx << "] Poped booking request: '"
+    STDAIR_LOG_DEBUG ("Poped booking request: '"
                       << lPoppedRequest.describe() << "'.");
     
     // Retrieve the corresponding demand stream
@@ -196,16 +200,13 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
       const stdair::NbOfRequests_T& lNbOfRequests = trademgenService.
         getTotalNumberOfRequestsToBeGenerated (lDemandStreamKey);
 
-      BOOST_CHECK_EQUAL (std::floor (lNbOfRequests + 0.5),
-                         lExpectedTotalNbOfEvents);
-      BOOST_CHECK_MESSAGE (std::floor (lNbOfRequests + 0.5)
-                           == lExpectedTotalNbOfEvents,
-                           "[" << lDemandStreamKey
-                           << "] Total number of requests to be generated: "
-                           << lNbOfRequests << " (=> "
-                           << std::floor (lNbOfRequests + 0.5)
-                           << "). Expected value: "
-                           << lExpectedTotalNbOfEvents);
+      BOOST_CHECK_EQUAL (std::floor (lNbOfRequests), lExpectedTotalNbOfEvents);
+      BOOST_CHECK_MESSAGE(std::floor(lNbOfRequests) == lExpectedTotalNbOfEvents,
+                          "[" << lDemandStreamKey
+                          << "] Total number of requests to be generated: "
+                          << lNbOfRequests << " (=> "
+                          << std::floor (lNbOfRequests)
+                          << "). Expected value: " << lExpectedTotalNbOfEvents);
     }
 
     // Assess whether more events should be generated for that demand stream
@@ -243,20 +244,6 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                              << "of the current event ("
                              << lPoppedRequest.getRequestDateTime() << ")");
       
-      //
-      stdair::EventStruct lNextEventStruct (stdair::EventType::BKG_REQ,
-                                            lDemandStreamKey,
-                                            lNextRequest_ptr);
-
-      /**
-         Note that when adding an event in the event queue, the former can be
-         altered. It happends when an event already exists in the event queue
-         with exactly the same date-time stamp. In that case, the date-time
-         stamp is altered for the newly added event, so that the unicity on the
-         date-time stamp can be guaranteed.
-      */
-      trademgenService.addEvent (lNextEventStruct);
-      
       // DEBUG
       STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "][" << lCurrentNbOfEvents
                         << "/" << lExpectedTotalNbOfEvents
@@ -273,7 +260,9 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
     // Iterate
     ++idx;
   }
-
+  // Compensate for the last iteration
+  --idx;
+  
   //
   BOOST_CHECK_EQUAL (idx, lTotalExpectedNbOfEvents);
   BOOST_CHECK_MESSAGE (idx == lTotalExpectedNbOfEvents,
@@ -284,6 +273,9 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   /** Reset the context of the demand streams for another demand generation
       without having to reparse the demand input file. */
   trademgenService.reset();
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("End of the simulation");
 
   // Close the log file
   logOutputFile.close();
