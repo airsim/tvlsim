@@ -19,6 +19,8 @@
 // Boost Accumulators
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
+// Boost Progress
+//#include <boost/progress.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/bom/EventStruct.hpp>
@@ -254,7 +256,8 @@ int main (int argc, char* argv[]) {
         number of events) for every demand stream. */
     //stdair::ProgressDisplayMap_T lProgressDisplays;
     //trademgenService.initProgressDisplays (lProgressDisplays);
-
+    //boost::progress_display lProgressDisplay (nbOfEventsToBeGenerated);
+    
     /**
        Main loop.
        <ul>
@@ -323,6 +326,9 @@ int main (int argc, char* argv[]) {
                           << "'. Is queue done? "
                           << trademgenService.isQueueDone());
       }
+
+      // Update the progress display
+      //++lProgressDisplay;
     }
 
     // Add the number of events to the statistics accumulator
