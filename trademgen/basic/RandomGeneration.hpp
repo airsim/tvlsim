@@ -1,5 +1,5 @@
-#ifndef __TRADEMGEN_BAS_BOM_RANDOMGENERATION_HPP
-#define __TRADEMGEN_BAS_BOM_RANDOMGENERATION_HPP
+#ifndef __TRADEMGEN_BAS_RANDOMGENERATION_HPP
+#define __TRADEMGEN_BAS_RANDOMGENERATION_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -64,4 +64,4 @@ namespace TRADEMGEN {
   };
 
 }
-#endif // __TRADEMGEN_BAS_BOM_RANDOMGENERATION_HPP
+#endif // __TRADEMGEN_BAS_RANDOMGENERATION_HPP
