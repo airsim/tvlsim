@@ -53,7 +53,7 @@ namespace TRADEMGEN {
     : _trademgenServiceContext (NULL) {
 
     // Initialise the service context
-    initServiceContext ();
+    initServiceContext();
     
     // Retrieve the Trademgen service context
     assert (_trademgenServiceContext != NULL);
@@ -102,7 +102,8 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_Service::~TRADEMGEN_Service () {
-    // Retrieve the Trademgen service context
+
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -126,14 +127,16 @@ namespace TRADEMGEN {
   initStdAirService (const stdair::BasLogParams& iLogParams,
                      const stdair::BasDBParams& iDBParams) {
 
-    // Retrieve the Trademgen service context
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
     
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+       Initialise the STDAIR service handler.
+       \note The track on the object memory is kept thanks to the Boost
+       Smart Pointers component.
+    */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     assert (lSTDAIR_Service_ptr != NULL);
@@ -146,14 +149,16 @@ namespace TRADEMGEN {
   void TRADEMGEN_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams) {
 
-    // Retrieve the Trademgen service context
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
     
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+       Initialise the STDAIR service handler.
+       \note The track on the object memory is kept thanks to the Boost
+       Smart Pointers component.
+    */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
     assert (lSTDAIR_Service_ptr != NULL);
@@ -179,7 +184,7 @@ namespace TRADEMGEN {
                                               + "be read");
     }
 
-    // Retrieve the Trademgen service context
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -207,20 +212,15 @@ namespace TRADEMGEN {
     // Store a reference of the EventQueue object instance within the
     // service context
     lTRADEMGEN_ServiceContext.setEventQueue (lEventQueue);
-    
-    // Initialise the demand generators
+
+    // Parse the input file and initialise the demand generators
     DemandParser::generateDemand (iDemandInputFilename, lBomRoot,
                                   lSharedGenerator, lDefaultPOSProbabilityMass);
-
-    // DEBUG
-    //STDAIR_LOG_DEBUG ("Generated BomRoot:");
-    //std::ostringstream oStream;
-    //stdair::BomManager::display (oStream, lBomRoot);
-    //STDAIR_LOG_DEBUG (oStream.str());
   }
   
   // //////////////////////////////////////////////////////////////////////
   void TRADEMGEN_Service::displayAirlineListFromDB () const {
+
     if (_trademgenServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The TraDemGen service has "
                                                     "not been initialised");
@@ -240,74 +240,68 @@ namespace TRADEMGEN {
                       << std::endl
                       << lNowDateTime);
 
-    try {
+    // Delegate the query execution to the dedicated command
+    stdair::BasChronometer lDsimChronometer;
+    lDsimChronometer.start();
+
+    // Retrieve the database session handler
+    stdair::DBSession_T& lDBSession =
+      stdair::DBSessionManager::instance().getDBSession();
+    
+    // Prepare and execute the select statement
+    stdair::AirlineStruct lAirline;
+    stdair::DBRequestStatement_T lSelectStatement (lDBSession);
+    stdair::DBManagerForAirlines::prepareSelectStatement (lDBSession,
+                                                          lSelectStatement,
+                                                          lAirline);
+    
+    // Prepare the SQL request corresponding to the select statement
+    bool hasStillData = true;
+    unsigned int idx = 0;
+    while (hasStillData == true) {
+      hasStillData =
+        stdair::DBManagerForAirlines::iterateOnStatement (lSelectStatement,
+                                                          lAirline);
       
-      // Delegate the query execution to the dedicated command
-      stdair::BasChronometer lDsimChronometer;
-      lDsimChronometer.start();
-
-      // Retrieve the database session handler
-      stdair::DBSession_T& lDBSession =
-        stdair::DBSessionManager::instance().getDBSession();
-      
-      // Prepare and execute the select statement
-      stdair::AirlineStruct lAirline;
-      stdair::DBRequestStatement_T lSelectStatement (lDBSession);
-      stdair::DBManagerForAirlines::prepareSelectStatement (lDBSession,
-                                                            lSelectStatement,
-                                                            lAirline);
-
-      // Prepare the SQL request corresponding to the select statement
-      bool hasStillData = true;
-      unsigned int idx = 0;
-      while (hasStillData == true) {
-        hasStillData =
-          stdair::DBManagerForAirlines::iterateOnStatement (lSelectStatement,
-                                                            lAirline);
-        
-        // DEBUG
-        STDAIR_LOG_DEBUG ("[" << idx << "]: " << lAirline);
-
-        // Iteration
-        ++idx;
-      }
-
-      const double lDsimMeasure = lDsimChronometer.elapsed();
-
       // DEBUG
-      STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
+      STDAIR_LOG_DEBUG ("[" << idx << "]: " << lAirline);
       
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw TrademgenGenerationException();
+      // Iteration
+      ++idx;
     }
+    
+    const double lDsimMeasure = lDsimChronometer.elapsed();
+    
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::NbOfRequests_T& TRADEMGEN_Service::
-  getTotalNumberOfRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T& iKey) const {
-    // Retrieve the Trademgen service context
+  const stdair::Count_T& TRADEMGEN_Service::
+  getTotalNumberOfRequestsToBeGenerated() const {
+    
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
-    // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service != NULL);
+    // Retrieve the event queue object instance
+    const stdair::EventQueue& lQueue =
+      lTRADEMGEN_ServiceContext.getEventQueue();
     
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
-
     // Delegate the call to the dedicated command
-    return DemandManager::getTotalNumberOfRequestsToBeGenerated(lBomRoot, iKey);
+    const stdair::Count_T& oExpectedTotalNumberOfRequestsToBeGenerated =
+      lQueue.getExpectedTotalNbOfEvents();
+
+    //
+    return oExpectedTotalNumberOfRequestsToBeGenerated;
   }
 
   // ////////////////////////////////////////////////////////////////////
   const bool TRADEMGEN_Service::
   stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T& iKey) const {
-    // Retrieve the Trademgen service context
+    
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -322,12 +316,43 @@ namespace TRADEMGEN {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
     // Delegate the call to the dedicated command
-    return DemandManager::stillHavingRequestsToBeGenerated (lBomRoot, iKey);
+    const bool oStillHavingRequestsToBeGenerated =
+      DemandManager::stillHavingRequestsToBeGenerated (lBomRoot, iKey);
+
+    //
+    return oStillHavingRequestsToBeGenerated;
   }
 
   // ////////////////////////////////////////////////////////////////////
   stdair::Count_T TRADEMGEN_Service::generateFirstRequests() const {
-    // Retrieve the Trademgen service context
+
+    // Retrieve the TraDemGen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+    
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // will be attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
+
+    // Delegate the call to the dedicated command
+    const stdair::Count_T& oActualTotalNbOfEvents =
+      DemandManager::generateFirstRequests (lBomRoot);
+
+    //
+    return oActualTotalNbOfEvents;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  stdair::BookingRequestPtr_T TRADEMGEN_Service::
+  generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey) const {
+
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -350,29 +375,9 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::BookingRequestPtr_T TRADEMGEN_Service::
-  generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey) const {
-    // Retrieve the Trademgen service context
-    assert (_trademgenServiceContext != NULL);
-    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
-      *_trademgenServiceContext;
-
-    // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service != NULL);
-    
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
-
-    // Delegate the call to the dedicated command
-    return DemandManager::generateNextRequest (lBomRoot, iKey);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
   stdair::EventStruct TRADEMGEN_Service::popEvent() const {
-    // Retrieve the Trademgen service context
+
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -389,7 +394,8 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   bool TRADEMGEN_Service::isQueueDone() const {
-    // Retrieve the Trademgen service context
+
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -405,23 +411,9 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::
-  initProgressDisplays (stdair::ProgressDisplayMap_T& ioProgressDisplayMap) const {
-    // Retrieve the Trademgen service context
-    assert (_trademgenServiceContext != NULL);
-    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
-      *_trademgenServiceContext;
-
-    // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
-    
-    // Initialise the map of Boost progress_display objects
-    lQueue.initProgressDisplays (ioProgressDisplayMap);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
   void TRADEMGEN_Service::reset() const {
-    // Retrieve the Trademgen service context
+
+    // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
@@ -431,8 +423,8 @@ namespace TRADEMGEN {
       lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
     assert (lSTDAIR_Service != NULL);
 
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
+    // Get the root of the BOM tree, on which all of the other BOM
+    // objects will be attached
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
     // Delegate the call to the dedicated command

@@ -38,7 +38,10 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   const std::string TRADEMGEN_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "TRADEMGEN_ServiceContext";
+    oStr << "TRADEMGEN_ServiceContext ";
+    if (_eventQueue != NULL) {
+      oStr << _eventQueue->toString();
+    }
     return oStr.str();
   }
 

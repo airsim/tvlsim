@@ -234,12 +234,26 @@ int main (int argc, char* argv[]) {
   logOutputFile.open (lLogFilename.c_str());
   logOutputFile.clear();
 
-  // Initialise the TraDemGen service object
+  /**
+     Initialise the TraDemGen service object:
+     <ul>
+       <li>Parse the input file;</li>
+       <li>Create the DemandStream objects, and insert them within the
+         BOM tree;</li>
+       <li>Calculate the expected number of events to be generated.</li>
+     </ul>
+  */
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
 
-  // DEBUG
-  //return 0;
+  //  
+  const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+    trademgenService.getTotalNumberOfRequestsToBeGenerated();
+
+  // Initialise the (Boost) progress display object
+  boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated
+                                            * lNbOfRuns);
+
 
   for (NbOfRuns_T runIdx = 1; runIdx <= lNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
@@ -249,20 +263,19 @@ int main (int argc, char* argv[]) {
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    const stdair::Count_T& nbOfEventsToBeGenerated =
+    const stdair::Count_T& lActualNbOfEventsToBeGenerated =
       trademgenService.generateFirstRequests();
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("[" << runIdx << "] Expected: "
+                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
+                      << lActualNbOfEventsToBeGenerated);
       
-    /** (Boost) progress display (current number of events, total
-        number of events) for every demand stream. */
-    //stdair::ProgressDisplayMap_T lProgressDisplays;
-    //trademgenService.initProgressDisplays (lProgressDisplays);
-    //boost::progress_display lProgressDisplay (nbOfEventsToBeGenerated);
-    
     /**
        Main loop.
        <ul>
-       <li>Pop a request and get its associated type/demand stream.</li>
-       <li>Generate the next request for the same type/demand stream.</li>
+         <li>Pop a request and get its associated type/demand stream.</li>
+         <li>Generate the next request for the same type/demand stream.</li>
        </ul>
     */
     while (trademgenService.isQueueDone() == false) {
@@ -287,7 +300,7 @@ int main (int argc, char* argv[]) {
         
       // Retrieve the corresponding demand stream
       const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
-        lEventStruct.getDemandStreamKey ();
+        lEventStruct.getDemandStreamKey();
       
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated = 
@@ -328,11 +341,11 @@ int main (int argc, char* argv[]) {
       }
 
       // Update the progress display
-      //++lProgressDisplay;
+      ++lProgressDisplay;
     }
 
     // Add the number of events to the statistics accumulator
-    lStatAccumulator (nbOfEventsToBeGenerated);
+    lStatAccumulator (lActualNbOfEventsToBeGenerated);
     
     // Reset the service (including the event queue) for the next run
     trademgenService.reset();
@@ -347,6 +360,9 @@ int main (int argc, char* argv[]) {
   
   // Close the Log outputFile
   logOutputFile.close();
+
+  //
+  std::cout << std::endl;
 
   return 0;
 }

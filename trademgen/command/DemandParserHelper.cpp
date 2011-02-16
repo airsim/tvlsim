@@ -10,7 +10,7 @@
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristicTypes.hpp>
 #include <trademgen/command/DemandParserHelper.hpp>
-#include <trademgen/command/DemandGenerator.hpp>
+#include <trademgen/command/DemandManager.hpp>
 
 namespace TRADEMGEN {
 
@@ -20,8 +20,7 @@ namespace TRADEMGEN {
     //  Semantic actions
     // //////////////////////////////////////////////////////////////////
 
-    ParserSemanticAction::
-    ParserSemanticAction (DemandStruct& ioDemand)
+    ParserSemanticAction::ParserSemanticAction (DemandStruct& ioDemand)
       : _demand (ioDemand) {
     }      
 
@@ -69,7 +68,8 @@ namespace TRADEMGEN {
     }
     
     // //////////////////////////////////////////////////////////////////
-    void storePrefCabin::operator() (iterator_t iStr, iterator_t iStrEnd) const {
+    void storePrefCabin::operator() (iterator_t iStr,
+                                     iterator_t iStrEnd) const {
       stdair::CabinCode_T lPrefCabin  (iStr, iStrEnd);
       _demand._prefCabin = lPrefCabin; 
       //STDAIR_LOG_DEBUG ("Preferred cabin: " << lPrefCabin);
@@ -387,8 +387,8 @@ namespace TRADEMGEN {
       // STDAIR_LOG_DEBUG ("Demand: " << _demand.describe());
 
       // Create the Demand BOM objects
-      DemandGenerator::createDemandCharacteristics (_bomRoot, _uniformGenerator,
-                                                    _posProbabilityMass,_demand);
+      DemandManager::createDemandCharacteristics (_bomRoot, _uniformGenerator,
+                                                  _posProbabilityMass, _demand);
                                  
       // Clean the lists
       _demand._posProbDist.clear();

@@ -4,8 +4,9 @@
 // STL
 #include <cassert>
 #include <sstream>
-// Math
 #include <cmath>
+// Boost
+#include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasConst_Request.hpp>
@@ -72,14 +73,8 @@ namespace TRADEMGEN {
     const stdair::RealNumber_T lRealNumberOfRequestsToBeGenerated =
       _numberOfRequestsRandomGenerator.generateNormal (lMu, lSigma);
 
-    stdair::NbOfRequests_T lIntegerNumberOfRequestsToBeGenerated = 0;
-    if (lRealNumberOfRequestsToBeGenerated < 0.5) {
-    	lIntegerNumberOfRequestsToBeGenerated = 0;
-        
-    } else {
-      lIntegerNumberOfRequestsToBeGenerated =
-        static_cast<stdair::NbOfRequests_T> (lRealNumberOfRequestsToBeGenerated + 0.5);
-    }
+    const stdair::NbOfRequests_T lIntegerNumberOfRequestsToBeGenerated = 
+      std::floor (lRealNumberOfRequestsToBeGenerated + 0.5);
     
     _totalNumberOfRequestsToBeGenerated = lIntegerNumberOfRequestsToBeGenerated;
   }  
@@ -176,7 +171,7 @@ namespace TRADEMGEN {
       lCumulativeProbabilityThisRequest;
 
     //
-    incrementGeneratedRequestsCounter ();
+    incrementGeneratedRequestsCounter();
 
     // DEBUG
     // STDAIR_LOG_DEBUG (lCumulativeProbabilityThisRequest << "; "
@@ -186,7 +181,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::AirportCode_T DemandStream::generatePOS () {
+  const stdair::AirportCode_T DemandStream::generatePOS() {
     stdair::AirportCode_T oPOS;
     
     // Generate a random number between 0 and 1.
@@ -209,7 +204,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::ChannelLabel_T DemandStream::generateChannel () {
+  const stdair::ChannelLabel_T DemandStream::generateChannel() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01();
@@ -218,7 +213,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::TripType_T DemandStream::generateTripType () {
+  const stdair::TripType_T DemandStream::generateTripType() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01(); 
@@ -227,7 +222,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::DayDuration_T DemandStream::generateStayDuration () {
+  const stdair::DayDuration_T DemandStream::generateStayDuration() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01();    
@@ -236,7 +231,7 @@ namespace TRADEMGEN {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  const stdair::FrequentFlyer_T DemandStream::generateFrequentFlyer () {
+  const stdair::FrequentFlyer_T DemandStream::generateFrequentFlyer() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01();       
@@ -245,7 +240,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::Duration_T DemandStream::generatePreferredDepartureTime () {
+  const stdair::Duration_T DemandStream::generatePreferredDepartureTime() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01();     
@@ -272,7 +267,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::PriceValue_T DemandStream::generateValueOfTime () {
+  const stdair::PriceValue_T DemandStream::generateValueOfTime() {
     // Generate a random number between 0 and 1.
     const stdair::Probability_T lVariate =
       _demandCharacteristicsRandomGenerator.generateUniform01();    
@@ -281,7 +276,7 @@ namespace TRADEMGEN {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  stdair::BookingRequestPtr_T DemandStream::generateNextRequest () {
+  stdair::BookingRequestPtr_T DemandStream::generateNextRequest() {
     // Origin
     const stdair::AirportCode_T& lOrigin = _key.getOrigin();
     // Destination
@@ -291,38 +286,58 @@ namespace TRADEMGEN {
       _key.getPreferredDepartureDate();
     // Preferred cabin
     const stdair::CabinCode_T& lPreferredCabin = _key.getPreferredCabin();
+    // Party size
+    const stdair::NbOfSeats_T lPartySize = stdair::DEFAULT_PARTY_SIZE;
     // POS
-    const stdair::AirportCode_T lPOS = generatePOS ();
+    const stdair::AirportCode_T lPOS = generatePOS();
     // Time of request.    
-    const stdair::DateTime_T lDateTimeThisRequest =  generateTimeOfRequest ();
+    const stdair::DateTime_T lDateTimeThisRequest = generateTimeOfRequest();
     // Booking channel.
-    const stdair::ChannelLabel_T lChannelLabel = generateChannel ();
+    const stdair::ChannelLabel_T lChannelLabel = generateChannel();
     // Trip type.
-    const stdair::TripType_T lTripType = generateTripType ();
+    const stdair::TripType_T lTripType = generateTripType();
     // Stay duration.
-    const stdair::DayDuration_T lStayDuration = generateStayDuration ();
+    const stdair::DayDuration_T lStayDuration = generateStayDuration();
     // Frequet flyer type.
-    const stdair::FrequentFlyer_T lFrequentFlyer = generateFrequentFlyer ();
+    const stdair::FrequentFlyer_T lFrequentFlyer = generateFrequentFlyer();
     // Preferred departure time.
     const stdair::Duration_T lPreferredDepartureTime =
-      generatePreferredDepartureTime ();
+      generatePreferredDepartureTime();
     // Value of time
-    const stdair::PriceValue_T lValueOfTime = generateValueOfTime ();
+    const stdair::PriceValue_T lValueOfTime = generateValueOfTime();
     // WTP
     const stdair::WTP_T lWTP = generateWTP (lPreferredDepartureDate,
                                             lDateTimeThisRequest,
                                             lStayDuration);
+
+    // TODO 1: understand why the following form does not work, knowing
+    // that:
+    // typede boost::shared_ptr<stdair::BookingRequestStruct> stdair::BookingRequestPtr_T
+    // stdair::BookingRequestPtr_T oBookingRequest_ptr =
+    //   boost::make_shared<stdair::BookingRequestStruct> ();
+
+
+    // TODO 2: move the creation of the structure out of the BOM layer
+    //  (into the command layer, e.g., within the DemandManager command).
     
-    // Create the booking request with a hardcoded party size.
-    stdair::BookingRequestPtr_T oBookingRequest_ptr = stdair::BookingRequestPtr_T
-      (new stdair::BookingRequestStruct (lOrigin, lDestination, lPOS,
-                                         lPreferredDepartureDate,
-                                         lDateTimeThisRequest,
-                                         lPreferredCabin,
-                                         stdair::DEFAULT_PARTY_SIZE,
-                                         lChannelLabel, lTripType, lStayDuration,
-                                         lFrequentFlyer, lPreferredDepartureTime,
-                                         lWTP, lValueOfTime));
+    // Create the booking request
+    stdair::BookingRequestPtr_T oBookingRequest_ptr =
+      stdair::BookingRequestPtr_T (new
+                                   stdair::BookingRequestStruct (lOrigin,
+                                                                 lDestination,
+                                                                 lPOS,
+                                                                 lPreferredDepartureDate,
+                                                                 lDateTimeThisRequest,
+                                                                 lPreferredCabin,
+                                                                 lPartySize,
+                                                                 lChannelLabel,
+                                                                 lTripType,
+                                                                 lStayDuration,
+                                                                 lFrequentFlyer,
+                                                                 lPreferredDepartureTime,
+                                                                 lWTP,
+                                                                 lValueOfTime));
+  
     // DEBUG
     // STDAIR_LOG_DEBUG ("\n[BKG] " << oBookingRequest_ptr->describe());
     

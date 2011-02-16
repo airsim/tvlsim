@@ -35,7 +35,7 @@ namespace TRADEMGEN {
     // Link the EventQueue to its parent (BomRoot)
     stdair::FacBomManager::instance().linkWithParent (ioBomRoot, oEventQueue);
     
-    // Ad the EventQueue to the dedicated list
+    // Add the EventQueue to the dedicated list
     stdair::FacBomManager::instance().addToListAndMap (ioBomRoot, oEventQueue);
 
     //
@@ -63,7 +63,7 @@ namespace TRADEMGEN {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void DemandManager::addDemandStream
+  DemandStream& DemandManager::createDemandStream
   (stdair::BomRoot& ioBomRoot,
    const DemandStreamKey& iKey,
    const ArrivalPatternCumulativeDistribution_T& iArrivalPattern,
@@ -82,7 +82,7 @@ namespace TRADEMGEN {
    stdair::UniformGenerator_T& ioSharedGenerator,
    const POSProbabilityMass_T& iDefaultPOSProbablityMass) {
     
-    DemandStream& lDemandStream = FacDemandStream::
+    DemandStream& oDemandStream = FacDemandStream::
       instance().create (iKey, iArrivalPattern, iPOSProbMass,
                          iChannelProbMass, iTripTypeProbMass,
                          iStayDurationProbMass, iFrequentFlyerProbMass,
@@ -92,25 +92,102 @@ namespace TRADEMGEN {
                          iRequestDateTimeSeed, iDemandCharacteristicsSeed,
                          ioSharedGenerator, iDefaultPOSProbablityMass);
     
-    // Insert the reference on the given DemandStream object into the
-    // dedicated list
-    // DEBUG
-    // STDAIR_LOG_DEBUG ("Add DemandStream: \n"
-    //                   << lDemandStream.getDemandCharacteristics().display()
-    //                   << lDemandStream.getDemandDistribution().display());
+    stdair::FacBomManager::instance().addToList (ioBomRoot, oDemandStream);
+    
     stdair::FacBomManager::instance().addToListAndMap (ioBomRoot,
-                                                       lDemandStream);
+                                                       oDemandStream);
+
+    //
+    const stdair::NbOfRequests_T& lExpectedNumberOfEventsToBeGenerated =
+      oDemandStream.getTotalNumberOfRequestsToBeGenerated();
+
+    return oDemandStream;
   }
     
+  // //////////////////////////////////////////////////////////////////////
+  void DemandManager::
+  createDemandCharacteristics (stdair::BomRoot& ioBomRoot,
+                               stdair::UniformGenerator_T& ioSharedGenerator,
+                               const POSProbabilityMass_T& iPOSProbMass,
+                               const DemandStruct& iDemand) {
+    
+    const DemandStreamKey lDemandStreamKey (iDemand._origin,
+                                            iDemand._destination,
+                                            iDemand._prefDepDate,
+                                            iDemand._prefCabin);
+    // DEBUG
+    // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
+    
+    const DemandDistribution lDemandDistribution (iDemand._demandMean,
+                                                  iDemand._demandStdDev);
+    
+    // Seed
+    const stdair::RandomSeed_T& lNumberOfRequestsSeed =
+      generateSeed (ioSharedGenerator);
+    const stdair::RandomSeed_T& lRequestDateTimeSeed =
+      generateSeed (ioSharedGenerator);
+    const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
+      generateSeed (ioSharedGenerator);
+  
+    // Delegate the call to the dedicated command
+    DemandStream& lDemandStream = 
+      createDemandStream (ioBomRoot, lDemandStreamKey,
+                          iDemand._dtdProbDist, iDemand._posProbDist,
+                          iDemand._channelProbDist,
+                          iDemand._tripProbDist,
+                          iDemand._stayProbDist, iDemand._ffProbDist,
+                          iDemand._prefDepTimeProbDist,
+                          iDemand._minWTP,
+                          iDemand._timeValueProbDist,
+                          lDemandDistribution,
+                          lNumberOfRequestsSeed, lRequestDateTimeSeed,
+                          lDemandCharacteristicsSeed,
+                          ioSharedGenerator, iPOSProbMass);
+
+    // Calculate the expected total number of events for the current
+    // demand stream
+    const stdair::NbOfRequests_T& lExpectedTotalNbOfEvents =
+      lDemandStream.getTotalNumberOfRequestsToBeGenerated();
+
+    // TODO: attach DemandStream directly to the EventQueue
+    // Retrieve the EventQueue instance
+    stdair::EventQueue& lEventQueue = getEventQueue (ioBomRoot);
+    
+    /**
+     * Initialise the progress status, specific to the demand stream,
+     * held by the event queue.
+     * <br>The event queue object, which is part of the StdAir
+     * library, has no information on the DemandStream objects, which
+     * are part of this (TraDemGen) library. As the number of events
+     * to be generated are known from the DemandStream objects only,
+     * the event queue object can not calculate the progress statuses
+     * itself.
+     */
+    lEventQueue.addStatus (lDemandStreamKey.toString(),
+                           lExpectedTotalNbOfEvents);
+  }
+
   // ////////////////////////////////////////////////////////////////////
-  const stdair::NbOfRequests_T& DemandManager::
-  getTotalNumberOfRequestsToBeGenerated (const stdair::BomRoot& iBomRoot,
-                                         const stdair::DemandStreamKeyStr_T& iKey) {
-    // Retrieve the DemandStream which corresponds to the given key.
-    const DemandStream& lDemandStream =
-      stdair::BomManager::getObject<DemandStream> (iBomRoot, iKey);
-      
-    return lDemandStream.getTotalNumberOfRequestsToBeGenerated ();
+  stdair::RandomSeed_T DemandManager::
+  generateSeed (stdair::UniformGenerator_T& ioSharedGenerator) {
+    stdair::RealNumber_T lVariateUnif = ioSharedGenerator() * 1e9;
+    stdair::RandomSeed_T oSeed =
+      static_cast<stdair::RandomSeed_T>(lVariateUnif);
+    return oSeed;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  const stdair::Count_T& DemandManager::
+  getTotalNumberOfRequestsToBeGenerated (const stdair::BomRoot& iBomRoot) {
+
+    // Retrieve the EventQueue instance
+    const stdair::EventQueue& lEventQueue = getEventQueue (iBomRoot);
+
+    //
+    const stdair::Count_T& oNbOfRequests =
+      lEventQueue.getExpectedTotalNbOfEvents();
+
+    return oNbOfRequests;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -121,7 +198,7 @@ namespace TRADEMGEN {
     const DemandStream& lDemandStream =
       stdair::BomManager::getObject<DemandStream> (iBomRoot, iKey);
     
-    return lDemandStream.stillHavingRequestsToBeGenerated ();
+    return lDemandStream.stillHavingRequestsToBeGenerated();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -146,7 +223,7 @@ namespace TRADEMGEN {
 
     /**
        Note that when adding an event in the event queue, the
-       event can be altered. It happens when an event already
+       event can be altered. That happens when an event already
        exists, in the event queue, with exactly the same date-time
        stamp. In that case, the date-time stamp is altered for the
        newly added event, so that the unicity on the date-time
@@ -208,12 +285,12 @@ namespace TRADEMGEN {
       lEventQueue.addStatus (lKey.toString(), lExpectedTotalNbOfEvents);
     }
 
-    // Retrieve the expected total number of events to be generated
-    const stdair::Count_T& oExpectedTotalNbOfEvents =
+    // Retrieve the actual total number of events to be generated
+    const stdair::Count_T& oTotalNbOfEvents =
       lEventQueue.getExpectedTotalNbOfEvents();
 
     //
-    return oExpectedTotalNbOfEvents;
+    return oTotalNbOfEvents;
   }
   
   // ////////////////////////////////////////////////////////////////////
