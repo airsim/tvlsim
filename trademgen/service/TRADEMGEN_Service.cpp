@@ -306,15 +306,10 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
-    // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service != NULL);
+    // Retrieve the event queue object instance
+    const stdair::EventQueue& lQueue =
+      lTRADEMGEN_ServiceContext.getEventQueue();
     
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
-
     // Delegate the call to the dedicated command
     const bool oStillHavingRequestsToBeGenerated =
       DemandManager::stillHavingRequestsToBeGenerated (lBomRoot, iKey);
@@ -367,11 +362,11 @@ namespace TRADEMGEN {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
 
     // Delegate the call to the dedicated command
-    const stdair::Count_T& oExpectedTotalNbOfEvents =
+    const stdair::Count_T& oActualTotalNbOfEvents =
       DemandManager::generateFirstRequests (lBomRoot);
 
     //
-    return oExpectedTotalNbOfEvents;
+    return oActualTotalNbOfEvents;
   }
 
   // ////////////////////////////////////////////////////////////////////
