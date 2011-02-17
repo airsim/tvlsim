@@ -229,9 +229,9 @@ namespace SIMLFS {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  stdair::TravelSolutionList_T SIMLFS_Service::
+  void SIMLFS_Service::
   fareQuote (const stdair::BookingRequestStruct& iBookingRequest,
-             const stdair::SegmentPathList_T& iSegmentPathList) {
+             stdair::TravelSolutionList_T& ioTravelSolutionList) {
      
     if (_simlfsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimLFS service has "
@@ -242,32 +242,21 @@ namespace SIMLFS {
 
     stdair::TravelSolutionList_T oTravelSolutionList;
 
-    try {
-      
-      // Get a reference on the SIMFQT service handler
-      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
-        lSIMLFS_ServiceContext.getSIMFQT_Service();  
-      assert (lSIMFQT_Service_ptr != NULL);
-      
-      // Delegate the action to the dedicated command
-      stdair::BasChronometer lFareQuoteRetrievalChronometer;
-      lFareQuoteRetrievalChronometer.start();
-      lSIMFQT_Service_ptr->getFares (oTravelSolutionList, iBookingRequest,
-                                     iSegmentPathList);
+    // Get a reference on the SIMFQT service handler
+    SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+      lSIMLFS_ServiceContext.getSIMFQT_Service();  
+    assert (lSIMFQT_Service_ptr != NULL);
 
-      // DEBUG 
-      const double lFareQuoteRetrievalMeasure =
-      	lFareQuoteRetrievalChronometer.elapsed(); 
-      STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
-                        << lFareQuoteRetrievalMeasure << " - "
-                        << lSIMLFS_ServiceContext.display());   
+    // Delegate the action to the dedicated command
+    stdair::BasChronometer lFareQuoteRetrievalChronometer;
+    lFareQuoteRetrievalChronometer.start();
+    lSIMFQT_Service_ptr->getFares (iBookingRequest, ioTravelSolutionList);
 
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw QuotingException();
-    }
-
-    return oTravelSolutionList;
+    // DEBUG 
+    const double lFareQuoteRetrievalMeasure =
+      lFareQuoteRetrievalChronometer.elapsed(); 
+    STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
+                      << " - " << lSIMLFS_ServiceContext.display());   
   }
   
   // ////////////////////////////////////////////////////////////////////
