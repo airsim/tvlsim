@@ -135,9 +135,13 @@ namespace SIMCRS {
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the StdAir service handler
+     *
+     * \note The (Boost) Smart Pointer keeps track of the references
+     * on the Service object, and deletes that object when it is no
+     * longer referenced (e.g., at the end of the process).
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     assert (lSTDAIR_Service_ptr != NULL);
@@ -154,9 +158,13 @@ namespace SIMCRS {
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the StdAir service handler
+     *
+     * \note The (Boost) Smart Pointer keeps track of the references
+     * on the Service object, and deletes that object when it is no
+     * longer referenced (e.g., at the end of the process).
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
     assert (lSTDAIR_Service_ptr != NULL);
@@ -178,7 +186,8 @@ namespace SIMCRS {
                         << "', can not be retrieved on the file-system");
       throw stdair::FileNotFoundException("The schedule input file, '"
                                           + iScheduleInputFilename
-                                          + "', can not be retrieved on the file-system");
+                                          + "', can not be retrieved on the "
+                                          + "file-system");
     }
 
     // Initialise the children AirSched service context
@@ -205,10 +214,13 @@ namespace SIMCRS {
       lSIMCRS_ServiceContext.getSTDAIR_Service();
     assert (lSTDAIR_Service_ptr != NULL);
 
-    // Initialise the AIRSCHED service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    /**
+     * Initialise the AirSched service handler
+     *
+     * \note The (Boost) Smart Pointer keeps track of the references
+     * on the Service object, and deletes that object when it is no
+     * longer referenced (e.g., at the end of the process).
+     */
     AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr =
       boost::make_shared<AIRSCHED::AIRSCHED_Service> (lSTDAIR_Service_ptr,
                                                       iScheduleInputFilename,
@@ -231,10 +243,13 @@ namespace SIMCRS {
       lSIMCRS_ServiceContext.getSTDAIR_Service();
     assert (lSTDAIR_Service_ptr != NULL);
 
-    // Initialise the SIMFQT service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    /**
+     * Initialise the SimFQT service handler
+     *
+     * \note The (Boost) Smart Pointer keeps track of the references
+     * on the Service object, and deletes that object when it is no
+     * longer referenced (e.g., at the end of the process).
+     */
     SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
       boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr,
                                                   iFareInputFilename);
@@ -257,10 +272,13 @@ namespace SIMCRS {
       lSIMCRS_ServiceContext.getSTDAIR_Service();
     assert (lSTDAIR_Service_ptr != NULL);
 
-    // Initialise the AIRINV service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    /**
+     * Initialise the AirInv service handler
+     *
+     * \note The (Boost) Smart Pointer keeps track of the references
+     * on the Service object, and deletes that object when it is no
+     * longer referenced (e.g., at the end of the process).
+     */
     AIRINV_Master_ServicePtr_T lAIRINV_Master_Service_ptr =
       boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr,
                                                          iScheduleInputFilename,
@@ -279,34 +297,27 @@ namespace SIMCRS {
                                                     "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext= *_simcrsServiceContext;
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
     stdair::TravelSolutionList_T oTravelSolutionList;
     
-    try {
-      
-      // Get a reference on the AIRSCHED service handler
-      AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr =
-        lSIMCRS_ServiceContext.getAIRSCHED_Service();
-      assert (lAIRSCHED_Service_ptr != NULL);
+    // Get a reference on the AIRSCHED service handler
+    AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr =
+      lSIMCRS_ServiceContext.getAIRSCHED_Service();
+    assert (lAIRSCHED_Service_ptr != NULL);
             
-      // Delegate the booking to the dedicated service
-      stdair::BasChronometer lSegmentPathRetrievingChronometer;
-      lSegmentPathRetrievingChronometer.start();
-      lAIRSCHED_Service_ptr->buildSegmentPathList (oTravelSolutionList,
-						   iBookingRequest);
+    // Delegate the booking to the dedicated service
+    stdair::BasChronometer lTravelSolutionRetrievingChronometer;
+    lTravelSolutionRetrievingChronometer.start();
+    lAIRSCHED_Service_ptr->buildSegmentPathList (oTravelSolutionList,
+                                                 iBookingRequest);
       
-      // DEBUG 
-      // const double lSegmentPathRetrievingMeasure =
-      //  lSegmentPathRetrievingChronometer.elapsed();
-      // STDAIR_LOG_DEBUG ("Travel solution retrieving: "
-      //                   << lSegmentPathRetrievingMeasure << " - "
-      //                   << lSIMCRS_ServiceContext.display());
-
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw BookingException();
-    }
+    // DEBUG
+    const double lSegmentPathRetrievingMeasure =
+      lTravelSolutionRetrievingChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Travel solution retrieving: "
+                      << lSegmentPathRetrievingMeasure << " - "
+                      << lSIMCRS_ServiceContext.display());
 
     return oTravelSolutionList;
   }
@@ -324,29 +335,21 @@ namespace SIMCRS {
     
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
-    try {
+    // Get a reference on the SIMFQT service handler
+    SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+      lSIMCRS_ServiceContext.getSIMFQT_Service();
+    assert (lSIMFQT_Service_ptr != NULL);
       
-      // Get a reference on the SIMFQT service handler
-      SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
-        lSIMCRS_ServiceContext.getSIMFQT_Service();  
-      assert (lSIMFQT_Service_ptr != NULL);
-      
-      // Delegate the action to the dedicated command
-      stdair::BasChronometer lFareQuoteRetrievalChronometer;
-      lFareQuoteRetrievalChronometer.start();
-      lSIMFQT_Service_ptr->getFares (iBookingRequest, ioTravelSolutionList);
+    // Delegate the action to the dedicated command
+    stdair::BasChronometer lFareQuoteRetrievalChronometer;
+    lFareQuoteRetrievalChronometer.start();
+    lSIMFQT_Service_ptr->getFares (iBookingRequest, ioTravelSolutionList);
 
-      // DEBUG 
-      const double lFareQuoteRetrievalMeasure =
-      	lFareQuoteRetrievalChronometer.elapsed(); 
-      STDAIR_LOG_DEBUG ("Fare Quote retrieving: "
-                        << lFareQuoteRetrievalMeasure << " - "
-                        << lSIMCRS_ServiceContext.display());   
-            
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw AvailabilityRetrievalException();
-    }    
+    // DEBUG
+    const double lFareQuoteRetrievalMeasure =
+      lFareQuoteRetrievalChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
+                      << " - " << lSIMCRS_ServiceContext.display());
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -362,8 +365,9 @@ namespace SIMCRS {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::sell(const stdair::TravelSolutionStruct& iTravelSolution,
-                            const stdair::PartySize_T& iPartySize) {
+  void SIMCRS_Service::
+  sell (const stdair::TravelSolutionStruct& iTravelSolution,
+        const stdair::PartySize_T& iPartySize) {
     
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
@@ -373,39 +377,32 @@ namespace SIMCRS {
     
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
-    try {
-      
-      // Retrieve the CRS code
-      //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
+    // Retrieve the CRS code
+    //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
 
-      // // TODO: optimise this part.
-      // // Retrieve the map/list of AIRINV_Services
-      // const AIRINV_ServicePtr_Map_T& lAIRINV_ServiceMap =
-      //   lSIMCRS_ServiceContext.getAIRINV_ServiceMap ();
+    // TODO: optimise this part.
+    // Retrieve the map/list of AIRINV_Services
+    // const AIRINV_ServicePtr_Map_T& lAIRINV_ServiceMap =
+    //   lSIMCRS_ServiceContext.getAIRINV_ServiceMap ();
       
-      // // Delegate the booking to the dedicated command
-      stdair::BasChronometer lSellChronometer;
-      lSellChronometer.start();
+    // Delegate the booking to the dedicated command
+    stdair::BasChronometer lSellChronometer;
+    lSellChronometer.start();
 
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
-                        << " persons on the following travel solution: "
-                        << iTravelSolution.describe());
-      STDAIR_LOG_DEBUG ("Note: the sell is not yet fully implemented...");
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
+                      << " persons on the following travel solution: "
+                      << iTravelSolution.describe());
+    STDAIR_LOG_DEBUG ("Note: the sell is not yet fully implemented...");
 
-      // TODO: Finish to implement the sell
-      // DistributionManager::sell (lAIRINV_ServiceMap,
-      //                            lCRSCode, iTravelSolution, iPartySize);
+    // TODO: Finish to implement the sell
+    // DistributionManager::sell (lAIRINV_ServiceMap,
+    //                            lCRSCode, iTravelSolution, iPartySize);
       
-      // DEBUG
-      const double lSellMeasure = lSellChronometer.elapsed();
-      STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                        << lSIMCRS_ServiceContext.display());
-      
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw BookingException();
-    }
+    // DEBUG
+    const double lSellMeasure = lSellChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+                      << lSIMCRS_ServiceContext.display());
   }
   
 }
