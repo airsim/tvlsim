@@ -183,9 +183,8 @@ namespace SIMFQT {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
-  getFares (stdair::TravelSolutionList_T& ioTravelSolutionList,
-            const stdair::BookingRequestStruct& iBookingRequest,
-            const stdair::SegmentPathList_T& iSegmentPathList) {
+  getFares (const stdair::BookingRequestStruct& iBookingRequest,
+            stdair::TravelSolutionList_T& ioTravelSolutionList) {
     
     // Retrieve the Simfqt service context
     assert (_simfqtServiceContext != NULL);
@@ -202,12 +201,11 @@ namespace SIMFQT {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
 
     // Initialise the fare parser 
-    if (!iSegmentPathList.empty()) {
-      for (stdair::SegmentPathList_T::const_iterator itSegmentPath =
-	     iSegmentPathList.begin();
-	   itSegmentPath != iSegmentPathList.end(); ++itSegmentPath) {
-	FareQuoter::priceQuote (*itSegmentPath, ioTravelSolutionList,
-                                iBookingRequest, lBomRoot);
+    if (!ioTravelSolutionList.empty()) {
+      for (stdair::TravelSolutionList_T::iterator itTravelSolution =
+	     ioTravelSolutionList.begin();
+	   itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
+	FareQuoter::priceQuote (iBookingRequest, *itTravelSolution, lBomRoot);
       }
     }
   }

@@ -48,15 +48,16 @@ namespace SIMFQT {
   
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
               const stdair::BomRoot& iBomRoot) {
 
-    // Get the first segment-date key of the traval solution. 
+    // Get the first segment-date key of the traval solution.
+    stdair::SegmentPath_T lSegmentPath =
+      ioTravelSolution.getSegmentPath();
     for (stdair::KeyList_T::const_iterator itSegmentPath =
-           iSegmentPath.begin ();
-         itSegmentPath != iSegmentPath.end (); ++itSegmentPath) {
+           lSegmentPath.begin ();
+         itSegmentPath != lSegmentPath.end (); ++itSegmentPath) {
 
       const std::string lSegmentDateKey = *itSegmentPath;
 
@@ -70,26 +71,18 @@ namespace SIMFQT {
       assert (hasParsingBeenSuccesful == true);
       assert (lResultParsing.size() == 5);
 
-      // Create a new travel solution.
-      stdair::TravelSolutionStruct lTravelSolution;
-      lTravelSolution.addSegmentDateKey (lSegmentDateKey);
-
-      priceQuote (iSegmentPath,
-                  ioTravelSolutionList,
-                  iBookingRequest,
+      priceQuote (iBookingRequest,
+                  ioTravelSolution,
                   iBomRoot,
-                  lTravelSolution,
                   lResultParsing);
     }
   }
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
-              const stdair::BomRoot& iBomRoot,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
+              const stdair::BomRoot& iBomRoot,
               const std::vector<std::string>& iResultParsing) {
     
     try {
@@ -113,11 +106,9 @@ namespace SIMFQT {
       }
       assert(lAirportPair_ptr != NULL);
 
-      priceQuote (iSegmentPath,
-                  ioTravelSolutionList,
-                  iBookingRequest,
-                  *lAirportPair_ptr,
-                  ioTravelSolution, 
+      priceQuote (iBookingRequest,
+                  ioTravelSolution,
+                  *lAirportPair_ptr, 
                   iResultParsing);
 
     } catch (const std::exception& lStdError) {
@@ -128,11 +119,9 @@ namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
-              const AirportPair& iAirportPair,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
+              const AirportPair& iAirportPair,
               const std::vector<std::string>& iResultParsing) {
     
     try {
@@ -167,11 +156,9 @@ namespace SIMFQT {
       }
       assert(lFarePosChannel_ptr != NULL);
 
-      priceQuote (iSegmentPath,
-                  ioTravelSolutionList,
-                  iBookingRequest,
+      priceQuote (iBookingRequest,
+                  ioTravelSolution,
                   *lFarePosChannel_ptr,
-                  ioTravelSolution, 
                   iResultParsing);
 
     } catch (const std::exception& lStdError) {
@@ -182,11 +169,9 @@ namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
-              const FarePosChannel& iFarePosChannel,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
+              const FarePosChannel& iFarePosChannel,
               const std::vector<std::string>& iResultParsing) {
     
     try {
@@ -215,12 +200,10 @@ namespace SIMFQT {
 
           AtLeastOneAvailableDateRule = true;
 
-          priceQuote (iSegmentPath,
-                      ioTravelSolutionList,
-                      iBookingRequest,
+          priceQuote (iBookingRequest,
+                      ioTravelSolution,
                       *lcurrentFareDatePeriod_ptr,
                       iFarePosChannel,
-                      ioTravelSolution, 
                       iResultParsing);
         }
       }
@@ -248,12 +231,10 @@ namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
               const FareDatePeriod& iFareDatePeriod,
               const FarePosChannel& iFarePosChannel,
-              stdair::TravelSolutionStruct& ioTravelSolution,
               const std::vector<std::string>& iResultParsing) {
 
     try {
@@ -282,12 +263,10 @@ namespace SIMFQT {
 
           AtLeastOneAvailableTimeRule = true;
 
-          priceQuote (iSegmentPath,
-                      ioTravelSolutionList,
-                      iBookingRequest,
+          priceQuote (iBookingRequest,
+                      ioTravelSolution,
                       *lcurrentFareTimePeriod_ptr,
                       iFarePosChannel,
-                      ioTravelSolution, 
                       iResultParsing);
         }
       }
@@ -317,12 +296,10 @@ namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
               const FareTimePeriod& iFareTimePeriod,
               const FarePosChannel& iFarePosChannel,
-              stdair::TravelSolutionStruct& ioTravelSolution,
               const std::vector<std::string>& iResultParsing) {
 
     try {
@@ -383,12 +360,10 @@ namespace SIMFQT {
           lChangeFees = lcurrentFareRuleFeatures_ptr->getChangeFees();
           lNonRefundable = lcurrentFareRuleFeatures_ptr->getRefundableOption();
 
-          priceQuote (iSegmentPath,
-                      ioTravelSolutionList,
-                      iBookingRequest,
+          priceQuote (iBookingRequest,
+                      ioTravelSolution,
                       *lcurrentFareRuleFeatures_ptr,
                       iFarePosChannel,
-                      ioTravelSolution,
                       iResultParsing,
                       lPrice,
                       lSaturdayStay,
@@ -430,12 +405,10 @@ namespace SIMFQT {
   }
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
-  priceQuote (const stdair::SegmentPath_T& iSegmentPath,
-              stdair::TravelSolutionList_T& ioTravelSolutionList,
-              const stdair::BookingRequestStruct& iBookingRequest,
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
               const FareRuleFeatures& iFareRuleFeatures,
               const FarePosChannel& iFarePosChannel,
-              stdair::TravelSolutionStruct& ioTravelSolution,
               const std::vector<std::string>& iResultParsing,
               const stdair::PriceValue_T& iPrice,
               const stdair::SaturdayStay_T& iSaturdayStay,
@@ -468,25 +441,32 @@ namespace SIMFQT {
 
           AtLeastOneAvailableAirlineRule = true;
 
-          // Set the travel solution price.
-          ioTravelSolution.setFare(iPrice);
+          // Set the travel fare option.
+          stdair::FareOptionStruct lFareOption;
+          lFareOption.addClass (lcurrentSegmentFeatures_ptr->getClassCode());
+          lFareOption.setFare (iPrice);
+          lFareOption.setChangeFees (iChangeFees);
+          lFareOption.setNonRefundable (iNonRefundable);
+          lFareOption.setSaturdayStay (iSaturdayStay);
 
+          ioTravelSolution.addFareOption(lFareOption);
+          
           // DEBUG
-          stdair::KeyList_T lsegmentDateKeyList =
-            ioTravelSolution.getSegmentDateKeyList();
-          STDAIR_LOG_DEBUG ("Segment path: " <<
-                            lsegmentDateKeyList.front()
+          STDAIR_LOG_DEBUG ("Segment path: "
+                            << iResultParsing.at(0) << ", "
+                            << iResultParsing.at(1) << ", "
+                            << iResultParsing.at(2) << ", "
+                            << iResultParsing.at(3) << ", "
+                            << iResultParsing.at(4) << ", "
                             << "\n   A corresponding fare rule is:"
                             << "\n     Fare:       "
-                            << ioTravelSolution.getFare()
+                            << iPrice
                             << "\n     Class:      "
                             << lcurrentSegmentFeatures_ptr->getClassCode()
                             << "\n     Conditions: "
                             << iSaturdayStay << ", "
                             << iChangeFees << ", "
                             << iNonRefundable);
-
-          ioTravelSolutionList.push_back (ioTravelSolution); 
         }
       }
        if (AtLeastOneAvailableAirlineRule == false) {
