@@ -33,10 +33,10 @@ namespace SIMCRS {
         const stdair::NbOfSeats_T& iPartySize) {
 
     try {
-      const stdair::KeyList_T& lSegmentDateKeyList =
-        iTravelSolution.getSegmentDateKeyList ();
-      const stdair::ClassList_String_T& lBookingClassKeyList =
-        iTravelSolution.getBookingClassKeyList();
+      /**const stdair::KeyList_T& lSegmentDateKeyList =
+        iTravelSolution.getSegmentPath();
+      const stdair::ClassList_String_T& lBookingClassKeyList; //=
+        //iTravelSolution.getBookingClassKeyList();
       stdair::ClassList_String_T::const_iterator itBookingClassKey =
         lBookingClassKeyList.begin();
       for (stdair::KeyList_T::const_iterator itKey= lSegmentDateKeyList.begin();
@@ -58,7 +58,7 @@ namespace SIMCRS {
         ostr <<*itBookingClassKey;
         const stdair::ClassCode_T lClassCode (ostr.str());
         lAirinvService_ptr->sell (lSegmentDateKey, lClassCode, iPartySize);
-      }
+        }*/
             
       // DEBUG
       // STDAIR_LOG_DEBUG ("The booking has been made");

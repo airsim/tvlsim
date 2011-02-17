@@ -302,12 +302,11 @@ int main (int argc, char* argv[]) {
                                                       lFrequentFlyerType,
                                                       lPreferredDepartureTime,
                                                       lWTP, lValueOfTime);
-  const stdair::SegmentPathList_T lSegmentPath =
+  stdair::TravelSolutionList_T lTravelSolutionList =
     simcrsService.calculateSegmentPathList (lBookingRequest);
   
   // Price the travel solution
-  stdair::TravelSolutionList_T lTravelSolutionList =
-    simcrsService.fareQuote (lBookingRequest, lSegmentPath);
+  simcrsService.fareQuote (lBookingRequest, lTravelSolutionList);
 
   // Choose a random travel solution: the first one.
   const stdair::TravelSolutionStruct& lChosenTravelSolution =
@@ -315,13 +314,20 @@ int main (int argc, char* argv[]) {
 
   // Get the segment path of the travel solution.
   stdair::KeyList_T lsegmentDateKeyList =
-    lChosenTravelSolution.getSegmentDateKeyList();
+    lChosenTravelSolution.getSegmentPath();
+
+  stdair::FareOptionList_T lFareOptionList =
+    lChosenTravelSolution.getFareOptionList ();
+
+  stdair::FareOptionStruct lFareOption =
+    lFareOptionList.front();
 
   // DEBUG
   STDAIR_LOG_DEBUG ("The chosen travel solution is: "
                     << lsegmentDateKeyList.front()
                     << ", the fare is: "
-                    << lChosenTravelSolution.getFare() << " Euros.");
+                    << lFareOption.getFare()
+                    << " Euros.");
 
   // Make a booking (reminder: party size is 3)
   simcrsService.sell (lChosenTravelSolution, lPartySize);

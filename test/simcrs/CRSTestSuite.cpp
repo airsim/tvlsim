@@ -139,18 +139,17 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
                                                       lFrequentFlyerType,
                                                       lPreferredDepartureTime,
                                                       lWTP, lValueOfTime);
-  const stdair::SegmentPathList_T lSegmentPath =
+  stdair::TravelSolutionList_T lTravelSolutionList =
     simcrsService.calculateSegmentPathList (lBookingRequest);
   
   // Price the travel solution
-  stdair::TravelSolutionList_T lTravelSolutionList =
-    simcrsService.fareQuote (lBookingRequest, lSegmentPath);
+  simcrsService.fareQuote (lBookingRequest, lTravelSolutionList);
 
   //
   const unsigned int lNbOfTravelSolutions = lTravelSolutionList.size();
 
   // TODO: change the expected number of travel solutions to the actual number
-  const unsigned int lExpectedNbOfTravelSolutions = 2;
+  const unsigned int lExpectedNbOfTravelSolutions = 1;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("Number of travel solutions for the booking request '"
@@ -170,23 +169,31 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   const stdair::TravelSolutionStruct& lTravelSolution =
     lTravelSolutionList.front();
 
+  //
+  stdair::FareOptionList_T lFareOptionList =
+    lTravelSolution.getFareOptionList ();
+
+  //
+  stdair::FareOptionStruct lFareOption =
+    lFareOptionList.front();
+
   //  
   const unsigned int lExpectedPrice = 2000;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("The price given by the fare quoter for '"
                     << lTravelSolution.describe() << "' is: "
-                    << lTravelSolution.getFare() << " Euros, and should be "
+                    << lFareOption.getFare() << " Euros, and should be "
                     << lExpectedPrice);
 
-  BOOST_CHECK_EQUAL (std::floor (lTravelSolution.getFare() + 0.5),
+  BOOST_CHECK_EQUAL (std::floor (lFareOption.getFare() + 0.5),
                      lExpectedPrice);
 
-  BOOST_CHECK_MESSAGE (std::floor (lTravelSolution.getFare() + 0.5)
+  BOOST_CHECK_MESSAGE (std::floor (lFareOption.getFare() + 0.5)
                        == lExpectedPrice,
                        "The price given by the fare quoter for '"
                        << lTravelSolution.describe() << "' is: "
-                       << lTravelSolution.getFare() << " Euros, and should be "
+                       << lFareOption.getFare() << " Euros, and should be "
                        << lExpectedPrice);
 
   // Make a booking (reminder: party size is 3)
