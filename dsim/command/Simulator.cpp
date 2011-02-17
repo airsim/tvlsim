@@ -34,18 +34,19 @@ namespace DSIM {
       // DEBUG
       STDAIR_LOG_DEBUG ("The simulation is starting");
 
+      // Retrieve the expected total number of events to be generated
+      const stdair::Count_T& lNbOfRequests =
+        ioTRADEMGEN_Service.getTotalNumberOfRequestsToBeGenerated();
+      
+      // Initialise the (Boost) progress display object
+      // boost::progress_display lProgressDisplay (lNbOfRequests);
+      
       /**
          Initialisation step.
          <br>Generate the first event for each demand stream.
       */
       ioTRADEMGEN_Service.generateFirstRequests();
   
-      /** (Boost) progress display (current number of events, total
-          number of events) for every demand stream.
-      stdair::ProgressDisplayMap_T lProgressDisplays;
-      ioTRADEMGEN_Service.initProgressDisplays (lProgressDisplays);
-       */
-
       /**
          Main loop.
          <ul>
@@ -81,11 +82,6 @@ namespace DSIM {
         bool stillHavingRequestsToBeGenerated = ioTRADEMGEN_Service.
           stillHavingRequestsToBeGenerated (lDemandStreamKey);
         
-        // Retrieve, from the demand stream, the total number of events
-        // to be generated
-        const stdair::NbOfRequests_T& lNbOfRequests = ioTRADEMGEN_Service.
-          getTotalNumberOfRequestsToBeGenerated (lDemandStreamKey);
-      
         // DEBUG
         STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
                           << "Still generate events for that demand stream? "
