@@ -3,7 +3,6 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <ostream>
 // Boost
 #include <boost/make_shared.hpp>
 // SOCI
@@ -21,7 +20,6 @@
 #include <simcrs/SIMCRS_Service.hpp>
 // TraDemGen
 #include <trademgen/TRADEMGEN_Service.hpp>
-#include <trademgen/DBParams.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
@@ -53,16 +51,16 @@ namespace DSIM {
     // Initialise the service context
     initServiceContext ();
     
-    // Retrieve the Trademgen service context
+    // Retrieve the DSim service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     
-    // Store the STDAIR service object within the (TRADEMGEN) service context
+    // Store the STDAIR service object within the (DSim) service context
     lDSIM_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
     // Initialise the context
-    init (iScheduleInputFilename, iODInputFilename,
-          iFareInputFilename, iDemandInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iDemandInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -81,8 +79,8 @@ namespace DSIM {
     initStdAirService (iLogParams, iDBParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename,
-          iFareInputFilename, iDemandInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iDemandInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -117,7 +115,7 @@ namespace DSIM {
     // will be attached
     assert (lSTDAIR_Service_ptr != NULL);
 
-    // Store the STDAIR service object within the (TRADEMGEN) service context
+    // Store the STDAIR service object within the (DSim) service context
     lDSIM_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
   }
   
@@ -164,38 +162,32 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::simulate() {
-    
+
     if (_dsimServiceContext == NULL) {
       throw NonInitialisedServiceException();
     }
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext= *_dsimServiceContext;
 
-    try {
+    // Get a reference on the SIMCRS service handler
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
 
-      // Get a reference on the SIMCRS service handler
-      SIMCRS::SIMCRS_Service& lSIMCRS_Service =
-        lDSIM_ServiceContext.getSIMCRS_Service();
-      // Get a reference on the TRADEMGEN service handler
-      TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
-        lDSIM_ServiceContext.getTRADEMGEN_Service();
-      
-      // Delegate the booking to the dedicated command
-      stdair::BasChronometer lSimulationChronometer;
-      lSimulationChronometer.start();
-      Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service);
-      const double lSimulationMeasure = lSimulationChronometer.elapsed();
-      
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
-                        << lDSIM_ServiceContext.display());
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service();
 
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw SimulationException();
-    }
+    // Delegate the booking to the dedicated command
+    stdair::BasChronometer lSimulationChronometer;
+    lSimulationChronometer.start();
+    Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service);
+    const double lSimulationMeasure = lSimulationChronometer.elapsed();
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
+                      << lDSIM_ServiceContext.display());
   }
-  
+
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::displayAirlineListFromDB () const {
     if (_dsimServiceContext == NULL) {
@@ -215,43 +207,36 @@ namespace DSIM {
                       << std::endl
                       << lNowDateTime);
 
-    try {
+    // Delegate the query execution to the dedicated command
+    stdair::BasChronometer lDsimChronometer;
+    lDsimChronometer.start();
+
+    // Retrieve the database session handler
+    stdair::DBSession_T& lDBSession =
+      stdair::DBSessionManager::instance().getDBSession();
+    
+    // Prepare and execute the select statement
+    stdair::AirlineStruct lAirline;
+    stdair::DBRequestStatement_T lSelectStatement (lDBSession);
+    DBManager::prepareSelectStatement(lDBSession, lSelectStatement, lAirline);
+    
+    // Prepare the SQL request corresponding to the select statement
+    bool hasStillData = true;
+    unsigned int idx = 0;
+    while (hasStillData == true) {
+      hasStillData = DBManager::iterateOnStatement (lSelectStatement, lAirline);
       
-      // Delegate the query execution to the dedicated command
-      stdair::BasChronometer lDsimChronometer;
-      lDsimChronometer.start();
-
-      // Retrieve the database session handler
-      stdair::DBSession_T& lDBSession =
-        stdair::DBSessionManager::instance().getDBSession();
-      
-      // Prepare and execute the select statement
-      stdair::AirlineStruct lAirline;
-      stdair::DBRequestStatement_T lSelectStatement (lDBSession);
-      DBManager::prepareSelectStatement(lDBSession, lSelectStatement, lAirline);
-
-      // Prepare the SQL request corresponding to the select statement
-      bool hasStillData = true;
-      unsigned int idx = 0;
-      while (hasStillData == true) {
-        hasStillData = DBManager::iterateOnStatement (lSelectStatement,
-                                                      lAirline);
-        // DEBUG
-        STDAIR_LOG_DEBUG ("[" << idx << "]: " << lAirline);
-
-        // Iteration
-        ++idx;
-      }
-
-      const double lDsimMeasure = lDsimChronometer.elapsed();
-
       // DEBUG
-      STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
+      STDAIR_LOG_DEBUG ("[" << idx << "]: " << lAirline);
       
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw SimulationException();
+      // Iteration
+      ++idx;
     }
+    
+    const double lDsimMeasure = lDsimChronometer.elapsed();
+    
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
   }
 
 }
