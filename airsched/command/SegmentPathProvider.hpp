@@ -28,16 +28,16 @@ namespace AIRSCHED {
     // ////////// Business Methods /////////
     /** Calculate and return a list of travel solutions corresponding to a given
         product demand. */
-    static void buildSegmentPathList (stdair::SegmentPathList_T&,
+    static void buildSegmentPathList (stdair::TravelSolutionList_T&,
                                       const stdair::BomRoot&,
                                       const stdair::BookingRequestStruct&);
-    static void buildSegmentPathList (stdair::SegmentPathList_T&,
+    static void buildSegmentPathList (stdair::TravelSolutionList_T&,
                                       const ReachableUniverse&,
                                       const stdair::BookingRequestStruct&);
-    static void buildSegmentPathList (stdair::SegmentPathList_T&,
+    static void buildSegmentPathList (stdair::TravelSolutionList_T&,
                                       const OriginDestinationSet&,
                                       const stdair::BookingRequestStruct&);
-    static void buildSegmentPathList (stdair::SegmentPathList_T&,
+    static void buildSegmentPathList (stdair::TravelSolutionList_T&,
                                       const SegmentPathPeriod&,
                                       const stdair::BookingRequestStruct&);
   };

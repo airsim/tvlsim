@@ -310,7 +310,7 @@ namespace AIRSCHED {
 
   // ////////////////////////////////////////////////////////////////////
   void AIRSCHED_Service::
-  buildSegmentPathList (stdair::SegmentPathList_T& ioSegmentPathList,
+  buildSegmentPathList (stdair::TravelSolutionList_T& ioTravelSolutionList,
 			const stdair::BookingRequestStruct& iBookingRequest) {
     if (_airschedServiceContext == NULL) {
       throw NonInitialisedServiceException();
@@ -325,7 +325,7 @@ namespace AIRSCHED {
     
     const stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
     
-    SegmentPathProvider::buildSegmentPathList (ioSegmentPathList,
+    SegmentPathProvider::buildSegmentPathList (ioTravelSolutionList,
 					       lBomRoot, iBookingRequest);
   }
 

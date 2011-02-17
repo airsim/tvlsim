@@ -358,8 +358,8 @@ int main (int argc, char* argv[]) {
     parseBookingRequest (lBookingRequestString);
 
   //
-  stdair::SegmentPathList_T lSegmentPathList;
-  airschedService.buildSegmentPathList (lSegmentPathList, lBookingRequest);
+  stdair::TravelSolutionList_T lTravelSolutionList;
+  airschedService.buildSegmentPathList (lTravelSolutionList, lBookingRequest);
   
   // DEBUG
   STDAIR_LOG_DEBUG ("Parsed booking request: " << lBookingRequest);
@@ -367,14 +367,14 @@ int main (int argc, char* argv[]) {
   /**
      TODO: move the following display code within the StdAir library
    */
-  // Browse the list of segment-path objects
+  // Browse the list of travel-solution objects
   unsigned short segmentPathIdx = 1;
-  stdair::SegmentPathList_T::const_iterator itSegmentPath =
-    lSegmentPathList.begin();
-  for ( ; itSegmentPath != lSegmentPathList.end();
-        ++itSegmentPath, ++segmentPathIdx) {
+  stdair::TravelSolutionList_T::const_iterator itTravelSolution =
+    lTravelSolutionList.begin();
+  for ( ; itTravelSolution != lTravelSolutionList.end();
+        ++itTravelSolution, ++segmentPathIdx) {
     //
-    const stdair::SegmentPath_T& lSegmentPath = *itSegmentPath;
+    const stdair::SegmentPath_T& lSegmentPath = (*itTravelSolution).getSegmentPath();
 
     // Dump the segment-path
     std::ostringstream oStr;

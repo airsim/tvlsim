@@ -119,7 +119,7 @@ namespace AIRSCHED {
     // ////////////////// Business support methods //////////////////  
     /** Calculate and return a list of travel solutions corresponding to a given
         product demand. */
-    void buildSegmentPathList (stdair::SegmentPathList_T&,
+    void buildSegmentPathList (stdair::TravelSolutionList_T&,
                                const stdair::BookingRequestStruct&);
 
     /** Perform a small simulation, which uses the Customer Choice Model.
