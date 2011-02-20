@@ -1,5 +1,5 @@
-#ifndef __AIRRAC_BAS_BASCOMPARSERTYPES_HPP
-#define __AIRRAC_BAS_BASCOMPARSERTYPES_HPP
+#ifndef __AIRSCHED_BAS_BASCOMPARSERTYPES_HPP
+#define __AIRSCHED_BAS_BASCOMPARSERTYPES_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -18,7 +18,7 @@
 #include <boost/spirit/home/classic/actor/push_back_actor.hpp>
 #include <boost/spirit/home/classic/actor/assign_actor.hpp>
 
-namespace AIRRAC {
+namespace AIRSCHED {
 
   // ///////////////////////////////////////////////////////////////////////
   //
@@ -47,12 +47,6 @@ namespace AIRRAC {
   /** 2-digit-integer parser */
   typedef boost::spirit::classic::uint_parser<unsigned int, 10, 2, 2> uint2_p_t;
     
-  /** Up-to-2-digit-integer parser */
-  typedef boost::spirit::classic::uint_parser<unsigned int, 10, 1, 2> uint1_2_p_t;    
-
-  /** Up-to-3-digit-integer parser */
-  typedef boost::spirit::classic::uint_parser<unsigned int, 10, 1, 3> uint1_3_p_t;    
-
   /** 4-digit-integer parser */
   typedef boost::spirit::classic::uint_parser<unsigned int, 10, 4, 4> uint4_p_t;
 
@@ -70,9 +64,8 @@ namespace AIRRAC {
 
   /** Bounded-number-of-integers parser */
   typedef boost::spirit::classic::bounded<uint2_p_t, unsigned int> bounded2_p_t;
-  typedef boost::spirit::classic::bounded<uint1_2_p_t, unsigned int> bounded1_2_p_t;
-  typedef boost::spirit::classic::bounded<uint1_3_p_t, unsigned int> bounded1_3_p_t;
   typedef boost::spirit::classic::bounded<uint4_p_t, unsigned int> bounded4_p_t;
   typedef boost::spirit::classic::bounded<uint1_4_p_t, unsigned int> bounded1_4_p_t;
+    
 }
-#endif // __AIRRAC_BAS_BASCOMPARSERTYPES_HPP
+#endif // __AIRSCHED_BAS_BASCOMPARSERTYPES_HPP

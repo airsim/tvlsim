@@ -1,23 +1,22 @@
-# airrac/config
+# airsched/config
 include $(top_srcdir)/Makefile.common
 
 ## Source directory
-
-DISTCLEANFILES = airrac-paths.hpp
+DISTCLEANFILES = airsched-paths.hpp
 
 MAINTAINERCLEANFILES = Makefile.in
 
-EXTRA_DIST = airrac-paths.hpp
+EXTRA_DIST = airsched-paths.hpp
 
 # Targets
-all-local: airrac-paths.hpp
+all-local: airsched-paths.hpp
 
-airrac-paths.hpp: Makefile
-	@echo '#ifndef __AIRRAC_PATHS_HPP' > $@
-	@echo '#define __AIRRAC_PATHS_HPP' >> $@
+airsched-paths.hpp: Makefile
+	@echo '#ifndef __AIRSCHED_PATHS_HPP' > $@
+	@echo '#define __AIRSCHED_PATHS_HPP' >> $@
 	@echo >> $@
-	@echo '#define PACKAGE "airrac"' >> $@
-	@echo '#define PACKAGE_NAME "AIRRAC"' >> $@
+	@echo '#define PACKAGE "airsched"' >> $@
+	@echo '#define PACKAGE_NAME "AIRSCHED"' >> $@
 	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
 	@echo '#define PREFIXDIR "$(prefix)"' >> $@
 	@echo '#define BINDIR "$(bindir)"' >> $@
@@ -26,5 +25,6 @@ airrac-paths.hpp: Makefile
 	@echo '#define DOCDIR "$(docdir)"' >> $@
 	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
 	@echo >> $@
-	@echo '#endif // __AIRRAC_PATHS_HPP' >> $@
+	@echo '#endif // __AIRSCHED_PATHS_HPP' >> $@
 	@echo >> $@
+

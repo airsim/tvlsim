@@ -1,14 +1,15 @@
-## airrac/basic sub-directory
+## airsched/basic sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
 #
-noinst_LTLIBRARIES = libairracbas.la
+noinst_LTLIBRARIES = libairschedbas.la
 
-libairracbas_la_SOURCES = $(airrac_bas_h_sources) $(airrac_bas_cc_sources) 
-libairracbas_la_CXXFLAGS = $(STDAIR_CFLAGS)
-libairracbas_la_LDFLAGS =
+libairschedbas_la_SOURCES = $(airsched_bas_h_sources) $(airsched_bas_cc_sources) 
+libairschedbas_la_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
+libairschedbas_la_LDFLAGS =
 
 #
 #pkgincludedir = $(includedir)/@PACKAGE@/basic
-#pkginclude_HEADERS = $(airrac_bas_h_sources)
+#pkginclude_HEADERS = $(airsched_bas_h_sources)
+

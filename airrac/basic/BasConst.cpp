@@ -1,12 +1,10 @@
-// //////////////////////////////////////////////////////////////////////
-// Import section
-// //////////////////////////////////////////////////////////////////////
-#include <airrac/basic/BasConst_General.hpp>
-#include <airrac/basic/BasConst_AIRRAC_Service.hpp>
+#include <airsched/basic/BasConst_General.hpp>
+#include <airsched/basic/BasConst_AIRSCHED_Service.hpp>
 
-namespace AIRRAC {
+namespace AIRSCHED {
 
-  /** Default airline name for the AIRRAC_Service. */
-  const std::string DEFAULT_AIRLINE_CODE = "BA";
+  /** Default value for the number of draws within the Monte-Carlo
+      Integration algorithm. */
+  const int DEFAULT_NUMBER_OF_DRAWS_FOR_MC_SIMULATION = 100000;
 
 }

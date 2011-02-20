@@ -1,14 +1,16 @@
-#ifndef __AIRRAC_BOM_BOMABSTRACT_HPP
-#define __AIRRAC_BOM_BOMABSTRACT_HPP
+#ifndef __AIRSCHED_BOM_BOMABSTRACT_HPP
+#define __AIRSCHED_BOM_BOMABSTRACT_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <iosfwd>
+#include <istream>
+#include <ostream>
+#include <sstream>
 #include <string>
 
-namespace AIRRAC {
+namespace AIRSCHED {
 
   /** Base class for the Business Object Model (BOM) layer. */
   class BomAbstract {
@@ -23,16 +25,16 @@ namespace AIRRAC {
         @param istream& the input stream. */
     virtual void fromStream (std::istream& ioIn) = 0;
 
-    /** Get the serialised version of the Business Object. */
+   /** Get the serialised version of the Business Object. */
     virtual std::string toString() const = 0;
     
     /** Get a string describing the whole key (differentiating two objects
         at any level). */
-    virtual std::string describeKey() const = 0;
+    virtual const std::string describeKey() const = 0;
 
     /** Get a string describing the short key (differentiating two objects
         at the same level). */
-    virtual std::string describeShortKey() const = 0;
+    virtual const std::string describeShortKey() const = 0;
 
     
   protected:
@@ -42,7 +44,7 @@ namespace AIRRAC {
 
     /** Destructor. */
     virtual ~BomAbstract() {}
-  };
+ };
 }
 
 /**
@@ -54,7 +56,7 @@ template <class charT, class traits>
 inline
 std::basic_ostream<charT, traits>&
 operator<< (std::basic_ostream<charT, traits>& ioOut,
-            const AIRRAC::BomAbstract& iBom) {
+            const AIRSCHED::BomAbstract& iBom) {
   /**
      string stream:
       - with same format
@@ -82,10 +84,10 @@ template <class charT, class traits>
 inline
 std::basic_istream<charT, traits>&
 operator>> (std::basic_istream<charT, traits>& ioIn,
-            AIRRAC::BomAbstract& ioBom) {
+            AIRSCHED::BomAbstract& ioBom) {
   // Fill Bom object with input stream
   ioBom.fromStream (ioIn);
   return ioIn;
 }
 
-#endif // __AIRRAC_BOM_BOMABSTRACT_HPP
+#endif // __AIRSCHED_BOM_BOMABSTRACT_HPP

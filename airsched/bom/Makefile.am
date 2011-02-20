@@ -1,16 +1,15 @@
-## stdair/bom sub-directory
+## airsched/bom sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
 #
-noinst_LTLIBRARIES= libstdairbom.la
+noinst_LTLIBRARIES = libairschedbom.la
 
-libstdairbom_la_SOURCES = $(stdair_bom_h_sources) $(stdair_bom_cc_sources) 
-libstdairbom_la_CXXFLAGS = $(BOOST_CFLAGS) 
-libstdairbom_la_LDFLAGS =
+libairschedbom_la_SOURCES = $(airsched_bom_h_sources) $(airsched_bom_cc_sources) 
+libairschedbom_la_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
+libairschedbom_la_LDFLAGS =
 
-
-# Header files
-pkgincludedir = $(includedir)/stdair/bom
-pkginclude_HEADERS = $(stdair_bom_h_sources)
+#
+#pkgincludedir = $(includedir)/@PACKAGE@/bom
+#pkginclude_HEADERS = $(airsched_bom_h_sources)
 
