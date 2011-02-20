@@ -32,22 +32,26 @@ namespace DSIM {
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
 
-    // Retrieve the expected total number of events to be generated
-    const stdair::Count_T& lNbOfRequests =
-      ioTRADEMGEN_Service.getTotalNumberOfRequestsToBeGenerated();
+    // Retrieve the expected (mean value of the) number of events to be
+    // generated
+    const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+      ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
 
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Expected number of events: " << lNbOfRequests);
-
-    // Initialise the (Boost) progress display object
-    // boost::progress_display lProgressDisplay (lNbOfRequests);
-  
     /**
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    ioTRADEMGEN_Service.generateFirstRequests();
+    const stdair::Count_T& lActualNbOfEventsToBeGenerated =
+      ioTRADEMGEN_Service.generateFirstRequests();
 
+    // Initialise the (Boost) progress display object
+    // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
+  
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Expected number of events: "
+                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
+                      << lActualNbOfEventsToBeGenerated);
+  
     /**
        Main loop.
        <ul>
@@ -114,6 +118,9 @@ namespace DSIM {
                           << "'. Is queue done? "
                           << ioTRADEMGEN_Service.isQueueDone());
       }
+
+      // Update the progress display
+      //++lProgressDisplay;
     }
        
     // DEBUG
