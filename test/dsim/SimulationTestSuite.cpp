@@ -120,9 +120,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lFareInputFilename, lDemandInputFilename);
   
   // Perform a simulation
-  // TODO: understand why there is an exception raised here
-  // BOOST_CHECK_NO_THROW (dsimService.simulate());
-  BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
+  // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
+  BOOST_CHECK_NO_THROW (dsimService.simulate());
 
   // Close the log file
   logOutputFile.close();
