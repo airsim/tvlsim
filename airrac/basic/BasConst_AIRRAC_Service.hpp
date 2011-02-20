@@ -1,12 +1,15 @@
+#ifndef __AIRRAC_BAS_BASCONST_AIRRAC_SERVICE_HPP
+#define __AIRRAC_BAS_BASCONST_AIRRAC_SERVICE_HPP
+
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-#include <airrac/basic/BasConst_General.hpp>
-#include <airrac/basic/BasConst_AIRRAC_Service.hpp>
+#include <string>
 
 namespace AIRRAC {
 
   /** Default airline name for the AIRRAC_Service. */
-  const std::string DEFAULT_AIRLINE_CODE = "BA";
-
+  extern const std::string DEFAULT_AIRLINE_CODE;
+  
 }
+#endif // __AIRRAC_BAS_BASCONST_AIRRAC_SERVICE_HPP

@@ -1,15 +1,14 @@
-## airsched/command sub-directory
+## airrac/service sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
 #
-noinst_LTLIBRARIES = libairschedsvc.la
+noinst_LTLIBRARIES = libairracsvc.la
 
-libairschedsvc_la_SOURCES = $(airsched_svc_h_sources) $(airsched_svc_cc_sources) 
-libairschedsvc_la_CXXFLAGS = $(STDAIR_CFLAGS)
-libairschedsvc_la_LDFLAGS =
+libairracsvc_la_SOURCES = $(airrac_svc_h_sources) $(airrac_svc_cc_sources) 
+libairracsvc_la_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
+libairracsvc_la_LDFLAGS =
 
 #
 #pkgincludedir = $(includedir)/@PACKAGE@/service
-#pkginclude_HEADERS = $(airsched_svc_h_sources)
-
+#pkginclude_HEADERS = $(airrac_svc_h_sources)

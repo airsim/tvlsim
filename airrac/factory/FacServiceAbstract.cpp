@@ -1,13 +1,13 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// C
-#include <assert.h>
-// TRAVEL-CCM
-#include <airsched/service/ServiceAbstract.hpp>
-#include <airsched/factory/FacServiceAbstract.hpp>
+// STL
+#include <cassert>
+// AIRRAC
+#include <airrac/service/ServiceAbstract.hpp>
+#include <airrac/factory/FacServiceAbstract.hpp>
 
-namespace AIRSCHED {
+namespace AIRRAC {
   
   // //////////////////////////////////////////////////////////////////////
   FacServiceAbstract::~FacServiceAbstract() {
@@ -20,10 +20,10 @@ namespace AIRSCHED {
          itService != _pool.end(); itService++) {
       ServiceAbstract* currentService_ptr = *itService;
       assert (currentService_ptr != NULL);
-
+      
       delete (currentService_ptr); currentService_ptr = NULL;
     }
-
+    
     // Empty the pool of Service Factories
     _pool.clear();
   }
