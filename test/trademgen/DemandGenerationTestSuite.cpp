@@ -104,54 +104,61 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   NbOfEventsByDemandStreamMap_T lNbOfEventsMap;
   lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
                          value_type ("SIN-HND 2010-Feb-08 Y",
-                                     NbOfEventsPair_T (1, 11)));
+                                     NbOfEventsPair_T (1, 10)));
   lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
                          value_type ("SIN-BKK 2010-Feb-08 Y",
-                                     NbOfEventsPair_T (1, 9)));
-  // Total number of events, for all the demand streams: 20 (11 + 9)
+                                     NbOfEventsPair_T (1, 10)));
+  // Total number of events, for all the demand streams: 20 (10 + 10)
   const stdair::Count_T lRefExpectedNbOfEvents (20);
   
-  //  
+  // Retrieve the expected (mean value of the) number of events to be
+  // generated
   const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-    trademgenService.getTotalNumberOfRequestsToBeGenerated();
+    trademgenService.getExpectedTotalNumberOfRequestsToBeGenerated();
 
   BOOST_CHECK_EQUAL (lRefExpectedNbOfEvents,
-                     std::floor(lExpectedNbOfEventsToBeGenerated));
+                     std::floor (lExpectedNbOfEventsToBeGenerated));
   
   BOOST_CHECK_MESSAGE (lRefExpectedNbOfEvents ==
-                       std::floor(lExpectedNbOfEventsToBeGenerated),
-                       "Total number of requests to be generated: "
+                       std::floor (lExpectedNbOfEventsToBeGenerated),
+                       "Expected total number of requests to be generated: "
                        << lExpectedNbOfEventsToBeGenerated
                        << " (=> "
                        << std::floor (lExpectedNbOfEventsToBeGenerated)
-                       << "). Expected value: " << lRefExpectedNbOfEvents);
-  
+                       << "). Reference value: " << lRefExpectedNbOfEvents);
+
   /**
-     Initialisation step.
-     <br>Generate the first event for each demand stream.
-  */
-  // const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-  trademgenService.generateFirstRequests();
-      
-  /** Is queue empty */
+   * Initialisation step.
+   *
+   * Generate the first event for each demand stream.
+   *
+   * \note For that demand (CSV) file (i.e., demand01.csv), the
+   *       expected and actual numbers of events to be generated are
+   *       the same (and equal to 20).
+   */
+  const stdair::Count_T& lActualNbOfEventsToBeGenerated =
+    trademgenService.generateFirstRequests();
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Expected number of events: "
+                    << lExpectedNbOfEventsToBeGenerated << ", actual: "
+                    << lActualNbOfEventsToBeGenerated);
+  
+  BOOST_CHECK_EQUAL (lRefExpectedNbOfEvents, lActualNbOfEventsToBeGenerated);
+  
+  BOOST_CHECK_MESSAGE (lRefExpectedNbOfEvents == lActualNbOfEventsToBeGenerated,
+                       "Actual total number of requests to be generated: "
+                       << lExpectedNbOfEventsToBeGenerated
+                       << " (=> "
+                       << std::floor (lExpectedNbOfEventsToBeGenerated)
+                       << "). Reference value: " << lRefExpectedNbOfEvents);
+
+  /** Is the queue empty? */
   const bool isQueueDone = trademgenService.isQueueDone();
   BOOST_REQUIRE_MESSAGE (isQueueDone == false,
                          "The event queue should not be empty. You may check "
                          << "the input file: '" << lInputFilename << "'");
-  
-  /** Queue size.
-      <br>At any moment, the size of the event queue represents the
-      number of independent demand/event streams. Indeed, each demand
-      stream generates the corresponding events one after
-      another. Therefore, each demand stream has always got a single
-      event in the event queue.
-  const stdair::Count_T lQueueSize = lEventQueue.getQueueSize();
-  BOOST_CHECK_EQUAL (lQueueSize, 2);
-  BOOST_CHECK_MESSAGE (lQueueSize == 2,
-                       "The event queue should be made of 2 demand streams, "
-                       << " but it is not");
-                        */
-  
+
   /**
      Main loop.
      <ul>
