@@ -1,20 +1,26 @@
-#ifndef __AIRSCHED_BOM_BOMABSTRACT_HPP
-#define __AIRSCHED_BOM_BOMABSTRACT_HPP
+/**
+ * @defgroup BomAbstract Abstract part of the Business Object Model (BOM)
+ * @author Anh Quan Nguyen <quannaus@users.sourceforge.net>
+ * @date 20/01/2010
+ */
+#ifndef __STDAIR_BOM_BOMABSTRACT_HPP
+#define __STDAIR_BOM_BOMABSTRACT_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <istream>
-#include <ostream>
-#include <sstream>
+#include <iosfwd>
 #include <string>
+#include <map>
+#include <typeinfo>
 
-namespace AIRSCHED {
+namespace stdair {
 
-  /** Base class for the Business Object Model (BOM) layer. */
+  /**
+   * @brief Base class for the Business Object Model (BOM) layer
+   */
   class BomAbstract {
-    friend class FacBomAbstract;
   public:
     // /////////// Display support methods /////////
     /** Dump a Business Object into an output stream.
@@ -27,24 +33,19 @@ namespace AIRSCHED {
 
    /** Get the serialised version of the Business Object. */
     virtual std::string toString() const = 0;
-    
-    /** Get a string describing the whole key (differentiating two objects
-        at any level). */
-    virtual const std::string describeKey() const = 0;
-
-    /** Get a string describing the short key (differentiating two objects
-        at the same level). */
-    virtual const std::string describeShortKey() const = 0;
 
     
   protected:
     /** Protected Default Constructor to ensure this class is abtract. */
     BomAbstract() {}
     BomAbstract(const BomAbstract&) {}
-
+  public:
     /** Destructor. */
     virtual ~BomAbstract() {}
- };
+  };
+
+  /* Define the map of object holder type. */
+  typedef std::map<const std::type_info*, BomAbstract*> HolderMap_T;
 }
 
 /**
@@ -56,7 +57,7 @@ template <class charT, class traits>
 inline
 std::basic_ostream<charT, traits>&
 operator<< (std::basic_ostream<charT, traits>& ioOut,
-            const AIRSCHED::BomAbstract& iBom) {
+            const stdair::BomAbstract& iBom) {
   /**
      string stream:
       - with same format
@@ -84,10 +85,10 @@ template <class charT, class traits>
 inline
 std::basic_istream<charT, traits>&
 operator>> (std::basic_istream<charT, traits>& ioIn,
-            AIRSCHED::BomAbstract& ioBom) {
+            stdair::BomAbstract& ioBom) {
   // Fill Bom object with input stream
   ioBom.fromStream (ioIn);
   return ioIn;
 }
 
-#endif // __AIRSCHED_BOM_BOMABSTRACT_HPP
+#endif // __STDAIR_BOM_BOMABSTRACT_HPP

@@ -1,15 +1,16 @@
-## airsched/command sub-directory
+## stdair/service sub-directory
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
 #
-noinst_LTLIBRARIES = libairschedsvc.la
+noinst_LTLIBRARIES= libstdairsvc.la
 
-libairschedsvc_la_SOURCES = $(airsched_svc_h_sources) $(airsched_svc_cc_sources) 
-libairschedsvc_la_CXXFLAGS = $(STDAIR_CFLAGS)
-libairschedsvc_la_LDFLAGS =
+libstdairsvc_la_SOURCES = $(stdair_svc_h_sources) $(stdair_svc_cc_sources) 
+libstdairsvc_la_CXXFLAGS = $(SOCI_CFLAGS) $(MYSQL_CFLAGS)
+libstdairsvc_la_LDFLAGS = $(SOCI_LIBS) $(MYSQL_LIBS)
 
-#
-#pkgincludedir = $(includedir)/@PACKAGE@/service
-#pkginclude_HEADERS = $(airsched_svc_h_sources)
+
+# Header files
+pkgincludedir = $(includedir)/stdair/service
+pkginclude_HEADERS = $(stdair_svc_h_sources)
 
