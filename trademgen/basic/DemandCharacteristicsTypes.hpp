@@ -1,5 +1,5 @@
-#ifndef __TRADEMGEN_BAS_DEMANDCHARACTERISTICTYPES_HPP
-#define __TRADEMGEN_BAS_DEMANDCHARACTERISTICTYPES_HPP
+#ifndef __TRADEMGEN_BAS_DEMANDCHARACTERISTICSTYPES_HPP
+#define __TRADEMGEN_BAS_DEMANDCHARACTERISTICSTYPES_HPP
 
 // //////////////////////////////////////////////////////////////////////
 // Import section
@@ -63,4 +63,4 @@ namespace TRADEMGEN {
   /** Define the value of time continuous distribution. */
   typedef ValueOfTimeCumulativeDistribution_T::ContinuousDistribution_T ValueOfTimeContinuousDistribution_T;
 }
-#endif // __TRADEMGEN_BAS_DEMANDCHARACTERISTICTYPES_HPP
+#endif // __TRADEMGEN_BAS_DEMANDCHARACTERISTICSTYPES_HPP

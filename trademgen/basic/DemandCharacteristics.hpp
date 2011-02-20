@@ -8,22 +8,24 @@
 #include <string>
 // StdAir
 #include <stdair/stdair_date_time_types.hpp>
+#include <stdair/basic/StructAbstract.hpp>
 // TraDemGen
-#include <trademgen/basic/DemandCharacteristicTypes.hpp>
+#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 
 namespace TRADEMGEN {
 
   /** Class modeling the characteristics of a demand type. */
-  struct DemandCharacteristics {
+  struct DemandCharacteristics : public stdair::StructAbstract {
         
   public:
     // ////////////// Display Support Methods //////////
-    /** Display demand characteristics */
-    std::string display() const;
+    /** Give a description of the structure (for display purposes). */
+    const std::string describe() const;
+
 
   public:
     // ////////// Constructors and destructors /////////
-    /** Default constructor. */
+    /** Constructor. */
     DemandCharacteristics (const ArrivalPatternCumulativeDistribution_T&,
                            const POSProbabilityMassFunction_T&,
                            const ChannelProbabilityMassFunction_T&,
@@ -35,12 +37,13 @@ namespace TRADEMGEN {
                            const ValueOfTimeContinuousDistribution_T&);
     
     /** Destructor */
-    ~DemandCharacteristics ();
+    ~DemandCharacteristics();
   private:
     /** Default constructor. */
-    DemandCharacteristics ();
-    /** Copy constructor. */
+    DemandCharacteristics();
+    /** Deault copy constructor. */
     DemandCharacteristics (const DemandCharacteristics&);
+
 
   public:
     // //////////////////// Attributes /////////////////////

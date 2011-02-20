@@ -10,9 +10,9 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
-// Trademgen
+// TraDemGen
 #include <trademgen/TRADEMGEN_Types.hpp>
-#include <trademgen/basic/DemandCharacteristicTypes.hpp>
+#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 #include <trademgen/service/ServiceAbstract.hpp>
 
 // Forward declarations

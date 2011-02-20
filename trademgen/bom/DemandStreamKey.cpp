@@ -1,20 +1,31 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// TRADEMGEN
+// STL
+#include <cassert>
+#include <sstream>
+// StdAir
+#include <stdair/basic/BasConst_Inventory.hpp>
+// TraDemGen
 #include <trademgen/bom/DemandStreamKey.hpp>
 
 namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
-  DemandStreamKey::DemandStreamKey () {
+  DemandStreamKey::DemandStreamKey()
+    : _origin (stdair::DEFAULT_ORIGIN),
+      _destination (stdair::DEFAULT_DESTINATION),
+      _preferredDepartureDate (stdair::DEFAULT_FLIGHT_DATE),
+      _preferredCabin (stdair::DEFAULT_CABIN_CODE) {
+    assert (false);
   }
   
   // ////////////////////////////////////////////////////////////////////
-  DemandStreamKey::DemandStreamKey(const stdair::AirportCode_T& iOrigin,
-                                   const stdair::AirportCode_T& iDestination,
-                                   const stdair::Date_T& iPreferredDepartureDate,
-                                   const stdair::CabinCode_T& iPreferredCabin)
+  DemandStreamKey::
+  DemandStreamKey (const stdair::AirportCode_T& iOrigin,
+                   const stdair::AirportCode_T& iDestination,
+                   const stdair::Date_T& iPreferredDepartureDate,
+                   const stdair::CabinCode_T& iPreferredCabin)
     : _origin (iOrigin), _destination (iDestination),
       _preferredDepartureDate (iPreferredDepartureDate),
       _preferredCabin (iPreferredCabin) {
@@ -33,7 +44,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   void DemandStreamKey::toStream (std::ostream& ioOut) const {
-    ioOut << "DemandStreamKey: " << toString() << std::endl;
+    ioOut << "DemandStreamKey: " << toString();
   }
 
   // ////////////////////////////////////////////////////////////////////

@@ -13,6 +13,35 @@
 namespace TRADEMGEN {
   
   // /////////////////////////////////////////////////////
+  DemandCharacteristics::DemandCharacteristics()
+    : _arrivalPattern (ArrivalPatternCumulativeDistribution_T()),
+      _posProbabilityMass (POSProbabilityMassFunction_T()),
+      _channelProbabilityMass (ChannelProbabilityMassFunction_T()),
+      _tripTypeProbabilityMass (TripTypeProbabilityMassFunction_T()),
+      _stayDurationProbabilityMass (StayDurationProbabilityMassFunction_T()),
+      _frequentFlyerProbabilityMass (FrequentFlyerProbabilityMassFunction_T()),
+      _preferredDepartureTimeCumulativeDistribution (PreferredDepartureTimeContinuousDistribution_T()),
+      _minWTP (stdair::WTP_T()),
+      _valueOfTimeCumulativeDistribution (ValueOfTimeContinuousDistribution_T()) {
+    assert (false);
+  }
+
+  // /////////////////////////////////////////////////////
+  DemandCharacteristics::
+  DemandCharacteristics (const DemandCharacteristics& iDC)
+    : _arrivalPattern (ArrivalPatternCumulativeDistribution_T()),
+      _posProbabilityMass (POSProbabilityMassFunction_T()),
+      _channelProbabilityMass (ChannelProbabilityMassFunction_T()),
+      _tripTypeProbabilityMass (TripTypeProbabilityMassFunction_T()),
+      _stayDurationProbabilityMass (StayDurationProbabilityMassFunction_T()),
+      _frequentFlyerProbabilityMass (FrequentFlyerProbabilityMassFunction_T()),
+      _preferredDepartureTimeCumulativeDistribution (PreferredDepartureTimeContinuousDistribution_T()),
+      _minWTP (iDC._minWTP),
+      _valueOfTimeCumulativeDistribution (ValueOfTimeContinuousDistribution_T()) {
+    assert (false);
+  }
+
+  // /////////////////////////////////////////////////////
   DemandCharacteristics::
   DemandCharacteristics (const ArrivalPatternCumulativeDistribution_T& iArrivalPattern,
                          const POSProbabilityMassFunction_T& iPOSProbMass,
@@ -29,7 +58,8 @@ namespace TRADEMGEN {
       _tripTypeProbabilityMass (iTripTypeProbMass),
       _stayDurationProbabilityMass (iStayDurationProbMass),
       _frequentFlyerProbabilityMass (iFrequentFlyerProbMass),
-      _preferredDepartureTimeCumulativeDistribution (iPreferredDepartureTimeContinuousDistribution), _minWTP (iMinWTP),
+      _preferredDepartureTimeCumulativeDistribution (iPreferredDepartureTimeContinuousDistribution),
+      _minWTP (iMinWTP),
       _valueOfTimeCumulativeDistribution (iValueOfTimeContinuousDistribution) {
   }
     
@@ -38,7 +68,7 @@ namespace TRADEMGEN {
   }
   
   // /////////////////////////////////////////////////////
-  std::string DemandCharacteristics::display() const {
+  const std::string DemandCharacteristics::describe() const {
     std::ostringstream oStr;
 
     //

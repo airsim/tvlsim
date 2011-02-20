@@ -14,10 +14,25 @@
 namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
-  DemandStruct::DemandStruct ()
+  DemandStruct::DemandStruct()
     : _prefDepDate (stdair::DEFAULT_DATE), _prefArrDate (stdair::DEFAULT_DATE),
       _prefCabin (""), _itHours (0), _itMinutes (0), _itSeconds (0),
       _itFFCode ("") {
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  DemandStruct::DemandStruct (const DemandStruct& iDemandStruct)
+    : _prefDepDate (iDemandStruct._prefDepDate),
+      _prefArrDate (iDemandStruct._prefArrDate),
+      _prefCabin (iDemandStruct._prefCabin),
+      _itHours (iDemandStruct._itHours),
+      _itMinutes (iDemandStruct._itMinutes),
+      _itSeconds (iDemandStruct._itSeconds),
+      _itFFCode (iDemandStruct._itFFCode) {
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  DemandStruct::~DemandStruct() {
   }
 
   // ////////////////////////////////////////////////////////////////////

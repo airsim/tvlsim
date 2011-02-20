@@ -11,26 +11,40 @@
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
 // TraDemGen
-#include <trademgen/basic/DemandCharacteristicTypes.hpp>
+#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 
 namespace TRADEMGEN {
 
   /** Utility Structure for the parsing of Demand structures. */
   struct DemandStruct : public stdair::StructAbstract {
-    
+
+  public:
     /** Get the date from the staging details. */
     stdair::Date_T getDate() const;
 
     /** Get the time from the staging details. */
     stdair::Duration_T getTime() const;
 
+
+  public:
+    // ////////////// Display Support Methods //////////
     /** Give a description of the structure (for display purposes). */
     const std::string describe() const;
 
-    /** Constructor. */
-    DemandStruct ();
 
-    // Attributes
+  public:
+    // ////////// Constructors and destructors /////////
+    /** Default constructor. */
+    DemandStruct();
+    /** Destructor */
+    ~DemandStruct();
+  private:
+    /** Deault copy constructor. */
+    DemandStruct (const DemandStruct&);
+
+
+  public:
+    // ////////////// Attributes ///////////////////
     stdair::Date_T _prefDepDate;
     stdair::Date_T _prefArrDate;
     stdair::AirportCode_T _origin;
@@ -48,6 +62,8 @@ namespace TRADEMGEN {
     ValueOfTimeContinuousDistribution_T _timeValueProbDist;
     ArrivalPatternCumulativeDistribution_T _dtdProbDist;
     
+  public:
+    // ////////////// Staging ///////////////////
     /** Staging Date. */
     unsigned int _itYear;
     unsigned int _itMonth;

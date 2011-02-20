@@ -5,10 +5,10 @@
 #include <cassert>
 // StdAir
 #include <stdair/basic/BasFileMgr.hpp>
-#include <stdair/bom/BomRoot.hpp>
+#include <stdair/bom/EventQueue.hpp>
 #include <stdair/service/Logger.hpp>
 // TraDemGen
-#include <trademgen/basic/DemandCharacteristicTypes.hpp>
+#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 #include <trademgen/command/DemandParserHelper.hpp>
 #include <trademgen/command/DemandManager.hpp>
 
@@ -370,11 +370,11 @@ namespace TRADEMGEN {
     }
 
     // //////////////////////////////////////////////////////////////////
-    doEndDemand::doEndDemand (stdair::BomRoot& ioBomRoot,
+    doEndDemand::doEndDemand (stdair::EventQueue& ioEventQueue,
                               stdair::UniformGenerator_T& ioSharedGenerator,
                               const POSProbabilityMass_T& iPOSProbMass,
                               DemandStruct& ioDemand)
-      : ParserSemanticAction (ioDemand), _bomRoot (ioBomRoot),
+      : ParserSemanticAction (ioDemand), _eventQueue (ioEventQueue),
         _uniformGenerator (ioSharedGenerator),
         _posProbabilityMass (iPOSProbMass) {
     }
@@ -387,7 +387,7 @@ namespace TRADEMGEN {
       // STDAIR_LOG_DEBUG ("Demand: " << _demand.describe());
 
       // Create the Demand BOM objects
-      DemandManager::createDemandCharacteristics (_bomRoot, _uniformGenerator,
+      DemandManager::createDemandCharacteristics (_eventQueue, _uniformGenerator,
                                                   _posProbabilityMass, _demand);
                                  
       // Clean the lists
@@ -479,11 +479,11 @@ namespace TRADEMGEN {
     // //////////////////////////////////////////////////////////////////
 
     // //////////////////////////////////////////////////////////////////
-    DemandParser::DemandParser (stdair::BomRoot& ioBomRoot,
+    DemandParser::DemandParser (stdair::EventQueue& ioEventQueue,
                                 stdair::UniformGenerator_T& ioSharedGenerator,
                                 const POSProbabilityMass_T& iPOSProbMass,
                                 DemandStruct& ioDemand) 
-      : _bomRoot (ioBomRoot), _uniformGenerator (ioSharedGenerator),
+      : _eventQueue (ioEventQueue), _uniformGenerator (ioSharedGenerator),
         _posProbabilityMass (iPOSProbMass), _demand (ioDemand) {
     }
 
@@ -511,7 +511,7 @@ namespace TRADEMGEN {
         >> ';' >> time_value_dist
         >> ';' >> dtd_dist
         >> ';' >> demand_params
-        >> demand_end[doEndDemand(self._bomRoot, self._uniformGenerator,
+        >> demand_end[doEndDemand(self._eventQueue, self._uniformGenerator,
                                   self._posProbabilityMass, self._demand)]
         ;
 
@@ -747,11 +747,11 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   DemandFileParser::
-  DemandFileParser (stdair::BomRoot& ioBomRoot,
+  DemandFileParser (stdair::EventQueue& ioEventQueue,
                     stdair::UniformGenerator_T& ioSharedGenerator,
                     const POSProbabilityMass_T& iPOSProbMass,
                     const std::string& iFilename)
-    : _filename (iFilename), _bomRoot (ioBomRoot),
+    : _filename (iFilename), _eventQueue (ioEventQueue),
       _uniformGenerator (ioSharedGenerator),
       _posProbabilityMass (iPOSProbMass) {
     init();
@@ -768,7 +768,8 @@ namespace TRADEMGEN {
                         << " does not exist or can not be read.");
 
       throw DemandInputFileNotFoundException ("The demand file " + _filename
-                                              + " does not exist or can not be read");
+                                              + " does not exist or can not "
+                                              + "be read");
     }
     
     // Open the file
@@ -779,7 +780,8 @@ namespace TRADEMGEN {
       STDAIR_LOG_ERROR ("The demand file " << _filename << " can not be open.");
 
       throw DemandInputFileNotFoundException ("The demand file " + _filename
-                                              + " does not exist or can not be read");
+                                              + " does not exist or can not "
+                                              + "be read");
     }
 
     // Create an EOF iterator
@@ -793,14 +795,17 @@ namespace TRADEMGEN {
     STDAIR_LOG_DEBUG ("Parsing demand input file: " << _filename);
 
     // Initialise the parser (grammar) with the helper/staging structure.
-    DemandParserHelper::DemandParser lDemandParser (_bomRoot, _uniformGenerator,
-                                                    _posProbabilityMass,_demand);
+    DemandParserHelper::DemandParser lDemandParser (_eventQueue,
+                                                    _uniformGenerator,
+                                                    _posProbabilityMass,
+                                                    _demand);
       
     // Launch the parsing of the file and, thanks to the doEndDemand
-    // call-back structure, the building of the whole BomRoot BOM
+    // call-back structure, the building of the whole EventQueue BOM
     // (i.e., including Inventory, FlightDate, LegDate, SegmentDate, etc.)
     boost::spirit::classic::parse_info<iterator_t> info =
-      boost::spirit::classic::parse (_startIterator, _endIterator, lDemandParser,
+      boost::spirit::classic::parse (_startIterator, _endIterator,
+                                     lDemandParser,
                                      boost::spirit::classic::space_p);
 
     // Retrieves whether or not the parsing was successful

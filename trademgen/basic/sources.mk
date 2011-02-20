@@ -6,7 +6,7 @@ bas_h_sources = \
 		$(top_srcdir)/trademgen/basic/CategoricalAttribute.hpp \
 		$(top_srcdir)/trademgen/basic/ContinuousAttributeLite.hpp \
 		$(top_srcdir)/trademgen/basic/CategoricalAttributeLite.hpp \
-		$(top_srcdir)/trademgen/basic/DemandCharacteristicTypes.hpp \
+		$(top_srcdir)/trademgen/basic/DemandCharacteristicsTypes.hpp \
 		$(top_srcdir)/trademgen/basic/DemandCharacteristics.hpp \
 		$(top_srcdir)/trademgen/basic/DemandDistribution.hpp \
 		$(top_srcdir)/trademgen/basic/RandomGeneration.hpp \

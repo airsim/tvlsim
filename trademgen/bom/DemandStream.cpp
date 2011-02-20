@@ -9,13 +9,53 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
+#include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/basic/BasConst_Request.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // TraDemGen
+#include <trademgen/basic/BasConst_DemandGeneration.hpp>
 #include <trademgen/bom/DemandStream.hpp>
 
 namespace TRADEMGEN {
+
+  // ////////////////////////////////////////////////////////////////////
+  DemandStream::DemandStream()
+    : _key (stdair::DEFAULT_ORIGIN, stdair::DEFAULT_DESTINATION,
+            stdair::DEFAULT_FLIGHT_DATE, stdair::DEFAULT_CABIN_CODE),
+      _parent (NULL),
+      _demandCharacteristics (ArrivalPatternCumulativeDistribution_T(),
+                              POSProbabilityMassFunction_T(),
+                              ChannelProbabilityMassFunction_T(),
+                              TripTypeProbabilityMassFunction_T(),
+                              StayDurationProbabilityMassFunction_T(),
+                              FrequentFlyerProbabilityMassFunction_T(),
+                              PreferredDepartureTimeContinuousDistribution_T(),
+                              0.0,
+                              ValueOfTimeContinuousDistribution_T()),
+      _uniformGenerator (DEFAULT_UNIFORM_GENERATOR),
+      _posProMass (DEFAULT_POS_PROBALILITY_MASS) {
+    assert (false);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  DemandStream::DemandStream (const DemandStream&)
+    : _key (stdair::DEFAULT_ORIGIN, stdair::DEFAULT_DESTINATION,
+            stdair::DEFAULT_FLIGHT_DATE, stdair::DEFAULT_CABIN_CODE),
+      _parent (NULL),
+      _demandCharacteristics (ArrivalPatternCumulativeDistribution_T(),
+                              POSProbabilityMassFunction_T(),
+                              ChannelProbabilityMassFunction_T(),
+                              TripTypeProbabilityMassFunction_T(),
+                              StayDurationProbabilityMassFunction_T(),
+                              FrequentFlyerProbabilityMassFunction_T(),
+                              PreferredDepartureTimeContinuousDistribution_T(),
+                              0.0,
+                              ValueOfTimeContinuousDistribution_T()),
+      _uniformGenerator (DEFAULT_UNIFORM_GENERATOR),
+      _posProMass (DEFAULT_POS_PROBALILITY_MASS) {
+    assert (false);
+  }
 
   // ////////////////////////////////////////////////////////////////////
   DemandStream::
@@ -312,7 +352,7 @@ namespace TRADEMGEN {
 
     // TODO 1: understand why the following form does not work, knowing
     // that:
-    // typede boost::shared_ptr<stdair::BookingRequestStruct> stdair::BookingRequestPtr_T
+    // typedef boost::shared_ptr<stdair::BookingRequestStruct> stdair::BookingRequestPtr_T
     // stdair::BookingRequestPtr_T oBookingRequest_ptr =
     //   boost::make_shared<stdair::BookingRequestStruct> ();
 
@@ -345,9 +385,9 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DemandStream::reset () {
-    init ();
+  void DemandStream::reset() {
     _randomGenerationContext.reset();
+    init();
   }  
 
 }

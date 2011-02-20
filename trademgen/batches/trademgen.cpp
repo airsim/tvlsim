@@ -31,7 +31,7 @@
 #include <trademgen/TRADEMGEN_Service.hpp>
 #include <trademgen/config/trademgen-paths.hpp>
 #include <trademgen/basic/DemandCharacteristics.hpp>
-#include <trademgen/basic/DemandCharacteristicTypes.hpp>
+#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 #include <trademgen/basic/DemandDistribution.hpp>
 #include <trademgen/basic/RandomGeneration.hpp>
 #include <trademgen/basic/RandomGenerationContext.hpp>

@@ -17,18 +17,18 @@ namespace TRADEMGEN {
     
     // ////////// Constructors and destructors /////////
     /** Constructor by default */
-    RandomGenerationContext ();
+    RandomGenerationContext();
     /** Default constructors. */
     RandomGenerationContext (const RandomGenerationContext&);
     /** Destructor */
-    ~RandomGenerationContext ();
+    ~RandomGenerationContext();
     
     // /////////////// Business Methods //////////
     /** Increment counter of requests generated so far */
-    void incrementGeneratedRequestsCounter ();
+    void incrementGeneratedRequestsCounter();
 
     /** Reset the counters. */
-    void reset ();
+    void reset();
 
         // ////////// Attributes //////////
     /** Cumulative probability in arrival pattern for last request
@@ -37,7 +37,6 @@ namespace TRADEMGEN {
     
     /** Number of requests generated so far */
     stdair::Count_T _numberOfRequestsGeneratedSoFar;
-    
   };
 
 }

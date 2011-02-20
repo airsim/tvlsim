@@ -5,11 +5,11 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
+#include <iosfwd>
 #include <string>
 #include <map>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/service/Logger.hpp>
 // TRADEMGEN
 #include <trademgen/basic/DictionaryManager.hpp>
 
@@ -26,7 +26,7 @@ namespace TRADEMGEN {
   public:
     // /////////////// Business Methods //////////
     /** Get value from inverse cumulative distribution. */
-    const T getValue (const stdair::Probability_T& iCumulativeProbability) const{
+    const T getValue(const stdair::Probability_T& iCumulativeProbability) const{
       const DictionaryKey_T lKey =
         DictionaryManager::valueToKey (iCumulativeProbability);
       unsigned int idx = 0;
@@ -77,6 +77,7 @@ namespace TRADEMGEN {
       return oStr.str();
     }
 
+
   public:
     // ////////// Constructors and destructors /////////
     /** Constructor */
@@ -88,15 +89,17 @@ namespace TRADEMGEN {
     }
     
     /** Destructor */
-    virtual ~ContinuousAttributeLite () {
+    virtual ~ContinuousAttributeLite() {
       // TODO: Verify that the arrays are correctly cleaned.
       delete _cumulativeDistribution; _cumulativeDistribution = NULL;
       delete _valueArray; _valueArray = NULL;
     }
 
   private:
-    /** Constructors by default */
-    ContinuousAttributeLite ();
+    /** Default constructor. */
+    ContinuousAttributeLite() : _size(1) {
+      assert (false);
+    }
     ContinuousAttributeLite (const ContinuousAttributeLite&);
 
     /** Determine inverse cumulative distribution from cumulative
@@ -117,6 +120,7 @@ namespace TRADEMGEN {
       }
     }
   
+
   private:
     // ////////// Attributes //////////
     /** Size of the two arrays. */

@@ -15,7 +15,7 @@
 
 // Forward declarations
 namespace stdair {
-  class BomRoot;
+  class EventQueue;
 }
 
 namespace TRADEMGEN {
@@ -224,12 +224,12 @@ namespace TRADEMGEN {
     /** Mark the end of the demand parsing. */
     struct doEndDemand : public ParserSemanticAction {
       /** Actor Constructor. */
-      doEndDemand (stdair::BomRoot&, stdair::UniformGenerator_T&,
+      doEndDemand (stdair::EventQueue&, stdair::UniformGenerator_T&,
                    const POSProbabilityMass_T&, DemandStruct&);
       /** Actor Function (functor). */
       void operator() (iterator_t iStr, iterator_t iStrEnd) const;
       /** Actor Specific Context. */
-      stdair::BomRoot& _bomRoot;
+      stdair::EventQueue& _eventQueue;
       stdair::UniformGenerator_T& _uniformGenerator;
       const POSProbabilityMass_T& _posProbabilityMass;
     };
@@ -328,7 +328,7 @@ namespace TRADEMGEN {
     struct DemandParser : 
       public boost::spirit::classic::grammar<DemandParser> {
 
-      DemandParser (stdair::BomRoot&, stdair::UniformGenerator_T&,
+      DemandParser (stdair::EventQueue&, stdair::UniformGenerator_T&,
                     const POSProbabilityMass_T&, DemandStruct&);
 
       template <typename ScannerT>
@@ -354,7 +354,7 @@ namespace TRADEMGEN {
       };
 
       // Parser Context
-      stdair::BomRoot& _bomRoot;
+      stdair::EventQueue& _eventQueue;
       stdair::UniformGenerator_T& _uniformGenerator;
       const POSProbabilityMass_T& _posProbabilityMass;
       DemandStruct& _demand;
@@ -376,7 +376,7 @@ namespace TRADEMGEN {
   class DemandFileParser : public stdair::CmdAbstract {
   public:
     /** Constructor. */
-    DemandFileParser (stdair::BomRoot&, stdair::UniformGenerator_T&,
+    DemandFileParser (stdair::EventQueue&, stdair::UniformGenerator_T&,
                       const POSProbabilityMass_T&,
                       const stdair::Filename_T& iDemandInputFilename);
 
@@ -399,7 +399,7 @@ namespace TRADEMGEN {
     iterator_t _endIterator;
       
     /** Root of the BOM tree. */
-    stdair::BomRoot& _bomRoot;
+    stdair::EventQueue& _eventQueue;
 
     /** Shared uniform generator. */
     stdair::UniformGenerator_T& _uniformGenerator;

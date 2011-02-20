@@ -3,11 +3,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <string>
-// STDAIR
+// StdAir
 #include <stdair/bom/Inventory.hpp>
-// TRADEMGEN
-#include <trademgen/basic/DictionaryManager.hpp>
+// TraDemGen
 #include <trademgen/command/DemandParserHelper.hpp>
 #include <trademgen/command/DemandParser.hpp>
 
@@ -16,17 +14,16 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   void DemandParser::
   generateDemand (const stdair::Filename_T& iFilename,
-                  stdair::BomRoot& ioBomRoot,
+                  stdair::EventQueue& ioEventQueue,
                   stdair::UniformGenerator_T& ioSharedGenerator,
                   const POSProbabilityMass_T& iDefaultPOSProbablityMass) {
     // Initialise the demand file parser.
-    DemandFileParser lDemandParser (ioBomRoot, ioSharedGenerator,
+    DemandFileParser lDemandParser (ioEventQueue, ioSharedGenerator,
                                     iDefaultPOSProbablityMass, iFilename);
 
     // Parse the CSV-formatted demand input file, and generate the
     // corresponding DemandCharacteristic objects.
-    lDemandParser.generateDemand ();
-
+    lDemandParser.generateDemand();
   }
 
 }

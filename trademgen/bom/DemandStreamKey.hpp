@@ -11,24 +11,33 @@
 
 namespace TRADEMGEN {
 
-  /** Key of demand-stream. */
+  /**
+   * Key of a given demand-stream, made of a pair of required
+   * airports/cities (origin and destination), a preferred departure
+   * date and a preferred cabin. Those attributes correspond to a the
+   * travel requirements of a simulated traveller.
+   */
   struct DemandStreamKey : public stdair::KeyAbstract {
+
+    // /////////// Constructors and destructors ///////////
+  private:
+    /** Default constructor. */
+    DemandStreamKey();
+
   public:
-    // /////////// Construction ///////////
-    /** Constructors. */
+    /** Constructor. */
     DemandStreamKey (const stdair::AirportCode_T& iOrigin,
                      const stdair::AirportCode_T& iDestination,
                      const stdair::Date_T& iPreferredDepartureDate,
                      const stdair::CabinCode_T& iPreferredCabin);
+    /** Default copy constructor. */
     DemandStreamKey (const DemandStreamKey&);
 
     /** Destructor. */
-    ~DemandStreamKey ();
+    ~DemandStreamKey();
+
     
   public:
-    /** Default constructor */
-    DemandStreamKey ();
-    
     // /////////// Getters //////////
     /** Get the origin. */
     const stdair::AirportCode_T& getOrigin() const {
@@ -67,11 +76,19 @@ namespace TRADEMGEN {
        marketing classes for the same segment-stream. */
     const std::string toString() const;
     
+
   private:
-    // Attributes
+    // ///////////////// Attributes ///////////////
+    /** Required origin airport/city. */
     stdair::AirportCode_T _origin;
+
+    /** Required destination airport/city. */
     stdair::AirportCode_T _destination;
+
+    /** Preferred departure date. */
     stdair::Date_T _preferredDepartureDate;
+
+    /** Preferred cabin. */
     stdair::CabinCode_T _preferredCabin;
   };
 

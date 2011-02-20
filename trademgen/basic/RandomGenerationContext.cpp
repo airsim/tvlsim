@@ -1,9 +1,7 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// STL
-#include <iosfwd>
-// TRADEMGEN
+// TraDemGen
 #include <trademgen/basic/RandomGenerationContext.hpp>
 
 namespace TRADEMGEN {
@@ -15,22 +13,23 @@ namespace TRADEMGEN {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  RandomGenerationContext::RandomGenerationContext (const RandomGenerationContext& iRandomGenerationContext)
+  RandomGenerationContext::
+  RandomGenerationContext (const RandomGenerationContext& iRandomGenerationContext)
     : _cumulativeProbabilitySoFar (iRandomGenerationContext._cumulativeProbabilitySoFar),
       _numberOfRequestsGeneratedSoFar (iRandomGenerationContext._numberOfRequestsGeneratedSoFar) {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  RandomGenerationContext::~RandomGenerationContext () {
+  RandomGenerationContext::~RandomGenerationContext() {
   }
     
   // //////////////////////////////////////////////////////////////////////
-  void RandomGenerationContext::incrementGeneratedRequestsCounter () {
+  void RandomGenerationContext::incrementGeneratedRequestsCounter() {
     ++_numberOfRequestsGeneratedSoFar;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void RandomGenerationContext::reset () {
+  void RandomGenerationContext::reset() {
     _cumulativeProbabilitySoFar = 0.0;
     _numberOfRequestsGeneratedSoFar = 0;
   }
