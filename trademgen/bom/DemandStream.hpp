@@ -78,7 +78,7 @@ namespace TRADEMGEN {
       return _totalNumberOfRequestsToBeGenerated;
     }
 
-    /** Get the mean number of requests. */
+    /** Get the mean (expected) number of requests. */
     const stdair::NbOfRequests_T& getMeanNumberOfRequests() const {
       return _demandDistribution._meanNumberOfRequests;
     }

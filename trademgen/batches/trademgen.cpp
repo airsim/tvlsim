@@ -246,9 +246,10 @@ int main (int argc, char* argv[]) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
 
-  //  
+  // Retrieve the expected (mean value of the) number of events to be
+  // generated
   const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-    trademgenService.getTotalNumberOfRequestsToBeGenerated();
+    trademgenService.getExpectedTotalNumberOfRequestsToBeGenerated();
 
   // Initialise the (Boost) progress display object
   boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated

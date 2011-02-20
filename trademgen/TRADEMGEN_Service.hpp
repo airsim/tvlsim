@@ -106,13 +106,28 @@ namespace TRADEMGEN {
      * underlying EventQueue object, which keeps track of that number.
      *
      * \note That number usually corresponds to an expectation (i.e.,
-     *   the mean value of a random distribution). The actual number
-     *   will be drawn when calling the generateNextRequest() method.
+     *       the mean value of a random distribution). The actual number
+     *       will be drawn when calling the generateFirstRequests() method.
      *
      * @return const stdair::Count_T& Expected number of events to be
      *   generated.
      */
-    const stdair::Count_T& getTotalNumberOfRequestsToBeGenerated() const;
+    const stdair::Count_T& getExpectedTotalNumberOfRequestsToBeGenerated() const;
+
+    /**
+     * Get the actual number of events/requests to be generated for
+     * all the demand streams.
+     *
+     * The getActualTotalNbOfEvents() method is called on the
+     * underlying EventQueue object, which keeps track of that number.
+     *
+     * \note That number has been drawn when calling the
+     *       generateFirstRequests() method.
+     *
+     * @return const stdair::Count_T& Expected number of events to be
+     *   generated.
+     */
+    const stdair::Count_T& getActualTotalNumberOfRequestsToBeGenerated() const;
 
     /**
      * Check whether enough requests have already been generated for

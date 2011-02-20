@@ -278,7 +278,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   const stdair::Count_T& TRADEMGEN_Service::
-  getTotalNumberOfRequestsToBeGenerated() const {
+  getExpectedTotalNumberOfRequestsToBeGenerated() const {
     
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -294,6 +294,26 @@ namespace TRADEMGEN {
 
     //
     return oExpectedTotalNumberOfRequestsToBeGenerated;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  const stdair::Count_T& TRADEMGEN_Service::
+  getActualTotalNumberOfRequestsToBeGenerated() const {
+    
+    // Retrieve the TraDemGen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+
+    // Retrieve the event queue object instance
+    const stdair::EventQueue& lQueue= lTRADEMGEN_ServiceContext.getEventQueue();
+    
+    // Delegate the call to the dedicated command
+    const stdair::Count_T& oActualTotalNumberOfRequestsToBeGenerated =
+      lQueue.getActualTotalNbOfEvents();
+
+    //
+    return oActualTotalNumberOfRequestsToBeGenerated;
   }
 
   // ////////////////////////////////////////////////////////////////////

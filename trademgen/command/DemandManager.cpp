@@ -100,10 +100,6 @@ namespace TRADEMGEN {
     stdair::FacBomManager::instance().addToListAndMap (ioEventQueue,
                                                        oDemandStream);
 
-    //
-    // const stdair::NbOfRequests_T& lExpectedNumberOfEventsToBeGenerated =
-    //  oDemandStream.getTotalNumberOfRequestsToBeGenerated();
-
     return oDemandStream;
   }
     
@@ -114,6 +110,7 @@ namespace TRADEMGEN {
                                const POSProbabilityMass_T& iPOSProbMass,
                                const DemandStruct& iDemand) {
     
+    //
     const DemandStreamKey lDemandStreamKey (iDemand._origin,
                                             iDemand._destination,
                                             iDemand._prefDepDate,
@@ -121,6 +118,7 @@ namespace TRADEMGEN {
     // DEBUG
     // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
     
+    //
     const DemandDistribution lDemandDistribution (iDemand._demandMean,
                                                   iDemand._demandStdDev);
     
@@ -150,12 +148,13 @@ namespace TRADEMGEN {
     // Calculate the expected total number of events for the current
     // demand stream
     const stdair::NbOfRequests_T& lExpectedTotalNbOfEvents =
-      lDemandStream.getTotalNumberOfRequestsToBeGenerated();
+      lDemandStream.getMeanNumberOfRequests();
 
     /**
      * Initialise the progress status, specific to the demand stream,
      * held by the event queue.
-     * <br>The event queue object, which is part of the StdAir
+     *
+     * The event queue object, which is part of the StdAir
      * library, has no information on the DemandStream objects, which
      * are part of this (TraDemGen) library. As the number of events
      * to be generated are known from the DemandStream objects only,
@@ -170,8 +169,7 @@ namespace TRADEMGEN {
   stdair::RandomSeed_T DemandManager::
   generateSeed (stdair::UniformGenerator_T& ioSharedGenerator) {
     stdair::RealNumber_T lVariateUnif = ioSharedGenerator() * 1e9;
-    stdair::RandomSeed_T oSeed =
-      static_cast<stdair::RandomSeed_T>(lVariateUnif);
+    stdair::RandomSeed_T oSeed = static_cast<stdair::RandomSeed_T>(lVariateUnif);
     return oSeed;
   }
   
@@ -204,12 +202,11 @@ namespace TRADEMGEN {
                                       lBookingRequest);
 
     /**
-       Note that when adding an event in the event queue, the
-       event can be altered. That happens when an event already
-       exists, in the event queue, with exactly the same date-time
-       stamp. In that case, the date-time stamp is altered for the
-       newly added event, so that the unicity on the date-time
-       stamp can be guaranteed.
+       \note When adding an event in the event queue, the event can be
+       altered. That happens when an event already exists, in the
+       event queue, with exactly the same date-time stamp. In that
+       case, the date-time stamp is altered for the newly added event,
+       so that the unicity on the date-time stamp can be guaranteed.
     */
     ioEventQueue.addEvent (lEventStruct);
     
@@ -220,9 +217,9 @@ namespace TRADEMGEN {
   stdair::Count_T DemandManager::
   generateFirstRequests (stdair::EventQueue& ioEventQueue) {
 
-    //
-    stdair::NbOfEventsByDemandStreamMap_T lNbOfEvents;
-    
+    // Actual total number of events to be generated
+    stdair::NbOfRequests_T lActualTotalNbOfEvents = 0.0;
+
     // Retrieve the DemandStream list
     const DemandStreamList_T& lDemandStreamList =
       stdair::BomManager::getList<DemandStream> (ioEventQueue);
@@ -233,23 +230,34 @@ namespace TRADEMGEN {
       DemandStream* lDemandStream_ptr = *itDemandStream;
       assert (lDemandStream_ptr != NULL);
 
+      // Calculate the expected total number of events for the current
+      // demand stream
+      const stdair::NbOfRequests_T& lActualNbOfEvents =
+        lDemandStream_ptr->getTotalNumberOfRequestsToBeGenerated();
+      lActualTotalNbOfEvents += lActualNbOfEvents;
+
+      // Retrieve the key of the demand stream
+      const DemandStreamKey& lKey = lDemandStream_ptr->getKey();
+
+      // Update the progress status for the given demand stream
+      ioEventQueue.updateStatus (lKey.toString(), lActualNbOfEvents);
+
       // Check whether there are still booking requests to be generated
       const bool stillHavingRequestsToBeGenerated =
         lDemandStream_ptr->stillHavingRequestsToBeGenerated();
    
-      // Retrieve the key of the demand stream
-      const DemandStreamKey& lKey = lDemandStream_ptr->getKey();
-
       if (stillHavingRequestsToBeGenerated) {
-        // Generate the next event (booking request), and insert it in
-        // the event queue
+        // Generate the next event (booking request), and insert it
+        // into the event queue
         generateNextRequest (ioEventQueue, lKey.toString());
       }
     }
 
+    // Update the actual total number of events to be generated
+    ioEventQueue.setActualTotalNbOfEvents (lActualTotalNbOfEvents);
+
     // Retrieve the actual total number of events to be generated
-    const stdair::Count_T& oTotalNbOfEvents =
-      ioEventQueue.getExpectedTotalNbOfEvents();
+    const stdair::Count_T oTotalNbOfEvents = std::floor (lActualTotalNbOfEvents);
 
     //
     return oTotalNbOfEvents;
@@ -269,7 +277,13 @@ namespace TRADEMGEN {
       lCurrentDS_ptr->reset();
     }
     
-    // Reset the EventQueue object
+    /**
+     * Reset the EventQueue object.
+     *
+     * \note As the DemandStream objects are attached to the EventQueue
+     * instance, that latter has to be resetted after the DemandStream
+     * objects.
+     */
     ioEventQueue.reset();
   }
 
