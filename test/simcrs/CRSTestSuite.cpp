@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
     lFareOptionList.front();
 
   //  
-  const unsigned int lExpectedPrice = 2000;
+  const unsigned int lExpectedPrice = 200;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("The price given by the fare quoter for '"
