@@ -11,13 +11,13 @@ namespace SIMFQT  {
 
   // ////////////////////////////////////////////////////////////////////
   SegmentFeaturesKey::SegmentFeaturesKey (const stdair::AirlineCode_T& iAirlineCode,
-					  const stdair::ClassCode_T& iClassCode)
-    : _airlineCode (iAirlineCode), _classCode (iClassCode) {
+					  const std::list<std::string>& iClassCodeList)
+    : _airlineCode (iAirlineCode), _classCodeList (iClassCodeList) {
   }
 
   // ////////////////////////////////////////////////////////////////////
   SegmentFeaturesKey::SegmentFeaturesKey (const SegmentFeaturesKey& iKey)
-    : _airlineCode (iKey._airlineCode), _classCode (iKey._classCode) {
+    : _airlineCode (iKey._airlineCode), _classCodeList (iKey._classCodeList) {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -36,7 +36,14 @@ namespace SIMFQT  {
   // ////////////////////////////////////////////////////////////////////
   const std::string SegmentFeaturesKey::toString() const {
     std::ostringstream oStr;
-    oStr << _airlineCode << "-" << _classCode  << std::endl; 
+    oStr << _airlineCode << "-";
+    for (std::list<std::string>::const_iterator lItClassCode =
+           _classCodeList.begin();
+         lItClassCode != _classCodeList.end();
+         lItClassCode++) {
+      oStr << *lItClassCode << " ";
+    }
+    oStr << std::endl; 
     return oStr.str();
   }
 

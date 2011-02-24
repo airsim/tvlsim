@@ -4,6 +4,7 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
+#include <list>
 // SIMFQT
 #include <stdair/bom/KeyAbstract.hpp>
 #include <stdair/stdair_basic_types.hpp>
@@ -18,7 +19,7 @@ namespace SIMFQT  {
   public:
     // /////////// Construction ///////////
     /** Constructors. */
-    SegmentFeaturesKey (const stdair::AirlineCode_T&, const stdair::ClassCode_T&);
+    SegmentFeaturesKey (const stdair::AirlineCode_T&, const std::list<std::string> &);
     SegmentFeaturesKey (const SegmentFeaturesKey&);
     /** Destructor. */
     ~SegmentFeaturesKey ();
@@ -30,8 +31,8 @@ namespace SIMFQT  {
     }
 
     /** Get the class code. */
-    const stdair::ClassCode_T& getClassCode() const {
-      return _classCode;
+    const std::list<std::string>& getClassCodeList() const {
+      return _classCodeList;
     }
     
     // /////////// Display support methods /////////
@@ -54,7 +55,7 @@ namespace SIMFQT  {
     stdair::AirlineCode_T _airlineCode;
 
     /** Classe code. */
-    stdair::ClassCode_T _classCode;
+    std::list<std::string> _classCodeList;
   };
 
 }

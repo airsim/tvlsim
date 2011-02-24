@@ -50,8 +50,8 @@ namespace SIMFQT {
     const stdair::AirlineCode_T& getAirlineCode() const {
       return _key.getAirlineCode();
     }
-    const stdair::ClassCode_T& getClassCode() const {
-      return _key.getClassCode();
+    const std::list<std::string>& getClassCodeList() const {
+      return _key.getClassCodeList();
     }
     stdair::BomAbstract* const getParent() const { return _parent; }
     const  stdair::HolderMap_T& getHolderMap() const { return _holderMap; }

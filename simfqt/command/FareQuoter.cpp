@@ -443,7 +443,7 @@ namespace SIMFQT {
 
           // Set the travel fare option.
           stdair::FareOptionStruct lFareOption;
-          lFareOption.addClass (lcurrentSegmentFeatures_ptr->getClassCode());
+          //lFareOption.addClass (lcurrentSegmentFeatures_ptr->getClassCodeList());
           lFareOption.setFare (iPrice);
           lFareOption.setChangeFees (iChangeFees);
           lFareOption.setNonRefundable (iNonRefundable);
@@ -462,7 +462,7 @@ namespace SIMFQT {
                             << "\n     Fare:       "
                             << iPrice
                             << "\n     Class:      "
-                            << lcurrentSegmentFeatures_ptr->getClassCode()
+                            //<< lcurrentSegmentFeatures_ptr->getClassCode()
                             << "\n     Conditions: "
                             << iSaturdayStay << ", "
                             << iChangeFees << ", "

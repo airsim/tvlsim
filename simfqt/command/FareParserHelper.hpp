@@ -115,6 +115,16 @@ namespace SIMFQT {
                        boost::spirit::qi::unused_type) const;
     };
 
+    /** Store the cabin code. */
+    struct storeCabinCode : public ParserSemanticAction {
+      /** Actor Constructor. */
+      storeCabinCode  (FareRuleStruct&);
+      /** Actor Function (functor). */
+      void operator() (char,
+                       boost::spirit::qi::unused_type,
+                       boost::spirit::qi::unused_type) const;
+    };
+
     /** Store the channel distribution. */
     struct storeChannel : public ParserSemanticAction {
       /** Actor Constructor. */
@@ -200,7 +210,7 @@ namespace SIMFQT {
       /** Actor Constructor. */
       storeClass (FareRuleStruct&);
       /** Actor Function (functor). */
-      void operator() (char,
+      void operator() (std::vector<char>,
                        boost::spirit::qi::unused_type,
                        boost::spirit::qi::unused_type) const; 
     };
@@ -238,6 +248,7 @@ namespace SIMFQT {
      DepartureTimeRangeStart (hh:mm)
      DepartureTimeRangeEnd   (hh:mm)
      POS                     (3-char position city)
+     Cabin Code              (1-char cabin code)
      Channel                 (D=direct, I=indirect, N=oNline, F=oFfline)
      AdvancePurchase         
      SaturdayNight           (T=True, F=False)
@@ -246,7 +257,7 @@ namespace SIMFQT {
      MinimumStay
      Price
      AirlineCode             (2-char airline code)
-     Class                   (1-char class code)
+     ClassList               (List of 1-char class code)
      
      Grammar:
       Demand ::= PrefDepDate ';' Origin ';' Destination ';' PassengerType
@@ -302,8 +313,9 @@ namespace SIMFQT {
                               boost::spirit::ascii::space_type>
       start, comments, fare_rule, fare_rule_end, fare_key, fare_id, origin,
         destination, dateRangeStart, dateRangeEnd, date, timeRangeStart,
-        timeRangeEnd, time, position, channel, advancePurchase, saturdayStay,
-        changeFees, nonRefundable, minimumStay, fare, segment;
+        timeRangeEnd, time, position, cabinCode, channel, advancePurchase,
+        saturdayStay, changeFees, nonRefundable, minimumStay, fare,
+        segment, list_class;
       
       // Parser Context
       stdair::BomRoot& _bomRoot;

@@ -23,6 +23,7 @@ namespace SIMFQT {
      _dateRangeEnd(stdair::DEFAULT_DATE),
      _timeRangeStart(stdair::DEFAULT_EPSILON_DURATION),
      _timeRangeEnd(stdair::DEFAULT_EPSILON_DURATION),
+     _cabinCode (""), 
      _pos (""), 
      _advancePurchase(0), 
      _saturdayStay("T"),
@@ -59,24 +60,34 @@ namespace SIMFQT {
 	 << _dateRangeStart << "/" << _dateRangeEnd << "] - ["
 	 << boost::posix_time::to_simple_string(_timeRangeStart) << "/"
 	 << boost::posix_time::to_simple_string(_timeRangeEnd) << "]\n    "
+         << "-Cabin code- " << _cabinCode << "\n    "
          << "-Channel-    " << _channel << "\n    "
          << "-Conditions- " << _saturdayStay << ", " <<  _changeFees << ", "
          << _nonRefundable << ", " << _advancePurchase << ", "
 	 << _minimumStay << "\n    "
          << "-Fare-       " << _fare << "\n           ";
-    assert (_airlineCodeList.size() == _classCodeList.size());
-    stdair::ClassCodeList_T::const_iterator lItCurrentClassCode =
-      _classCodeList.begin();
+    assert (_airlineCodeList.size() == _classCodeListOfList.size());
+    std::list<std::list<std::string> >::const_iterator lItCurrentClassCodeList =
+      _classCodeListOfList.begin();
     stdair::AirlineCode_T lAirlineCode; 
-    stdair::ClassCode_T lClassCode;
+    std::list<std::string> lClassCodeList;
+    std::string lClassCode;
     for (stdair::AirlineCodeList_T::const_iterator lItCurrentAirlineCode =
            _airlineCodeList.begin();
          lItCurrentAirlineCode != _airlineCodeList.end();
          lItCurrentAirlineCode++) {
       lAirlineCode = *lItCurrentAirlineCode;
-      lClassCode = *lItCurrentClassCode;
-      ostr << lAirlineCode << ", " << lClassCode << "        ";
-      lItCurrentClassCode++;
+      lClassCodeList = *lItCurrentClassCodeList;
+      ostr << lAirlineCode << ", ";
+      for (std::list<std::string>::const_iterator lItCurrentClassCode =
+             lClassCodeList.begin();
+           lItCurrentClassCode != lClassCodeList.end();
+           lItCurrentClassCode ++) {
+        lClassCode = *lItCurrentClassCode;
+        ostr << lClassCode << " ";
+      }
+      ostr << "        ";
+      lItCurrentClassCodeList++;
     }
     ostr << std::endl;
     return ostr.str();
@@ -116,6 +127,31 @@ namespace SIMFQT {
   }
 
   // //////////////////////////////////////////////////////////////////////
+  void FareRuleStruct::beginClassCodeList () {
+    _itCurrentClassCodeList = _classCodeListOfList.begin();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  bool FareRuleStruct::hasNotReachedEndClassCodeList () const {
+    bool result = (_itCurrentClassCodeList != _classCodeListOfList.end());
+    return result;
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  std::list<std::string> FareRuleStruct::getCurrentClassCodeList () const {
+    assert (_itCurrentClassCodeList != _classCodeListOfList.end());    
+    return (*_itCurrentClassCodeList);
+  }
+
+
+  // //////////////////////////////////////////////////////////////////////
+  void FareRuleStruct::iterateClassCodeList () {
+    if (_itCurrentClassCodeList != _classCodeListOfList.end()) {
+      _itCurrentClassCodeList++;
+    }
+  }
+
+  // //////////////////////////////////////////////////////////////////////
   void FareRuleStruct::beginClassCode () {
     _itCurrentClassCode = _classCodeList.begin();
   }
@@ -127,7 +163,7 @@ namespace SIMFQT {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  stdair::ClassCode_T FareRuleStruct::getCurrentClassCode () const {
+  std::string FareRuleStruct::getCurrentClassCode () const {
     assert (_itCurrentClassCode != _classCodeList.end());    
     return (*_itCurrentClassCode);
   }

@@ -41,6 +41,11 @@ namespace SIMFQT {
     /** Get the size of the class code list. */
     const unsigned int getClassCodeListSize () const {
       return _classCodeList.size();
+    }
+
+    /** Get the size of the list of class code list. */
+    const unsigned int getClassCodeListOfListSize () const {
+      return _classCodeListOfList.size();
     } 
   
     /** Get the first airline code. */
@@ -62,6 +67,22 @@ namespace SIMFQT {
         increment both internal iterators on Buckets. */
     void iterateAirline ();
 
+    /** Initialise the internal iterators on class code list:
+	The current iterator is set on the first class code list,
+	the next iterator is set on the second one. */
+    void beginClassCodeList ();
+
+    /** States whether or not the end of the (class code list)
+        list has been reached. */
+    bool hasNotReachedEndClassCodeList () const;
+
+    /** Get the current element (class code list). */
+    std::list<std::string> getCurrentClassCodeList () const;
+
+    /** Iterate for one element (classCodelist): 
+        increment both internal iterators on Buckets. */
+    void iterateClassCodeList ();
+
     /** Initialise the internal iterators on class code:
 	The current iterator is set on the first class code,
 	the next iterator is set on the second one. */
@@ -72,7 +93,7 @@ namespace SIMFQT {
     bool hasNotReachedEndClassCode () const;
 
     /** Get the current element (class code). */
-    stdair::ClassCode_T getCurrentClassCode () const;
+    std::string getCurrentClassCode () const;
 
     /** Iterate for one element (classCode): 
         increment both internal iterators on Buckets. */
@@ -94,7 +115,9 @@ namespace SIMFQT {
     /** Iterator for the current airline code list. */
     stdair::AirlineCodeList_T::iterator _itCurrentAirlineCode;
     /** Iterator for the current class code list. */
-    stdair::ClassCodeList_T::iterator _itCurrentClassCode;
+    std::list<std::list<std::string> >::iterator _itCurrentClassCodeList;
+    /** Iterator for the current class code. */
+    std::list<std::string>::iterator _itCurrentClassCode;
     
     /** Fare ID. */
     SIMFQT::FareQuoteID_T _fareId;
@@ -116,8 +139,11 @@ namespace SIMFQT {
      
     /** End time from the time range available for this fare rule.*/
     stdair::Duration_T _timeRangeEnd;
+
+    /** Cabin code. */
+    stdair::CabinCode_T _cabinCode;
     
-     /** Point-of-sale. */
+    /** Point-of-sale. */
     stdair::CityCode_T _pos;
     
     /** Channel distribution. */
@@ -153,8 +179,11 @@ namespace SIMFQT {
     /** Numbers of different Airline Codes*/
     unsigned long int _nbOfAirlines;
     
+    /** Class Code List of list*/
+    std::list<std::list<std::string> > _classCodeListOfList;
+
     /** Class Code List*/
-    stdair::ClassCodeList_T _classCodeList;
+    std::list<std::string>  _classCodeList;
 
   };
 

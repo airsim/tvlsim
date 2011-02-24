@@ -149,21 +149,23 @@ namespace SIMFQT {
     assert(lFareRuleFeatures_ptr != NULL); 
 
     // Generate Segment Features and link them to their FareRule
+    std::list<std::list<std::string> >::const_iterator lItCurrentClassCodeList =
+      iFareRuleStruct._classCodeListOfList.begin();
     const unsigned int lAirlineListSize =
       iFareRuleStruct.getAirlineListSize();
-    const unsigned int lClassCodeListSize =
-      iFareRuleStruct.getClassCodeListSize();
-    assert (lAirlineListSize == lClassCodeListSize);
-    iFareRuleStruct.beginClassCode();
+    const unsigned int lClassCodeListOfListSize =
+      iFareRuleStruct.getClassCodeListOfListSize();
+    assert (lAirlineListSize == lClassCodeListOfListSize);
+    iFareRuleStruct.beginClassCodeList();
     for (iFareRuleStruct.beginAirline();
 	 iFareRuleStruct.hasNotReachedEndAirline();
 	 iFareRuleStruct.iterateAirline()) {
       stdair::AirlineCode_T lAirlineCode =
 	iFareRuleStruct.getCurrentAirlineCode();
-      stdair::ClassCode_T lClassCode = 
-	iFareRuleStruct.getCurrentClassCode();
-      iFareRuleStruct.iterateClassCode();
-      const SegmentFeaturesKey lSegmentFeaturesKey (lAirlineCode, lClassCode); 
+      std::list<std::string> lClassCodeList = 
+	iFareRuleStruct.getCurrentClassCodeList();
+      iFareRuleStruct.iterateClassCodeList();
+      const SegmentFeaturesKey lSegmentFeaturesKey (lAirlineCode, lClassCodeList); 
         
       SegmentFeatures* lSegmentFeatures_ptr =
          &stdair::FacBom<SegmentFeatures>::instance().create (lSegmentFeaturesKey);
