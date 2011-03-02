@@ -79,8 +79,8 @@ namespace DSIM {
       playBookingRequest (ioSIMCRS_Service, lPoppedRequest);
 
       // Retrieve the corresponding demand stream
-      const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
-        lEventStruct.getDemandStreamKey();
+      const stdair::EventContentKey_T& lDemandStreamKey =
+        lEventStruct.getEventContentKey();
 
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated =

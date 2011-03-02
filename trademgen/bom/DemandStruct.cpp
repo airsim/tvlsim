@@ -5,7 +5,7 @@
 #include <cassert>
 #include <sstream>
 // StdAir
-#include <stdair/basic/BasConst_General.hpp>
+#include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/service/Logger.hpp>
 // TRADEMGEN
 #include <trademgen/TRADEMGEN_Types.hpp>
@@ -15,9 +15,10 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   DemandStruct::DemandStruct()
-    : _prefDepDate (stdair::DEFAULT_DATE), _prefArrDate (stdair::DEFAULT_DATE),
-      _prefCabin (""), _itHours (0), _itMinutes (0), _itSeconds (0),
-      _itFFCode ("") {
+    : _prefDepDate (stdair::DEFAULT_FLIGHT_DATE),
+      _prefArrDate (stdair::DEFAULT_FLIGHT_DATE),
+      _prefCabin (stdair::DEFAULT_CABIN_CODE),
+      _itHours (0), _itMinutes (0), _itSeconds (0), _itFFCode ("") {
   }
 
   // ////////////////////////////////////////////////////////////////////

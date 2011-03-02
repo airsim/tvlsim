@@ -299,9 +299,9 @@ int main (int argc, char* argv[]) {
       // Dump the request into the dedicated CSV file
       TRADEMGEN::BomManager::csvDisplay (output, lPoppedRequest);
         
-      // Retrieve the corresponding demand stream
-      const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
-        lEventStruct.getDemandStreamKey();
+      // Retrieve the corresponding demand stream key
+      const stdair::EventContentKey_T& lDemandStreamKey =
+        lEventStruct.getEventContentKey();
       
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated = 

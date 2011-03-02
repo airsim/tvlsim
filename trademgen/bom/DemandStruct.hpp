@@ -19,6 +19,7 @@ namespace TRADEMGEN {
   struct DemandStruct : public stdair::StructAbstract {
 
   public:
+    // /////////////////// Getters ////////////////////
     /** Get the date from the staging details. */
     stdair::Date_T getDate() const;
 
@@ -27,13 +28,13 @@ namespace TRADEMGEN {
 
 
   public:
-    // ////////////// Display Support Methods //////////
+    // ////////////////// Display Support Methods ////////////////
     /** Give a description of the structure (for display purposes). */
     const std::string describe() const;
 
 
   public:
-    // ////////// Constructors and destructors /////////
+    // /////////////// Constructors and destructors ///////////////
     /** Default constructor. */
     DemandStruct();
     /** Destructor */
