@@ -150,7 +150,7 @@ namespace DSIM {
       const stdair::TravelSolutionStruct& lChosenTS = *itTS;
 
       // DEBUG
-      STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS);
+      STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS.describe());
       
       // Retrieve and convert the party size
       const stdair::NbOfSeats_T& lPartySizeDouble =
