@@ -41,12 +41,10 @@ namespace SIMFQT {
       // DEBUG
       //STDAIR_LOG_DEBUG ( "Fare Id: " << _fareRule._fareId);
 
-      _fareRule._nbOfAirlines = 0;
       _fareRule._airlineCode = "";
       _fareRule._classCode = "";
       _fareRule._airlineCodeList.clear();
       _fareRule._classCodeList.clear();
-      _fareRule._classCodeListOfList.clear();
       _fareRule._itSeconds = 0; 
     }
     
@@ -340,34 +338,8 @@ namespace SIMFQT {
       stdair::AirlineCode_T lAirlineCode (iChar.begin(), iChar.end());
       // Update the airline code
       _fareRule._airlineCode = lAirlineCode;
-      // Test if the FareRule Struct stands for interline products
-      if (_fareRule._airlineCodeList.size() > 0) {
-        _fareRule._classCodeListOfList.push_back(_fareRule._classCodeList);
-        _fareRule._classCodeList.clear();
-        // Update the number of airlines if necessary
-        std::vector<stdair::AirlineCode_T>::iterator Airline_iterator;
-        for (Airline_iterator = _fareRule._airlineCodeList.begin();
-             Airline_iterator != _fareRule._airlineCodeList.end();
-             ++Airline_iterator) {
-          stdair::AirlineCode_T lPreviousAirlineCode =
-            *Airline_iterator;
-          if (lPreviousAirlineCode == lAirlineCode) {
-            lAlreadyInTheList = true;
-            /*STDAIR_LOG_DEBUG ("Airline Code Already Existing: "
-              << lAirlineCode);*/
-          }
-        }
-        if (lAlreadyInTheList == false) {
-          /*STDAIR_LOG_DEBUG ("New Airline Code: "
-          << lAirlineCode);*/
-          _fareRule._airlineCodeList.push_back(lAirlineCode);
-          _fareRule._classCodeList.clear();
-        }
-      } else {
-        /*STDAIR_LOG_DEBUG ("First Airline Code: "
-          << lAirlineCode);*/
-        _fareRule._airlineCodeList.push_back (lAirlineCode);
-      }
+      // Insertion of this airline Code list in the whole AirlineCode name
+      _fareRule._airlineCodeList.push_back (lAirlineCode);
       // DEBUG
       //STDAIR_LOG_DEBUG ( "Airline code: " << lAirlineCode);
     }
@@ -392,7 +364,7 @@ namespace SIMFQT {
       // Insertion of this class Code list in the whole classCode name
       _fareRule._classCodeList.push_back(classCodeStr);
       // DEBUG
-      // STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
+      STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -410,7 +382,6 @@ namespace SIMFQT {
       // DEBUG
       // STDAIR_LOG_DEBUG ("Do End");
       // Generation of the fare rule object.
-      _fareRule._classCodeListOfList.push_back(_fareRule._classCodeList);
       FareRuleGenerator::createFareRule (_bomRoot, _fareRule);
       STDAIR_LOG_DEBUG(_fareRule.describe());
     }  
@@ -527,11 +498,8 @@ namespace SIMFQT {
       fare = bsq::double_[storeFare(_fareRule)];
       
       segment = bsq::repeat(2)[bsa::char_("A-Z")][storeAirlineCode(_fareRule)]
-        //>> ';'
-        //>> bsa::char_("A-Z")[storeClass(_fareRule)]
-        >> +(';' >> list_class);
-
-      list_class = bsq::repeat(1,bsq::inf)[bsa::char_("A-Z")][storeClass(_fareRule)];
+        >> ';'
+        >> bsq::repeat(1,bsq::inf)[bsa::char_("A-Z")][storeClass(_fareRule)];
 
       //BOOST_SPIRIT_DEBUG_NODE (FareRuleParser);
       BOOST_SPIRIT_DEBUG_NODE (start);
@@ -558,7 +526,6 @@ namespace SIMFQT {
       BOOST_SPIRIT_DEBUG_NODE (minimumStay);
       BOOST_SPIRIT_DEBUG_NODE (fare);
       BOOST_SPIRIT_DEBUG_NODE (segment);
-      BOOST_SPIRIT_DEBUG_NODE (list_class);
     }
   }
 

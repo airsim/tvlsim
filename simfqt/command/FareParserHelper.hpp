@@ -315,7 +315,7 @@ namespace SIMFQT {
         destination, dateRangeStart, dateRangeEnd, date, timeRangeStart,
         timeRangeEnd, time, position, cabinCode, channel, advancePurchase,
         saturdayStay, changeFees, nonRefundable, minimumStay, fare,
-        segment, list_class;
+        segment;
       
       // Parser Context
       stdair::BomRoot& _bomRoot;

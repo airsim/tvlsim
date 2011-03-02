@@ -7,7 +7,7 @@
 #include <list>
 // SIMFQT
 #include <stdair/bom/KeyAbstract.hpp>
-#include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_types.hpp>
 
 namespace SIMFQT  {
   /** Key of airport-pair. */
@@ -19,19 +19,20 @@ namespace SIMFQT  {
   public:
     // /////////// Construction ///////////
     /** Constructors. */
-    SegmentFeaturesKey (const stdair::AirlineCode_T&, const std::list<std::string> &);
+    SegmentFeaturesKey (const stdair::AirlineCodeList_T&,
+                        const stdair::ClassList_StringList_T&);
     SegmentFeaturesKey (const SegmentFeaturesKey&);
     /** Destructor. */
     ~SegmentFeaturesKey ();
     
     // /////////// Getters //////////
-    /** Get the airline code. */
-    const stdair::AirlineCode_T& getAirlineCode() const {
-      return _airlineCode;
+    /** Get the airline code list. */
+    const stdair::AirlineCodeList_T& getAirlineCodeList() const {
+      return _airlineCodeList;
     }
 
-    /** Get the class code. */
-    const std::list<std::string>& getClassCodeList() const {
+    /** Get the class code list. */
+    const stdair::ClassList_StringList_T& getClassCodeList() const {
       return _classCodeList;
     }
     
@@ -51,11 +52,11 @@ namespace SIMFQT  {
 
   private:
     // Attributes
-    /** Airline code. */
-    stdair::AirlineCode_T _airlineCode;
+    /** Airline code List. */
+    stdair::AirlineCodeList_T _airlineCodeList;
 
-    /** Classe code. */
-    std::list<std::string> _classCodeList;
+    /** Classe code List. */
+    stdair::ClassList_StringList_T _classCodeList;
   };
 
 }

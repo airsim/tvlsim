@@ -66,28 +66,20 @@ namespace SIMFQT {
          << _nonRefundable << ", " << _advancePurchase << ", "
 	 << _minimumStay << "\n    "
          << "-Fare-       " << _fare << "\n           ";
-    assert (_airlineCodeList.size() == _classCodeListOfList.size());
-    std::list<std::list<std::string> >::const_iterator lItCurrentClassCodeList =
-      _classCodeListOfList.begin();
+    assert (_airlineCodeList.size() == _classCodeList.size());
+    stdair::ClassList_StringList_T::const_iterator lItCurrentClassCode =
+      _classCodeList.begin();
     stdair::AirlineCode_T lAirlineCode; 
-    std::list<std::string> lClassCodeList;
     std::string lClassCode;
     for (stdair::AirlineCodeList_T::const_iterator lItCurrentAirlineCode =
            _airlineCodeList.begin();
          lItCurrentAirlineCode != _airlineCodeList.end();
          lItCurrentAirlineCode++) {
       lAirlineCode = *lItCurrentAirlineCode;
-      lClassCodeList = *lItCurrentClassCodeList;
-      ostr << lAirlineCode << ", ";
-      for (std::list<std::string>::const_iterator lItCurrentClassCode =
-             lClassCodeList.begin();
-           lItCurrentClassCode != lClassCodeList.end();
-           lItCurrentClassCode ++) {
-        lClassCode = *lItCurrentClassCode;
-        ostr << lClassCode << " ";
-      }
+      lClassCode = *lItCurrentClassCode;
+      ostr << lAirlineCode << ", " << lClassCode;
       ostr << "        ";
-      lItCurrentClassCodeList++;
+      lItCurrentClassCode++;
     }
     ostr << std::endl;
     return ostr.str();
@@ -118,37 +110,19 @@ namespace SIMFQT {
       return (*_itCurrentAirlineCode);
   }
 
-
   // //////////////////////////////////////////////////////////////////////
   void FareRuleStruct::iterateAirline () {
-    if (_itCurrentAirlineCode != _airlineCodeList.end()) {
+    if (_itCurrentAirlineCode != _classCodeList.end()) {
       _itCurrentAirlineCode++;
     }
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void FareRuleStruct::beginClassCodeList () {
-    _itCurrentClassCodeList = _classCodeListOfList.begin();
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  bool FareRuleStruct::hasNotReachedEndClassCodeList () const {
-    bool result = (_itCurrentClassCodeList != _classCodeListOfList.end());
-    return result;
-  }
-  
-  // //////////////////////////////////////////////////////////////////////
-  std::list<std::string> FareRuleStruct::getCurrentClassCodeList () const {
-    assert (_itCurrentClassCodeList != _classCodeListOfList.end());    
-    return (*_itCurrentClassCodeList);
-  }
-
-
-  // //////////////////////////////////////////////////////////////////////
-  void FareRuleStruct::iterateClassCodeList () {
-    if (_itCurrentClassCodeList != _classCodeListOfList.end()) {
-      _itCurrentClassCodeList++;
-    }
+  const std::string& FareRuleStruct::getFirstClassCode () const {
+    assert (_classCodeList.size() > 0);
+    stdair::ClassList_StringList_T::const_iterator itFirstClassCode =
+      _classCodeList.begin();
+    return *itFirstClassCode;
   }
 
   // //////////////////////////////////////////////////////////////////////

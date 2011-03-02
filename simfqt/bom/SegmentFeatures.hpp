@@ -47,10 +47,10 @@ namespace SIMFQT {
   public:
     // ////////// Getters ////////////
     const Key_T& getKey() const { return _key; }
-    const stdair::AirlineCode_T& getAirlineCode() const {
-      return _key.getAirlineCode();
+    const stdair::AirlineCodeList_T& getAirlineCodeList() const {
+      return _key.getAirlineCodeList();
     }
-    const std::list<std::string>& getClassCodeList() const {
+    const stdair::ClassList_StringList_T& getClassCodeList() const {
       return _key.getClassCodeList();
     }
     stdair::BomAbstract* const getParent() const { return _parent; }

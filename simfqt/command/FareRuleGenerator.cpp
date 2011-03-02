@@ -149,31 +149,20 @@ namespace SIMFQT {
     assert(lFareRuleFeatures_ptr != NULL); 
 
     // Generate Segment Features and link them to their FareRule
-    std::list<std::list<std::string> >::const_iterator lItCurrentClassCodeList =
-      iFareRuleStruct._classCodeListOfList.begin();
     const unsigned int lAirlineListSize =
       iFareRuleStruct.getAirlineListSize();
-    const unsigned int lClassCodeListOfListSize =
-      iFareRuleStruct.getClassCodeListOfListSize();
-    assert (lAirlineListSize == lClassCodeListOfListSize);
-    iFareRuleStruct.beginClassCodeList();
-    for (iFareRuleStruct.beginAirline();
-	 iFareRuleStruct.hasNotReachedEndAirline();
-	 iFareRuleStruct.iterateAirline()) {
-      stdair::AirlineCode_T lAirlineCode =
-	iFareRuleStruct.getCurrentAirlineCode();
-      std::list<std::string> lClassCodeList = 
-	iFareRuleStruct.getCurrentClassCodeList();
-      iFareRuleStruct.iterateClassCodeList();
-      const SegmentFeaturesKey lSegmentFeaturesKey (lAirlineCode, lClassCodeList); 
+    const unsigned int lClassCodeListSize =
+      iFareRuleStruct.getClassCodeListSize();
+    assert (lAirlineListSize == lClassCodeListSize);
+    const SegmentFeaturesKey lSegmentFeaturesKey (iFareRuleStruct._airlineCodeList,
+                                                  iFareRuleStruct._classCodeList);
         
-      SegmentFeatures* lSegmentFeatures_ptr =
-         &stdair::FacBom<SegmentFeatures>::instance().create (lSegmentFeaturesKey);
-      stdair::FacBomManager::
-	instance().addToListAndMap (*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
-      stdair::FacBomManager::
-	instance().linkWithParent(*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
-      }
+    SegmentFeatures* lSegmentFeatures_ptr =
+      &stdair::FacBom<SegmentFeatures>::instance().create (lSegmentFeaturesKey);
+    stdair::FacBomManager::
+      instance().addToListAndMap (*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
+    stdair::FacBomManager::
+      instance().linkWithParent(*lFareRuleFeatures_ptr, *lSegmentFeatures_ptr); 
   }
         
 }

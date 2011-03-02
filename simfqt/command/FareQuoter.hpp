@@ -35,6 +35,7 @@ namespace SIMFQT {
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::BomRoot&,
+                            const std::vector<std::string>&,
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
@@ -58,11 +59,8 @@ namespace SIMFQT {
                             stdair::TravelSolutionStruct&,
                             const FareRuleFeatures&,
                             const FarePosChannel&,
-                            const std::vector<std::string>&,
-                            const stdair::PriceValue_T&,
-                            const stdair::SaturdayStay_T&,
-                            const stdair::ChangeFees_T&,
-                            const stdair::NonRefundable_T&);
+                            stdair::FareOptionStruct&,
+                            const std::vector<std::string>&);
     
 
   private:
