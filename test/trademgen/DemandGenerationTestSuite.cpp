@@ -184,8 +184,8 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                       << lPoppedRequest.describe() << "'.");
     
     // Retrieve the corresponding demand stream
-    const stdair::DemandStreamKeyStr_T& lDemandStreamKey =
-      lEventStruct.getDemandStreamKey();
+    const stdair::EventContentKey_T& lDemandStreamKey =
+      lEventStruct.getEventContentKey();
 
     // Check that the number of booking requests to be generated are correct
     const NbOfEventsByDemandStreamMap_T::iterator itNbOfEventsMap =
