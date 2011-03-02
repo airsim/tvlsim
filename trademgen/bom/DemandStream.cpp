@@ -141,19 +141,19 @@ namespace TRADEMGEN {
   const stdair::DateTime_T DemandStream::generateTimeOfRequest() {
     
     // Assert that there are requests to be generated.
-    const stdair::Count_T lNbOfRequestsGeneratedSoFar =
+    const stdair::Count_T& lNbOfRequestsGeneratedSoFar =
       _randomGenerationContext._numberOfRequestsGeneratedSoFar;
 
     const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
       _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
     assert (lRemainingNumberOfRequestsToBeGenerated > 0);
 
-    // Request datetime, determined from departure date and arrival pattern
+    // The request date-time is derived from departure date and arrival pattern.
     // Sequential generation
-    const stdair::Probability_T lCumulativeProbabilitySoFar =
+    const stdair::Probability_T& lCumulativeProbabilitySoFar =
       _randomGenerationContext._cumulativeProbabilitySoFar;
 
-    const stdair::Probability_T lVariate =
+    const stdair::Probability_T& lVariate =
       _requestDateTimeRandomGenerator.generateUniform01();
 
     //
