@@ -537,7 +537,7 @@ namespace SIMFQT {
                  lClassCodeList.begin();
                itClassCodeList != lClassCodeList.end();
                ++itClassCodeList ) {
-            iFareOption.addClass (*itClassCodeList);
+            iFareOption.addClassList (*itClassCodeList);
           }
           ioTravelSolution.addFareOption(iFareOption);
           
