@@ -17,10 +17,6 @@ namespace stdair {
   struct TravelSolutionStruct;
 }
 
-namespace AIRINV {
-  class AIRINV_Master_Service;
-}
-
 namespace SIMCRS {
 
   /** Command wrapping the travel distribution (CRS/GDS) process. */
@@ -28,12 +24,13 @@ namespace SIMCRS {
     friend class SIMCRS_Service;
   private:
     /** Get the availability for each travel solution in the list.. */
-    static void getAvailability (AIRINV::AIRINV_Master_Service&,
+    static void getAvailability (const AIRINV::AIRINV_ServicePtr_Map_T&,
+                                 const CRSCode_T&,
                                  stdair::TravelSolutionList_T&);
     
     /** Register a booking (segment sell). */
-    static void sell (AIRINV::AIRINV_Master_Service&,
-                      const stdair::TravelSolutionStruct&,
+    static void sell (const AIRINV::AIRINV_ServicePtr_Map_T&,
+                      const CRSCode_T&, const stdair::TravelSolutionStruct&,
                       const stdair::NbOfSeats_T&);
 
   private:
