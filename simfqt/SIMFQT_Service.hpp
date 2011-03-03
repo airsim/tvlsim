@@ -15,6 +15,7 @@
 // Forward declarations.
 namespace stdair {
   class STDAIR_Service;
+  struct BookingRequestStruct;
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
