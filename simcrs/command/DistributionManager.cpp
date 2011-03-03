@@ -4,10 +4,11 @@
 // STL
 #include <cassert>
 // StdAir
+#include <stdair/bom/FareOptionStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // Airline Inventory
-#include <airinv/AIRINV_Service.hpp>
+#include <airinv/AIRINV_Master_Service.hpp>
 // Simcrs
 #include <simcrs/command/DistributionManager.hpp>
 
@@ -15,8 +16,7 @@ namespace SIMCRS {
   
   // ////////////////////////////////////////////////////////////////////
   void DistributionManager::
-  getAvailability (const AIRINV::AIRINV_ServicePtr_Map_T& iAIRINV_ServiceMap,
-                   const CRSCode_T& iCRSCode,
+  getAvailability (AIRINV::AIRINV_Master_Service& ioAIRINV_Master_Service,
                    stdair::TravelSolutionList_T& ioTravelSolutionList) {
     for (stdair::TravelSolutionList_T::iterator itTS =
            ioTravelSolutionList.begin();
@@ -27,39 +27,32 @@ namespace SIMCRS {
   
   // ////////////////////////////////////////////////////////////////////
   void DistributionManager::
-  sell (const AIRINV::AIRINV_ServicePtr_Map_T& iAIRINV_ServiceMap,
-        const CRSCode_T& iCRSCode,
+  sell (AIRINV::AIRINV_Master_Service& ioAIRINV_Master_Service,
         const stdair::TravelSolutionStruct& iTravelSolution,
         const stdair::NbOfSeats_T& iPartySize) {
 
     try {
-      /**const stdair::KeyList_T& lSegmentDateKeyList =
+      const stdair::KeyList_T& lSegmentDateKeyList =
         iTravelSolution.getSegmentPath();
-      const stdair::ClassList_String_T& lBookingClassKeyList; //=
-        //iTravelSolution.getBookingClassKeyList();
-      stdair::ClassList_String_T::const_iterator itBookingClassKey =
-        lBookingClassKeyList.begin();
+      const stdair::FareOptionStruct& lChosenFareOption =
+        iTravelSolution.getChosenFareOption ();
+      const stdair::ClassList_StringList_T& lClassPath =
+        lChosenFareOption.getClassPath();
+      stdair::ClassList_StringList_T::const_iterator itClassKeyList =
+        lClassPath.begin();
       for (stdair::KeyList_T::const_iterator itKey= lSegmentDateKeyList.begin();
-           itKey != lSegmentDateKeyList.end(); ++itKey, ++itBookingClassKey) {
+           itKey != lSegmentDateKeyList.end(); ++itKey, ++itClassKeyList) {
         const std::string& lSegmentDateKey = *itKey;
 
-        std::ostringstream ostrCode;
-        ostrCode << lSegmentDateKey.at(0) << lSegmentDateKey.at(1);
-        stdair::AirlineCode_T lAirlineCode = ostrCode.str(); 
-
-        // Do the sale within the corresponding inventory.
-        AIRINV::AIRINV_ServicePtr_Map_T::const_iterator itAirinvService =
-          iAIRINV_ServiceMap.find (lAirlineCode);
-        assert (itAirinvService != iAIRINV_ServiceMap.end());
-        const AIRINV::AIRINV_ServicePtr_T& lAirinvService_ptr =
-          itAirinvService->second;
-        assert (lAirinvService_ptr);
+        // TODO: Removed this hardcode.
         std::ostringstream ostr;
-        ostr <<*itBookingClassKey;
+        const stdair::ClassList_String_T& lClassList = *itClassKeyList;
+        assert (lClassList.size() > 0);
+        ostr << lClassList.at(0);
         const stdair::ClassCode_T lClassCode (ostr.str());
-        lAirinvService_ptr->sell (lSegmentDateKey, lClassCode, iPartySize);
-        }*/
-            
+        ioAIRINV_Master_Service.sell (lSegmentDateKey, lClassCode, iPartySize);
+      }
+      
       // DEBUG
       // STDAIR_LOG_DEBUG ("The booking has been made");
       
@@ -68,5 +61,5 @@ namespace SIMCRS {
       throw BookingException();
     }
   }
-
+  
 }

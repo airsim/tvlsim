@@ -302,15 +302,14 @@ namespace SIMCRS {
     stdair::TravelSolutionList_T oTravelSolutionList;
     
     // Get a reference on the AIRSCHED service handler
-    AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr =
+    AIRSCHED::AIRSCHED_Service& lAIRSCHED_Service =
       lSIMCRS_ServiceContext.getAIRSCHED_Service();
-    assert (lAIRSCHED_Service_ptr != NULL);
             
     // Delegate the booking to the dedicated service
     stdair::BasChronometer lTravelSolutionRetrievingChronometer;
     lTravelSolutionRetrievingChronometer.start();
-    lAIRSCHED_Service_ptr->buildSegmentPathList (oTravelSolutionList,
-                                                 iBookingRequest);
+    lAIRSCHED_Service.buildSegmentPathList (oTravelSolutionList,
+                                            iBookingRequest);
       
     // DEBUG
     const double lSegmentPathRetrievingMeasure =
@@ -336,14 +335,13 @@ namespace SIMCRS {
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
     // Get a reference on the SIMFQT service handler
-    SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+    SIMFQT::SIMFQT_Service& lSIMFQT_Service = 
       lSIMCRS_ServiceContext.getSIMFQT_Service();
-    assert (lSIMFQT_Service_ptr != NULL);
       
     // Delegate the action to the dedicated command
     stdair::BasChronometer lFareQuoteRetrievalChronometer;
     lFareQuoteRetrievalChronometer.start();
-    lSIMFQT_Service_ptr->getFares (iBookingRequest, ioTravelSolutionList);
+    lSIMFQT_Service.getFares (iBookingRequest, ioTravelSolutionList);
 
     // DEBUG
     const double lFareQuoteRetrievalMeasure =
@@ -380,11 +378,10 @@ namespace SIMCRS {
     // Retrieve the CRS code
     //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
 
-    // TODO: optimise this part.
-    // Retrieve the map/list of AIRINV_Services
-    // const AIRINV_ServicePtr_Map_T& lAIRINV_ServiceMap =
-    //   lSIMCRS_ServiceContext.getAIRINV_ServiceMap ();
-      
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+    
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
     lSellChronometer.start();
@@ -393,11 +390,9 @@ namespace SIMCRS {
     STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
                       << " persons on the following travel solution: "
                       << iTravelSolution.describe());
-    STDAIR_LOG_DEBUG ("Note: the sell is not yet fully implemented...");
-
-    // TODO: Finish to implement the sell
-    // DistributionManager::sell (lAIRINV_ServiceMap,
-    //                            lCRSCode, iTravelSolution, iPartySize);
+    
+     DistributionManager::sell (lAIRINV_Master_Service,
+                                iTravelSolution, iPartySize);
       
     // DEBUG
     const double lSellMeasure = lSellChronometer.elapsed();
