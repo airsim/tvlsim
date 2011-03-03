@@ -11,6 +11,8 @@
 // StdAir
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/Inventory.hpp>
+// RMOL
+#include <rmol/RMOL_Types.hpp>
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
 #include <airinv/service/ServiceAbstract.hpp>
@@ -47,11 +49,22 @@ namespace AIRINV {
       assert (_stdairService != NULL);
       return *_stdairService;
     }
+
+    /** Get the RMOL service handler. */
+    RMOL::RMOL_Service& getRMOL_Service () const {
+      assert (_rmolService != NULL);
+      return *_rmolService;
+    }
     
     // ///////////////// Setters ///////////////////
     /** Set the pointer on the STDAIR service handler. */
     void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
       _stdairService = ioSTDAIR_ServicePtr;
+    }
+    
+    /** Set the pointer on the RMOL service handler. */
+    void setRMOL_Service (RMOL::RMOL_ServicePtr_T ioRMOL_ServicePtr) {
+      _rmolService = ioRMOL_ServicePtr;
     }
 
   private:
@@ -67,6 +80,9 @@ namespace AIRINV {
     // /////////////// Children ///////////////
     /** Standard Airline (StdAir) Service Handler. */
     stdair::STDAIR_ServicePtr_T _stdairService;
+    
+    /** Standard Airline (RMOL) Service Handler. */
+    RMOL::RMOL_ServicePtr_T _rmolService;
   };
 
 }

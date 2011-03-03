@@ -15,6 +15,8 @@
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+// RMOL
+#include <rmol/RMOL_Service.hpp>
 // Airinv
 #include <airinv/basic/BasConst_AIRINV_Service.hpp>
 #include <airinv/factory/FacAirinvServiceContext.hpp>
@@ -26,18 +28,18 @@
 
 namespace AIRINV {
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::AIRINV_Service () : _airinvServiceContext (NULL) {
     assert (false);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::AIRINV_Service (const AIRINV_Service& iService)
   : _airinvServiceContext (NULL) {
     assert (false);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::
   AIRINV_Service (const stdair::Filename_T& iInventoryInputFilename)
     : _airinvServiceContext (NULL) {
@@ -50,12 +52,15 @@ namespace AIRINV {
 
     // Add the StdAir service context to the AIRINV service context
     addStdAirService (lSTDAIR_Service_ptr);
+
+    // Initalise the RMOL service.
+    initRMOLService (lSTDAIR_Service_ptr);
     
     // Initialise the (remaining of the) context
     init (iInventoryInputFilename);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::
   AIRINV_Service (const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename)
@@ -69,18 +74,21 @@ namespace AIRINV {
 
     // Add the StdAir service context to the AIRINV service context
     addStdAirService (lSTDAIR_Service_ptr);
+
+    // Initalise the RMOL service.
+    initRMOLService (lSTDAIR_Service_ptr);
     
     // Initialise the (remaining of the) context
     init (iScheduleInputFilename, iODInputFilename);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::~AIRINV_Service () {
     // Delete/Clean all the objects from memory
     finalise();
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::initServiceContext () {
     // Initialise the context
     AIRINV_ServiceContext& lAIRINV_ServiceContext = 
@@ -88,10 +96,9 @@ namespace AIRINV {
     _airinvServiceContext = &lAIRINV_ServiceContext;
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::
   addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr) {
-
     // Retrieve the Airinv service context
     assert (_airinvServiceContext != NULL);
     AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
@@ -100,9 +107,8 @@ namespace AIRINV {
     lAIRINV_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr);
   }
   
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   stdair::STDAIR_ServicePtr_T AIRINV_Service::initStdAirService () {
-
     // Initialise the STDAIR service handler
     // Note that the track on the object memory is kept thanks to the Boost
     // Smart Pointers component.
@@ -111,8 +117,25 @@ namespace AIRINV {
     
     return lSTDAIR_Service_ptr;
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Service::
+  initRMOLService (stdair::STDAIR_ServicePtr_T ioStdAir_Service) {
+    // Initialise the RMOL service handler
+    // Note that the track on the object memory is kept thanks to the Boost
+    // Smart Pointers component.
+    RMOL::RMOL_ServicePtr_T lRMOL_Service_ptr = 
+      boost::make_shared<RMOL::RMOL_Service> (ioStdAir_Service);
+    
+    // Retrieve the Airinv service context
+    assert (_airinvServiceContext != NULL);
+    AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
+
+    // Store the RMOL service object within the (AIRINV) service context
+    lAIRINV_ServiceContext.setRMOL_Service (lRMOL_Service_ptr);
+  }
   
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::
   init (const stdair::Filename_T& iInventoryInputFilename) {
     // Check that the file path given as input corresponds to an actual file
@@ -136,7 +159,7 @@ namespace AIRINV {
     InventoryParser::buildInventory (iInventoryInputFilename, lBomRoot);
   }
   
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::
   init (const stdair::Filename_T& iScheduleInputFilename,
         const stdair::Filename_T& iODInputFilename) {
@@ -169,12 +192,12 @@ namespace AIRINV {
     ScheduleParser::generateInventories (iScheduleInputFilename, lBomRoot);
   }
   
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::finalise () {
     assert (_airinvServiceContext != NULL);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   bool AIRINV_Service::sell (const std::string& iSegmentDateKey,
                              const stdair::ClassCode_T& iClassCode,
                              const stdair::PartySize_T& iPartySize) {
@@ -186,35 +209,19 @@ namespace AIRINV {
     assert (_airinvServiceContext != NULL);
     AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
 
-    // Retrieve the corresponding inventory.
-    stdair::STDAIR_Service& lSTDAIR_Service =
-      lAIRINV_ServiceContext.getSTDAIR_Service();
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
-    std::string lInventoryKey;
-    lInventoryKey.append (iSegmentDateKey, 0, 2);
-    stdair::Inventory& lInventory =
-      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot, lInventoryKey);
-    
-    try {
+    // Delegate the booking to the dedicated command
+    stdair::BasChronometer lSellChronometer;
+    lSellChronometer.start();
+    const bool saleControl = true;
+    // InventoryManager::sell (lInventory, iSegmentDateKey,
+    //                         iClassCode, iPartySize);
+    const double lSellMeasure = lSellChronometer.elapsed();
       
-      // Delegate the booking to the dedicated command
-      stdair::BasChronometer lSellChronometer;
-      lSellChronometer.start();
-      bool saleControl =  InventoryManager::sell (lInventory, iSegmentDateKey,
-                                                  iClassCode, iPartySize);
-      const double lSellMeasure = lSellChronometer.elapsed();
-      
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                        << lAIRINV_ServiceContext.display());
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+                      << lAIRINV_ServiceContext.display());
 
-      return saleControl;
-    } catch (const std::exception& error) {
-      STDAIR_LOG_ERROR ("Exception: "  << error.what());
-      throw BookingException();
-    }
-
-    return false;
+    return saleControl;
   }
   
 }

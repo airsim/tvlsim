@@ -258,16 +258,14 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
 
-    AIRINV_Service& lAIRINV_Service =
-      lAIRINV_Master_ServiceContext.getAIRINV_Service();
-
     try {
       
       // Delegate the booking to the dedicated command
       stdair::BasChronometer lSellChronometer;
       lSellChronometer.start();
-      bool saleControl = lAIRINV_Service.sell (iSegmentDateKey,
-                                               iClassCode, iPartySize);
+      bool saleControl = true;
+      //InventoryManager::sell (lInventory, iSegmentDateKey,
+      //                       iClassCode, iPartySize);
       const double lSellMeasure = lSellChronometer.elapsed();
       
       // DEBUG
