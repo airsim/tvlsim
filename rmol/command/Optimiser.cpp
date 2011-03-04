@@ -5,200 +5,70 @@
 #include <cassert>
 #include <sstream>
 // StdAir
-#include <stdair/basic/BasChronometer.hpp>
+#include <stdair/basic/BasConst_General.hpp>
+#include <stdair/basic/RandomGeneration.hpp>
+#include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/LegCabin.hpp>
+#include <stdair/bom/SegmentCabin.hpp>
+#include <stdair/bom/BookingClass.hpp>
 #include <stdair/service/Logger.hpp>
 // RMOL
-#include <rmol/field/FldYieldRange.hpp>
-#include <rmol/field/FldDistributionParameters.hpp>
-#include <rmol/bom/StudyStatManager.hpp>
-#include <rmol/bom/BucketHolder.hpp>
-//#include <rmol/bom/Resource.hpp>
 #include <rmol/bom/MCOptimiser.hpp>
 #include <rmol/bom/Emsr.hpp>
 #include <rmol/bom/DPOptimiser.hpp>
-#include <rmol/factory/FacPartialSumHolder.hpp>
-#include <rmol/factory/FacPartialSumHolderHolder.hpp>
-#include <rmol/factory/FacDemand.hpp>
-#include <rmol/factory/FacBucket.hpp>
 #include <rmol/command/Optimiser.hpp>
 
 namespace RMOL {
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void Optimiser::
-  optimalOptimisationByMCIntegration (const int K, 
-                                      const ResourceCapacity_T iCabinCapacity,
-                                      BucketHolder& ioBucketHolder,
-                                      BidPriceVector_T& ioBidPriceVector) {
-    // Retrieve the BucketHolder
-    // BucketHolder& ioBucketHolder = ioResource.getBucketHolder();
-
-    // Number of classes/buckets: n
-    const short nbOfClasses = ioBucketHolder.getSize();
-
-    // Create a holder for the list of Partial Sum Lists
-    PartialSumHolderHolder& aPartialSumHolderHolder =
-      FacPartialSumHolderHolder::instance().create();
-
-    /** 
-	Instanciate the list of PartialSumHolder objects.
-        Iterate on the classes/buckets, from 1 to n-1.
-        Note that n-1 corresponds to the size of the parameter list,
-        i.e., n corresponds to the number of classes/buckets.
-    */
-    for (short j = 0 ; j <= nbOfClasses; ++j) {
-      PartialSumHolder& aPartialSumList = 
-	FacPartialSumHolder::instance().create ();
-
-      FacPartialSumHolderHolder::instance().
-	addPartialSumHolder (aPartialSumHolderHolder, aPartialSumList);
-    }
-
-    // Call the class performing the actual algorithm
-    MCOptimiser::optimalOptimisationByMCIntegration (K, iCabinCapacity, 
-                                                     ioBucketHolder,
-                                                     aPartialSumHolderHolder,
-                                                     ioBidPriceVector);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  optimalOptimisationByMCIntegration (const int K, 
-                                      const ResourceCapacity_T iCabinCapacity,
-                                      BucketHolder& ioBucketHolder,
-                                      BidPriceVector_T& ioBidPriceVector,
-                                      StudyStatManager& ioStudyStatManager) {
-    stdair::BasChronometer lMCIntegrationBasChrono;
-    lMCIntegrationBasChrono.start();
-    // Retrieve the BucketHolder
-    // BucketHolder& ioBucketHolder = ioResource.getBucketHolder();
-
-    // Number of classes/buckets: n
-    const short nbOfClasses = ioBucketHolder.getSize();
-
-    // Create a holder for the list of Partial Sum Lists
-    PartialSumHolderHolder& aPartialSumHolderHolder =
-      FacPartialSumHolderHolder::instance().create();
-
-    /** 
-	Instanciate the list of PartialSumHolder objects.
-        Iterate on the classes/buckets, from 1 to n-1.
-        Note that n-1 corresponds to the size of the parameter list,
-        i.e., n corresponds to the number of classes/buckets.
-    */
-    for (short j = 0 ; j <= nbOfClasses; ++j) {
-      PartialSumHolder& aPartialSumList = 
-	FacPartialSumHolder::instance().create ();
-
-      FacPartialSumHolderHolder::instance().
-	addPartialSumHolder (aPartialSumHolderHolder, aPartialSumList);
-    }
-
-    // Call the class performing the actual algorithm
-    MCOptimiser::optimalOptimisationByMCIntegration (K, iCabinCapacity, 
-                                                     ioBucketHolder,
-                                                     aPartialSumHolderHolder,
-                                                     ioBidPriceVector,
-                                                     ioStudyStatManager);
-    const double lMCIntegrationTime = lMCIntegrationBasChrono.elapsed();
-    ioStudyStatManager.addMeasure ("MCIntegrationRunningTime",
-                                   lMCIntegrationTime);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  optimalOptimisationByDP (const ResourceCapacity_T iCabinCapacity,
-                           BucketHolder& ioBucketHolder) {
-    BidPriceVector_T lBidPriceVector;
-    DPOptimiser::optimalOptimisationByDP (iCabinCapacity,
-                                          ioBucketHolder,
-                                          lBidPriceVector);
-
-    // DEBUG
-    std::ostringstream ostr;
-    // Store current formatting flags of the stream
-    std::ios::fmtflags oldFlags = ostr.flags();
-
-    ostr << "BPV: " << std::fixed << std::setprecision (2);
+  optimalOptimisationByMCIntegration (const int K,
+                                      stdair::LegCabin& ioLegCabin) {
+    // Retrieve the segment-cabin
+    const stdair::SegmentCabinList_T lSegmentCabinList =
+      stdair::BomManager::getList<stdair::SegmentCabin> (ioLegCabin);
+    stdair::SegmentCabinList_T::const_iterator itSC = lSegmentCabinList.begin();
+    assert (itSC != lSegmentCabinList.end());
+    const stdair::SegmentCabin* lSegmentCabin_ptr = *itSC;
+    assert (lSegmentCabin_ptr != NULL);
     
-    unsigned int i = 0;
+    // Retrieve the class list.
+    const stdair::BookingClassList_T lBookingClassList =
+      stdair::BomManager::getList<stdair::BookingClass> (*lSegmentCabin_ptr);
+    stdair::RandomGeneration lSeedGenerator (stdair::DEFAULT_RANDOM_SEED);
 
-    for (BidPriceVector_T::const_iterator itBP = lBidPriceVector.begin();
-         itBP != lBidPriceVector.end(); ++itBP, ++i) {
-      const double bidPrice = *itBP;
-      ostr << "[" << i << "]: " << bidPrice << ", ";
-    }
-
-    // Reset formatting flags of stream
-    ostr.flags (oldFlags);
-
-    // DEBUG
-    STDAIR_LOG_DEBUG (ostr.str());
+    // Generate the demand samples for the booking classes.
+    for (stdair::BookingClassList_T::const_iterator itBC =
+           lBookingClassList.begin(); itBC != lBookingClassList.end(); ++itBC) {
+      stdair::RandomSeed_T lRandomSeed =
+        lSeedGenerator.generateUniform01 () * 1e9;
+      stdair::BookingClass* lBookingClass_ptr = *itBC;
+      assert (lBookingClass_ptr != NULL);
+      lBookingClass_ptr->generateDemandSamples (K, lRandomSeed);
+    }   
+    
+    // Call the class performing the actual algorithm
+    MCOptimiser::optimalOptimisationByMCIntegration (ioLegCabin);
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  heuristicOptimisationByEmsr (const ResourceCapacity_T iCabinCapacity,
-                               BucketHolder& ioBucketHolder,
-                               BidPriceVector_T& ioBidPriceVector) {
-    Emsr::heuristicOptimisationByEmsr (iCabinCapacity,
-                                       ioBucketHolder,
-                                       ioBidPriceVector);
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::optimalOptimisationByDP (stdair::LegCabin& ioLegCabin) {
+    DPOptimiser::optimalOptimisationByDP (ioLegCabin);
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  heuristicOptimisationByEmsr (const ResourceCapacity_T iCabinCapacity,
-                               BucketHolder& ioBucketHolder,
-                               BidPriceVector_T& ioBidPriceVector,
-                               StudyStatManager& ioStudyStatManager) {
-    stdair::BasChronometer lEMRSBasChrono;
-    lEMRSBasChrono.start();
-    Emsr::heuristicOptimisationByEmsr (iCabinCapacity,
-                                       ioBucketHolder,
-                                       ioBidPriceVector);
-    const double lEMRSTime = lEMRSBasChrono.elapsed();
-    ioStudyStatManager.addMeasure ("EMSRRunningTime", lEMRSTime);
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::heuristicOptimisationByEmsr (stdair::LegCabin& ioLegCabin) {
+    Emsr::heuristicOptimisationByEmsr (ioLegCabin);
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  heuristicOptimisationByEmsrA (const ResourceCapacity_T iCabinCapacity,
-                                BucketHolder& ioBucketHolder) {
-    Emsr::heuristicOptimisationByEmsrA (iCabinCapacity, ioBucketHolder);
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::heuristicOptimisationByEmsrA (stdair::LegCabin& ioLegCabin) {
+    Emsr::heuristicOptimisationByEmsrA (ioLegCabin);
   }
   
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::heuristicOptimisationByEmsrAwithSellup 
-  (const ResourceCapacity_T iCabinCapacity, 
-   BucketHolder& ioBucketHolder,
-   SellupProbabilityVector_T& iSellupProbabilityVector) {
-    Emsr::heuristicOptimisationByEmsrAwithSellup (iCabinCapacity, 
-                                                ioBucketHolder, 
-                                                iSellupProbabilityVector);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  heuristicOptimisationByEmsrB (const ResourceCapacity_T iCabinCapacity,
-                                BucketHolder& ioBucketHolder) {
-    
-    // Create the aggregated class/bucket.
-    FldYieldRange aYieldRange = FldYieldRange (0);
-    FldDistributionParameters aDistribParams = FldDistributionParameters (0,0);
-    Demand& aDemand = FacDemand::instance().create(aDistribParams, aYieldRange);
-    Bucket& aBucket = FacBucket::instance().create (aYieldRange, aDemand);
-    
-    Emsr::heuristicOptimisationByEmsrB(iCabinCapacity, ioBucketHolder, aBucket);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void Optimiser::
-  legOptimisationByMC (const ResourceCapacity_T iCabinCapacity,
-                       BucketHolder& ioBucketHolder,
-                       BidPriceVector_T& ioBidPriceVector) {
-    MCOptimiser::legOptimisationByMC (iCabinCapacity, ioBucketHolder,
-                                      ioBidPriceVector);
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::heuristicOptimisationByEmsrB (stdair::LegCabin& ioLegCabin) {
+    Emsr::heuristicOptimisationByEmsrB (ioLegCabin);
   }
   
 }

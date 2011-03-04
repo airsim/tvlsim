@@ -7,14 +7,12 @@
 // RMOL
 #include <rmol/RMOL_Types.hpp>
 
-namespace RMOL {
+// Forward declarations.
+namespace stdair {
+  class LegCabin;
+}
 
-  /** Forward declarations. */
-  //class Resource;
-  class BucketHolder;
-  class PartialSumHolderHolder;
-  class StudyStatManager;
-  
+namespace RMOL {
   /** Utility methods for the Monte-Carlo algorithms. */
   class MCOptimiser {
   public:
@@ -25,32 +23,9 @@ namespace RMOL {
 	<br>The Monte Carlo Integration algorithm (see The Theory and 
 	Practice of Revenue Management, by Kalyan T. Talluri and 
 	Garret J. van Ryzin, Kluwer Academic Publishers, for the details) 
-	is used. Hence, K is the number of random draws to perform.
-	100 is a minimum for K, as statistics must be drawn from those
-	random generations.
-	<br>The cabin capacity is used to a double to allow for some
-	overbooking.
+	is used.
      */
-    static void optimalOptimisationByMCIntegration (const int K, 
-                                                    const ResourceCapacity_T,
-                                                    BucketHolder&,
-                                                    PartialSumHolderHolder&,
-                                                    BidPriceVector_T&);
-    /**
-       Monte Carlo algorithm with StudyStatManager.
-     */
-    static void optimalOptimisationByMCIntegration (const int K, 
-                                                    const ResourceCapacity_T,
-                                                    BucketHolder&,
-                                                    PartialSumHolderHolder&,
-                                                    BidPriceVector_T&,
-                                                    StudyStatManager&);
-    /** 
-        Leg optimisation using Monte-Carlo Integration as a step in
-        network optimisation. 
-    */
-    static void legOptimisationByMC (const ResourceCapacity_T,
-                                     BucketHolder&, BidPriceVector_T&);
+    static void optimalOptimisationByMCIntegration (stdair::LegCabin&);
     
   };
 }
