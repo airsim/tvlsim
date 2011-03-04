@@ -7,7 +7,6 @@
 // StdAir
 #include <stdair/STDAIR_Service.hpp>
 #include <stdair/basic/BasConst_General.hpp>
-#include <stdair/bom/EventQueue.hpp>
 // TraDemGen
 #include <trademgen/basic/BasConst_DemandGeneration.hpp>
 #include <trademgen/service/TRADEMGEN_ServiceContext.hpp>
@@ -16,8 +15,7 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_ServiceContext::TRADEMGEN_ServiceContext ()
-    : _eventQueue (NULL),
-      _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
+    : _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
       _uniformGenerator (_generator, DEFAULT_UNIFORM_REAL_DISTRIBUTION),
       _posProbabilityMass (DEFAULT_POS_PROBALILITY_MASS) {
   }
@@ -25,8 +23,7 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_ServiceContext::
   TRADEMGEN_ServiceContext (const std::string& iServiceName) 
-    : _eventQueue (NULL),
-      _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
+    : _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
       _uniformGenerator (_generator, DEFAULT_UNIFORM_REAL_DISTRIBUTION),
       _posProbabilityMass (DEFAULT_POS_PROBALILITY_MASS) {
   }
@@ -38,10 +35,7 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   const std::string TRADEMGEN_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "TRADEMGEN_ServiceContext ";
-    if (_eventQueue != NULL) {
-      oStr << _eventQueue->toString();
-    }
+    oStr << "TRADEMGEN_ServiceContext";
     return oStr.str();
   }
 

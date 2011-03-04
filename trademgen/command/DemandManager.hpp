@@ -15,8 +15,7 @@
 
 // Forward declarations
 namespace stdair {
-  class BomRoot;
-  struct EventQueue;
+  class EventQueue;
 }
 
 namespace TRADEMGEN {
@@ -38,21 +37,6 @@ namespace TRADEMGEN {
     
   private:
     // //////// Business methodes //////////
-    /**
-     * Create an EventQueue object instance, and add it to the BOM
-     * tree.
-     *
-     * @param stdair::BomRoot& Reference on the top of the BOM tree.
-     */
-    static stdair::EventQueue& initEventQueue (stdair::BomRoot&);
-
-    /**
-     * Retrieve the EventQueue object instance.
-     *
-     * @param stdair::BomRoot& Reference on the top of the BOM tree.
-     */
-    static stdair::EventQueue& getEventQueue (const stdair::BomRoot&);
-
     /**
      * Generate the Demand objects corresponding to the given
      * Flight-Period, and add them to the given EventQueue.

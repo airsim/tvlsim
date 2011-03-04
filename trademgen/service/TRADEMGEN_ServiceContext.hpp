@@ -72,11 +72,6 @@ namespace TRADEMGEN {
       _stdairService = ioSTDAIR_ServicePtr;
     }
 
-    /** Set the pointer on the EventQueue instance. */
-    void setEventQueue (stdair::EventQueue& ioEventQueue) {
-      _eventQueue = &ioEventQueue;
-    }
-
     
   private:
     // ///////// Display Methods //////////

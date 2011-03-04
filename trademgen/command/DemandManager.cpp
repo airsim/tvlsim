@@ -6,7 +6,6 @@
 // StdAir
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/EventStruct.hpp>
-#include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/factory/FacBomManager.hpp>
@@ -21,47 +20,6 @@
 
 namespace TRADEMGEN {
 
-  // //////////////////////////////////////////////////////////////////////
-  stdair::EventQueue& DemandManager::
-  initEventQueue (stdair::BomRoot& ioBomRoot) {
-    
-    // The event queue key is a just a string. For now, it is not used.
-    const stdair::EventQueueKey lKey ("EQ01");
-
-    // Create an EventQueue object instance
-    stdair::EventQueue& oEventQueue =
-      stdair::FacBom<stdair::EventQueue>::instance().create (lKey);
-
-    // Link the EventQueue to its parent (BomRoot)
-    stdair::FacBomManager::instance().linkWithParent (ioBomRoot, oEventQueue);
-    
-    // Add the EventQueue to the dedicated list
-    stdair::FacBomManager::instance().addToList (ioBomRoot, oEventQueue);
-
-    //
-    return oEventQueue;
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  stdair::EventQueue& DemandManager::
-  getEventQueue (const stdair::BomRoot& iBomRoot) {
-
-    //
-    const stdair::EventQueueList_T& lEventQueueList =
-      stdair::BomManager::getList<stdair::EventQueue> (iBomRoot);
-    assert (lEventQueueList.empty() == false);
-
-    //
-    stdair::EventQueueList_T::const_iterator itEventQueue =
-      lEventQueueList.begin();
-
-    //
-    stdair::EventQueue* oEventQueue_ptr = *itEventQueue;
-    assert (oEventQueue_ptr != NULL);
-    
-    return *oEventQueue_ptr;
-  }
-  
   // //////////////////////////////////////////////////////////////////////
   DemandStream& DemandManager::createDemandStream
   (stdair::EventQueue& ioEventQueue,
@@ -151,8 +109,9 @@ namespace TRADEMGEN {
       lDemandStream.getMeanNumberOfRequests();
 
     /**
-     * Initialise the progress status, specific to the demand stream,
-     * held by the event queue.
+     * Initialise the progress statuses, one specific to the demand
+     * stream, and the other one specific to the booking request type,
+     * both held by the event queue.
      *
      * The event queue object, which is part of the StdAir
      * library, has no information on the DemandStream objects, which
@@ -161,7 +120,8 @@ namespace TRADEMGEN {
      * the event queue object can not calculate the progress statuses
      * itself.
      */
-    ioEventQueue.addStatus (lDemandStreamKey.toString(),
+    ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
+                            lDemandStreamKey.toString(),
                             lExpectedTotalNbOfEvents);
   }
 
@@ -239,7 +199,11 @@ namespace TRADEMGEN {
       // Retrieve the key of the demand stream
       const DemandStreamKey& lKey = lDemandStream_ptr->getKey();
 
-      // Update the progress status for the given demand stream
+      // Update the progress status for the given event type (i.e.,
+      // booking request)
+      ioEventQueue.updateStatus (stdair::EventType::BKG_REQ, lActualNbOfEvents);
+
+      // Update the progress status for the given demand stream key
       ioEventQueue.updateStatus (lKey.toString(), lActualNbOfEvents);
 
       // Check whether there are still booking requests to be generated
@@ -265,6 +229,10 @@ namespace TRADEMGEN {
   
   // ////////////////////////////////////////////////////////////////////
   void DemandManager::reset (stdair::EventQueue& ioEventQueue) {
+
+    // TODO: check whether it is really necessary to destroy the
+    // objects manually. Indeed, FacSupervisor::cleanAll() should
+    // destroy any BOM object.
 
     // Reset all the DemandStream objects
     const DemandStreamList_T& lDemandStreamList =

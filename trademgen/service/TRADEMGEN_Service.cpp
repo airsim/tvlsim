@@ -35,7 +35,7 @@
 namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
-  TRADEMGEN_Service::TRADEMGEN_Service ()
+  TRADEMGEN_Service::TRADEMGEN_Service()
     : _trademgenServiceContext (NULL) {
     assert (false);
   }
@@ -101,7 +101,7 @@ namespace TRADEMGEN {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  TRADEMGEN_Service::~TRADEMGEN_Service () {
+  TRADEMGEN_Service::~TRADEMGEN_Service() {
 
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -115,7 +115,7 @@ namespace TRADEMGEN {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::initServiceContext () {
+  void TRADEMGEN_Service::initServiceContext() {
     // Initialise the service context
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext = 
       FacTRADEMGENServiceContext::instance().create ();
@@ -202,16 +202,8 @@ namespace TRADEMGEN {
     const POSProbabilityMass_T& lDefaultPOSProbabilityMass =
       lTRADEMGEN_ServiceContext.getPOSProbabilityMass();
     
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service->getBomRoot();
-
     // Initialise the event queue
-    stdair::EventQueue& lEventQueue = DemandManager::initEventQueue (lBomRoot);
-
-    // Store a reference of the EventQueue object instance within the
-    // service context
-    lTRADEMGEN_ServiceContext.setEventQueue (lEventQueue);
+    stdair::EventQueue& lEventQueue = lSTDAIR_Service->getEventQueue();
 
     // Parse the input file and initialise the demand generators
     DemandParser::generateDemand (iDemandInputFilename, lEventQueue,
@@ -219,7 +211,7 @@ namespace TRADEMGEN {
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::displayAirlineListFromDB () const {
+  void TRADEMGEN_Service::displayAirlineListFromDB() const {
 
     if (_trademgenServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The TraDemGen service has "
@@ -285,12 +277,17 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    const stdair::EventQueue& lQueue= lTRADEMGEN_ServiceContext.getEventQueue();
+    const stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     const stdair::Count_T& oExpectedTotalNumberOfRequestsToBeGenerated =
-      lQueue.getExpectedTotalNbOfEvents();
+      lQueue.getExpectedTotalNbOfEvents (stdair::EventType::BKG_REQ);
 
     //
     return oExpectedTotalNumberOfRequestsToBeGenerated;
@@ -305,12 +302,17 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    const stdair::EventQueue& lQueue= lTRADEMGEN_ServiceContext.getEventQueue();
+    const stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     const stdair::Count_T& oActualTotalNumberOfRequestsToBeGenerated =
-      lQueue.getActualTotalNbOfEvents();
+      lQueue.getActualTotalNbOfEvents (stdair::EventType::BKG_REQ);
 
     //
     return oActualTotalNumberOfRequestsToBeGenerated;
@@ -325,9 +327,13 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    const stdair::EventQueue& lQueue =
-      lTRADEMGEN_ServiceContext.getEventQueue();
+    const stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     const bool oStillHavingRequestsToBeGenerated =
@@ -345,8 +351,13 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     const stdair::Count_T& oActualTotalNbOfEvents =
@@ -365,8 +376,13 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     return DemandManager::generateNextRequest (lQueue, iKey);
@@ -380,8 +396,13 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Extract the next event from the queue
     const stdair::EventStruct& oEventStruct = lQueue.popEvent();
@@ -398,8 +419,13 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
 
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    const stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Calculates whether the event queue has been fully emptied
     const bool isQueueDone = lQueue.isQueueDone();
@@ -416,10 +442,16 @@ namespace TRADEMGEN {
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
     
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service != NULL);
+
     // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lTRADEMGEN_ServiceContext.getEventQueue();
+    stdair::EventQueue& lQueue = lSTDAIR_Service->getEventQueue();
     
     // Delegate the call to the dedicated command
     DemandManager::reset (lQueue);
   }
+
 }

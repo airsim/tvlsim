@@ -38,7 +38,7 @@ namespace TRADEMGEN {
       _instance = new FacDemandStream ();
       assert (_instance != NULL);
 
-      stdair::FacSupervisor::instance().registerFacBom (_instance);
+      stdair::FacSupervisor::instance().registerBomFactory (_instance);
     }
     return *_instance;
   }
