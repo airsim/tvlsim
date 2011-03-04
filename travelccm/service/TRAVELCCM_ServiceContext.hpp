@@ -6,16 +6,16 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// STDAIR
+// StdAir
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/service/ServiceAbstract.hpp>
 // TravelCCM
 #include <travelccm/TRAVELCCM_Types.hpp>
-#include <travelccm/service/ServiceAbstract.hpp>
 
 namespace TRAVELCCM {
 
   /** Inner class holding the context for the TRAVELCCM Service object. */
-  class TRAVELCCM_ServiceContext : public ServiceAbstract {
+  class TRAVELCCM_ServiceContext : public stdair::ServiceAbstract {
     /** The TRAVELCCM_Service class should be the sole class to get access to
         ServiceContext content: general users do not want to bother
         with a context interface. */

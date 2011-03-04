@@ -4,9 +4,10 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// Travelccm
+// StdAir
+#include <stdair/service/FacServiceAbstract.hpp>
+// TravelCCM
 #include <travelccm/TRAVELCCM_Types.hpp>
-#include <travelccm/factory/FacServiceAbstract.hpp>
 
 namespace TRAVELCCM {
 
@@ -14,7 +15,7 @@ namespace TRAVELCCM {
   class TRAVELCCM_ServiceContext;
 
   /** Factory for Bucket. */
-  class FacTRAVELCCMServiceContext : public FacServiceAbstract {
+  class FacTRAVELCCMServiceContext : public stdair::FacServiceAbstract {
   public:
 
     /** Provide the unique instance.

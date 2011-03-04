@@ -3,8 +3,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// TRAVELCCM Common
-#include <travelccm/factory/FacSupervisor.hpp>
+// StdAir
+#include <stdair/service/FacSupervisor.hpp>
+// TravelCCM
 #include <travelccm/factory/FacTRAVELCCMServiceContext.hpp>
 #include <travelccm/service/TRAVELCCM_ServiceContext.hpp>
 
@@ -24,7 +25,7 @@ namespace TRAVELCCM {
       _instance = new FacTRAVELCCMServiceContext();
       assert (_instance != NULL);
       
-      FacSupervisor::instance().registerServiceFactory (_instance);
+      stdair::FacSupervisor::instance().registerServiceFactory (_instance);
     }
     return *_instance;
   }
