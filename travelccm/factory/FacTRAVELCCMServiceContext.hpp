@@ -4,7 +4,7 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// TRAVELCCM
+// Travelccm
 #include <travelccm/TRAVELCCM_Types.hpp>
 #include <travelccm/factory/FacServiceAbstract.hpp>
 
@@ -12,7 +12,6 @@ namespace TRAVELCCM {
 
   /** Forward declarations. */
   class TRAVELCCM_ServiceContext;
-  struct TravelCCMType;
 
   /** Factory for Bucket. */
   class FacTRAVELCCMServiceContext : public FacServiceAbstract {
@@ -20,18 +19,19 @@ namespace TRAVELCCM {
 
     /** Provide the unique instance.
         <br> The singleton is instantiated when first used
-        @return FacServiceContext& */
+        @return FacTRAVELCCMServiceContext& */
     static FacTRAVELCCMServiceContext& instance();
 
     /** Destructor.
         <br> The Destruction put the _instance to NULL
-        in order to be clean for the next FacServiceContext::instance() */
-    virtual ~FacTRAVELCCMServiceContext();
+        in order to be clean for the next
+        FacTRAVELCCMServiceContext::instance(). */
+    ~FacTRAVELCCMServiceContext();
 
-    /** Create a new ServiceContext object.
+    /** Create a new TRAVELCCM_ServiceContext object.
         <br>This new object is added to the list of instantiated objects.
-        @return ServiceContext& The newly created object. */
-    TRAVELCCM_ServiceContext& create (const TravelCCMType&);
+        @return TRAVELCCM_ServiceContext& The newly created object. */
+    TRAVELCCM_ServiceContext& create ();
 
     
   protected:
@@ -43,7 +43,7 @@ namespace TRAVELCCM {
   private:
     /** The unique instance.*/
     static FacTRAVELCCMServiceContext* _instance;
-
   };
+
 }
 #endif // __TRAVELCCM_FAC_FACTRAVELCCMSERVICECONTEXT_HPP

@@ -14,10 +14,6 @@ namespace TRAVELCCM {
       a list of classes/travelSolutions) from a given input file. */
   class FileMgr {
   public:
-    /** Read the input values from a CSV file. */
-    static void
-    readAndProcessTravelSolutionInputFile (const std::string& iInputFileName,
-                                           TravelSolutionHolder&);
     
   };
 }

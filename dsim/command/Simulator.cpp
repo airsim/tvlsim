@@ -17,6 +17,8 @@
 #include <simcrs/SIMCRS_Service.hpp>
 // TRADEMGEN
 #include <trademgen/TRADEMGEN_Service.hpp>
+// TRAVELCCM
+#include <travelccm/TRAVELCCM_Service.hpp>
 // Airsched
 #include <airsched/AIRSCHED_Service.hpp>
 // Dsim
@@ -27,7 +29,8 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   void Simulator::simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-                            TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service) {
+                            TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
+                            TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service) {
 
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
@@ -76,7 +79,7 @@ namespace DSIM {
                         << "'.");
 
       // Play booking request
-      playBookingRequest (ioSIMCRS_Service, lPoppedRequest);
+      playBookingRequest(ioSIMCRS_Service, ioTRAVELCCM_Service, lPoppedRequest);
 
       // Retrieve the corresponding demand stream
       const stdair::EventContentKey_T& lDemandStreamKey =
@@ -130,6 +133,7 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playBookingRequest (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+                      TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::BookingRequestStruct& iBookingRequest) {
 
     // Retrieve a list of travel solutions corresponding the given
@@ -144,22 +148,27 @@ namespace DSIM {
       // Get the availability for each travel solution.
       ioSIMCRS_Service.calculateAvailability (lTravelSolutionList);
 
-      // Hardcode a travel solution choice.
-      stdair::TravelSolutionList_T::const_iterator itTS =
-        lTravelSolutionList.begin();
-      const stdair::TravelSolutionStruct& lChosenTS = *itTS;
-
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS.describe());
-      
-      // Retrieve and convert the party size
-      const stdair::NbOfSeats_T& lPartySizeDouble =
-        iBookingRequest.getPartySize();
-      const stdair::PartySize_T lPartySize = std::floor (lPartySizeDouble);
-
-      // Delegate the sell to the corresponding SimCRS service
-      ioSIMCRS_Service.sell (lChosenTS, lPartySize);
-
+      // Get a travel solution choice.
+      const stdair::TravelSolutionStruct* lChosenTS_ptr =
+        ioTRAVELCCM_Service.chooseTravelSolution (lTravelSolutionList,
+                                                  iBookingRequest);
+      if (lChosenTS_ptr != NULL) {
+        // DEBUG
+        STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS_ptr->describe());
+        
+        // Retrieve and convert the party size
+        const stdair::NbOfSeats_T& lPartySizeDouble =
+          iBookingRequest.getPartySize();
+        const stdair::PartySize_T lPartySize = std::floor (lPartySizeDouble);
+        
+        // Delegate the sell to the corresponding SimCRS service
+        ioSIMCRS_Service.sell (*lChosenTS_ptr, lPartySize);
+      }
+      else {
+        // DEBUG
+        STDAIR_LOG_DEBUG ("There is no chosen travel solution"
+                          <<"for this request: " << iBookingRequest.describe());
+      }
     } else {
       // DEBUG
       STDAIR_LOG_DEBUG ("No travel solution has been found/chosen for: "

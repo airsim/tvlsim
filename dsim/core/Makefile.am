@@ -24,5 +24,6 @@ libdsim_la_LDFLAGS = \
 	$(BOOST_FILESYSTEM_LIB) $(STDAIR_LIBS) \
 	$(top_builddir)/simcrs/core/libsimcrs.la \
 	$(top_builddir)/trademgen/core/libtrademgen.la \
+	$(top_builddir)/travelccm/core/libtravelccm.la \
 	-version-info $(GENERIC_LIBRARY_VERSION)
 

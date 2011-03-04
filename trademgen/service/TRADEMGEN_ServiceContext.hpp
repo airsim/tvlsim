@@ -43,7 +43,6 @@ namespace TRADEMGEN {
 
     /** Destructor. */
     ~TRADEMGEN_ServiceContext();
-
     
   private:
     // ///////// Getters //////////

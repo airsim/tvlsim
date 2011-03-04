@@ -20,6 +20,8 @@
 #include <simcrs/SIMCRS_Service.hpp>
 // TraDemGen
 #include <trademgen/TRADEMGEN_Service.hpp>
+// Travelccm
+#include <travelccm/TRAVELCCM_Service.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
@@ -153,6 +155,11 @@ namespace DSIM {
       boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
                                                         iDemandInputFilename);
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service);
+
+    // Initialise the TRAVELCCM service handler
+    TRAVELCCM_ServicePtr_T lTRAVELCCM_Service =
+      boost::make_shared<TRAVELCCM::TRAVELCCM_Service> (lSTDAIR_Service_ptr);
+    lDSIM_ServiceContext.setTRAVELCCM_Service (lTRAVELCCM_Service);
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -176,11 +183,15 @@ namespace DSIM {
     // Get a reference on the TRADEMGEN service handler
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service();
+    
+    // Get a reference on the TRAVELCCM service handler
+    TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
+      lDSIM_ServiceContext.getTRAVELCCM_Service();
 
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSimulationChronometer;
     lSimulationChronometer.start();
-    Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service);
+    Simulator::simulate (lSIMCRS_Service,lTRADEMGEN_Service,lTRAVELCCM_Service);
     const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
     // DEBUG

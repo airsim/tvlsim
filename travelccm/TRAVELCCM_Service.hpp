@@ -6,23 +6,21 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/stdair_date_time_types.hpp>
+#include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
+#include <stdair/bom/TravelSolutionTypes.hpp>
 // TravelCCM
 #include <travelccm/TRAVELCCM_Types.hpp>
-#include <travelccm/TravelCCMType.hpp>
 
 // Forward declarations
 namespace stdair {
-  struct PassengerType;
+  struct BookingRequestStruct;
 }
 
 namespace TRAVELCCM {
 
   // Forward declarations
   class TRAVELCCM_ServiceContext;
-  class TravelSolutionHolder;
-  class TravelSolution;
 
   /** Interface for the TRAVELCCM Services. */
   class TRAVELCCM_Service {
@@ -34,9 +32,8 @@ namespace TRAVELCCM {
         <br>Moreover, a reference on an output stream is given, so
         that log outputs can be directed onto that stream.       
         @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const TravelCCMType& Type of the customer-choice
-               model type (e.g., Preference-based or Logit). */
-    TRAVELCCM_Service (const stdair::BasLogParams&, const TravelCCMType&);
+    */
+    TRAVELCCM_Service (const stdair::BasLogParams&);
     
     /** Constructor.
         <br>The init() method is called; see the corresponding documentation
@@ -47,71 +44,22 @@ namespace TRAVELCCM {
         methods in the calling chain (for instance, when the TRAVELCCM_Service
         is itself being initialised by another library service such as
         DSIM_Service).
-        @param const TravelCCMType& Type of the customer-choice
-               model type (e.g., Preference-based or Logit). */
-    TRAVELCCM_Service (const TravelCCMType&);
+        @param stdair::STDAIR_ServicePtr_T Handler on the STDAIR_Service.
+    */
+    TRAVELCCM_Service (stdair::STDAIR_ServicePtr_T);
     
     /** Destructor. */
     ~TRAVELCCM_Service();
 
-    
   public:
-    // ////////// Use Cases //////////
-    /** Create a passenger in the context for the given type. */
-    void createPassenger (const stdair::PassengerType&);
-    
-    /** Initialize the different fields of a passenger after creating it. */
-    void initializePassenger();
-
-    /** add a travel solution to the context */
-    void addTravelSolution (const stdair::AirportCode_T& iDepartureAirport,
-                            const stdair::AirportCode_T& iArrivalAirport,
-                            const stdair::Date_T& iDepartureDate,
-                            const stdair::Duration_T& iDepartureTime,
-                            const stdair::Duration_T& iArrivalTime,
-                            const stdair::Duration_T& iDuration,
-                            const bool iRefundability,
-                            const stdair::AirlineCode_T& iAirlineCode,
-                            const stdair::CabinCode_T& iCabinCode,
-                            const int iFlightNumber, double iFare,
-                            int iStopsNumber,  bool iSNS, bool iChangeability,
-                            const std::string& id);
-
-    /** Add a restriction to the context. */
-    void addRestriction (const std::string& iRestrictionType);
-
-    /** Add a restriction to the context. */
-    void addRestriction (const std::string& iRestrictionType,
-                         const std::string& iNamePreference);
-
-    /** Add a request to the context. */
-    void addRequest (bool, bool, bool, const stdair::AirlineCode_T&,
-                     const stdair::CabinCode_T&, const stdair::DateTime_T&);
-
-    /* Add the restrictions to the passenger, in the right order, from his
-       request */
-    void addRestrictionsFromRequest ();
-    
-    /** Return the holder of travel solutions after the algorithm of
-        preferred choices */
-    TravelSolutionHolder& getChoosenTravelSolutions();
-
-    // TODO: revise the choice process since the travel solution returned is
-    // not necessarily the cheapest one. Idem for the following function.
-    /** Return the cheapest travel solution amongs those retained by the
-        customer, that is the one he will buy */
-    const TravelSolution* getBestTravelSolution (TravelSolutionHolder&);
-
-    /** Return one of the cheapest travel solutions which has the best matching
-        indicator */
-    const TravelSolution* getBestTravelSolutionByMatchingIndicator ();
-    
-    /** Return the key of the cheapest travel solution */
-    std::string getBestTravelSolutionId();
-
-    /** Perform a small simulation, which uses the Customer Choice Model.*/
-    bool simulate();
-
+    // ///////////// Business methodes /////////////////
+    /** Choose the travel solution and the fare option within the given
+        list of travel solutions.
+        <br> the returned pointer will be NULL if no travel solution is
+        chosen (e.g. Willingness-To-Pay too low). */
+    const stdair::TravelSolutionStruct*
+    chooseTravelSolution (stdair::TravelSolutionList_T&,
+                          const stdair::BookingRequestStruct&);
     
   private:
     // /////// Construction and Destruction helper methods ///////
@@ -119,13 +67,21 @@ namespace TRAVELCCM {
     TRAVELCCM_Service ();
     TRAVELCCM_Service (const TRAVELCCM_Service&);
 
-    /** Initialise the log. */
-    void logInit (const stdair::BasLogParams&);
-
-    /** Initialise.
-        @param const TravelCCMType& Type of the customer-choice
-               model type (e.g., Preference-based or Logit). */
-    void init (const TravelCCMType&);
+    /** Initialise the (TRADEMGEN) service context (i.e., the
+        TRADEMGEN_ServiceContext object). */
+    void initServiceContext ();
+    
+    /** Initialise the STDAIR service (including the log service).
+        <br>A reference on the root of the BOM tree, namely the BomRoot object,
+        is stored within the service context for later use.
+        @param const stdair::BasLogParams& Parameters for the output log stream.
+    */
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
+    
+    /** Attach the STDAIR service (holding the log and database services) to
+        the AIRINV_Service.
+        @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service. */
+    void addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr);
     
     /** Finaliser. */
     void finalise ();

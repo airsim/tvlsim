@@ -156,11 +156,6 @@ int main (int argc, char* argv[]) {
   
   // Initialise the service context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  const TRAVELCCM::TravelCCMType lCCMType(TRAVELCCM::TravelCCMType::PREF_BASED);
-  TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams, lCCMType);
-  
-  // Start a mini-simulation
-  travelccmService.simulate();
   
   return 0;	
 }

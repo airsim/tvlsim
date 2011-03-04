@@ -23,12 +23,18 @@ namespace SIMCRS {
 namespace TRADEMGEN {
   class TRADEMGEN_Service;
 }
+namespace TRAVELCCM {
+  class TRAVELCCM_Service;
+}
 
 /** Pointer on the SIMCRS Service handler. */
 typedef boost::shared_ptr<SIMCRS::SIMCRS_Service> SIMCRS_ServicePtr_T;
 
 /** Pointer on the TRADEMGEN Service handler. */
 typedef boost::shared_ptr<TRADEMGEN::TRADEMGEN_Service> TRADEMGEN_ServicePtr_T;
+
+/** Pointer on the TRAVELCCM Service handler. */
+typedef boost::shared_ptr<TRAVELCCM::TRAVELCCM_Service> TRAVELCCM_ServicePtr_T;
 
 
 namespace DSIM {
@@ -68,6 +74,11 @@ namespace DSIM {
       return *_trademgenService.get();
     }
     
+    /** Get a reference on the TRAVELCCM service handler. */
+    TRAVELCCM::TRAVELCCM_Service& getTRAVELCCM_Service () const {
+      return *_travelccmService.get();
+    }
+    
     // ///////// Setters //////////
     /** Set the pointer on the STDAIR service handler. */
     void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
@@ -99,6 +110,11 @@ namespace DSIM {
       _trademgenService = ioTRADEMGEN_ServicePtr;
     }
 
+    /** Set the pointer on the TRAVELCCM service handler. */
+    void setTRAVELCCM_Service (TRAVELCCM_ServicePtr_T ioTRAVELCCM_ServicePtr) {
+      _travelccmService = ioTRAVELCCM_ServicePtr;
+    }
+
     // ///////// Display Methods //////////
     /** Display the short DSIM_ServiceContext content. */
     const std::string shortDisplay() const;
@@ -124,6 +140,8 @@ namespace DSIM {
     SIMCRS_ServicePtr_T _simcrsService;
     /** TRADEMGEN Service Handler. */
     TRADEMGEN_ServicePtr_T _trademgenService;
+    /** TRAVELCCM Service Handler. */
+    TRAVELCCM_ServicePtr_T _travelccmService;
 
   private:
     // //////////// Attributes //////////////////

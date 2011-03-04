@@ -11,13 +11,14 @@
 namespace stdair {
   struct BookingRequestStruct;
 }
-
 namespace SIMCRS {
   class SIMCRS_Service;
 }
-
 namespace TRADEMGEN {
   class TRADEMGEN_Service;
+}
+namespace TRAVELCCM {
+  class TRAVELCCM_Service;
 }
 
 namespace DSIM {
@@ -28,10 +29,13 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate (SIMCRS::SIMCRS_Service&,TRADEMGEN::TRADEMGEN_Service&);
+    static void simulate (SIMCRS::SIMCRS_Service&,
+                          TRADEMGEN::TRADEMGEN_Service&,
+                          TRAVELCCM::TRAVELCCM_Service&);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
+                                    TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::BookingRequestStruct&);
 
   private:
