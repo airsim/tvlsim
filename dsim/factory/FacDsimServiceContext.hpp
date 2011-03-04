@@ -6,8 +6,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Dsim
-#include <dsim/factory/FacServiceAbstract.hpp>
+// StdAir
+#include <stdair/service/FacServiceAbstract.hpp>
 
 namespace DSIM {
 
@@ -15,7 +15,7 @@ namespace DSIM {
   class DSIM_ServiceContext;
 
   /** Factory for Bucket. */
-  class FacDsimServiceContext : public FacServiceAbstract {
+  class FacDsimServiceContext : public stdair::FacServiceAbstract {
   public:
 
     /** Provide the unique instance.

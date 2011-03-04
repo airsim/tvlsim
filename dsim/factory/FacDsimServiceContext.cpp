@@ -3,8 +3,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// DSIM Common
-#include <dsim/factory/FacSupervisor.hpp>
+// StdAir
+#include <stdair/service/FacSupervisor.hpp>
+// DSim
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
 
@@ -24,7 +25,7 @@ namespace DSIM {
       _instance = new FacDsimServiceContext();
       assert (_instance != NULL);
       
-      FacSupervisor::instance().registerServiceFactory (_instance);
+      stdair::FacSupervisor::instance().registerServiceFactory (_instance);
     }
     return *_instance;
   }

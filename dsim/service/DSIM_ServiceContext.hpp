@@ -10,11 +10,11 @@
 #include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/service/ServiceAbstract.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/bom/ConfigurationParameters.hpp>
 #include <dsim/bom/RDSParameters.hpp>
-#include <dsim/service/ServiceAbstract.hpp>
 
 // Forward declarations
 namespace SIMCRS {
@@ -39,48 +39,66 @@ typedef boost::shared_ptr<TRAVELCCM::TRAVELCCM_Service> TRAVELCCM_ServicePtr_T;
 
 namespace DSIM {
     
-  /** Class holding the context of the Dsim services. */
-  class DSIM_ServiceContext : public ServiceAbstract {
+  /**
+   * @brief Class holding the context of the Dsim services.
+   */
+  class DSIM_ServiceContext : public stdair::ServiceAbstract {
     friend class FacDsimServiceContext;
   public:
     // ///////// Getters //////////
-    /** Get the pointer on the STDAIR service handler. */
-    stdair::STDAIR_ServicePtr_T getSTDAIR_Service () const {
+    /**
+     * Get the pointer on the STDAIR service handler.
+     */
+    stdair::STDAIR_ServicePtr_T getSTDAIR_Service() const {
       return _stdairService;
     }
     
-    /** Get the simulator ID. */
-    const SimulatorID_T& getSimulatorID () const {
+    /**
+     * Get the simulator ID.
+     */
+    const SimulatorID_T& getSimulatorID() const {
       return _simulatorID;
     }
 
-    /** Get the configuration parameters. */
-    const ConfigurationParameters& getConfigurationParameters () const {
+    /**
+     * Get the configuration parameters.
+     */
+    const ConfigurationParameters& getConfigurationParameters() const {
       return _configurationParameters;
     }
     
-    /** Get the RDS parameters. */
-    const RDSParameters& getRDSParameters () const {
+    /**
+     * Get the RDS parameters.
+     */
+    const RDSParameters& getRDSParameters() const {
       return _rdsParameters;
     }
 
-    /** Get a reference on the SIMCRS service handler. */
-    SIMCRS::SIMCRS_Service& getSIMCRS_Service () const {
+    /**
+     * Get a reference on the SIMCRS service handler.
+     */
+    SIMCRS::SIMCRS_Service& getSIMCRS_Service() const {
       return *_simcrsService.get();
     }
     
-    /** Get a reference on the TRADEMGEN service handler. */
-    TRADEMGEN::TRADEMGEN_Service& getTRADEMGEN_Service () const {
+    /**
+     * Get a reference on the TRADEMGEN service handler.
+     */
+    TRADEMGEN::TRADEMGEN_Service& getTRADEMGEN_Service() const {
       return *_trademgenService.get();
     }
     
-    /** Get a reference on the TRAVELCCM service handler. */
-    TRAVELCCM::TRAVELCCM_Service& getTRAVELCCM_Service () const {
+    /**
+     * Get a reference on the TRAVELCCM service handler.
+     */
+    TRAVELCCM::TRAVELCCM_Service& getTRAVELCCM_Service() const {
       return *_travelccmService.get();
     }
     
     // ///////// Setters //////////
-    /** Set the pointer on the STDAIR service handler. */
+    /**
+     * Set the pointer on the STDAIR service handler.
+     */
     void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
       _stdairService = ioSTDAIR_ServicePtr;
     }
@@ -90,50 +108,74 @@ namespace DSIM {
       _simulatorID = iSimulatorID;
     }
 
-    /** Set the configuration parameters. */
+    /**
+     * Set the configuration parameters.
+     */
     void setConfigurationParameters (const ConfigurationParameters& iConfigurationParameters) {
       _configurationParameters = iConfigurationParameters;
     }
     
-    /** Set the RDS parameters. */
+    /**
+     * Set the RDS parameters.
+     */
     void setRDSParameters (const RDSParameters& iRDSParameters) {
       _rdsParameters = iRDSParameters;
     }
     
-    /** Set the pointer on the SIMCRS service handler. */
+    /**
+     * Set the pointer on the SIMCRS service handler.
+     */
     void setSIMCRS_Service (SIMCRS_ServicePtr_T ioSIMCRS_ServicePtr) {
       _simcrsService = ioSIMCRS_ServicePtr;
     }
 
-    /** Set the pointer on the TRADEMGEN service handler. */
+    /**
+     * Set the pointer on the TRADEMGEN service handler.
+     */
     void setTRADEMGEN_Service (TRADEMGEN_ServicePtr_T ioTRADEMGEN_ServicePtr) {
       _trademgenService = ioTRADEMGEN_ServicePtr;
     }
 
-    /** Set the pointer on the TRAVELCCM service handler. */
+    /**
+     * Set the pointer on the TRAVELCCM service handler.
+     */
     void setTRAVELCCM_Service (TRAVELCCM_ServicePtr_T ioTRAVELCCM_ServicePtr) {
       _travelccmService = ioTRAVELCCM_ServicePtr;
     }
 
     // ///////// Display Methods //////////
-    /** Display the short DSIM_ServiceContext content. */
+    /**
+     * Display the short DSIM_ServiceContext content.
+     */
     const std::string shortDisplay() const;
     
-    /** Display the full DSIM_ServiceContext content. */
+    /**
+     * Display the full DSIM_ServiceContext content.
+     */
     const std::string display() const;
 
   private:
     // /////// Construction / initialisation ////////
-    /** Constructors. */
-    DSIM_ServiceContext ();
+    /**
+     * Default constructor.
+     */
+    DSIM_ServiceContext();
+    /**
+     * Constructor.
+     */
     DSIM_ServiceContext (const SimulatorID_T&);
+    /**
+     * Copy constructor.
+     */
     DSIM_ServiceContext (const DSIM_ServiceContext&);
 
-    /** Destructor. */
+    /**
+     * Destructor.
+     */
     ~DSIM_ServiceContext();
 
   private:
-    // ///////////// Children ////////////
+    // //////////////////// Children ///////////////////////
     /** Standard Airline (StdAir) Service Handler. */
     stdair::STDAIR_ServicePtr_T _stdairService;
     /** CRS Service Handler. */
@@ -144,14 +186,20 @@ namespace DSIM {
     TRAVELCCM_ServicePtr_T _travelccmService;
 
   private:
-    // //////////// Attributes //////////////////
-    /** Simulator ID. */
+    // /////////////////// Attributes ////////////////////////
+    /**
+     * Simulator ID.
+     */
     SimulatorID_T _simulatorID;
 
-    /** Configuration parameters. */
+    /**
+     * Configuration parameters.
+     */
     ConfigurationParameters _configurationParameters;
     
-    /** Reference Data Set parameters. */
+    /**
+     * Reference Data Set parameters.
+     */
     RDSParameters _rdsParameters;
   };
 
