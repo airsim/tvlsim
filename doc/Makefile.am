@@ -35,7 +35,6 @@ include $(top_srcdir)/airsched/batches/sources.mk
 #include $(top_srcdir)/airrac/core/sources.mk
 # RMOL
 include $(top_srcdir)/rmol/basic/sources.mk
-include $(top_srcdir)/rmol/field/sources.mk
 include $(top_srcdir)/rmol/bom/sources.mk
 include $(top_srcdir)/rmol/factory/sources.mk
 include $(top_srcdir)/rmol/command/sources.mk

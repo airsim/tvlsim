@@ -374,7 +374,6 @@ AC_CONFIG_FILES(
 	airrac/batches/Makefile
 	rmol/Makefile
 	rmol/basic/Makefile
-	rmol/field/Makefile
 	rmol/bom/Makefile
 	rmol/factory/Makefile
 	rmol/command/Makefile
