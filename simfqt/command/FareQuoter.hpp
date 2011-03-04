@@ -8,11 +8,12 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
-// SimFQT
-#include <simfqt/bom/AirportPair.hpp>
-#include <simfqt/bom/FarePosChannel.hpp>
-#include <simfqt/bom/FareDatePeriod.hpp>
-#include <simfqt/bom/FareTimePeriod.hpp>
+#include <stdair/bom/AirportPair.hpp>
+#include <stdair/bom/PosChannel.hpp>
+#include <stdair/bom/DatePeriod.hpp>
+#include <stdair/bom/TimePeriod.hpp>
+#include <stdair/bom/AirlineClassList.hpp>
+// SIMFQT
 #include <simfqt/bom/FareRuleFeatures.hpp>
 
 // Forward declarations
@@ -39,26 +40,26 @@ namespace SIMFQT {
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const AirportPair&,
+                            const stdair::AirportPair&,
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const FarePosChannel&,
+                            const stdair::PosChannel&,
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const FareDatePeriod&,
-                            const FarePosChannel&,
+                            const stdair::DatePeriod&,
+                            const stdair::PosChannel&,
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const FareTimePeriod&,
-                            const FarePosChannel&,
+                            const stdair::TimePeriod&,
+                            const stdair::PosChannel&,
                             const std::vector<std::string>&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const FareRuleFeatures&,
-                            const FarePosChannel&,
+                            const stdair::PosChannel&,
                             stdair::FareOptionStruct&,
                             const std::vector<std::string>&);
     
