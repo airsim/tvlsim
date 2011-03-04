@@ -334,7 +334,6 @@ namespace SIMFQT {
                                        boost::spirit::qi::unused_type,
                                        boost::spirit::qi::unused_type) const {
 
-      bool lAlreadyInTheList = false;
       stdair::AirlineCode_T lAirlineCode (iChar.begin(), iChar.end());
       // Update the airline code
       _fareRule._airlineCode = lAirlineCode;

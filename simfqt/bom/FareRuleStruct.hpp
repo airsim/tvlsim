@@ -42,44 +42,6 @@ namespace SIMFQT {
     const unsigned int getClassCodeListSize () const {
       return _classCodeList.size();
     }
-  
-    /** Get the first airline code. */
-    const stdair::AirlineCode_T& getFirstAirlineCode () const;
-
-    /** Initialise the internal iterators on airline code:
-	The current iterator is set on the first airline code,
-	the next iterator is set on the second one. */
-    void beginAirline ();
-
-    /** States whether or not the end of the (airline code)
-        list has been reached. */
-    bool hasNotReachedEndAirline () const;
-
-    /** Get the current element (airline code). */
-    stdair::AirlineCode_T getCurrentAirlineCode () const;
-
-    /** Iterate for one element (airline code): 
-        increment both internal iterators on Buckets. */
-    void iterateAirline ();
-    
-    /** Get the first class code list as a string. */
-    const std::string& getFirstClassCode () const;
-
-    /** Initialise the internal iterators on class code:
-	The current iterator is set on the first class code,
-	the next iterator is set on the second one. */
-    void beginClassCode ();
-
-    /** States whether or not the end of the (class code)
-        list has been reached. */
-    bool hasNotReachedEndClassCode () const;
-
-    /** Get the current element (class code). */
-    std::string getCurrentClassCode () const;
-
-    /** Iterate for one element (classCode): 
-        increment both internal iterators on Buckets. */
-    void iterateClassCode ();
 
   public:
     // ////////////////// Attributes /////////////////
@@ -94,12 +56,6 @@ namespace SIMFQT {
     stdair::minute_t _itMinutes;
     stdair::second_t _itSeconds;   
 
-    /** Iterator for the current airline code list. */
-    stdair::AirlineCodeList_T::iterator _itCurrentAirlineCode;
-
-    /** Iterator for the current class code. */
-    stdair::ClassList_StringList_T::iterator _itCurrentClassCode;
-    
     /** Fare ID. */
     SIMFQT::FareQuoteID_T _fareId;
 
@@ -156,9 +112,6 @@ namespace SIMFQT {
 
     /** Airline Code List*/
     stdair::AirlineCodeList_T _airlineCodeList;
-
-    /** Numbers of different Airline Codes*/
-    //unsigned long int _nbOfAirlines;
 
     /** Class Code List*/
     stdair::ClassList_StringList_T _classCodeList;
