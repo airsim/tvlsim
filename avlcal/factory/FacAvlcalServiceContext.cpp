@@ -3,28 +3,29 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// AVLCAL Common
-#include <avlcal/factory/FacSupervisor.hpp>
-#include <avlcal/factory/FacAvlcalServiceContext.hpp>
+// StdAir
+#include <stdair/service/FacSupervisor.hpp>
+// AvlCal
 #include <avlcal/service/AVLCAL_ServiceContext.hpp>
+#include <avlcal/factory/FacAvlcalServiceContext.hpp>
 
 namespace AVLCAL {
 
   FacAvlcalServiceContext* FacAvlcalServiceContext::_instance = NULL;
 
   // //////////////////////////////////////////////////////////////////////
-  FacAvlcalServiceContext::~FacAvlcalServiceContext () {
+  FacAvlcalServiceContext::~FacAvlcalServiceContext() {
     _instance = NULL;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  FacAvlcalServiceContext& FacAvlcalServiceContext::instance () {
+  FacAvlcalServiceContext& FacAvlcalServiceContext::instance() {
 
     if (_instance == NULL) {
       _instance = new FacAvlcalServiceContext();
       assert (_instance != NULL);
       
-      FacSupervisor::instance().registerServiceFactory (_instance);
+      stdair::FacSupervisor::instance().registerServiceFactory (_instance);
     }
     return *_instance;
   }

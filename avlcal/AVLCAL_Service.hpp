@@ -6,17 +6,19 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/basic/BasLogParams.hpp>
+#include <stdair/stdair_service_types.hpp>
 // Avlcal
 #include <avlcal/AVLCAL_Types.hpp>
 
 namespace AVLCAL {
 
-  // Forward declaration
+  /// Forward declarations
   class AVLCAL_ServiceContext;
 
   
-  /** Interface for the AVLCAL Services. */
+  /**
+   * @brief Interface for the AVLCAL Services.
+   */
   class AVLCAL_Service {
   public:
     // /////////// Business Methods /////////////
@@ -25,53 +27,92 @@ namespace AVLCAL {
 
     
     // ////////// Constructors and destructors //////////
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>Moreover, a reference on an output stream is given, so
-        that log outputs can be directed onto that stream.       
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param AirlineCode_T& Code of the owner airline. */
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * Moreover, a reference on an output stream is given, so
+     * that log outputs can be directed onto that stream.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log
+     *        stream.
+     * @param AirlineCode_T& Code of the owner airline.
+     */
     AVLCAL_Service (const stdair::BasLogParams&, const stdair::AirlineCode_T&);
 
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>Moreover, as no reference on any output stream is given,
-        it is assumed that the StdAir log service has already been
-        initialised with the proper log output stream by some other
-        methods in the calling chain (for instance, when the AVLCAL_Service
-        is itself being initialised by another library service such as
-        SIMCRS_Service).
-        @param AirlineCode_T& Code of the owner airline. */
-    AVLCAL_Service (const stdair::AirlineCode_T&);
-
-    /** Destructor. */
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * Moreover, as no reference on any output stream is given,
+     * it is assumed that the StdAir log service has already been
+     * initialised with the proper log output stream by some other
+     * methods in the calling chain (for instance, when the AVLCAL_Service
+     * is itself being initialised by another library service such as
+     * SIMCRS_Service).
+     *
+     * @param STDAIR_ServicePtr_T the shared pointer of stdair service.
+     * @param AirlineCode_T& Code of the owner airline.
+     */
+    AVLCAL_Service (stdair::STDAIR_ServicePtr_T, const stdair::AirlineCode_T&);
+        
+    /**
+     * Destructor.
+     */
     ~AVLCAL_Service();
 
-    
+    /**
+     * Clear the context (cabin capacity, bucket holder).
+     */
+    void reset();
+  
+
   private:
     // /////// Construction and Destruction helper methods ///////
-    /** Default constructor. */
-    AVLCAL_Service ();
-    /** Default copy constructor. */
+    /**
+     * Default constructor.
+     */
+    AVLCAL_Service();
+    /**
+     * Copy constructor.
+     */
     AVLCAL_Service (const AVLCAL_Service&);
 
-    /** Initialise the log. */
-    void logInit (const stdair::BasLogParams&);
+    /**
+     * Initialise the (AVLCAL) service context (i.e., the
+     * AVLCAL_ServiceContext object).
+     */
+    void initServiceContext (const stdair::AirlineCode_T&);
+    
+    /**
+     * Initialise the STDAIR service (including the log service).
+     */
+    void initStdAirService (const stdair::BasLogParams&);
 
-    /** Initialise.
-        @param const stdair::AirlineCode_T& Airline code of the inventory
-               owner. */
-    void init (const stdair::AirlineCode_T&);
+    /**
+     * Attach the STDAIR service (holding the log and database services) to
+     * the AVLCAL_Service.
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     */
+    void addStdAirService (stdair::STDAIR_ServicePtr_T,
+                           const bool iOwnStdairService);
 
-    /** Finalise. */
-    void finalise ();
+    /**
+     * Finaliser.
+     */
+    void finalise();
 
     
   private:
     // ///////// Service Context /////////
-    /** Avlcal context. */
+    /**
+     * Service Context.
+     */
     AVLCAL_ServiceContext* _avlcalServiceContext;
   };
 }

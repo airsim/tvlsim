@@ -4,10 +4,9 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// STL
-#include <string>
-// Avlcal
-#include <avlcal/factory/FacServiceAbstract.hpp>
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
+#include <stdair/service/FacServiceAbstract.hpp>
 
 namespace AVLCAL {
 
@@ -15,7 +14,7 @@ namespace AVLCAL {
   class AVLCAL_ServiceContext;
 
   /** Factory for Bucket. */
-  class FacAvlcalServiceContext : public FacServiceAbstract {
+  class FacAvlcalServiceContext : public stdair::FacServiceAbstract {
   public:
 
     /** Provide the unique instance.
