@@ -11,7 +11,8 @@
 namespace AIRINV {
 
   // //////////////////////////////////////////////////////////////////////
-  AIRINV_Master_ServiceContext::AIRINV_Master_ServiceContext () {
+  AIRINV_Master_ServiceContext::AIRINV_Master_ServiceContext()
+   : _ownStdairService (false) {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -21,7 +22,8 @@ namespace AIRINV {
   // //////////////////////////////////////////////////////////////////////
   const std::string AIRINV_Master_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "AIRINV_Master_ServiceContext: " << std::endl;
+    oStr << "AIRINV_Master_ServiceContext -- Owns StdAir service: "
+         << _ownStdairService;
     return oStr.str();
   }
 
@@ -30,6 +32,18 @@ namespace AIRINV {
     std::ostringstream oStr;
     oStr << shortDisplay();
     return oStr.str();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string AIRINV_Master_ServiceContext::describe() const {
+    return shortDisplay();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void AIRINV_Master_ServiceContext::reset() {
+    if (_ownStdairService == true) {
+      _stdairService.reset();
+    }
   }
 
 }

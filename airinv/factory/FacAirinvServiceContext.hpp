@@ -6,13 +6,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Airinv
-#include <airinv/factory/FacServiceAbstract.hpp>
-
-// Forward declarations.
-namespace stdair {
-  class Inventory;
-}
+// StdAir
+#include <stdair/service/FacServiceAbstract.hpp>
 
 namespace AIRINV {
 
@@ -20,7 +15,7 @@ namespace AIRINV {
   class AIRINV_ServiceContext;
 
   /** Factory for Bucket. */
-  class FacAirinvServiceContext : public FacServiceAbstract {
+  class FacAirinvServiceContext : public stdair::FacServiceAbstract {
   public:
 
     /** Provide the unique instance.
@@ -37,14 +32,14 @@ namespace AIRINV {
     /** Create a new AIRINV_ServiceContext object.
         <br>This new object is added to the list of instantiated objects.
         @return AIRINV_ServiceContext& The newly created object. */
-    AIRINV_ServiceContext& create ();
+    AIRINV_ServiceContext& create();
 
     
   protected:
     /** Default Constructor.
         <br>This constructor is protected in order to ensure the singleton
         pattern.*/
-    FacAirinvServiceContext () {}
+    FacAirinvServiceContext() {}
 
   private:
     /** The unique instance.*/

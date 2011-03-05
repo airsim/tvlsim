@@ -31,7 +31,7 @@ namespace AIRINV {
 
   // //////// Type definitions /////////
   /** Pointer on the AIRINV Service handler. */
-  typedef boost::shared_ptr<AIRINV::AIRINV_Service> AIRINV_ServicePtr_T;
+  typedef boost::shared_ptr<AIRINV_Service> AIRINV_ServicePtr_T;
   
   /** Typedef which defines a map of airline codes and the corresponding
       airline inventories. */

@@ -7,15 +7,14 @@
 #include <list>
 #include <string>
 // Boost (Extended STL)
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/program_options.hpp>
 // StdAir
+#include <stdair/basic/BasLogParams.hpp>
+#include <stdair/basic/BasDBParams.hpp>
 #include <stdair/service/Logger.hpp>
 // AirInv
-#include <airinv/AIRINV_Types.hpp>
-#include <airinv/AIRINV_Service.hpp>
+#include <airinv/AIRINV_Master_Service.hpp>
 #include <airinv/config/airinv-paths.hpp>
 
 
@@ -192,8 +191,7 @@ int main (int argc, char* argv[]) {
   
   // Initialise the Airinv service object
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  // AIRINV::AIRINV_Service airinvService (lLogParams, lAirlineCode,
-  //                                       lInputFilename);
+  AIRINV::AIRINV_Master_Service airinvService (lLogParams, lInputFilename);
   
   // Close the Log outputFile
   logOutputFile.close();
