@@ -19,7 +19,7 @@
 namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
-  RMOL_ServiceContext::RMOL_ServiceContext () {
+  RMOL_ServiceContext::RMOL_ServiceContext() : _ownStdairService (false) {
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -32,6 +32,31 @@ namespace RMOL {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_Service& RMOL_ServiceContext::getSTDAIR_Service() const {
+    assert (_stdairService != NULL);
+    return *_stdairService;
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string RMOL_ServiceContext::shortDisplay() const {
+    std::ostringstream oStr;
+    oStr << "RMOL_ServiceContext -- Owns StdAir service: " << _ownStdairService;
+    return oStr.str();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string RMOL_ServiceContext::display() const {
+    std::ostringstream oStr;
+    oStr << shortDisplay();
+    return oStr.str();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string RMOL_ServiceContext::describe() const {
+    return shortDisplay();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void RMOL_ServiceContext::
   readFromInputFile (const std::string& iInputFileName) {
     stdair::STDAIR_Service& lSTDAIR_Service = getSTDAIR_Service();
@@ -41,11 +66,13 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   void RMOL_ServiceContext::reset() {
-    _stdairService.reset();
+    if (_ownStdairService == true) {
+      _stdairService.reset();
+    }
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::LegCabin& RMOL_ServiceContext::getLegCabinSample () const {
+  stdair::LegCabin& RMOL_ServiceContext::getLegCabinSample() const {
     // Bom root
     stdair::STDAIR_Service& lSTDAIR_Service = getSTDAIR_Service ();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot ();    
