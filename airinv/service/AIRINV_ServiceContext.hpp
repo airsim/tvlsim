@@ -80,11 +80,6 @@ namespace AIRINV {
     void setRMOL_Service (RMOL::RMOL_ServicePtr_T ioRMOL_ServicePtr) {
       _rmolService = ioRMOL_ServicePtr;
     }
-    
-    /** Set the pointer on the RMOL service handler. */
-    void setRMOL_Service (RMOL::RMOL_ServicePtr_T ioRMOL_ServicePtr) {
-      _rmolService = ioRMOL_ServicePtr;
-    }
 
 
   private:

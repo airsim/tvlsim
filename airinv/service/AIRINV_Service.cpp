@@ -160,7 +160,7 @@ namespace AIRINV {
     initAirinvService (iInventoryInputFilename);
   }
 
-  // ////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////
   AIRINV_Service::
   AIRINV_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
                   const stdair::Filename_T& iInventoryInputFilename)
@@ -301,23 +301,6 @@ namespace AIRINV {
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     
     return lSTDAIR_Service_ptr;
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Service::
-  initRMOLService (stdair::STDAIR_ServicePtr_T ioStdAir_Service) {
-    // Initialise the RMOL service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
-    RMOL::RMOL_ServicePtr_T lRMOL_Service_ptr = 
-      boost::make_shared<RMOL::RMOL_Service> (ioStdAir_Service);
-    
-    // Retrieve the Airinv service context
-    assert (_airinvServiceContext != NULL);
-    AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
-
-    // Store the RMOL service object within the (AIRINV) service context
-    lAIRINV_ServiceContext.setRMOL_Service (lRMOL_Service_ptr);
   }
   
   // //////////////////////////////////////////////////////////////////////
