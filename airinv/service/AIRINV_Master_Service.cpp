@@ -90,17 +90,10 @@ namespace AIRINV {
     // Initialise the service context
     initServiceContext();
 
-    // Retrieve the AirInv service context
-    assert (_airinvMasterServiceContext != NULL);
-    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
-      *_airinvMasterServiceContext;
-    
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
     const bool doesNotOwnStdairService = false;
-    assert (ioSTDAIR_Service_ptr);
-    lAIRINV_Master_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
-                                                     doesNotOwnStdairService);
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
     initSlaveAirinvService (ioSTDAIR_Service_ptr);
@@ -160,17 +153,10 @@ namespace AIRINV {
     // Initialise the service context
     initServiceContext();
 
-    // Retrieve the AirInv service context
-    assert (_airinvMasterServiceContext != NULL);
-    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
-      *_airinvMasterServiceContext;
-    
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
     const bool doesNotOwnStdairService = false;
-    assert (ioSTDAIR_Service_ptr);
-    lAIRINV_Master_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
-                                                     doesNotOwnStdairService);
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
     initSlaveAirinvService (ioSTDAIR_Service_ptr, iInventoryInputFilename);
@@ -235,17 +221,10 @@ namespace AIRINV {
     // Initialise the service context
     initServiceContext();
 
-    // Retrieve the AirInv service context
-    assert (_airinvMasterServiceContext != NULL);
-    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
-      *_airinvMasterServiceContext;
-    
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
     const bool doesNotOwnStdairService = false;
-    assert (ioSTDAIR_Service_ptr);
-    lAIRINV_Master_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
-                                                     doesNotOwnStdairService);
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
     initSlaveAirinvService (ioSTDAIR_Service_ptr, iScheduleInputFilename,
