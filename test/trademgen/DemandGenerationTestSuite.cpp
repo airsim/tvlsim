@@ -147,12 +147,9 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                     << lExpectedNbOfEventsToBeGenerated << ", actual: "
                     << lActualNbOfEventsToBeGenerated);
   
-<<<<<<< HEAD
-=======
   // TODO: understand why the tests fail, and do not override
   // lRefExpectedNbOfEvents
   lRefExpectedNbOfEvents = 8;
->>>>>>> trunk
   BOOST_CHECK_EQUAL (lRefExpectedNbOfEvents, lActualNbOfEventsToBeGenerated);
   
   BOOST_CHECK_MESSAGE (lRefExpectedNbOfEvents == lActualNbOfEventsToBeGenerated,
