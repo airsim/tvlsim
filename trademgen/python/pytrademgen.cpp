@@ -10,6 +10,7 @@
 #include <boost/python.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>

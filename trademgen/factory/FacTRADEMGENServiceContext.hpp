@@ -4,9 +4,10 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// Trademgen
+// StdAir
+#include <stdair/service/FacServiceAbstract.hpp>
+// TraDemGen
 #include <trademgen/TRADEMGEN_Types.hpp>
-#include <trademgen/factory/FacServiceAbstract.hpp>
 
 namespace TRADEMGEN {
 
@@ -14,7 +15,7 @@ namespace TRADEMGEN {
   class TRADEMGEN_ServiceContext;
 
   /** Factory for Bucket. */
-  class FacTRADEMGENServiceContext : public FacServiceAbstract {
+  class FacTRADEMGENServiceContext : public stdair::FacServiceAbstract {
   public:
 
     /** Provide the unique instance.

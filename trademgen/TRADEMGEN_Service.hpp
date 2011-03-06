@@ -10,8 +10,6 @@
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
 #include <stdair/bom/EventTypes.hpp>
-// TraDemGen
-#include <trademgen/TRADEMGEN_Types.hpp>
 
 // Forward declarations
 namespace stdair {
@@ -26,7 +24,7 @@ namespace stdair {
 
 namespace TRADEMGEN {
 
-  // Forward declaration
+  /// Forward declarations
   class TRADEMGEN_ServiceContext;
   struct DemandStreamKey;
   
@@ -39,11 +37,13 @@ namespace TRADEMGEN {
     /**
      * @brief Constructor.
      *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
-     * <br>A reference on an output stream is given, so that log
-     * outputs can be directed onto that stream.
-     * <br>Moreover, database connection parameters are given, so that a
+     * The init() method is called; see the corresponding
+     * documentation for more details.
+     *
+     * A reference on an output stream is given, so that log outputs
+     * can be directed onto that stream.
+     *
+     * Moreover, database connection parameters are given, so that a
      * session can be created on the corresponding database.
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
@@ -56,10 +56,11 @@ namespace TRADEMGEN {
     /**
      * Constructor.
      *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
-     * <br>A reference on an output stream is given, so that log
-     * outputs can be directed onto that stream.
+     * The init() method is called; see the corresponding
+     * documentation for more details.
+     *
+     * A reference on an output stream is given, so that log outputs
+     * can be directed onto that stream.
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::Filename_T& Filename of the input demand file.
@@ -72,7 +73,8 @@ namespace TRADEMGEN {
      *
      * The init() method is called; see the corresponding documentation
      * for more details.
-     * <br>Moreover, as no reference on any output stream is given,
+     *
+     * Moreover, as no reference on any output stream is given,
      * neither any database access parameter is given, it is assumed
      * that the StdAir log service has already been initialised with
      * the proper log output stream by some other methods in the
@@ -207,37 +209,54 @@ namespace TRADEMGEN {
     TRADEMGEN_Service (const TRADEMGEN_Service&);
 
     /**
+     * Initialise the STDAIR service (including the log service).
+     *
+     * A reference on the root of the BOM tree, namely the BomRoot
+     * object, is stored within the service context for later use.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output
+     *        log stream.
+     * @param const stdair::BasDBParams& Parameters for the database
+     *        access.
+     */
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&,
+                                                   const stdair::BasDBParams&);
+    
+    /**
+     * Initialise the STDAIR service (including the log service).
+     *
+     * A reference on the root of the BOM tree, namely the BomRoot
+     * object, is stored within the service context for later use.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output
+     *        log stream.
+     */
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
+    
+    /**
+     * Attach the STDAIR service (holding the log and database services) to
+     * the TRADEMGEN_Service.
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     * @param const bool State whether or not TraDemGen owns the STDAIR
+     *        service resources.
+     */
+    void addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                           const bool iOwnStdairService);
+    
+    /**
      * Initialise the (TRADEMGEN) service context (i.e., the
      * TRADEMGEN_ServiceContext object).
      */
-    void initServiceContext ();
+    void initServiceContext();
 
     /**
-     * Initialise the STDAIR service (including the log service).
-     *
-     * A reference on the root of the BOM tree, namely the BomRoot object,
-     * is stored within the service context for later use.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output
-     *   log stream.
-     * @param const stdair::BasDBParams& Parameters for the database
-     *   access.
-     */
-    void initStdAirService (const stdair::BasLogParams&,
-                            const stdair::BasDBParams&);
-    
-    /**
-     * Initialise the STDAIR service (including the log service).
-     * <br>A reference on the root of the BOM tree, namely the BomRoot object,
-     * is stored within the service context for later use.
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     */
-    void initStdAirService (const stdair::BasLogParams&);
-    
-    /**
      * Initialise.
-     * <br>The CSV file, describing the characteristics of the demand for the
-     * simulator, is parsed and the demand streams are generated accordingly.
+     *
+     * The CSV file, describing the characteristics of the demand for
+     * the simulator, is parsed and the demand streams are generated
+     * accordingly.
+     *
      * @param const stdair::Filename_T& Filename of the input demand file.
      */
     void init (const stdair::Filename_T& iDemandInputFilename);
@@ -251,7 +270,7 @@ namespace TRADEMGEN {
   private:
     // ///////// Service Context /////////
     /**
-     * Trademgen context.
+     * TraDemGen context.
      */
     TRADEMGEN_ServiceContext* _trademgenServiceContext;
   };

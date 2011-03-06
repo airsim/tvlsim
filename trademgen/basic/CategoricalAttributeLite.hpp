@@ -82,8 +82,8 @@ namespace TRADEMGEN {
     /** Destructor */
     virtual ~CategoricalAttributeLite () {
       // TODO: Verify that the arrays are correctly cleaned.
-      delete _cumulativeDistribution; _cumulativeDistribution = NULL;
-      delete _valueArray; _valueArray = NULL;
+      delete[] _cumulativeDistribution; _cumulativeDistribution = NULL;
+      delete[] _valueArray; _valueArray = NULL;
     }
 
   private:
