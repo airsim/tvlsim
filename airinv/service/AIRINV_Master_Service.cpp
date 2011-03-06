@@ -320,8 +320,6 @@ namespace AIRINV {
     // Note that the (Boost.)Smart Pointer keeps track of the references
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
-    stdair::BasLogParams logParams = ioSTDAIR_Service_ptr->getLogParams();
-    logParams.setForcedInitialisationFlag (true);
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
       boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr);
 
@@ -342,8 +340,6 @@ namespace AIRINV {
     // Note that the (Boost.)Smart Pointer keeps track of the references
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
-    stdair::BasLogParams logParams = ioSTDAIR_Service_ptr->getLogParams();
-    logParams.setForcedInitialisationFlag (true);
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
       boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr,
                                           iInventoryInputFilename);
@@ -366,8 +362,6 @@ namespace AIRINV {
     // Note that the (Boost.)Smart Pointer keeps track of the references
     // on the Service object, and deletes that object when it is no longer
     // referenced (e.g., at the end of the process).
-    stdair::BasLogParams logParams = ioSTDAIR_Service_ptr->getLogParams();
-    logParams.setForcedInitialisationFlag (true);
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
       boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr,
                                           iScheduleInputFilename,
