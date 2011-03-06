@@ -8,6 +8,7 @@
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
+#include <stdair/factory/FacBom.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 // TraDemGen
@@ -15,7 +16,6 @@
 #include <trademgen/basic/DemandDistribution.hpp>
 #include <trademgen/bom/DemandStruct.hpp>
 #include <trademgen/bom/DemandStream.hpp>
-#include <trademgen/factory/FacDemandStream.hpp>
 #include <trademgen/command/DemandManager.hpp>
 
 namespace TRADEMGEN {
@@ -37,19 +37,20 @@ namespace TRADEMGEN {
    const stdair::RandomSeed_T& iNumberOfRequestsSeed,
    const stdair::RandomSeed_T& iRequestDateTimeSeed,
    const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
-   stdair::UniformGenerator_T& ioSharedGenerator,
    const POSProbabilityMass_T& iDefaultPOSProbablityMass) {
     
-    DemandStream& oDemandStream = FacDemandStream::
-      instance().create (iKey, iArrivalPattern, iPOSProbMass,
-                         iChannelProbMass, iTripTypeProbMass,
-                         iStayDurationProbMass, iFrequentFlyerProbMass,
-                         iPreferredDepartureTimeContinuousDistribution,
-                         iMinWTP, iValueOfTimeContinuousDistribution,
-                         iDemandDistribution, iNumberOfRequestsSeed,
-                         iRequestDateTimeSeed, iDemandCharacteristicsSeed,
-                         ioSharedGenerator, iDefaultPOSProbablityMass);
-    
+    DemandStream& oDemandStream =
+      stdair::FacBom<DemandStream>::instance().create (iKey);
+
+    oDemandStream.setAll (iArrivalPattern, iPOSProbMass,
+                          iChannelProbMass, iTripTypeProbMass,
+                          iStayDurationProbMass, iFrequentFlyerProbMass,
+                          iPreferredDepartureTimeContinuousDistribution,
+                          iMinWTP, iValueOfTimeContinuousDistribution,
+                          iDemandDistribution, iNumberOfRequestsSeed,
+                          iRequestDateTimeSeed, iDemandCharacteristicsSeed,
+                          iDefaultPOSProbablityMass);
+
     // Link the DemandStream to its parent (EventQueue)
     stdair::FacBomManager::instance().linkWithParent (ioEventQueue,
                                                       oDemandStream);
@@ -64,7 +65,7 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   void DemandManager::
   createDemandCharacteristics (stdair::EventQueue& ioEventQueue,
-                               stdair::UniformGenerator_T& ioSharedGenerator,
+                               stdair::RandomGeneration& ioSharedGenerator,
                                const POSProbabilityMass_T& iPOSProbMass,
                                const DemandStruct& iDemand) {
     
@@ -101,7 +102,7 @@ namespace TRADEMGEN {
                           lDemandDistribution,
                           lNumberOfRequestsSeed, lRequestDateTimeSeed,
                           lDemandCharacteristicsSeed,
-                          ioSharedGenerator, iPOSProbMass);
+                          iPOSProbMass);
 
     // Calculate the expected total number of events for the current
     // demand stream
@@ -127,7 +128,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::RandomSeed_T DemandManager::
-  generateSeed (stdair::UniformGenerator_T& ioSharedGenerator) {
+  generateSeed (stdair::RandomGeneration& ioSharedGenerator) {
     stdair::RealNumber_T lVariateUnif = ioSharedGenerator() * 1e9;
     stdair::RandomSeed_T oSeed = static_cast<stdair::RandomSeed_T>(lVariateUnif);
     return oSeed;
@@ -147,6 +148,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T DemandManager::
   generateNextRequest (stdair::EventQueue& ioEventQueue,
+                       stdair::RandomGeneration& ioGenerator,
                        const stdair::DemandStreamKeyStr_T& iKey) {
 
     // Retrieve the DemandStream which corresponds to the given key.
@@ -155,7 +157,7 @@ namespace TRADEMGEN {
 
     // Generate the next booking request
     stdair::BookingRequestPtr_T lBookingRequest =
-      lDemandStream.generateNextRequest();
+      lDemandStream.generateNextRequest (ioGenerator);
 
     // Create an event structure
     stdair::EventStruct lEventStruct (stdair::EventType::BKG_REQ, iKey,
@@ -175,7 +177,8 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::Count_T DemandManager::
-  generateFirstRequests (stdair::EventQueue& ioEventQueue) {
+  generateFirstRequests (stdair::EventQueue& ioEventQueue,
+                         stdair::RandomGeneration& ioGenerator) {
 
     // Actual total number of events to be generated
     stdair::NbOfRequests_T lActualTotalNbOfEvents = 0.0;
@@ -213,7 +216,7 @@ namespace TRADEMGEN {
       if (stillHavingRequestsToBeGenerated) {
         // Generate the next event (booking request), and insert it
         // into the event queue
-        generateNextRequest (ioEventQueue, lKey.toString());
+        generateNextRequest (ioEventQueue, ioGenerator, lKey.toString());
       }
     }
 

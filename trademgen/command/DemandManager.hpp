@@ -6,6 +6,7 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/RandomGeneration.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
 #include <stdair/command/CmdAbstract.hpp>
 // TraDemGen
@@ -42,10 +43,10 @@ namespace TRADEMGEN {
      * Flight-Period, and add them to the given EventQueue.
      *
      * @param stdair::EventQueue& Reference on the EventQueue.
-     * @param stdair::UniformGenerator_T& Boost uniform generator.
+     * @param stdair::RandomGeneration& Boost uniform generator.
      */
     static void createDemandCharacteristics (stdair::EventQueue&,
-                                             stdair::UniformGenerator_T&,
+                                             stdair::RandomGeneration&,
                                              const POSProbabilityMass_T&,
                                              const DemandStruct&);
 
@@ -53,10 +54,10 @@ namespace TRADEMGEN {
      * Generate the random seed for the demand characteristic
      * distributions.
      *
-     * @param stdair::UniformGenerator_T& Boost uniform generator.
+     * @param stdair::RandomGeneration& Boost uniform generator.
      * @return stdair::RandomSeed_T The generated seed.
      */
-    static stdair::RandomSeed_T generateSeed (stdair::UniformGenerator_T&);
+    static stdair::RandomSeed_T generateSeed (stdair::RandomGeneration&);
 
     /**
      * Create a demand stream object and it into the BOM tree.
@@ -95,7 +96,6 @@ namespace TRADEMGEN {
                         const stdair::RandomSeed_T&,
                         const stdair::RandomSeed_T&,
                         const stdair::RandomSeed_T&,
-                        stdair::UniformGenerator_T&,
                         const POSProbabilityMass_T&);
 
     /**
@@ -120,20 +120,26 @@ namespace TRADEMGEN {
      * @return stdair::Count_T The actual total number of events to
      *         be generated, for all the demand stream.
      */
-    static stdair::Count_T generateFirstRequests (stdair::EventQueue&);
+    static stdair::Count_T generateFirstRequests (stdair::EventQueue&,
+                                                  stdair::RandomGeneration&);
 
     /**
      * Generate a request with the demand stream, for which the key is
      * given as parameter.
      *
+     * The state of the random generator, passed as parameter, is
+     * altered, reflecting the random generations made within that
+     * method.
+     *
      * @param stdair::EventQueue& Reference on the top of the BOM tree.
+     * @param stdair::RandomGeneration& Random generator.
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
      * @return stdair::BookingRequestPtr_T (Boost) shared pointer on
      *   the booking request structure, which has just been created.
      */
     static stdair::BookingRequestPtr_T
-    generateNextRequest (stdair::EventQueue&,
+    generateNextRequest (stdair::EventQueue&, stdair::RandomGeneration&,
                          const stdair::DemandStreamKeyStr_T&);
 
     /**

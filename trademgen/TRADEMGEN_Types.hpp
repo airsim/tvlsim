@@ -4,24 +4,10 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// STL
-#include <exception>
-// StdAir
-#include <stdair/stdair_exceptions.hpp>
+// TraDemGen
+#include <trademgen/TRADEMGEN_Exceptions.hpp>
 
 namespace TRADEMGEN {
-
-  // ///////// Exceptions ///////////
-  class TrademgenGenerationException : public stdair::RootException {
-  };
-
-  class DemandInputFileNotFoundException : public stdair::FileNotFoundException{
-  public:
-    /** Constructor. */
-    DemandInputFileNotFoundException (const std::string& iWhat)
-      : stdair::FileNotFoundException (iWhat) {}
-  };
-
 
   // //////// Type definitions specific to TraDemGen /////////
   // No specific type for now

@@ -4,6 +4,7 @@
 // STL
 #include <cassert>
 // StdAir
+#include <stdair/basic/RandomGeneration.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/service/Logger.hpp>
@@ -371,7 +372,7 @@ namespace TRADEMGEN {
 
     // //////////////////////////////////////////////////////////////////
     doEndDemand::doEndDemand (stdair::EventQueue& ioEventQueue,
-                              stdair::UniformGenerator_T& ioSharedGenerator,
+                              stdair::RandomGeneration& ioSharedGenerator,
                               const POSProbabilityMass_T& iPOSProbMass,
                               DemandStruct& ioDemand)
       : ParserSemanticAction (ioDemand), _eventQueue (ioEventQueue),
@@ -480,7 +481,7 @@ namespace TRADEMGEN {
 
     // //////////////////////////////////////////////////////////////////
     DemandParser::DemandParser (stdair::EventQueue& ioEventQueue,
-                                stdair::UniformGenerator_T& ioSharedGenerator,
+                                stdair::RandomGeneration& ioSharedGenerator,
                                 const POSProbabilityMass_T& iPOSProbMass,
                                 DemandStruct& ioDemand) 
       : _eventQueue (ioEventQueue), _uniformGenerator (ioSharedGenerator),
@@ -511,8 +512,8 @@ namespace TRADEMGEN {
         >> ';' >> time_value_dist
         >> ';' >> dtd_dist
         >> ';' >> demand_params
-        >> demand_end[doEndDemand(self._eventQueue, self._uniformGenerator,
-                                  self._posProbabilityMass, self._demand)]
+        >> demand_end[doEndDemand (self._eventQueue, self._uniformGenerator,
+                                   self._posProbabilityMass, self._demand)]
         ;
 
       demand_end =
@@ -748,7 +749,7 @@ namespace TRADEMGEN {
   // //////////////////////////////////////////////////////////////////////
   DemandFileParser::
   DemandFileParser (stdair::EventQueue& ioEventQueue,
-                    stdair::UniformGenerator_T& ioSharedGenerator,
+                    stdair::RandomGeneration& ioSharedGenerator,
                     const POSProbabilityMass_T& iPOSProbMass,
                     const std::string& iFilename)
     : _filename (iFilename), _eventQueue (ioEventQueue),

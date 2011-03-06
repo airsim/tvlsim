@@ -7,6 +7,7 @@
 // STL
 #include <string>
 // StdAir
+#include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
 // TraDemGen
@@ -14,18 +15,38 @@
 
 namespace TRADEMGEN {
 
-  /** Class modeling the characteristics of a demand type. */
+  /**
+   * @brief Class modeling the characteristics of a demand type.
+   */
   struct DemandCharacteristics : public stdair::StructAbstract {
         
   public:
-    // ////////////// Display Support Methods //////////
-    /** Give a description of the structure (for display purposes). */
+    // ////////////// Business support methods //////////
+    /**
+     * Get the POS corresponding to the cumulative probability
+     */
+    const stdair::AirportCode_T&
+    getPOSValue (const stdair::Probability_T& iCumulativeProbability) const;
+
+    /**
+     * Check that the POS is within the distribution.
+     */
+    bool checkPOSValue (const stdair::AirportCode_T& iPOS) const;
+
+
+  public:
+    // ////////////// Display support methods //////////
+    /**
+     * Give a description of the structure (for display purposes).
+     */
     const std::string describe() const;
 
 
   public:
     // ////////// Constructors and destructors /////////
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     DemandCharacteristics (const ArrivalPatternCumulativeDistribution_T&,
                            const POSProbabilityMassFunction_T&,
                            const ChannelProbabilityMassFunction_T&,
@@ -35,47 +56,72 @@ namespace TRADEMGEN {
                            const PreferredDepartureTimeContinuousDistribution_T&,
                            const stdair::WTP_T&,
                            const ValueOfTimeContinuousDistribution_T&);
-    
-    /** Destructor */
-    ~DemandCharacteristics();
-  private:
-    /** Default constructor. */
+
+    /**
+     * Default constructor.
+     */
     DemandCharacteristics();
-    /** Deault copy constructor. */
+
+    /**
+     * Copy constructor.
+     */
     DemandCharacteristics (const DemandCharacteristics&);
+
+    /**
+     * Destructor.
+     */
+    ~DemandCharacteristics();
 
 
   public:
     // //////////////////// Attributes /////////////////////
-    /** Arrival pattern (cumulative distribution of timing of arrival
-        of requests (negative number of days between departure date
-        and request date). */
-    const ContinuousFloatDuration_T _arrivalPattern;
+    /**
+     * Arrival pattern (cumulative distribution of timing of arrival
+     * of requests (negative number of days between departure date
+     * and request date).
+     */
+    ContinuousFloatDuration_T _arrivalPattern;
 
-    /** POS probability mass. */
-    const POSProbabilityMass_T _posProbabilityMass;
+    /**
+     * POS probability mass.
+     */
+    POSProbabilityMass_T _posProbabilityMass;
     
-    /** Channel probability mass. */
-    const ChannelProbabilityMass_T _channelProbabilityMass;
+    /**
+     * Channel probability mass.
+     */
+    ChannelProbabilityMass_T _channelProbabilityMass;
     
-    /** Trip type probability mass */
-    const TripTypeProbabilityMass_T _tripTypeProbabilityMass;
+    /**
+     * Trip type probability mass.
+     */
+    TripTypeProbabilityMass_T _tripTypeProbabilityMass;
     
-    /** Stay duration probability mass */
-    const StayDurationProbabilityMass_T _stayDurationProbabilityMass;
+    /**
+     * Stay duration probability mass.
+     */
+    StayDurationProbabilityMass_T _stayDurationProbabilityMass;
     
-    /** Frequent flyer probability mass */
-    const FrequentFlyerProbabilityMass_T _frequentFlyerProbabilityMass;
+    /**
+     * Frequent flyer probability mass.
+     */
+    FrequentFlyerProbabilityMass_T _frequentFlyerProbabilityMass;
 
-    /** Preferred departure time cumulative distribution. */
-    const PreferredDepartureTimeCumulativeDistribution_T _preferredDepartureTimeCumulativeDistribution;
+    /**
+     * Preferred departure time cumulative distribution.
+     */
+    PreferredDepartureTimeCumulativeDistribution_T _preferredDepartureTimeCumulativeDistribution;
     
-    /** Min Willingness-to-pay, used for the computation of the WTP of
-        each request. */
-    const stdair::WTP_T _minWTP;
+    /**
+     * Min Willingness-to-pay, used for the computation of the WTP of
+     * each request.
+     */
+    stdair::WTP_T _minWTP;
 
-    /** Value of time cumulative distribution. */
-    const ValueOfTimeCumulativeDistribution_T _valueOfTimeCumulativeDistribution;
+    /**
+     * Value of time cumulative distribution.
+     */
+    ValueOfTimeCumulativeDistribution_T _valueOfTimeCumulativeDistribution;
   };
 
 }

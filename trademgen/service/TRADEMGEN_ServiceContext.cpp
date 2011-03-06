@@ -15,16 +15,14 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_ServiceContext::TRADEMGEN_ServiceContext()
-    : _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
-      _uniformGenerator (_generator, DEFAULT_UNIFORM_REAL_DISTRIBUTION),
+    : _uniformGenerator (stdair::DEFAULT_RANDOM_SEED),
       _posProbabilityMass (DEFAULT_POS_PROBALILITY_MASS) {
   }
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_ServiceContext::
   TRADEMGEN_ServiceContext (const std::string& iServiceName) 
-    : _seed (stdair::DEFAULT_RANDOM_SEED), _generator (_seed),
-      _uniformGenerator (_generator, DEFAULT_UNIFORM_REAL_DISTRIBUTION),
+    : _uniformGenerator (stdair::DEFAULT_RANDOM_SEED),
       _posProbabilityMass (DEFAULT_POS_PROBALILITY_MASS) {
   }
 
@@ -36,7 +34,7 @@ namespace TRADEMGEN {
   const std::string TRADEMGEN_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
     oStr << "TRADEMGEN_ServiceContext -- Owns StdAir service: "
-         << _ownStdairService;
+         << _ownStdairService << " -- Generator: " << _uniformGenerator;
     return oStr.str();
   }
 

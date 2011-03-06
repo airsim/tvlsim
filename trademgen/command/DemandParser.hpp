@@ -12,28 +12,33 @@
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class EventQueue;
+  struct RandomGeneration;
 }
 
 namespace TRADEMGEN {
   
   /**
-   * Class wrapping the parser entry point.
+   * @brief Class wrapping the parser entry point.
    */
   class DemandParser : public stdair::CmdAbstract {
   public:
     /**
-     * Parses the CSV file describing travel demand, for instance for
+     * Parse the CSV file describing travel demand, for instance for
      * generating simulated booking request in a simulator.
+     *
+     * The state of the random generator, given as parameter, evolves
+     * each time a demand request is generated.
+     *
      * @param const stdair::Filename_T& The file-name of the
               CSV-formatted demand input file.
-     * @param const stdair::Date_T&
-     * @param stdair::EventQueue& Root of the BOM tree.
+     * @param stdair::EventQueue& Event queue.
+     * @param stdair::RandomGeneration& Random generator.
      */
     static void generateDemand (const stdair::Filename_T&, stdair::EventQueue&,
-                                stdair::UniformGenerator_T&,
+                                stdair::RandomGeneration&,
                                 const POSProbabilityMass_T&);
   };
 }

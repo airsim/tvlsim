@@ -9,13 +9,11 @@ bas_h_sources = \
 		$(top_srcdir)/trademgen/basic/DemandCharacteristicsTypes.hpp \
 		$(top_srcdir)/trademgen/basic/DemandCharacteristics.hpp \
 		$(top_srcdir)/trademgen/basic/DemandDistribution.hpp \
-		$(top_srcdir)/trademgen/basic/RandomGeneration.hpp \
 		$(top_srcdir)/trademgen/basic/RandomGenerationContext.hpp \
 		$(top_srcdir)/trademgen/basic/DictionaryManager.hpp
 bas_cc_sources = \
 		$(top_srcdir)/trademgen/basic/BasConst.cpp \
 		$(top_srcdir)/trademgen/basic/DemandCharacteristics.cpp \
 		$(top_srcdir)/trademgen/basic/DemandDistribution.cpp \
-		$(top_srcdir)/trademgen/basic/RandomGeneration.cpp \
 		$(top_srcdir)/trademgen/basic/RandomGenerationContext.cpp \
 		$(top_srcdir)/trademgen/basic/DictionaryManager.cpp

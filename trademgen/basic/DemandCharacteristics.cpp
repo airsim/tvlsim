@@ -6,7 +6,6 @@
 #include <sstream>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/basic/BasConst_General.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristics.hpp>
 
@@ -23,22 +22,20 @@ namespace TRADEMGEN {
       _preferredDepartureTimeCumulativeDistribution (PreferredDepartureTimeContinuousDistribution_T()),
       _minWTP (stdair::WTP_T()),
       _valueOfTimeCumulativeDistribution (ValueOfTimeContinuousDistribution_T()) {
-    assert (false);
   }
 
   // /////////////////////////////////////////////////////
   DemandCharacteristics::
   DemandCharacteristics (const DemandCharacteristics& iDC)
-    : _arrivalPattern (ArrivalPatternCumulativeDistribution_T()),
-      _posProbabilityMass (POSProbabilityMassFunction_T()),
-      _channelProbabilityMass (ChannelProbabilityMassFunction_T()),
-      _tripTypeProbabilityMass (TripTypeProbabilityMassFunction_T()),
-      _stayDurationProbabilityMass (StayDurationProbabilityMassFunction_T()),
-      _frequentFlyerProbabilityMass (FrequentFlyerProbabilityMassFunction_T()),
-      _preferredDepartureTimeCumulativeDistribution (PreferredDepartureTimeContinuousDistribution_T()),
+    : _arrivalPattern (iDC._arrivalPattern),
+      _posProbabilityMass (iDC._posProbabilityMass),
+      _channelProbabilityMass (iDC._channelProbabilityMass),
+      _tripTypeProbabilityMass (iDC._tripTypeProbabilityMass),
+      _stayDurationProbabilityMass (iDC._stayDurationProbabilityMass),
+      _frequentFlyerProbabilityMass (iDC._frequentFlyerProbabilityMass),
+      _preferredDepartureTimeCumulativeDistribution (iDC._preferredDepartureTimeCumulativeDistribution),
       _minWTP (iDC._minWTP),
-      _valueOfTimeCumulativeDistribution (ValueOfTimeContinuousDistribution_T()) {
-    assert (false);
+      _valueOfTimeCumulativeDistribution (iDC._valueOfTimeCumulativeDistribution) {
   }
 
   // /////////////////////////////////////////////////////
@@ -64,9 +61,21 @@ namespace TRADEMGEN {
   }
     
   // /////////////////////////////////////////////////////
-  DemandCharacteristics::~DemandCharacteristics () {
+  DemandCharacteristics::~DemandCharacteristics() {
   }
   
+  // /////////////////////////////////////////////////////
+  const stdair::AirportCode_T& DemandCharacteristics::
+  getPOSValue (const stdair::Probability_T& iCumulativeProbability) const {
+    return _posProbabilityMass.getValue (iCumulativeProbability);
+  }
+
+  // /////////////////////////////////////////////////////
+  bool DemandCharacteristics::
+  checkPOSValue (const stdair::AirportCode_T& iPOS) const {
+    return _posProbabilityMass.checkValue (iPOS);
+  }
+
   // /////////////////////////////////////////////////////
   const std::string DemandCharacteristics::describe() const {
     std::ostringstream oStr;

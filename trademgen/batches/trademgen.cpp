@@ -9,9 +9,6 @@
 #include <list>
 #include <string>
 //  //// Boost (Extended STL) ////
-// Boost Date-Time
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 // Boost Tokeniser
 #include <boost/tokenizer.hpp>
 // Boost Program Options
@@ -26,17 +23,11 @@
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/BomDisplay.hpp>
 #include <stdair/service/Logger.hpp>
-// Trademgen
+// TraDemGen
 #include <trademgen/TRADEMGEN_Service.hpp>
 #include <trademgen/config/trademgen-paths.hpp>
-#include <trademgen/basic/DemandCharacteristics.hpp>
-#include <trademgen/basic/DemandCharacteristicsTypes.hpp>
-#include <trademgen/basic/DemandDistribution.hpp>
-#include <trademgen/basic/RandomGeneration.hpp>
-#include <trademgen/basic/RandomGenerationContext.hpp>
-#include <trademgen/basic/DictionaryManager.hpp>
-#include <trademgen/bom/BomManager.hpp>
 #include <trademgen/config/trademgen-paths.hpp>
 
 // Aliases for namespaces
@@ -297,7 +288,7 @@ int main (int argc, char* argv[]) {
                         << lPoppedRequest.describe() << "'.");
     
       // Dump the request into the dedicated CSV file
-      TRADEMGEN::BomManager::csvDisplay (output, lPoppedRequest);
+      stdair::BomDisplay::csvDisplay (output, lPoppedRequest);
         
       // Retrieve the corresponding demand stream key
       const stdair::EventContentKey_T& lDemandStreamKey =

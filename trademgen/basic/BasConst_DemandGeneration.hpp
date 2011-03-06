@@ -28,7 +28,7 @@ namespace TRADEMGEN {
   extern stdair::BaseGenerator_T DEFAULT_BASE_GENERATOR;
 
   /** Default random uniform real distribution. */
-  extern const boost::uniform_real<> DEFAULT_UNIFORM_REAL_DISTRIBUTION;
+  extern const boost::uniform_01<> DEFAULT_UNIFORM_REAL_DISTRIBUTION;
 
 }
 #endif // __TRADEMGEN_BAS_BASCONST_DEMANDGENERATION_HPP

@@ -7,39 +7,41 @@
 // StdAir
 #include <stdair/bom/BomAbstract.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
+#include <stdair/basic/RandomGeneration.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristics.hpp>
 #include <trademgen/basic/DemandDistribution.hpp>
-#include <trademgen/basic/RandomGeneration.hpp>
 #include <trademgen/basic/RandomGenerationContext.hpp>
 #include <trademgen/bom/DemandStreamKey.hpp>
 #include <trademgen/bom/DemandStreamTypes.hpp>
 
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class FacBomManager;
+  template <typename BOM> class FacBom;
 }
 
 namespace TRADEMGEN {
   
   /**
-   * Class modeling a demand stream.
+   * @brief Class modeling a demand stream.
    */
-  class DemandStream  : public stdair::BomAbstract {
-    template <typename BOM> friend class FacBom;
+  class DemandStream : public stdair::BomAbstract {
+    template <typename BOM> friend class stdair::FacBom;
     friend class stdair::FacBomManager;
-    friend class FacDemandStream;
 
   public:
     // ////////// Type definitions ////////////
-    /** Definition allowing to retrieve the associated BOM key type. */
+    /**
+     * Definition allowing to retrieve the associated BOM key type.
+     */
     typedef DemandStreamKey Key_T;
 
 
   public:
     // ///////////// Getters ///////////
     /** Get the key */
-    const Key_T& getKey () const {
+    const Key_T& getKey() const {
       return _key;
     }
     
@@ -73,6 +75,16 @@ namespace TRADEMGEN {
       return _holderMap;
     }
     
+    /** Get the demand characteristics. */
+    const DemandCharacteristics& getDemandCharacteristics() const {
+      return _demandCharacteristics;
+    }
+
+    /** Get the demand distribution. */
+    const DemandDistribution& getDemandDistribution() const {
+      return _demandDistribution;
+    }
+
     /** Get the total number of requests to be generated. */
     const stdair::NbOfRequests_T& getTotalNumberOfRequestsToBeGenerated() const{
       return _totalNumberOfRequestsToBeGenerated;
@@ -90,75 +102,121 @@ namespace TRADEMGEN {
     
     /** Get the number of requests generated so far. */
     const stdair::Count_T& getNumberOfRequestsGeneratedSoFar() const {
-      return _randomGenerationContext._numberOfRequestsGeneratedSoFar;
+      return _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
     }
     
     /** Get the seed of the random generator for the number of requests. */
-    const stdair:: RandomSeed_T& getNumberOfRequestsRandomGeneratorSeed () const{
+    const stdair:: RandomSeed_T& getNumberOfRequestsRandomGeneratorSeed() const{
       return _numberOfRequestsRandomGenerator._seed;
     }
 
     /** Get the seed of the random generator for the request datetime. */
-    const stdair:: RandomSeed_T& getRequestDateTimeRandomGeneratorSeed () const {
+    const stdair:: RandomSeed_T& getRequestDateTimeRandomGeneratorSeed() const {
       return _requestDateTimeRandomGenerator._seed;
     }
 
     /** Get the seed of the random generator for the demand characteristics. */
-    const stdair:: RandomSeed_T& getDemandCharacteristicsRandomGeneratorSeed () const {
+    const stdair:: RandomSeed_T& getDemandCharacteristicsRandomGeneratorSeed() const {
       return _demandCharacteristicsRandomGenerator._seed;
     }
 
-    /** Get the demand characteristics. */
-    const DemandCharacteristics& getDemandCharacteristics () const {
-      return _demandCharacteristics;
+    /**
+     * Get the default POS probablity mass, used when "row" (rest of
+     * the world) is drawn.
+     */
+    const POSProbabilityMass_T& getPOSProbabilityMass() const {
+      return _posProMass;
     }
 
-    /** Get the demand distribution. */
-    const DemandDistribution& getDemandDistribution () const {
-      return _demandDistribution;
-    }
 
 
   public:
     // //////////////// Setters //////////////////    
     /** Set the number of requests generated so far. */
-    void setNumberOfRequestsGeneratedSoFar (const stdair:: Count_T& iNumberOfRequests) {
-      _randomGenerationContext._numberOfRequestsGeneratedSoFar =
-        iNumberOfRequests;
+    void setNumberOfRequestsGeneratedSoFar (const stdair:: Count_T& iCount) {
+      _randomGenerationContext.setNumberOfRequestsGeneratedSoFar (iCount);
     }
 
-
-  public:
-    // /////////// Display support methods /////////
-    /** Dump a Business Object into an output stream.
-        @param ostream& the output stream. */
-    void toStream (std::ostream& ioOut) const {
-      ioOut << toString();
+    /** Set the demand distribution. */
+    void setDemandDistribution (const DemandDistribution& iDemandDistribution) {
+      _demandDistribution = iDemandDistribution;
     }
 
-    /** Read a Business Object from an input stream.
-        @param istream& the input stream. */
-    void fromStream (std::istream& ioIn) {
+    /** Set the demand characteristics. */
+    void
+    setDemandCharacteristics (const ArrivalPatternCumulativeDistribution_T& iArrivalPattern,
+                              const POSProbabilityMassFunction_T& iPOSProbMass,
+                              const ChannelProbabilityMassFunction_T& iChannelProbMass,
+                              const TripTypeProbabilityMassFunction_T& iTripTypeProbMass,
+                              const StayDurationProbabilityMassFunction_T& iStayDurationProbMass,
+                              const FrequentFlyerProbabilityMassFunction_T& iFrequentFlyerProbMass,
+                              const PreferredDepartureTimeContinuousDistribution_T& iPreferredDepartureTimeContinuousDistribution,
+                              const stdair::WTP_T& iMinWTP,
+                              const ValueOfTimeContinuousDistribution_T& iValueOfTimeContinuousDistribution) {
+      _demandCharacteristics =
+        DemandCharacteristics (iArrivalPattern, iPOSProbMass,
+                               iChannelProbMass, iTripTypeProbMass,
+                               iStayDurationProbMass, iFrequentFlyerProbMass,
+                               iPreferredDepartureTimeContinuousDistribution,
+                               iMinWTP, iValueOfTimeContinuousDistribution);
     }
 
-   /** Get the serialised version of the Business Object. */
-    std::string toString() const;
+    /** Set the total number of requests to be generated. */
+    void setTotalNumberOfRequestsToBeGenerated (const stdair::NbOfRequests_T& iNbOfRequests) {
+      _totalNumberOfRequestsToBeGenerated = iNbOfRequests;
+    }
+
+    /** Set the seed of the random generator for the number of requests. */
+    void setNumberOfRequestsRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
+      _numberOfRequestsRandomGenerator._seed = iSeed;
+    }
+
+    /** Set the seed of the random generator for the request datetime. */
+    void setRequestDateTimeRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
+      _requestDateTimeRandomGenerator._seed = iSeed;
+    }
+
+    /** Set the seed of the random generator for the demand characteristics. */
+    void setDemandCharacteristicsRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
+      _demandCharacteristicsRandomGenerator._seed = iSeed;
+    }
+
+    /**
+     * Set the default POS probablity mass, used when "row" (rest of
+     * the world) is drawn.
+     */
+    void setPOSProbabilityMass (const POSProbabilityMass_T& iProbMass) {
+      _posProMass = iProbMass;
+    }
+
+    /**
+     * Initialisation.
+     */
+    void setAll (const ArrivalPatternCumulativeDistribution_T&,
+                 const POSProbabilityMassFunction_T&,
+                 const ChannelProbabilityMassFunction_T&,
+                 const TripTypeProbabilityMassFunction_T&,
+                 const StayDurationProbabilityMassFunction_T&,
+                 const FrequentFlyerProbabilityMassFunction_T&,
+                 const PreferredDepartureTimeContinuousDistribution_T&,
+                 const stdair::WTP_T&,
+                 const ValueOfTimeContinuousDistribution_T&,
+                 const DemandDistribution&,
+                 const stdair::RandomSeed_T& iNumberOfRequestsSeed,
+                 const stdair::RandomSeed_T& iRequestDateTimeSeed,
+                 const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
+                 const POSProbabilityMass_T&);
     
-    /** Get a string describing the  key. */
-    const std::string describeKey() const {
-      return _key.toString();
-    }
-
 
   public:
-    // /////////////// Business Methods //////////
+    // /////////////////// Business Methods ///////////////////
     /** Increment counter of requests generated so far */
-    void incrementGeneratedRequestsCounter () {
+    void incrementGeneratedRequestsCounter() {
       _randomGenerationContext.incrementGeneratedRequestsCounter();
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated () const;
+    const bool stillHavingRequestsToBeGenerated() const;
 
     /** Generate the time of the next request. */
     const stdair::DateTime_T generateTimeOfRequest();
@@ -182,7 +240,8 @@ namespace TRADEMGEN {
     const stdair::Duration_T generatePreferredDepartureTime();
     
     /** Generate the WTP. */
-    const stdair::WTP_T generateWTP (const stdair::Date_T&,
+    const stdair::WTP_T generateWTP (stdair::RandomGeneration&,
+                                     const stdair::Date_T&,
                                      const stdair::DateTime_T&,
                                      const stdair::DayDuration_T&);
 
@@ -190,37 +249,57 @@ namespace TRADEMGEN {
     const stdair::PriceValue_T generateValueOfTime();
     
     /** Generate the next request. */
-    stdair::BookingRequestPtr_T generateNextRequest();
+    stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&);
 
     /** Reset all the contexts of the demand stream. */
     void reset();
        
 
+  public:
+    // ////////////////// Display support methods //////////////
+    /**
+     * Dump a Business Object into an output stream.
+     * @param ostream& the output stream.
+     */
+    void toStream (std::ostream& ioOut) const {
+      ioOut << toString();
+    }
+
+    /**
+     * Read a Business Object from an input stream.
+     * @param istream& the input stream.
+     */
+    void fromStream (std::istream& ioIn) {
+    }
+
+    /**
+     * Get the serialised version of the Business Object.
+     */
+    std::string toString() const;
+    
+    /**
+     * Get a string describing the  key.
+     */
+    const std::string describeKey() const {
+      return _key.toString();
+    }
+
+
   protected:
     // ////////// Constructors and destructors /////////
-    /** Constructor. */
-    DemandStream (const Key_T&,
-                  const ArrivalPatternCumulativeDistribution_T&,
-                  const POSProbabilityMassFunction_T&,
-                  const ChannelProbabilityMassFunction_T&,
-                  const TripTypeProbabilityMassFunction_T&,
-                  const StayDurationProbabilityMassFunction_T&,
-                  const FrequentFlyerProbabilityMassFunction_T&,
-                  const PreferredDepartureTimeContinuousDistribution_T&,
-                  const stdair::WTP_T&,
-                  const ValueOfTimeContinuousDistribution_T&,
-                  const DemandDistribution&,
-                  const stdair::RandomSeed_T& iNumberOfRequestsSeed,
-                  const stdair::RandomSeed_T& iRequestDateTimeSeed,
-                  const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
-                  stdair::UniformGenerator_T&, const POSProbabilityMass_T&);
-    /** Destructor. */
-    virtual ~DemandStream ();
-    
+    /**
+     * Main constructor.
+     */
+    DemandStream (const Key_T&);
+    /**
+     * Destructor.
+     */
+    virtual ~DemandStream();
+
   private:
     /** Default constructor. */
-    DemandStream ();
-    /** Default copy constructor. */
+    DemandStream();
+    /** Copy constructor. */
     DemandStream (const DemandStream&);
     /** Initialisation. */
     void init();
@@ -228,44 +307,61 @@ namespace TRADEMGEN {
     
   protected:
     // ////////// Attributes //////////
-    /** Primary key (string gathering the origin, destination, POS and
-        date). */
+    /**
+     * Primary key (string gathering the origin, destination, POS and date).
+     */
     Key_T _key;
     
-    /** Pointer on the parent class (EventQueue). */
+    /**
+     * Pointer on the parent class (EventQueue).
+     */
     BomAbstract* _parent;
     
-    /** Map holding the children (not used for now). */
+    /**
+     * Map holding the children (not used for now).
+     */
     stdair::HolderMap_T _holderMap;
     
-    /** Demand characteristics. */
+    /**
+     * Demand characteristics.
+     */
     DemandCharacteristics _demandCharacteristics;
 
-    /** Demand distribution. */
+    /**
+     * Demand distribution.
+     */
     DemandDistribution _demandDistribution;
     
-    /** Total number of requests to be generated. */
+    /**
+     * Total number of requests to be generated.
+     */
     stdair::NbOfRequests_T _totalNumberOfRequestsToBeGenerated;
 
-    /** Random generation context. */
+    /**
+     * Random generation context.
+     */
     RandomGenerationContext _randomGenerationContext;
   
-    /** Random generator for number of requests. */
-    RandomGeneration _numberOfRequestsRandomGenerator;
+    /**
+     * Random generator for number of requests.
+     */
+    stdair::RandomGeneration _numberOfRequestsRandomGenerator;
     
-    /** Random generator for request date-time. */
-    RandomGeneration _requestDateTimeRandomGenerator;
+    /**
+     * Random generator for request date-time.
+     */
+    stdair::RandomGeneration _requestDateTimeRandomGenerator;
     
-    /** Random generator for demand characteristics. */
-    RandomGeneration _demandCharacteristicsRandomGenerator;
+    /**
+     * Random generator for demand characteristics.
+     */
+    stdair::RandomGeneration _demandCharacteristicsRandomGenerator;
 
-    /** Shared random uniform generator for seeds and some other
-        values. */
-    stdair::UniformGenerator_T& _uniformGenerator;
-
-    /** Defaut POS probablity mass, used when "row" (rest of the world)
-        is drawn. */
-    const POSProbabilityMass_T& _posProMass;
+    /**
+     * Defaut POS probablity mass, used when "row" (rest of the world)
+     * is drawn.
+     */
+    POSProbabilityMass_T _posProMass;
   };
 
 }

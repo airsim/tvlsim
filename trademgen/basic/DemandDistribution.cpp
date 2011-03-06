@@ -15,15 +15,15 @@ namespace TRADEMGEN {
   DemandDistribution::DemandDistribution (const stdair::NbOfRequests_T& iMean,
                                           const stdair::StdDevValue_T& iStdDev)
     : _meanNumberOfRequests (iMean),
-      _stdDevNumberOfRequests (iStdDev){
+      _stdDevNumberOfRequests (iStdDev) {
   }
   
   // /////////////////////////////////////////////////////
-  DemandDistribution::DemandDistribution () {
+  DemandDistribution::DemandDistribution() {
   }
   
   // /////////////////////////////////////////////////////
-  DemandDistribution::~DemandDistribution () {
+  DemandDistribution::~DemandDistribution() {
   }
   
   // /////////////////////////////////////////////////////
