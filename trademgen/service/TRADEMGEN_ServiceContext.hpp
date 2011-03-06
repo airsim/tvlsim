@@ -20,7 +20,6 @@
 namespace stdair {
   struct DemandCharacteristics;
   struct DemandDistribution;
-  class EventQueue;
 }
   
 namespace TRADEMGEN {
@@ -135,14 +134,6 @@ namespace TRADEMGEN {
      * Standard Airline (StdAir) Service Handler.
      */
     stdair::STDAIR_ServicePtr_T _stdairService;
-    /** Pointer on the EventQueue instance. */
-    stdair::EventQueue* _eventQueue;
-
-    /**
-     * State whether or not RMOL owns the STDAIR service resources.
-     */
-    bool _ownStdairService;
-
 
     /**
      * State whether or not RMOL owns the STDAIR service resources.

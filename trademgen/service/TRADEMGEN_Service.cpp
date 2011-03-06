@@ -367,21 +367,6 @@ namespace TRADEMGEN {
     stdair::RandomGeneration& lGenerator =
       lTRADEMGEN_ServiceContext.getUniformGenerator();
 
-  // ////////////////////////////////////////////////////////////////////
-  stdair::Count_T TRADEMGEN_Service::generateFirstRequests() const {
-
-    // Retrieve the TraDemGen service context
-    assert (_trademgenServiceContext != NULL);
-    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
-      *_trademgenServiceContext;
-
-    // Retrieve the StdAir service context
-    stdair::STDAIR_Service& lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_Service();
-
-    // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lSTDAIR_Service.getEventQueue();
-    
     // Delegate the call to the dedicated command
     const stdair::Count_T& oActualTotalNbOfEvents =
       DemandManager::generateFirstRequests (lQueue, lGenerator);
@@ -410,9 +395,6 @@ namespace TRADEMGEN {
     stdair::RandomGeneration& lGenerator =
       lTRADEMGEN_ServiceContext.getUniformGenerator();
 
-    // Retrieve the event queue object instance
-    stdair::EventQueue& lQueue = lSTDAIR_Service.getEventQueue();
-    
     // Delegate the call to the dedicated command
     return DemandManager::generateNextRequest (lQueue, lGenerator, iKey);
   }
@@ -468,7 +450,7 @@ namespace TRADEMGEN {
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
-
+    
     // Retrieve the StdAir service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lTRADEMGEN_ServiceContext.getSTDAIR_Service();

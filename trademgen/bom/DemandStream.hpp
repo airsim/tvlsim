@@ -129,7 +129,6 @@ namespace TRADEMGEN {
     }
 
 
-
   public:
     // //////////////// Setters //////////////////    
     /** Set the number of requests generated so far. */
