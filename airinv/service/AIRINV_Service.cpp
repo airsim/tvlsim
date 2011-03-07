@@ -438,12 +438,21 @@ namespace AIRINV {
     assert (_airinvServiceContext != NULL);
     AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
 
+    // Retrieve the corresponding inventory.
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    std::string lInventoryKey;
+    lInventoryKey.append (iSegmentDateKey, 0, 2);
+    stdair::Inventory& lInventory =
+      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot, lInventoryKey);
+
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
     lSellChronometer.start();
-    const bool saleControl = true;
-    // InventoryManager::sell (lInventory, iSegmentDateKey,
-    //                         iClassCode, iPartySize);
+    const bool saleControl = 
+      InventoryManager::sell(lInventory, iSegmentDateKey,
+                             iClassCode, iPartySize);
     const double lSellMeasure = lSellChronometer.elapsed();
 
     // DEBUG
