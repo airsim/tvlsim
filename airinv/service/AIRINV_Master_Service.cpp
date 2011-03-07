@@ -372,12 +372,13 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from the (AIRINV) service context
-    AIRINV_ServicePtr_T lAIRINV_Service_ptr =
+    // Retrieve the slave AIRINV service object from
+    // the (AIRINV) service context
+    AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
 
     // Delegate the BOM building to the dedicated service
-    lAIRINV_Service_ptr->buildSampleBom();
+    lAIRINV_Service.buildSampleBom();
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -393,12 +394,13 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from the (AIRINV) service context
-    AIRINV_ServicePtr_T lAIRINV_Service_ptr =
+    // Retrieve the slave AIRINV service object from
+    // the (AIRINV) service context
+    AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
 
     // Delegate the BOM building to the dedicated service
-    return lAIRINV_Service_ptr->csvDisplay();
+    return lAIRINV_Service.csvDisplay();
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -416,8 +418,9 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from the (AIRINV) service context
-    AIRINV_ServicePtr_T lAIRINV_Service_ptr =
+    // Retrieve the slave AIRINV service object from the (AIRINV)
+    // service context
+    AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
 
     // Delegate the booking to the dedicated command
@@ -426,7 +429,7 @@ namespace AIRINV {
 
     // Delegate the BOM building to the dedicated service
     const bool hasBeenSaleSuccessful =
-      lAIRINV_Service_ptr->sell (iSegmentDateKey, iClassCode, iPartySize);
+      lAIRINV_Service.sell (iSegmentDateKey, iClassCode, iPartySize);
 
     const double lSellMeasure = lSellChronometer.elapsed();
 

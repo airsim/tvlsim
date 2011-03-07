@@ -73,21 +73,23 @@ namespace SIMCRS {
     }
 
     /** Get a reference on the AIRINV Master service handler. */
-    AIRINV_Master_ServicePtr_T getAIRINV_Master_Service () const {
-      return _airinvMasterService;
+    AIRINV::AIRINV_Master_Service& getAIRINV_Master_Service () const {
+      assert (_airinvMasterService != NULL);
+      return *_airinvMasterService;
     }
 
     /** Get a reference on the AIRSCHED service handler. */
-    AIRSCHED_ServicePtr_T getAIRSCHED_Service () const {
-      return _airschedService;
+    AIRSCHED::AIRSCHED_Service& getAIRSCHED_Service () const {
+      assert (_airschedService != NULL);
+      return *_airschedService;
     }
 
     /** Get a reference on the SIMFQT service handler. */
-    SIMFQT_ServicePtr_T getSIMFQT_Service () const {
-      return _simfqtService;
+    SIMFQT::SIMFQT_Service& getSIMFQT_Service () const {
+      assert (_simfqtService != NULL);
+      return *_simfqtService;
     }
-  
-    
+      
     // ///////////////// Setters ///////////////////
     /** Set the pointer on the STDAIR service handler. */
     void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
