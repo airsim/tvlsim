@@ -21,14 +21,20 @@ namespace TRADEMGEN {
     static POSProbabilityMassFunction_T create();
   };
 
-  /** Default uniform generator. */
-  extern stdair::UniformGenerator_T DEFAULT_UNIFORM_GENERATOR;
-
-  /** Default base generator. */
+  /** Default base generator. Just here to initialise objects
+      (e.g., stdair::RandomGeneration) with default generator. They
+      are then replaced by a generator, for which the state can better
+      be tracked/stored. */
   extern stdair::BaseGenerator_T DEFAULT_BASE_GENERATOR;
 
+  /** Default uniform generator. Just here to initialise objects
+      (e.g., stdair::RandomGeneration) with default generator. They
+      are then replaced by a generator, for which the state can better
+      be tracked/stored. */
+  extern stdair::UniformGenerator_T DEFAULT_UNIFORM_GENERATOR;
+
   /** Default random uniform real distribution. */
-  extern const boost::uniform_01<> DEFAULT_UNIFORM_REAL_DISTRIBUTION;
+  extern const stdair::UniformDistribution_T DEFAULT_UNIFORM_REAL_DISTRIBUTION;
 
 }
 #endif // __TRADEMGEN_BAS_BASCONST_DEMANDGENERATION_HPP

@@ -1,8 +1,6 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// Boost Random
-#include <boost/random/uniform_01.hpp>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
 // TraDemGen
@@ -36,7 +34,7 @@ namespace TRADEMGEN {
   stdair::BaseGenerator_T DEFAULT_BASE_GENERATOR (stdair::DEFAULT_RANDOM_SEED);
 
   /** Default random uniform real distribution. */
-  const boost::uniform_01<> DEFAULT_UNIFORM_REAL_DISTRIBUTION;
+  const stdair::UniformDistribution_T DEFAULT_UNIFORM_REAL_DISTRIBUTION;
 
   /** Default uniform variate generator. */
   stdair::UniformGenerator_T
