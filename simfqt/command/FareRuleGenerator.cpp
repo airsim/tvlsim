@@ -47,7 +47,7 @@ namespace SIMFQT {
     }
     assert (lAirportPair_ptr != NULL);    
 
-    // Set the position-channel primary key.
+    // Set the point-of-sale-channel primary key.
     const stdair::CityCode_T& lPosition = 
       iFareRuleStruct._pos;
     const stdair::ChannelLabel_T& lChannel = 

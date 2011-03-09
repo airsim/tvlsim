@@ -154,8 +154,15 @@ namespace SIMFQT {
     void storePOS::operator() (std::vector<char> iChar,
                                boost::spirit::qi::unused_type,
                                boost::spirit::qi::unused_type) const {
-      stdair::AirlineCode_T lPOS (iChar.begin(), iChar.end());
-      _fareRule._pos = lPOS;
+      stdair::CityCode_T lPOS (iChar.begin(), iChar.end());
+      if (lPOS == _fareRule._origin || lPOS == _fareRule._destination) {
+        _fareRule._pos = lPOS;
+      } else if (lPOS == "ROW") {
+        _fareRule._pos = "ROW";
+      } else {
+        // ERROR
+        STDAIR_LOG_ERROR ("Invalid point of sale " << lPOS);
+      }
       // DEBUG
       //STDAIR_LOG_DEBUG ("POS: " << _fareRule._pos);
     }
@@ -194,8 +201,8 @@ namespace SIMFQT {
       stdair::ChannelLabel_T lChannel (iChar.begin(), iChar.end());
       if (lChannel != "IN" && lChannel != "IF"
           && lChannel != "DN" && lChannel != "DF") {
-        // DEBUG
-        STDAIR_LOG_DEBUG ("Invalid channel " << lChannel);
+        // ERROR
+        STDAIR_LOG_ERROR ("Invalid channel " << lChannel);
       }
       _fareRule._channel = lChannel;
       // DEBUG
@@ -445,7 +452,7 @@ namespace SIMFQT {
         >> ';' >> origin >> ';' >> destination
         >> ';' >> dateRangeStart >> ';' >> dateRangeEnd
         >> ';' >> timeRangeStart >> ';' >> timeRangeEnd
-        >> ';' >> position >>  ';' >> cabinCode >> ';' >> channel
+        >> ';' >> point_of_sale >>  ';' >> cabinCode >> ';' >> channel
         >> ';' >> advancePurchase >> ';' >> saturdayStay
         >> ';' >> changeFees >> ';' >> nonRefundable
         >> ';' >> minimumStay >> ';' >> fare;
@@ -478,7 +485,7 @@ namespace SIMFQT {
         >> minute_p[boost::phoenix::ref(_fareRule._itMinutes) = bsq::labels::_1]      
         >> - (':' >> second_p[boost::phoenix::ref(_fareRule._itSeconds) = bsq::labels::_1]) ];
       
-      position = bsq::repeat(3)[bsa::char_("A-Z")][storePOS(_fareRule)];
+      point_of_sale = bsq::repeat(3)[bsa::char_("A-Z")][storePOS(_fareRule)];
 
       cabinCode = bsa::char_("A-Z")[storeCabinCode(_fareRule)];
             
@@ -515,7 +522,7 @@ namespace SIMFQT {
       BOOST_SPIRIT_DEBUG_NODE (timeRangeStart);
       BOOST_SPIRIT_DEBUG_NODE (timeRangeEnd);
       BOOST_SPIRIT_DEBUG_NODE (time);
-      BOOST_SPIRIT_DEBUG_NODE (position);
+      BOOST_SPIRIT_DEBUG_NODE (point_of_sale);
       BOOST_SPIRIT_DEBUG_NODE (cabinCode);
       BOOST_SPIRIT_DEBUG_NODE (channel);
       BOOST_SPIRIT_DEBUG_NODE (advancePurchase);
