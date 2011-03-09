@@ -358,8 +358,27 @@ namespace SIMCRS {
                                                     "not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
+    
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
-    //SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+    // Retrieve the CRS code
+    //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+    
+    // Delegate the availability retrieval to the dedicated command
+    stdair::BasChronometer lAvlChronometer;
+    lAvlChronometer.start();
+
+    DistributionManager::calculateAvailability (lAIRINV_Master_Service,
+                                                ioTravelSolutionList);
+    
+    // DEBUG
+    const double lAvlMeasure = lAvlChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+                      << lSIMCRS_ServiceContext.display());
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -382,14 +401,12 @@ namespace SIMCRS {
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
       lSIMCRS_ServiceContext.getAIRINV_Master_Service();
     
-
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
     lSellChronometer.start();
 
     DistributionManager::sell (lAIRINV_Master_Service,
                                 iTravelSolution, iPartySize);
-
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
