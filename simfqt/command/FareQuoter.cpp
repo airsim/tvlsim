@@ -186,18 +186,18 @@ namespace SIMFQT {
     
     try {
 
-      // Get the position of the booking request.
-      const stdair::CityCode_T& lPosition =
+      // Get the point_of_sale of the booking request.
+      const stdair::CityCode_T& lPointOfSale =
         iBookingRequest.getPOS();
 
       // Get the booking request channel.
       const stdair::ChannelLabel_T lChannel =
         iBookingRequest.getBookingChannel();
 
-      // Construct the corresponding position-channel primary key.
-      const stdair::PosChannelKey lFarePosChannelKey (lPosition, lChannel);
+      // Construct the corresponding point_of_sale-channel primary key.
+      const stdair::PosChannelKey lFarePosChannelKey (lPointOfSale, lChannel);
 
-      // Search for the fare rules having the same position as the travel
+      // Search for the fare rules having the same point_of_sale as the travel
       // solution
       const stdair::PosChannel* lFarePosChannel_ptr =
         stdair::BomManager::
@@ -206,12 +206,12 @@ namespace SIMFQT {
 
       if (lFarePosChannel_ptr == NULL) {
         STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
-                          "position " << lPosition
+                          "point of sale " << lPointOfSale
                           << ", to the channel " << lChannel
                           << " and to the Origin-Destination pair: "
                           << iAirportPair.toString());
         throw PosOrChannelNotFoundException ("No available fare rule for the "
-                                         "position " + lPosition
+                                         "point of sale " + lPointOfSale
                                          + " and the channel " + lChannel);
       }
       assert(lFarePosChannel_ptr != NULL);
@@ -271,8 +271,8 @@ namespace SIMFQT {
       if (AtLeastOneAvailableDateRule == false) {
         STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
                           "flight date " << iResultParsing.at(2)
-                          << ", to the position "
-                          << iFarePosChannel.getPosition()
+                          << ", to the point of sale "
+                          << iFarePosChannel.getPos()
                           << ", to the channel "
                           << iFarePosChannel.getChannel()
                           << " and to the Origin-Destination pair: "
@@ -336,8 +336,8 @@ namespace SIMFQT {
                           "flight boarding time " << iResultParsing.at(3)
                           << ", to the flight date "
                           << iResultParsing.at(2)
-                          << ", to the position "
-                          << iFarePosChannel.getPosition()
+                          << ", to the point of sale "
+                          << iFarePosChannel.getPos()
                           << ", to the channel "
                           << iFarePosChannel.getChannel()
                           << " and to the Origin-Destination pair: "
@@ -438,8 +438,8 @@ namespace SIMFQT {
                           << iResultParsing.at(3)
                           << ", to the flight date "
                           << iResultParsing.at(2)
-                          << ", to the position "
-                          << iFarePosChannel.getPosition()
+                          << ", to the point of sale "
+                          << iFarePosChannel.getPos()
                           << ", to the channel "
                           << iFarePosChannel.getChannel()
                           << " and to the Origin-Destination pair: "
@@ -569,8 +569,8 @@ namespace SIMFQT {
                           << iResultParsing.at(3)
                           << ", to the flight date "
                           << iResultParsing.at(2)
-                          << ", to the position "
-                          << iFarePosChannel.getPosition()
+                          << ", to the point of sale "
+                          << iFarePosChannel.getPos()
                           << ", to the channel "
                           << iFarePosChannel.getChannel()
                           << " and to the Origin-Destination pair: "

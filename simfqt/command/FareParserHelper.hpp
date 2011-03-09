@@ -105,7 +105,7 @@ namespace SIMFQT {
                        boost::spirit::qi::unused_type) const;
     };
 
-    /** Store the parsed customer position. */
+    /** Store the parsed customer point_of_sale. */
     struct storePOS : public ParserSemanticAction {
       /** Actor Constructor. */
       storePOS (FareRuleStruct&);
@@ -247,7 +247,7 @@ namespace SIMFQT {
      DateRangeEnd            (yyyy-mm-dd)
      DepartureTimeRangeStart (hh:mm)
      DepartureTimeRangeEnd   (hh:mm)
-     POS                     (3-char position city)
+     POS                     (3-char point_of_sale city)
      Cabin Code              (1-char cabin code)
      Channel                 (D=direct, I=indirect, N=oNline, F=oFfline)
      AdvancePurchase         
@@ -313,7 +313,7 @@ namespace SIMFQT {
                               boost::spirit::ascii::space_type>
       start, comments, fare_rule, fare_rule_end, fare_key, fare_id, origin,
         destination, dateRangeStart, dateRangeEnd, date, timeRangeStart,
-        timeRangeEnd, time, position, cabinCode, channel, advancePurchase,
+        timeRangeEnd, time, point_of_sale, cabinCode, channel, advancePurchase,
         saturdayStay, changeFees, nonRefundable, minimumStay, fare,
         segment;
       

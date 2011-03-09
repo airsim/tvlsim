@@ -445,7 +445,7 @@ namespace SIMFQT {
         >> ';' >> origin >> ';' >> destination
         >> ';' >> dateRangeStart >> ';' >> dateRangeEnd
         >> ';' >> timeRangeStart >> ';' >> timeRangeEnd
-        >> ';' >> position >>  ';' >> cabinCode >> ';' >> channel
+        >> ';' >> point_of_sale >>  ';' >> cabinCode >> ';' >> channel
         >> ';' >> advancePurchase >> ';' >> saturdayStay
         >> ';' >> changeFees >> ';' >> nonRefundable
         >> ';' >> minimumStay >> ';' >> fare;
@@ -478,7 +478,7 @@ namespace SIMFQT {
         >> minute_p[boost::phoenix::ref(_fareRule._itMinutes) = bsq::labels::_1]      
         >> - (':' >> second_p[boost::phoenix::ref(_fareRule._itSeconds) = bsq::labels::_1]) ];
       
-      position = bsq::repeat(3)[bsa::char_("A-Z")][storePOS(_fareRule)];
+      point_of_sale = bsq::repeat(3)[bsa::char_("A-Z")][storePOS(_fareRule)];
 
       cabinCode = bsa::char_("A-Z")[storeCabinCode(_fareRule)];
             
@@ -515,7 +515,7 @@ namespace SIMFQT {
       BOOST_SPIRIT_DEBUG_NODE (timeRangeStart);
       BOOST_SPIRIT_DEBUG_NODE (timeRangeEnd);
       BOOST_SPIRIT_DEBUG_NODE (time);
-      BOOST_SPIRIT_DEBUG_NODE (position);
+      BOOST_SPIRIT_DEBUG_NODE (point_of_sale);
       BOOST_SPIRIT_DEBUG_NODE (cabinCode);
       BOOST_SPIRIT_DEBUG_NODE (channel);
       BOOST_SPIRIT_DEBUG_NODE (advancePurchase);
