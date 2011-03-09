@@ -154,8 +154,15 @@ namespace SIMFQT {
     void storePOS::operator() (std::vector<char> iChar,
                                boost::spirit::qi::unused_type,
                                boost::spirit::qi::unused_type) const {
-      stdair::AirlineCode_T lPOS (iChar.begin(), iChar.end());
-      _fareRule._pos = lPOS;
+      stdair::CityCode_T lPOS (iChar.begin(), iChar.end());
+      if (lPOS == _fareRule._origin || lPOS == _fareRule._destination) {
+        _fareRule._pos = lPOS;
+      } else if (lPOS == "ROW") {
+        _fareRule._pos = "ROW";
+      } else {
+        // ERROR
+        STDAIR_LOG_ERROR ("Invalid point of sale " << lPOS);
+      }
       // DEBUG
       //STDAIR_LOG_DEBUG ("POS: " << _fareRule._pos);
     }
@@ -194,8 +201,8 @@ namespace SIMFQT {
       stdair::ChannelLabel_T lChannel (iChar.begin(), iChar.end());
       if (lChannel != "IN" && lChannel != "IF"
           && lChannel != "DN" && lChannel != "DF") {
-        // DEBUG
-        STDAIR_LOG_DEBUG ("Invalid channel " << lChannel);
+        // ERROR
+        STDAIR_LOG_ERROR ("Invalid channel " << lChannel);
       }
       _fareRule._channel = lChannel;
       // DEBUG
