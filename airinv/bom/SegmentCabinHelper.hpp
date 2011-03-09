@@ -20,6 +20,9 @@ namespace AIRINV {
   class SegmentCabinHelper {
   public:
     // ////////// Business Methods /////////
+    /** Initialise the AU for the booking classes. */
+    static void initialiseAU (const stdair::SegmentCabin&);
+    
     /** Update the segment-cabin with the reservation. */
     static void updateFromReservation (const stdair::FlightDate&,
                                        stdair::SegmentCabin&,

@@ -13,6 +13,7 @@
 // AIRINV
 #include <airinv/bom/FlightDateHelper.hpp>
 #include <airinv/bom/SegmentDateHelper.hpp>
+#include <airinv/bom/SegmentCabinHelper.hpp>
 
 namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
@@ -62,6 +63,9 @@ namespace AIRINV {
         }
       }
       lSegmentCabin.setAvailabilityPool (lAvailabilityPool);
+
+      // Initialise the AU for children booking classes.
+      SegmentCabinHelper::initialiseAU (lSegmentCabin);
     }
   }
 

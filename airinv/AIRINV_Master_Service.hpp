@@ -217,6 +217,9 @@ namespace AIRINV {
     void buildSampleBom (const bool isForRMOL = false,
                          const stdair::CabinCapacity_T iCabinCapacity = 0);
 
+    /** Compute the availability for the given travel solution. */
+    void calculateAvailability (stdair::TravelSolutionStruct&);
+
     /**
      * Register a booking.
      *

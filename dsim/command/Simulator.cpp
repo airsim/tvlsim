@@ -171,7 +171,7 @@ namespace DSIM {
       }
     } else {
       // DEBUG
-      STDAIR_LOG_DEBUG ("No travel solution has been found/chosen for: "
+      STDAIR_LOG_DEBUG ("No travel solution has been found for: "
                         << iBookingRequest);
     }
   }

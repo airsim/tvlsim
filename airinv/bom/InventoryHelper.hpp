@@ -25,6 +25,11 @@ namespace AIRINV {
     /** Fill the attributes derived from the routing legs (e.g., board
         and off dates). */
     static void fillFromRouting (const stdair::Inventory&);
+
+    /** Compute the availability for the given travel solution. */
+    static void calculateAvailability (const stdair::Inventory&,
+                                       const std::string&,
+                                       stdair::TravelSolutionStruct&);
     
     /** Make a sale with the given travel solution. */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,

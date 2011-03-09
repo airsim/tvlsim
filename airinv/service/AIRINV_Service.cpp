@@ -425,7 +425,34 @@ namespace AIRINV {
     // Delegate the BOM building to the dedicated service
     return lSTDAIR_Service.csvDisplay();
   }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Service::
+  calculateAvailability (stdair::TravelSolutionStruct& ioTravelSolution) {
+    
+    if (_airinvServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInv service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvServiceContext != NULL);
+    AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
 
+    // Retrieve the corresponding inventory.
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Delegate the booking to the dedicated command
+    stdair::BasChronometer lAvlChronometer;
+    lAvlChronometer.start();
+    InventoryManager::calculateAvailability (lBomRoot, ioTravelSolution);
+    const double lAvlMeasure = lAvlChronometer.elapsed();
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+                      << lAIRINV_ServiceContext.display());
+  }
+  
   // ////////////////////////////////////////////////////////////////////
   bool AIRINV_Service::sell (const std::string& iSegmentDateKey,
                              const stdair::ClassCode_T& iClassCode,

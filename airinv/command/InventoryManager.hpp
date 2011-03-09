@@ -11,6 +11,7 @@
 
 // Forward declarations
 namespace stdair {
+  class BomRoot;
   class Inventory;
   struct TravelSolutionStruct;
 }
@@ -21,6 +22,10 @@ namespace AIRINV {
   class InventoryManager {
     friend class AIRINV_Service;
   private:
+
+    /** Compute the availability for the given travel solution. */
+    static void calculateAvailability (const stdair::BomRoot&,
+                                       stdair::TravelSolutionStruct&);
 
     /** Register a booking (segment sell). */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,

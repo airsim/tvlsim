@@ -376,10 +376,9 @@ namespace AIRINV {
           getObject<stdair::LegDate> (ioFlightDate, currentBoardingPoint);
         // Link the SegmentDate and LegDate together
         stdair::FacBomManager::
-          instance().addToListAndMap (*lCurrentSegmentDate_ptr,
-                                                lLegDate);
-        stdair::FacBomManager::instance().addToListAndMap (lLegDate,
-                                                *lCurrentSegmentDate_ptr);
+          instance().addToListAndMap (*lCurrentSegmentDate_ptr, lLegDate);
+        stdair::FacBomManager::
+          instance().addToListAndMap (lLegDate, *lCurrentSegmentDate_ptr);
         // Prepare the next iteration
         currentBoardingPoint = lLegDate.getOffPoint();
         ++i;
@@ -429,10 +428,10 @@ namespace AIRINV {
         // Link the SegmentCabin and LegCabin together
         stdair::FacBomManager::
           instance().addToListAndMap (*lCurrentSegmentCabin_ptr,
-                                                lLegCabin, lLegCabinFullKey);
-        stdair::FacBomManager::instance().addToListAndMap (lLegCabin,
-                                                *lCurrentSegmentCabin_ptr,
-                                                lSegmentCabinFullKey);
+                                      lLegCabin, lLegCabinFullKey);
+        stdair::FacBomManager::
+          instance().addToListAndMap (lLegCabin, *lCurrentSegmentCabin_ptr,
+                                      lSegmentCabinFullKey);
       }      
     }
   }

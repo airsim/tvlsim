@@ -10,6 +10,7 @@
 #include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/BookingClass.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // AIRINV
 #include <airinv/bom/InventoryHelper.hpp>
@@ -33,6 +34,63 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void InventoryHelper::
+  calculateAvailability (const stdair::Inventory& iInventory, 
+                         const std::string& iSegmentDateKey,
+                         stdair::TravelSolutionStruct& ioTravelSolution) {
+    // Create the map of class/availability for the given segment date.
+    stdair::ClassAvailabilityMap_T lClassAvailabilityMap;
+
+    const int lSize = iSegmentDateKey.size();
+    // Retrieve the corresponding flight-date.
+    std::string lFlightDateKey;
+    STDAIR_LOG_DEBUG (iSegmentDateKey);
+    lFlightDateKey.append (iSegmentDateKey, 4, lSize - 23);
+    const stdair::FlightDate& lFlightDate =
+      stdair::BomManager::getObject<stdair::FlightDate> (iInventory,
+                                                         lFlightDateKey);
+
+    // Retrieve the corresponding segment-date.
+    std::string lSegmentDateKey;
+    lSegmentDateKey.append (iSegmentDateKey, lSize - 7, 7);
+    const stdair::SegmentDate& lSegmentDate =
+      stdair::BomManager::getObject<stdair::SegmentDate> (lFlightDate,
+                                                          lSegmentDateKey);
+    
+    // Browse the segment-cabins and fill the map with the availability of
+    // each booking class.
+    const stdair::SegmentCabinList_T& lSegmentCabinList =
+      stdair::BomManager::getList<stdair::SegmentCabin> (lSegmentDate);
+    for (stdair::SegmentCabinList_T::const_iterator itCabin =
+           lSegmentCabinList.begin();
+         itCabin != lSegmentCabinList.end(); ++itCabin) {
+      stdair::SegmentCabin* lSegmentCabin_ptr = *itCabin;
+      assert (lSegmentCabin_ptr != NULL);
+
+      // TODO: re-implemented this part.
+      const stdair::CommittedSpace_T& lCommittedSpace =
+        lSegmentCabin_ptr->getCommittedSpace ();
+      const stdair::BookingClassList_T& lBCList =
+        stdair::BomManager::getList<stdair::BookingClass> (*lSegmentCabin_ptr);
+
+      for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
+           itBC != lBCList.end(); ++itBC) {
+        const stdair::BookingClass* lBC_ptr = *itBC;
+        assert (lBC_ptr != NULL);
+
+        const stdair::ClassCode_T& lClassCode = lBC_ptr->getClassCode();
+        const stdair::AuthorizationLevel_T& lAU=lBC_ptr->getAuthorizationLevel();
+        const stdair::Availability_T lAvl = lAU - lCommittedSpace;
+
+        lClassAvailabilityMap.
+          insert (stdair::ClassAvailabilityMap_T::value_type (lClassCode, lAvl));
+      }
+    }
+
+    ioTravelSolution.addClassAvailabilityMap (lClassAvailabilityMap);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   bool InventoryHelper::sell (stdair::Inventory& ioInventory, 
                               const std::string& iSegmentDateKey,
                               const stdair::ClassCode_T& iClassCode,
@@ -41,7 +99,7 @@ namespace AIRINV {
     // Retrieve the corresponding flight-date.
     std::string lFlightDateKey;
     STDAIR_LOG_DEBUG (iSegmentDateKey);
-    lFlightDateKey.append (iSegmentDateKey, 4, lSize - 13);
+    lFlightDateKey.append (iSegmentDateKey, 4, lSize - 23);
     const stdair::FlightDate& lFlightDate =
       stdair::BomManager::getObject<stdair::FlightDate> (ioInventory,
                                                          lFlightDateKey);
