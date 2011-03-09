@@ -7,9 +7,11 @@
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/SegmentDate.hpp>
+#include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/LegDate.hpp>
 // AIRINV
 #include <airinv/bom/SegmentDateHelper.hpp>
+#include <airinv/bom/SegmentCabinHelper.hpp>
 
 namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
@@ -41,6 +43,18 @@ namespace AIRINV {
     ioSegmentDate.setOffTime (lOffTime);
     // Set the Elapsed Time for the whole path
     updateElapsedTimeFromRouting (ioSegmentDate);
+
+    // Initialise the AU for all classes.
+    const stdair::SegmentCabinList_T& lSegmentCabinList =
+      stdair::BomManager::getList<stdair::SegmentCabin> (ioSegmentDate);
+    for (stdair::SegmentCabinList_T::const_iterator itSC =
+           lSegmentCabinList.begin(); itSC != lSegmentCabinList.end(); ++itSC) {
+      stdair::SegmentCabin* lSC_ptr = *itSC;
+      assert (lSC_ptr != NULL);
+      
+      // Initialise the AU for children booking classes.
+      SegmentCabinHelper::initialiseAU (*lSC_ptr);
+    }
   }
 
   // //////////////////////////////////////////////////////////////////////

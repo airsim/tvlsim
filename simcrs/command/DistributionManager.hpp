@@ -28,7 +28,7 @@ namespace SIMCRS {
     friend class SIMCRS_Service;
   private:
     /** Get the availability for each travel solution in the list.. */
-    static void getAvailability (AIRINV::AIRINV_Master_Service&,
+    static void calculateAvailability (AIRINV::AIRINV_Master_Service&,
                                  stdair::TravelSolutionList_T&);
     
     /** Register a booking (segment sell). */

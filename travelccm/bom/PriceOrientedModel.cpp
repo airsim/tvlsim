@@ -81,7 +81,8 @@ namespace TRAVELCCM {
         // Choose the current fare option and the current solution
         // if the current fare is lower than the current lowest fare.
         const stdair::Fare_T& lCurrentFare = lCurrentFO.getFare();
-        if (lCurrentFare < lLowestFare) {
+        if (lCurrentFare < lLowestFare && lAvlSuff == true
+            && lCurrentFare <= lWTP) {
           lLowestFare = lCurrentFare;
           oChosenTS_ptr = &lCurrentTS;
           oChosenTS_ptr->setChosenFareOption (lCurrentFO);
