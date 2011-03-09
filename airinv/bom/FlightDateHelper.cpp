@@ -63,6 +63,9 @@ namespace AIRINV {
         }
       }
       lSegmentCabin.setAvailabilityPool (lAvailabilityPool);
+
+      // Initialise the AU for children booking classes.
+      SegmentCabinHelper::initialiseAU (lSegmentCabin);
     }
   }
 
