@@ -21,7 +21,7 @@ namespace AIRINV {
   public:
     // ////////// Business Methods /////////
     /** Initialise the AU for the booking classes. */
-    static void initialiseAU (const stdair::SegmentCabin&);
+    static void initialiseAU (stdair::SegmentCabin&);
     
     /** Update the segment-cabin with the reservation. */
     static void updateFromReservation (const stdair::FlightDate&,
