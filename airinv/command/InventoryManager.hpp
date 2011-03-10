@@ -13,6 +13,8 @@
 namespace stdair {
   class BomRoot;
   class Inventory;
+  class FlightDate;
+  class SegmentDate;
   struct TravelSolutionStruct;
 }
 
@@ -21,7 +23,11 @@ namespace AIRINV {
   /** Command wrapping the travel request process. */
   class InventoryManager {
     friend class AIRINV_Service;
+
   private:
+    /** Compute the availability for the given travel solution. */
+    static void calculateAvailability (const stdair::BomRoot&,
+                                       stdair::TravelSolutionStruct&);
 
     /** Compute the availability for the given travel solution. */
     static void calculateAvailability (const stdair::BomRoot&,
@@ -31,6 +37,15 @@ namespace AIRINV {
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
 
+
+  public:
+    /** Create the direct accesses within the invetories suck as links between
+        leg-date and segment-date, ect. */
+    static void createDirectAccesses (const stdair::BomRoot&);
+    static void createDirectAccesses (stdair::Inventory&);
+    static void createDirectAccesses (stdair::FlightDate&);
+    static void createDirectAccesses (stdair::SegmentDate&);
+    
   private:
     /** Constructors. */
     InventoryManager() {}

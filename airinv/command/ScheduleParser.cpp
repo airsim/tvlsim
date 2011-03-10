@@ -9,7 +9,7 @@
 // Airinv
 #include <airinv/command/ScheduleParserHelper.hpp>
 #include <airinv/command/ScheduleParser.hpp>
-#include <airinv/command/InventoryGenerator.hpp>
+#include <airinv/command/InventoryManager.hpp>
 
 namespace AIRINV {
 
@@ -27,7 +27,7 @@ namespace AIRINV {
       
     // Complete the BomRoot BOM building
     // Create the routings for all the inventories.
-    InventoryGenerator::createDirectAccesses (ioBomRoot);
+    InventoryManager::createDirectAccesses (ioBomRoot);
   }
 
 }

@@ -9,6 +9,7 @@
 // Airinv
 #include <airinv/command/InventoryParserHelper.hpp>
 #include <airinv/command/InventoryParser.hpp>
+#include <airinv/command/InventoryManager.hpp>
 
 namespace AIRINV {
 
@@ -22,6 +23,10 @@ namespace AIRINV {
     // Parse the CSV-formatted inventory input file, and generate the
     // corresponding Inventory-related objects.
     lInventoryParser.buildInventory ();
+      
+    // Complete the BomRoot BOM building
+    // Create the routings for all the inventories.
+    InventoryManager::createDirectAccesses (ioBomRoot);
   }
 
 }
