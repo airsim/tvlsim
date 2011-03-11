@@ -445,6 +445,7 @@ AC_CONFIG_FILES(
 	doc/doxygen_html.cfg
 	doc/sourceforge/howto_release_dsim.html
 	samples/Makefile
+	samples/RDS01/Makefile
 	test/Makefile
 	test/boost/Makefile
 	test/boost/unit_test/Makefile
