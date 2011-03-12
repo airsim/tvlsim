@@ -29,10 +29,6 @@ namespace AIRINV {
     static void calculateAvailability (const stdair::BomRoot&,
                                        stdair::TravelSolutionStruct&);
 
-    /** Compute the availability for the given travel solution. */
-    static void calculateAvailability (const stdair::BomRoot&,
-                                       stdair::TravelSolutionStruct&);
-
     /** Register a booking (segment sell). */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
