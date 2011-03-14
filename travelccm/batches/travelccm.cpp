@@ -1,3 +1,7 @@
+/*!
+ * \page batch_travelccm_cpp Command-Line Utility to Demonstrate Typical TravelCCM Usage
+ * \code
+ */
 // STL
 #include <cassert>
 #include <iostream>
@@ -5,9 +9,13 @@
 #include <fstream>
 #include <string>
 // Boost (Extended STL)
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/program_options.hpp>
+// StdAir
+#include <stdair/basic/BasLogParams.hpp>
+#include <stdair/basic/BasDBParams.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/service/Logger.hpp>
 // TravelCCM
 #include <travelccm/TRAVELCCM_Service.hpp>
 #include <travelccm/config/travelccm-paths.hpp>
@@ -17,10 +25,8 @@
 const std::string K_TRAVELCCM_DEFAULT_LOG_FILENAME ("travelccm.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_TRAVELCCM_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ccm_01.csv");
-
-/** Default number of random draws to be generated (best if over 100). */
-const int K_TRAVELCCM_DEFAULT_RANDOM_DRAWS = 100000;
+const std::string K_TRAVELCCM_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                      "/ccm_01.csv");
 
 
 // ///////// Parsing of Options & Configuration /////////
@@ -35,8 +41,8 @@ template<class T> std::ostream& operator<< (std::ostream& os,
 const int K_TRAVELCCM_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
-int readConfiguration (int argc, char* argv[], int& lRandomDraws, 
-                       std::string& lInputFilename, std::string& lLogFilename) {
+int readConfiguration (int argc, char* argv[], std::string& lInputFilename,
+                       std::string& lLogFilename) {
   
     
   // Declare a group of options that will be allowed only on command line
@@ -50,12 +56,9 @@ int readConfiguration (int argc, char* argv[], int& lRandomDraws,
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
-    ("draws,d",
-     boost::program_options::value<int>(&lRandomDraws)->default_value(K_TRAVELCCM_DEFAULT_RANDOM_DRAWS), 
-     "Number of to-be-generated random draws")
     ("input,i",
      boost::program_options::value< std::string >(&lInputFilename)->default_value(K_TRAVELCCM_DEFAULT_INPUT_FILENAME),
-     "(CVS) input file for the demand distributions")
+     "(CVS) input file for customer choice")
     ("log,l",
      boost::program_options::value< std::string >(&lLogFilename)->default_value(K_TRAVELCCM_DEFAULT_LOG_FILENAME),
      "Filename for the logs")
@@ -115,8 +118,6 @@ int readConfiguration (int argc, char* argv[], int& lRandomDraws,
     lLogFilename = vm["log"].as< std::string >();
     std::cout << "Log filename is: " << lLogFilename << std::endl;
   }
-
-  std::cout << "The number of random draws is: " << lRandomDraws << std::endl;
   
   return 0;
 }
@@ -125,9 +126,6 @@ int readConfiguration (int argc, char* argv[], int& lRandomDraws,
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
     
-  // Number of random draws to be generated (best if greater than 100)
-  int lRandomDraws = 0;
-  
   // Input file name
   std::string lInputFilename;
   
@@ -136,16 +134,10 @@ int main (int argc, char* argv[]) {
   
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lRandomDraws, lInputFilename, lLogFilename);
+    readConfiguration (argc, argv, lInputFilename, lLogFilename);
   
   if (lOptionParserStatus == K_TRAVELCCM_EARLY_RETURN_STATUS) {
     return 0;
-  }
-  
-  // Check wether or not a (CSV) input file should be read
-  bool hasInputFile = false;
-  if (lInputFilename.empty() == false) {
-    hasInputFile = true;
   }
   
   // Set the log parameters
@@ -157,5 +149,52 @@ int main (int argc, char* argv[]) {
   // Initialise the service context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   
+  // Build the BOM tree
+  TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams);
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Welcome to TravelCCM");
+
+  // Build a list of travel solutions
+  const stdair::BookingRequestStruct& lBookingRequest =
+    travelccmService.buildSampleBookingRequest();
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Booking request: " << lBookingRequest.display());
+
+  // Build the sample BOM tree
+  stdair::TravelSolutionList_T lTSList;
+  travelccmService.buildSampleTravelSolutions (lTSList);
+
+  // DEBUG: Display the list of travel solutions
+  const std::string& lCSVDump = travelccmService.csvDisplay (lTSList);
+  STDAIR_LOG_DEBUG (lCSVDump);
+  
+  // Choose a travel solution
+  const stdair::TravelSolutionStruct* lTS_ptr =
+    travelccmService.chooseTravelSolution (lTSList, lBookingRequest);
+
+  if (lTS_ptr != NULL) {
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Chosen travel solution: " << lTS_ptr->display());
+
+  } else {
+    // DEBUG
+    STDAIR_LOG_DEBUG ("No travel solution can be found for "
+                      << lBookingRequest.display()
+                      << " within the following list of travel solutions");
+    STDAIR_LOG_DEBUG (lCSVDump);
+  }
+
+  // Close the Log outputFile
+  logOutputFile.close();
+
+  /*
+    Note: as that program is not intended to be run on a server in
+    production, it is better not to catch the exceptions. When it
+    happens (that an exception is throwned), that way we get the
+    call stack.
+  */
+
   return 0;	
 }
