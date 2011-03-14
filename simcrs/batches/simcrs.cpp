@@ -3,9 +3,6 @@
 #include <fstream>
 #include <string>
 // Boost (Extended STL)
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/tokenizer.hpp>
 #include <boost/program_options.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
@@ -274,63 +271,75 @@ int main (int argc, char* argv[]) {
                                         lOnDInputFilename,
                                         lFareInputFilename);
 
-  // Create an empty booking request structure
-  // TODO: fill the booking request structure from the input parameters
-  const stdair::AirportCode_T lOrigin ("SIN");
-  const stdair::AirportCode_T lDestination ("BKK");
-  const stdair::AirportCode_T lPOS ("SIN");
-  const stdair::Date_T lPreferredDepartureDate(2010, boost::gregorian::Jan, 30);
-  const stdair::Date_T lRequestDate (2010, boost::gregorian::Jan, 22);
-  const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
-  const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
-  const stdair::CabinCode_T lPreferredCabin ("Eco");
-  const stdair::PartySize_T lPartySize (3);
-  const stdair::ChannelLabel_T lChannel ("IN");
-  const stdair::TripType_T lTripType ("RI");
-  const stdair::DayDuration_T lStayDuration (7);
-  const stdair::FrequentFlyer_T lFrequentFlyerType ("M");
-  const stdair::Duration_T lPreferredDepartureTime (boost::posix_time::hours(10));
-  const stdair::WTP_T lWTP (1000.0);
-  const stdair::PriceValue_T lValueOfTime (100.0);
-  const stdair::BookingRequestStruct lBookingRequest (lOrigin, lDestination,
-                                                      lPOS,
-                                                      lPreferredDepartureDate,
-                                                      lRequestDateTime,
-                                                      lPreferredCabin,
-                                                      lPartySize, lChannel,
-                                                      lTripType, lStayDuration,
-                                                      lFrequentFlyerType,
-                                                      lPreferredDepartureTime,
-                                                      lWTP, lValueOfTime);
+  // TODO: instead of building a sample, read the parameters from the
+  //       command-line options, and build the corresponding booking request
+  const bool isForCRS = true;
+  const stdair::BookingRequestStruct& lBookingRequest =
+    simcrsService.buildSampleBookingRequest (isForCRS);
+
+  // Calculate the travel solutions corresponding to the given booking request
   stdair::TravelSolutionList_T lTravelSolutionList =
     simcrsService.calculateSegmentPathList (lBookingRequest);
   
+  // Check whether everything was fine
+  if (lTravelSolutionList.empty() == true) {
+    STDAIR_LOG_ERROR ("No travel solution has been found for: "
+                      << lBookingRequest.display());
+    return -1;
+  }
+
   // Price the travel solution
   simcrsService.fareQuote (lBookingRequest, lTravelSolutionList);
 
   // Choose a random travel solution: the first one.
-  const stdair::TravelSolutionStruct& lChosenTravelSolution =
+  stdair::TravelSolutionStruct& lChosenTravelSolution =
     lTravelSolutionList.front();
 
   // Get the segment path of the travel solution.
-  stdair::KeyList_T lsegmentDateKeyList =
+  const stdair::KeyList_T& lsegmentDateKeyList =
     lChosenTravelSolution.getSegmentPath();
 
-  stdair::FareOptionList_T lFareOptionList =
-    lChosenTravelSolution.getFareOptionList ();
+  const stdair::FareOptionList_T& lFareOptionList =
+    lChosenTravelSolution.getFareOptionList();
 
-  stdair::FareOptionStruct lFareOption =
-    lFareOptionList.front();
+  // Check whether everything was fine
+  if (lFareOptionList.empty() == true) {
+    STDAIR_LOG_ERROR ("No fare option for the chosen travel solution: "
+                      << lChosenTravelSolution.display());
+    return -1;
+  }
+
+  //
+  const stdair::FareOptionStruct& lFareOption = lFareOptionList.front();
+  lChosenTravelSolution.setChosenFareOption (lFareOption);
 
   // DEBUG
-  STDAIR_LOG_DEBUG ("The chosen travel solution is: "
-                    << lsegmentDateKeyList.front()
-                    << ", the fare is: "
-                    << lFareOption.getFare()
-                    << " Euros.");
+  const std::string& lSegmentDateKey = lsegmentDateKeyList.front();
+  STDAIR_LOG_DEBUG ("The chosen travel solution is: " << lSegmentDateKey
+                    << ", the fare is: " << lFareOption.getFare() << " Euros.");
 
   // Make a booking (reminder: party size is 3)
-  simcrsService.sell (lChosenTravelSolution, lPartySize);
+  const stdair::PartySize_T lPartySize (3);
+  const bool isSellSuccessful =
+    simcrsService.sell (lChosenTravelSolution, lPartySize);
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Sale ('" << lBookingRequest << "'): "
+                    << " successful? " << isSellSuccessful);
+
+  // DEBUG: Display the whole BOM tree
+  const std::string& lCSVDump = simcrsService.csvDisplay();
+  STDAIR_LOG_DEBUG (lCSVDump);
+
+  // Close the Log outputFile
+  logOutputFile.close();
+
+  /*
+    Note: as that program is not intended to be run on a server in
+    production, it is better not to catch the exceptions. When it
+    happens (that an exception is throwned), that way we get the
+    call stack.
+  */
 
   return 0;
 }

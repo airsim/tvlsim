@@ -40,11 +40,15 @@ namespace SIMCRS {
   typedef boost::shared_ptr<SIMFQT::SIMFQT_Service> SIMFQT_ServicePtr_T;
 
   
-  /** Class holding the context of the Simcrs services. */
+  /**
+   * @brief Class holding the context of the Simcrs services.
+   */
   class SIMCRS_ServiceContext : public ServiceAbstract {
-    /** The SIMCRS_Service class should be the sole class to get access to
-        ServiceContext content: general users do not want to bother
-        with a context interface. */
+    /**
+     * The SIMCRS_Service class should be the sole class to get access
+     * to ServiceContext content: general users do not want to bother
+     * with a context interface.
+     */
     friend class SIMCRS_Service;
     friend class FacSimcrsServiceContext;
     
@@ -62,11 +66,21 @@ namespace SIMCRS {
     
   private:
     // ///////////////// Getters ///////////////////
-    /** Get the pointer on the STDAIR service handler. */
-    stdair::STDAIR_ServicePtr_T getSTDAIR_Service () const {
+    /**
+     * Get the pointer on the STDAIR service handler.
+     */
+    stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr() const {
       return _stdairService;
     }
     
+    /**
+     * Get the STDAIR service handler.
+     */
+    stdair::STDAIR_Service& getSTDAIR_Service() const {
+      assert (_stdairService != NULL);
+      return *_stdairService;
+    }
+
     /** Get the CRS code. */
     const CRSCode_T& getCRSCode () const {
       return _CRSCode;

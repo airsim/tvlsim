@@ -3,11 +3,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <ostream>
+#include <sstream>
 // Boost
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
-#include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
 // Standard Airline Object Model
 #include <stdair/stdair_exceptions.hpp>
@@ -15,6 +12,7 @@
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp> 
+#include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
@@ -36,7 +34,7 @@
 namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
-  SIMCRS_Service::SIMCRS_Service () : _simcrsServiceContext (NULL) {
+  SIMCRS_Service::SIMCRS_Service() : _simcrsServiceContext (NULL) {
     assert (false);
   }
 
@@ -108,13 +106,13 @@ namespace SIMCRS {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  SIMCRS_Service::~SIMCRS_Service () {
+  SIMCRS_Service::~SIMCRS_Service() {
     // Delete/Clean all the objects from memory
     finalise();
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::finalise () {
+  void SIMCRS_Service::finalise() {
     assert (_simcrsServiceContext != NULL);
   }
 
@@ -178,18 +176,6 @@ namespace SIMCRS {
                              const stdair::Filename_T& iODInputFilename,
                              const stdair::Filename_T& iFareInputFilename) {
 
-    // Check that the file path given as input corresponds to an actual file
-    const bool doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iScheduleInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The schedule input file, '" << iScheduleInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw stdair::FileNotFoundException("The schedule input file, '"
-                                          + iScheduleInputFilename
-                                          + "', can not be retrieved on the "
-                                          + "file-system");
-    }
-
     // Initialise the children AirSched service context
     initAIRSCHEDService (iScheduleInputFilename, iODInputFilename);
 
@@ -205,13 +191,37 @@ namespace SIMCRS {
   initAIRSCHEDService (const stdair::Filename_T& iScheduleInputFilename,
                        const stdair::Filename_T& iODInputFilename) {
     
+    // Check that the file path given as input corresponds to an actual file
+    bool doesExistAndIsReadable =
+      stdair::BasFileMgr::doesExistAndIsReadable (iScheduleInputFilename);
+    if (doesExistAndIsReadable == false) {
+      STDAIR_LOG_ERROR ("The schedule input file, '" << iScheduleInputFilename
+                        << "', can not be retrieved on the file-system");
+      throw stdair::FileNotFoundException ("The schedule input file, '"
+                                           + iScheduleInputFilename
+                                           + "', can not be retrieved on the "
+                                           + "file-system");
+    }
+
+    // Check that the file path given as input corresponds to an actual file
+    doesExistAndIsReadable =
+      stdair::BasFileMgr::doesExistAndIsReadable (iODInputFilename);
+    if (doesExistAndIsReadable == false) {
+      STDAIR_LOG_ERROR ("The O&D input file, '" << iODInputFilename
+                        << "', can not be retrieved on the file-system");
+      throw stdair::FileNotFoundException ("The O&D input file, '"
+                                           + iODInputFilename
+                                           + "', can not be retrieved on the "
+                                           + "file-system");
+    }
+
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lSIMCRS_ServiceContext.getSTDAIR_Service();
+      lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
     assert (lSTDAIR_Service_ptr != NULL);
 
     /**
@@ -234,13 +244,25 @@ namespace SIMCRS {
   void SIMCRS_Service::
   initSIMFQTService (const stdair::Filename_T& iFareInputFilename) {
     
+    // Check that the file path given as input corresponds to an actual file
+    const bool doesExistAndIsReadable =
+      stdair::BasFileMgr::doesExistAndIsReadable (iFareInputFilename);
+    if (doesExistAndIsReadable == false) {
+      STDAIR_LOG_ERROR ("The fare input file, '" << iFareInputFilename
+                        << "', can not be retrieved on the file-system");
+      throw stdair::FileNotFoundException ("The fare input file, '"
+                                           + iFareInputFilename
+                                           + "', can not be retrieved on the "
+                                           + "file-system");
+    }
+
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lSIMCRS_ServiceContext.getSTDAIR_Service();
+      lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
     assert (lSTDAIR_Service_ptr != NULL);
 
     /**
@@ -269,7 +291,7 @@ namespace SIMCRS {
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lSIMCRS_ServiceContext.getSTDAIR_Service();
+      lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
     assert (lSTDAIR_Service_ptr != NULL);
 
     /**
@@ -286,6 +308,89 @@ namespace SIMCRS {
 
     // Store the Airinv service object within the (SimCRS) service context
     lSIMCRS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::
+  buildSampleTravelSolutions(stdair::TravelSolutionList_T& ioTravelSolutionList){
+
+    // Retrieve the SIMCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
+                                                    "been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    lSTDAIR_Service.buildSampleTravelSolutions (ioTravelSolutionList);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::BookingRequestStruct SIMCRS_Service::
+  buildSampleBookingRequest (const bool isForCRS) {
+
+    // Retrieve the SIMCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
+                                                    "been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.buildSampleBookingRequest (isForCRS);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  std::string SIMCRS_Service::csvDisplay() const {
+
+    // Retrieve the SIMCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
+                                                    "been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.csvDisplay();
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  std::string SIMCRS_Service::
+  csvDisplay (const stdair::TravelSolutionList_T& ioTravelSolutionList) const {
+
+    // Retrieve the SIMCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
+                                                    "been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.csvDisplay (ioTravelSolutionList);
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -382,10 +487,11 @@ namespace SIMCRS {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
+  bool SIMCRS_Service::
   sell (const stdair::TravelSolutionStruct& iTravelSolution,
         const stdair::PartySize_T& iPartySize) {
-    
+    bool hasSaleBeenSuccessful = false;
+
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -405,18 +511,22 @@ namespace SIMCRS {
     stdair::BasChronometer lSellChronometer;
     lSellChronometer.start();
 
-    DistributionManager::sell (lAIRINV_Master_Service,
-                                iTravelSolution, iPartySize);
+    hasSaleBeenSuccessful = DistributionManager::sell (lAIRINV_Master_Service,
+                                                       iTravelSolution,
+                                                       iPartySize);
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Making a sell of " << iPartySize
+    STDAIR_LOG_DEBUG ("Made a sell of " << iPartySize
                       << " persons on the following travel solution: "
-                      << iTravelSolution.describe());
+                      << iTravelSolution.describe()
+                      << ". Successful? " << hasSaleBeenSuccessful);
       
     // DEBUG
     const double lSellMeasure = lSellChronometer.elapsed();
     STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
                       << lSIMCRS_ServiceContext.display());
+
+    return hasSaleBeenSuccessful;
   }
   
 }

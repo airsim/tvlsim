@@ -23,7 +23,9 @@ namespace AIRINV {
 
 namespace SIMCRS {
 
-  /** Command wrapping the travel distribution (CRS/GDS) process. */
+  /**
+   * @brief Command wrapping the travel distribution (CRS/GDS) process.
+   */
   class DistributionManager {
     friend class SIMCRS_Service;
   private:
@@ -32,7 +34,7 @@ namespace SIMCRS {
                                  stdair::TravelSolutionList_T&);
     
     /** Register a booking (segment sell). */
-    static void sell (AIRINV::AIRINV_Master_Service&,
+    static bool sell (AIRINV::AIRINV_Master_Service&,
                       const stdair::TravelSolutionStruct&,
                       const stdair::NbOfSeats_T&);
 
