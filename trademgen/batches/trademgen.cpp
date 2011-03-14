@@ -288,7 +288,7 @@ int main (int argc, char* argv[]) {
                         << lPoppedRequest.describe() << "'.");
     
       // Dump the request into the dedicated CSV file
-      stdair::BomDisplay::csvDisplay (output, lPoppedRequest);
+      // stdair::BomDisplay::csvDisplay (output, lPoppedRequest);
         
       // Retrieve the corresponding demand stream key
       const stdair::EventContentKey_T& lDemandStreamKey =
