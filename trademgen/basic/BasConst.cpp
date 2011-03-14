@@ -27,7 +27,9 @@ namespace TRADEMGEN {
     // oMap["PEN"] = 0.02; oMap["FRA"] = 0.02; oMap["PEK"] = 0.02;
     // oMap["HKT"] = 0.02; oMap["AKT"] = 0.02; oMap["SFO"] = 0.01;
     // oMap["ICN"] = 0.01; oMap["TPE"] = 0.01; oMap["row"] = 0.02;
-    oMap["row"] = 1.00;
+    oMap["LHR"] = 0.60; oMap["BKK"] = 0.05; oMap["SYD"] = 0.10;
+    oMap["CDG"] = 0.10; oMap["JFK"] = 0.10;
+    oMap["row"] = 0.05;
     return oMap;
   }
 
