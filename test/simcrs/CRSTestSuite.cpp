@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
                       << lExpectedNbOfTravelSolutions);
   
   //
-  const stdair::TravelSolutionStruct& lTravelSolution =
+  stdair::TravelSolutionStruct& lTravelSolution =
     lTravelSolutionList.front();
 
   //
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
     lTravelSolution.getFareOptionList ();
 
   //
-  stdair::FareOptionStruct lFareOption =
-    lFareOptionList.front();
+  stdair::FareOptionStruct lFareOption = lFareOptionList.front();
+  lTravelSolution.setChosenFareOption (lFareOption);
 
   //  
   const unsigned int lExpectedPrice = 200;
@@ -197,7 +197,9 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
                        << lExpectedPrice);
 
   // Make a booking (reminder: party size is 3)
-  BOOST_CHECK_NO_THROW (simcrsService.sell (lTravelSolution, lPartySize));
+  const bool isSellSuccessful =
+    simcrsService.sell (lTravelSolution, lPartySize);
+  //BOOST_CHECK_NO_THROW ();
 
   // Close the log file
   logOutputFile.close();
