@@ -3,17 +3,18 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// STDAIR
+// StdAir
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/FlightDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/LegCabin.hpp>
 #include <stdair/bom/BookingClass.hpp>
-// AIRINV
+// AirInv
 #include <airinv/bom/SegmentCabinHelper.hpp>
 #include <airinv/bom/FlightDateHelper.hpp>
 
 namespace AIRINV {
+
   // ////////////////////////////////////////////////////////////////////
   void SegmentCabinHelper::
   initialiseAU (stdair::SegmentCabin& iSegmentCabin) {

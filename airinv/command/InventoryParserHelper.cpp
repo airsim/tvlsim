@@ -737,8 +737,8 @@ namespace AIRINV {
       // ///////////////////
       //if (_nbOfFlights % 1000 == 0) {
         // DEBUG: Display the result
-        STDAIR_LOG_DEBUG ("FlightDate #" << _nbOfFlights
-                          << ": " << _flightDate.describe());
+        //STDAIR_LOG_DEBUG ("FlightDate #" << _nbOfFlights
+        //                  << ": " << _flightDate.describe());
         //}
       
       // Build the FlightDate BOM objects

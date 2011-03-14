@@ -3,7 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// BOOST
+// Boost
 #include <boost/date_time/date_iterator.hpp>
 // StdAir
 #include <stdair/stdair_types.hpp>
@@ -18,9 +18,10 @@
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/LegDate.hpp>
 #include <stdair/bom/LegCabin.hpp>
+#include <stdair/bom/Bucket.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
-// AIRINV
+// AirInv
 #include <airinv/bom/FlightPeriodStruct.hpp>
 #include <airinv/command/InventoryGenerator.hpp>
 
@@ -187,16 +188,40 @@ namespace AIRINV {
   createLegCabin (stdair::LegDate& ioLegDate,
                   const LegCabinStruct& iCabin) {
     // Instantiate an leg-cabin object with the corresponding cabin code
-    stdair::LegCabinKey lKey (iCabin._cabinCode);
+    const stdair::LegCabinKey lKey (iCabin._cabinCode);
     stdair::LegCabin& lLegCabin =
       stdair::FacBom<stdair::LegCabin>::instance().create (lKey);
     stdair::FacBomManager::instance().addToListAndMap (ioLegDate, lLegCabin);
     stdair::FacBomManager::instance().linkWithParent (ioLegDate, lLegCabin);
-    
+
     // Set the Leg-Cabin attributes
     iCabin.fill (lLegCabin);
+
+    // Iterate on the bucket
+    const BucketStructList_T& lBucketList = iCabin._bucketList;
+    for (BucketStructList_T::const_iterator itBucket = lBucketList.begin();
+         itBucket != lBucketList.end(); ++itBucket) {
+      const BucketStruct& lBucket = *itBucket;
+
+      // Create the bucket of the leg-cabin
+      createBucket (lLegCabin, lBucket);
+    }
   }
     
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryGenerator::createBucket (stdair::LegCabin& ioLegCabin,
+                                         const BucketStruct& iBucket) {
+    // Instantiate a bucket object with the corresponding seat index
+    const stdair::BucketKey lKey (iBucket._seatIndex);
+    stdair::Bucket& lBucket =
+      stdair::FacBom<stdair::Bucket>::instance().create (lKey);
+    stdair::FacBomManager::instance().addToListAndMap (ioLegCabin, lBucket);
+    stdair::FacBomManager::instance().linkWithParent (ioLegCabin, lBucket);
+
+    // Set the Bucket attributes
+    iBucket.fill (lBucket);
+  }
+
   // ////////////////////////////////////////////////////////////////////
   void InventoryGenerator::
   createSegmentDate (stdair::FlightDate& ioFlightDate,

@@ -7,20 +7,22 @@
 // STL
 #include <string>
 #include <vector>
-// STDAIR
+// StdAir
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
-// AIRINV
+// AirInv
 #include <airinv/AIRINV_Types.hpp>
 
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class Bucket;
 }
 
 namespace AIRINV {
 
-  /** Utility Structure for the parsing of Bucket structures. */
+  /**
+   * @brief Utility Structure for the parsing of Bucket structures.
+   */
   struct BucketStruct : public stdair::StructAbstract {
     // Attributes
     stdair::Yield_T _yieldRangeUpperValue;

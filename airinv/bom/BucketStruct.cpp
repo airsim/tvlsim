@@ -6,14 +6,14 @@
 #include <sstream>
 // StdAir
 #include <stdair/basic/BasConst_General.hpp>
-//#include <stdair/bom/Bucket.hpp>
+#include <stdair/bom/Bucket.hpp>
 // AirInv
 #include <airinv/bom/BucketStruct.hpp>
 
 namespace AIRINV {
 
   // //////////////////////////////////////////////////////////////////////
-  BucketStruct::BucketStruct () {
+  BucketStruct::BucketStruct() {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -28,16 +28,13 @@ namespace AIRINV {
   // //////////////////////////////////////////////////////////////////////
   void BucketStruct::fill (stdair::Bucket& ioBucket) const {
     // Set the Yield Range Upper Value
-    // ioBucket.setYieldRangeValue (_yieldRangeUpperValue);
+    ioBucket.setYieldRangeUpperValue (_yieldRangeUpperValue);
 
     // Set the Availability
-    // ioBucket.setAvailability (_availability);
+    ioBucket.setAvailability (_availability);
 
-    // Set the number of seats
-    // ioBucket.setNbOfSeats (_nbOfSeats);
-      
-    // Set the Seat Index
-    // ioBucket.setSeatIndex (_seatIndex);
+    // Set the number of sold seats
+    ioBucket.setSoldSeats (_nbOfSeats);
   }
 
 }

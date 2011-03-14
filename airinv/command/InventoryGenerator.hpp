@@ -61,6 +61,9 @@ namespace AIRINV {
     /** Generate a leg-cabin. */
     static void createLegCabin (stdair::LegDate&, const LegCabinStruct&);
       
+    /** Generate a bucket. */
+    static void createBucket (stdair::LegCabin&, const BucketStruct&);
+
     /** Generate a segment-date. */
     static void createSegmentDate (stdair::FlightDate&, 
                                    const SegmentStruct&);

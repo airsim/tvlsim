@@ -3,7 +3,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// STDAIR
+// StdAir
+#include <stdair/bom/BomRetriever.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/bom/FlightDate.hpp>
@@ -12,12 +13,13 @@
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
-// AIRINV
+// AirInv
 #include <airinv/bom/InventoryHelper.hpp>
 #include <airinv/bom/FlightDateHelper.hpp>
 #include <airinv/bom/SegmentCabinHelper.hpp>
 
 namespace AIRINV {
+
   // ////////////////////////////////////////////////////////////////////
   void InventoryHelper::fillFromRouting (const stdair::Inventory& iInventory) {
     const stdair::FlightDateList_T& lFlightDateList =
@@ -36,31 +38,24 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void InventoryHelper::
   calculateAvailability (const stdair::Inventory& iInventory, 
-                         const std::string& iSegmentDateKey,
+                         const std::string& iFullSegmentDateKey,
                          stdair::TravelSolutionStruct& ioTravelSolution) {
+
     // Create the map of class/availability for the given segment date.
     stdair::ClassAvailabilityMap_T lClassAvailabilityMap;
 
-    const int lSize = iSegmentDateKey.size();
-    // Retrieve the corresponding flight-date.
-    std::string lFlightDateKey;
-    STDAIR_LOG_DEBUG (iSegmentDateKey);
-    lFlightDateKey.append (iSegmentDateKey, 4, lSize - 23);
-    const stdair::FlightDate& lFlightDate =
-      stdair::BomManager::getObject<stdair::FlightDate> (iInventory,
-                                                         lFlightDateKey);
+    // DEBUG
+    STDAIR_LOG_DEBUG (iFullSegmentDateKey);
 
-    // Retrieve the corresponding segment-date.
-    std::string lSegmentDateKey;
-    lSegmentDateKey.append (iSegmentDateKey, lSize - 7, 7);
-    const stdair::SegmentDate& lSegmentDate =
-      stdair::BomManager::getObject<stdair::SegmentDate> (lFlightDate,
-                                                          lSegmentDateKey);
-    
+    //
+    stdair::SegmentDate* lSegmentDate_ptr =
+      stdair::BomRetriever::retrieveSegmentDateFromLongKey (iInventory,
+                                                            iFullSegmentDateKey);
+
     // Browse the segment-cabins and fill the map with the availability of
     // each booking class.
     const stdair::SegmentCabinList_T& lSegmentCabinList =
-      stdair::BomManager::getList<stdair::SegmentCabin> (lSegmentDate);
+      stdair::BomManager::getList<stdair::SegmentCabin> (*lSegmentDate_ptr);
     for (stdair::SegmentCabinList_T::const_iterator itCabin =
            lSegmentCabinList.begin();
          itCabin != lSegmentCabinList.end(); ++itCabin) {
@@ -79,67 +74,73 @@ namespace AIRINV {
         assert (lBC_ptr != NULL);
 
         const stdair::ClassCode_T& lClassCode = lBC_ptr->getClassCode();
-        const stdair::AuthorizationLevel_T& lAU=lBC_ptr->getAuthorizationLevel();
+        const stdair::AuthorizationLevel_T& lAU =
+          lBC_ptr->getAuthorizationLevel();
         const stdair::Availability_T lAvl = lAU - lCommittedSpace;
 
-       bool insertSuccessful = lClassAvailabilityMap.
-          insert (stdair::ClassAvailabilityMap_T::
-                  value_type (lClassCode, lAvl)).second;
+       const bool insertSuccessful = lClassAvailabilityMap.
+          insert (stdair::ClassAvailabilityMap_T::value_type (lClassCode,
+                                                              lAvl)).second;
        assert (insertSuccessful == true);
-        // DEBUG
-        STDAIR_LOG_DEBUG ("Class: " << lClassCode << ", "
-                          << "AU: " << lAU << ", "
-                          << "Committed space: " << lCommittedSpace << ", "
-                          << "Avl: " << lAvl);
-        
+
+       // DEBUG
+       STDAIR_LOG_DEBUG ("Class: " << lClassCode
+                         << ", " << "AU: " << lAU << ", "
+                         << "Committed space: " << lCommittedSpace << ", "
+                         << "Avl: " << lAvl);
       }
     }
 
+    //
     ioTravelSolution.addClassAvailabilityMap (lClassAvailabilityMap);
   }
 
   // ////////////////////////////////////////////////////////////////////
   bool InventoryHelper::sell (stdair::Inventory& ioInventory, 
-                              const std::string& iSegmentDateKey,
+                              const std::string& iFullSegmentDateKey,
                               const stdair::ClassCode_T& iClassCode,
                               const stdair::PartySize_T& iPartySize) {
-    const int lSize = iSegmentDateKey.size();
-    // Retrieve the corresponding flight-date.
-    std::string lFlightDateKey;
-    STDAIR_LOG_DEBUG (iSegmentDateKey);
-    lFlightDateKey.append (iSegmentDateKey, 4, lSize - 23);
-    const stdair::FlightDate& lFlightDate =
-      stdair::BomManager::getObject<stdair::FlightDate> (ioInventory,
-                                                         lFlightDateKey);
+    bool hasSaleBeenSuccessful = false;
 
-    // Retrieve the corresponding segment-date.
-    std::string lSegmentDateKey;
-    lSegmentDateKey.append (iSegmentDateKey, lSize - 7, 7);
-    const stdair::SegmentDate& lSegmentDate =
-      stdair::BomManager::getObject<stdair::SegmentDate> (lFlightDate,
-                                                          lSegmentDateKey);
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Full key: " << iFullSegmentDateKey);
 
-    // Browse the segment-cabins and make the sale with the
-    // corresponding booking class.
-    const stdair::SegmentCabinList_T& lSegmentCabinList =
-      stdair::BomManager::getList<stdair::SegmentCabin> (lSegmentDate);
-    for (stdair::SegmentCabinList_T::const_iterator itCabin =
-           lSegmentCabinList.begin();
-         itCabin != lSegmentCabinList.end(); ++itCabin) {
-      stdair::SegmentCabin* lSegmentCabin_ptr = *itCabin;
-      assert (lSegmentCabin_ptr != NULL);
-      stdair::BookingClass* lBookingClass_ptr = stdair::BomManager::
-        getObjectPtr<stdair::BookingClass> (*lSegmentCabin_ptr, iClassCode);
-      if (lBookingClass_ptr) {
-        // Register the sale in the class.
-        lBookingClass_ptr->sell (iPartySize);
-        // Update the commited space of the segment-cabins and the leg-cabins.
-        SegmentCabinHelper::updateFromReservation (lFlightDate,
-                                                   *lSegmentCabin_ptr,
-                                                   iPartySize);
-        return true;
-      }
+    //
+    stdair::BookingClass* lBookingClass_ptr =
+      stdair::BomRetriever::retrieveBookingClassFromLongKey (ioInventory,
+                                                             iFullSegmentDateKey,
+                                                             iClassCode);
+
+    // DEBUG
+    const std::string hasFoundBookingClassStr =
+      (lBookingClass_ptr != NULL)?"Yes":"No";
+    STDAIR_LOG_DEBUG ("Found booking class? " << hasFoundBookingClassStr);
+
+    if (lBookingClass_ptr != NULL) {
+      // Register the sale in the class.
+      lBookingClass_ptr->sell (iPartySize);
+
+      //
+      stdair::SegmentCabin& lSegmentCabin =
+        stdair::BomManager::getParent<stdair::SegmentCabin,
+                                      stdair::BookingClass> (*lBookingClass_ptr);
+
+      //
+      stdair::SegmentDate& lSegmentDate =
+        stdair::BomManager::getParent<stdair::SegmentDate,
+                                      stdair::SegmentCabin> (lSegmentCabin);
+
+      //
+      stdair::FlightDate& lFlightDate =
+        stdair::BomManager::getParent<stdair::FlightDate,
+                                      stdair::SegmentDate> (lSegmentDate);
+      
+      // Update the commited space of the segment-cabins and the leg-cabins.
+      SegmentCabinHelper::updateFromReservation (lFlightDate, lSegmentCabin,
+                                                 iPartySize);
+      hasSaleBeenSuccessful = true;
     }
-    return false;
+
+    return hasSaleBeenSuccessful;
   }
 }

@@ -18,6 +18,8 @@
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/LegDate.hpp>
 #include <stdair/bom/LegCabin.hpp>
+#include <stdair/bom/Bucket.hpp>
+#include <stdair/factory/FacBom.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 // AIRINV
@@ -25,6 +27,7 @@
 #include <airinv/command/InventoryBuilder.hpp>
 
 namespace AIRINV {
+
   // ////////////////////////////////////////////////////////////////////
   void InventoryBuilder::
   buildInventory (stdair::BomRoot& ioBomRoot,
@@ -119,7 +122,7 @@ namespace AIRINV {
     // Update the BOM leg-date with the attributes of the leg-date struct.
     iLegDateStruct.fill (*lLegDate_ptr);
 
-    // Browse the list of leg-cabin struct and create the corresponding BOM.
+    // Browse the list of leg-cabin structs and create the corresponding BOM.
     for (LegCabinStructList_T::const_iterator itLegCabin =
            iLegDateStruct._cabinList.begin();
          itLegCabin != iLegDateStruct._cabinList.end(); ++itLegCabin) {
@@ -151,6 +154,40 @@ namespace AIRINV {
     // TODO: Update the BOM leg-cabin with the attributes of the
     // leg-cabin struct.
     iLegCabinStruct.fill (*lLegCabin_ptr);
+
+    // Browse the list of bucket structs and create the corresponding BOM.
+    for (BucketStructList_T::const_iterator itBucket =
+           iLegCabinStruct._bucketList.begin();
+         itBucket != iLegCabinStruct._bucketList.end(); ++itBucket) {
+      const BucketStruct& lCurrentBucketStruct = *itBucket;
+      buildBucket (*lLegCabin_ptr, lCurrentBucketStruct);
+    }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryBuilder::buildBucket (stdair::LegCabin& ioLegCabin,
+                                      const BucketStruct& iBucketStruct) {
+    // Create the BucketKey
+    const stdair::BucketKey lBucketKey (iBucketStruct._seatIndex);
+
+    // Check that the bucket object is not already existing. If a
+    // bucket object with the same key has already been created,
+    // then just update it, ifnot, create a bucket and update it.
+    stdair::Bucket* lBucket_ptr = stdair::BomManager::
+      getObjectPtr<stdair::Bucket> (ioLegCabin, lBucketKey.toString());
+    if (lBucket_ptr == NULL) {
+      // Instantiate a bucket object for the given key (seat index);
+      stdair::BucketKey lKey (iBucketStruct._seatIndex);
+      lBucket_ptr = &stdair::FacBom<stdair::Bucket>::instance().create (lKey);
+      stdair::FacBomManager::instance().addToListAndMap (ioLegCabin,
+                                                         *lBucket_ptr);
+      stdair::FacBomManager::instance().linkWithParent (ioLegCabin, 
+                                                        *lBucket_ptr);
+    }
+    assert (lBucket_ptr != NULL);
+
+    //
+    iBucketStruct.fill (*lBucket_ptr);
   }
 
   // ////////////////////////////////////////////////////////////////////
