@@ -89,9 +89,6 @@ namespace TRAVELCCM {
     // Initialise the (remaining of the) context
     initTravelCCMService();
   }
-  
-  // ////////////////////////////////////////////////////////////////////
-  void TRAVELCCM_Service::finalise () {
 
   // ////////////////////////////////////////////////////////////////////
   TRAVELCCM_Service::~TRAVELCCM_Service() {
