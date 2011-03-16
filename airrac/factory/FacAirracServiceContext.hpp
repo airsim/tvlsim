@@ -6,13 +6,8 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Airrac
+// AirRAC
 #include <airrac/factory/FacServiceAbstract.hpp>
-
-// Forward declarations.
-namespace stdair {
-  class YieldStore;
-}
 
 namespace AIRRAC {
 
@@ -37,8 +32,7 @@ namespace AIRRAC {
     /** Create a new AIRRAC_ServiceContext object.
         <br>This new object is added to the list of instantiated objects.
         @return AIRRAC_ServiceContext& The newly created object. */
-    AIRRAC_ServiceContext& create (const std::string& iTravelDatabaseName,
-                                   stdair::YieldStore&);
+    AIRRAC_ServiceContext& create ();
 
     
   protected:

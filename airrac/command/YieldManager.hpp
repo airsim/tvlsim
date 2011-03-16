@@ -9,7 +9,7 @@
 
 // Forward declarations
 namespace stdair {
-  class YieldStore;
+  class BomRoot;
   struct TravelSolutionStruct;
 }
 
@@ -21,8 +21,8 @@ namespace AIRRAC {
   private:
 
     /** Calculate/retrieve the yield for a given travel solution. */
-    static void calculateYield (stdair::YieldStore&,
-                                const stdair::TravelSolutionStruct&);
+    static void calculateYield (stdair::TravelSolutionStruct&,
+                                const stdair::BomRoot&);
 
   private:
     /** Constructors. */

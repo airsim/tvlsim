@@ -3,18 +3,22 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <iostream>
 #include <sstream>
 // Airrac
 #include <airrac/basic/BasConst_AIRRAC_Service.hpp>
 #include <airrac/service/AIRRAC_ServiceContext.hpp>
 
 namespace AIRRAC {
-
+  
   // //////////////////////////////////////////////////////////////////////
   AIRRAC_ServiceContext::
-  AIRRAC_ServiceContext (const stdair::AirlineCode_T& iAirlineCode,
-                         stdair::YieldStore& ioYieldStore)
-    : _airlineCode (iAirlineCode), _yieldStore (ioYieldStore) {
+  AIRRAC_ServiceContext (const AIRRAC_ServiceContext&) {
+    assert (false);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  AIRRAC_ServiceContext::AIRRAC_ServiceContext () {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -24,7 +28,7 @@ namespace AIRRAC {
   // //////////////////////////////////////////////////////////////////////
   const std::string AIRRAC_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "AIRRAC_ServiceContext: Airline code: " << _airlineCode;
+    oStr << "AIRRAC_ServiceContext: " << std::endl;
     return oStr.str();
   }
 

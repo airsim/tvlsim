@@ -3,205 +3,360 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <fstream>
+#include <vector>
 // StdAir
-#include <stdair/stdair_exceptions.hpp>
+#include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/service/Logger.hpp>
 // Airrac
 #include <airrac/command/YieldParserHelper.hpp>
+#include <airrac/command/YieldRuleGenerator.hpp>
 
 namespace AIRRAC {
 
   namespace YieldParserHelper {
-      
+
     // //////////////////////////////////////////////////////////////////
     //  Semantic actions
     // //////////////////////////////////////////////////////////////////
 
-    ParserSemanticAction::ParserSemanticAction (YieldStruct& ioYield)
-      : _yield (ioYield) {
+    ParserSemanticAction::
+    ParserSemanticAction (YieldRuleStruct& ioYieldRule)
+      : _yieldRule (ioYieldRule) {
     }      
-
+   
     // //////////////////////////////////////////////////////////////////
-    storeSnapshotDate::storeSnapshotDate (YieldStruct& ioYield)
-      : ParserSemanticAction (ioYield) {
+    storeYieldId::
+    storeYieldId (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
     }
     
     // //////////////////////////////////////////////////////////////////
-    void storeSnapshotDate::operator() (iterator_t iStr,
-                                        iterator_t iStrEnd) const {
-      _yield._yield = _yield.getDate();
-    }
+    void storeYieldId::operator() (unsigned int iYieldId,
+                                   boost::spirit::qi::unused_type,
+                                   boost::spirit::qi::unused_type) const {
+      _yieldRule._yieldId = iYieldId;
       
-    // //////////////////////////////////////////////////////////////////
-    storeAirlineCode::storeAirlineCode (YieldStruct& ioYield)
-      : ParserSemanticAction (ioYield) {
+      // DEBUG
+      //STDAIR_LOG_DEBUG ( "Yield Id: " << _yieldRule._yieldId);
+
+      _yieldRule._airlineCode = "";
+      _yieldRule._classCode = "";
+      _yieldRule._airlineCodeList.clear();
+      _yieldRule._classCodeList.clear();
+      _yieldRule._itSeconds = 0; 
     }
     
     // //////////////////////////////////////////////////////////////////
-    void storeAirlineCode::operator() (iterator_t iStr,
-                                       iterator_t iStrEnd) const {
-      const stdair::AirlineCode_T lAirlineCode (iStr, iStrEnd);
-      _yield._airlineCode = lAirlineCode;
-                
-      // As that's the beginning of a new yield rule, the list of legs
-      // must be reset
-      //_yield._legList.clear();
-    }
-      
-    // //////////////////////////////////////////////////////////////////
-    doEndYield::doEndYield (stdair::BomRoot& ioBomRoot, YieldStruct& ioYield)
-      : ParserSemanticAction (ioYield), _bomRoot (ioBomRoot) {
+    storeOrigin ::
+    storeOrigin (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
     }
     
     // //////////////////////////////////////////////////////////////////
-    // void doEndYield::operator() (char iChar) const {
-    void doEndYield::operator() (iterator_t iStr, iterator_t iStrEnd) const {
-        
-      // DEBUG: Display the result
-      // STDAIR_LOG_DEBUG ("Yield: " << _yield.describe());
-
-      // Create the Yield BOM objects
-      // YieldGenerator::createYield (_bomRoot, _yield);
+    void storeOrigin::operator() (std::vector<char> iChar,
+                                  boost::spirit::qi::unused_type,
+                                  boost::spirit::qi::unused_type) const {
+       stdair::AirportCode_T lOrigin (iChar.begin(), iChar.end());
+       // DEBUG
+       //STDAIR_LOG_DEBUG ( "Origin: " << lOrigin);
+       _yieldRule._origin = lOrigin;
     }
 
-      
+    // //////////////////////////////////////////////////////////////////
+    storeDestination ::
+    storeDestination (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeDestination::operator() (std::vector<char> iChar,
+                                       boost::spirit::qi::unused_type,
+                                       boost::spirit::qi::unused_type) const {
+       stdair::AirportCode_T lDestination (iChar.begin(), iChar.end());
+       // DEBUG
+       //STDAIR_LOG_DEBUG ( "Destination: " << lDestination);
+       _yieldRule._destination = lDestination;
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    storeDateRangeStart::
+    storeDateRangeStart (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeDateRangeStart::operator() (boost::spirit::qi::unused_type,
+                                          boost::spirit::qi::unused_type,
+                                          boost::spirit::qi::unused_type) const {
+      _yieldRule._dateRangeStart = _yieldRule.getDate();
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Date Range Start: "<< _yieldRule._dateRangeStart);
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeDateRangeEnd::
+    storeDateRangeEnd(YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeDateRangeEnd::operator() (boost::spirit::qi::unused_type,
+                                        boost::spirit::qi::unused_type,
+                                        boost::spirit::qi::unused_type) const {
+       _yieldRule._dateRangeEnd = _yieldRule.getDate();
+       // DEBUG
+       //STDAIR_LOG_DEBUG ("Date Range End: " << _yieldRule._dateRangeEnd);
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeStartRangeTime::
+    storeStartRangeTime (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeStartRangeTime::operator() (boost::spirit::qi::unused_type,
+                                          boost::spirit::qi::unused_type,
+                                          boost::spirit::qi::unused_type) const {
+      _yieldRule._timeRangeStart = _yieldRule.getTime();
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Time Range Start: " << _yieldRule._timeRangeStart);
+      // Reset the number of seconds
+      _yieldRule._itSeconds = 0;
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeEndRangeTime::
+    storeEndRangeTime (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeEndRangeTime::operator() (boost::spirit::qi::unused_type,
+                                        boost::spirit::qi::unused_type,
+                                        boost::spirit::qi::unused_type) const {
+      _yieldRule._timeRangeEnd = _yieldRule.getTime();
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Time Range End: " << _yieldRule._timeRangeEnd);
+      // Reset the number of seconds
+      _yieldRule._itSeconds = 0;
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeCabinCode ::
+    storeCabinCode (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeCabinCode::operator() (char iChar,
+                                     boost::spirit::qi::unused_type,
+                                     boost::spirit::qi::unused_type) const {
+      std::ostringstream ostr;
+      ostr << iChar;
+      std::string cabinCodeStr = ostr.str();
+      const stdair::CabinCode_T lCabinCode (cabinCodeStr);
+      _yieldRule._cabinCode = lCabinCode;
+     
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Cabin Code: " << lCabinCode);                 
+    
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeYield::
+    storeYield (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeYield::operator() (double iYield,
+                                boost::spirit::qi::unused_type,
+                                boost::spirit::qi::unused_type) const {
+      _yieldRule._yield = iYield;
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Yield: " << _yieldRule._yield);
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeAirlineCode ::
+    storeAirlineCode (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeAirlineCode::operator() (std::vector<char> iChar,
+                                       boost::spirit::qi::unused_type,
+                                       boost::spirit::qi::unused_type) const {
+
+      stdair::AirlineCode_T lAirlineCode (iChar.begin(), iChar.end());
+      // Update the airline code
+      _yieldRule._airlineCode = lAirlineCode;
+      // Insertion of this airline Code list in the whole AirlineCode name
+      _yieldRule._airlineCodeList.push_back (lAirlineCode);
+      // DEBUG
+      //STDAIR_LOG_DEBUG ( "Airline code: " << lAirlineCode);
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeClass ::
+    storeClass (YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storeClass::operator() (std::vector<char> iChar,
+                                 boost::spirit::qi::unused_type,
+                                 boost::spirit::qi::unused_type) const {
+      std::ostringstream ostr;
+      for (std::vector<char>::const_iterator lItVector = iChar.begin();
+         lItVector != iChar.end();
+         lItVector++) {
+        ostr << *lItVector;
+      }
+      std::string classCodeStr = ostr.str();
+      // Insertion of this class Code list in the whole classCode name
+      _yieldRule._classCodeList.push_back(classCodeStr);
+      // DEBUG
+      //STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    doEndYield::
+    doEndYield (stdair::BomRoot& ioBomRoot,
+               YieldRuleStruct& ioYieldRule)
+      : ParserSemanticAction (ioYieldRule),
+        _bomRoot (ioBomRoot) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void doEndYield::operator() (boost::spirit::qi::unused_type,
+                                boost::spirit::qi::unused_type,
+                                boost::spirit::qi::unused_type) const {
+      // DEBUG
+      // STDAIR_LOG_DEBUG ("Do End");
+      // Generation of the yield rule object.
+      YieldRuleGenerator::createYieldRule (_bomRoot, _yieldRule);
+      STDAIR_LOG_DEBUG(_yieldRule.describe());
+    }  
+    
     // ///////////////////////////////////////////////////////////////////
     //
     //  Utility Parsers
     //
     // ///////////////////////////////////////////////////////////////////
+    /** Namespaces. */
+    namespace bsq = boost::spirit::qi;
+    namespace bsa = boost::spirit::ascii;
+    
     /** 1-digit-integer parser */
-    int1_p_t int1_p;
+    stdair::int1_p_t int1_p;
     
     /** 2-digit-integer parser */
-    uint2_p_t uint2_p;
-    
-    /** Up-to-2-digit-integer parser */
-    uint1_2_p_t uint1_2_p;
-
-    /** Up-to-3-digit-integer parser */
-    uint1_3_p_t uint1_3_p;
+    stdair::uint2_p_t uint2_p;
 
     /** 4-digit-integer parser */
-    uint4_p_t uint4_p;
+    stdair::uint4_p_t uint4_p;
     
     /** Up-to-4-digit-integer parser */
-    uint1_4_p_t uint1_4_p;
+    stdair::uint1_4_p_t uint1_4_p;
 
-    /** Airline Code Parser: repeat_p(2,3)[chset_p("0-9A-Z")] */
-    repeat_p_t airline_code_p (chset_t("0-9A-Z").derived(), 2, 3);
-      
-    /** Flight Number Parser: limit_d(0u, 9999u)[uint1_4_p] */
-    bounded1_4_p_t flight_number_p (uint1_4_p.derived(), 0u, 9999u);
+    /** Time element parsers. */
+    stdair::hour_p_t hour_p;
+    stdair::minute_p_t minute_p;
+    stdair::second_p_t second_p;
 
-    /** Year Parser: limit_d(00u, 99u)[uint4_p] */
-    bounded2_p_t year_p (uint2_p.derived(), 0u, 99u);
-      
-    /** Month Parser: limit_d(1u, 12u)[uint2_p] */
-    bounded2_p_t month_p (uint2_p.derived(), 1u, 12u);
-
-    /** Day Parser: limit_d(1u, 31u)[uint2_p] */
-    bounded2_p_t day_p (uint2_p.derived(), 1u, 31u);
-     
-    /** DOW (Day-Of-the-Week) Parser: repeat_p(7)[chset_p("0-1")] */
-    repeat_p_t dow_p (chset_t("0-1").derived().derived(), 7, 7);
-
-    /** Airport Parser: repeat_p(3)[chset_p("0-9A-Z")] */
-    repeat_p_t airport_p (chset_t("0-9A-Z").derived(), 3, 3);
-      
-    /** Hour Parser: limit_d(0u, 24u)[uint2_p] */
-    bounded1_2_p_t hours_p (uint1_2_p.derived(), 0u, 24u);
-
-    /** Minute Parser: limit_d(0u, 59u)[uint2_p] */
-    bounded2_p_t minutes_p (uint2_p.derived(), 0u, 59u);
-
-    /** Second Parser: limit_d(0u, 59u)[uint2_p] */
-    bounded2_p_t seconds_p (uint2_p.derived(), 0u, 59u);
-
-    /** Cabin code parser: chset_p("A-Z") */
-    chset_t cabin_code_p ("A-Z");
-
-    /** Booking class code parser: chset_p("A-Z") */
-    chset_t class_code_p ("A-Z");
-
-    /** Passenger type parser: chset_p("A-Z") */
-    chset_t passenger_type_p ("A-Z");
-
-    /** Family code parser */
-    int1_p_t family_code_p;
-      
-    /** Class Code List Parser: repeat_p(1,26)[chset_p("A-Z")] */
-    repeat_p_t class_code_list_p (chset_t("A-Z").derived(), 1, 26);
-
-    /** Stay duration Parser: limit_d(0u, 999u)[uint3_p] */
-    bounded1_3_p_t stay_duration_p (uint1_3_p.derived(), 0u, 999u);
-
-
+    /** Date element parsers. */
+    stdair::year_p_t year_p;
+    stdair::month_p_t month_p;
+    stdair::day_p_t day_p;
+        
     // //////////////////////////////////////////////////////////////////
     //  (Boost Spirit) Grammar Definition
     // //////////////////////////////////////////////////////////////////
-
+    
     // //////////////////////////////////////////////////////////////////
-    YieldParser::YieldParser (stdair::BomRoot& ioBomRoot, YieldStruct& ioYield) 
-      : _bomRoot (ioBomRoot), _yield (ioYield) {
-    }
+    YieldRuleParser::YieldRuleParser (stdair::BomRoot& ioBomRoot,
+                                      YieldRuleStruct& ioYieldRule) :
+      YieldRuleParser::base_type(start),
+      _bomRoot(ioBomRoot), _yieldRule(ioYieldRule) {
 
-    // //////////////////////////////////////////////////////////////////
-    template<typename ScannerT>
-    YieldParser::definition<ScannerT>::definition (YieldParser const& self) {
+      start = *(comments | yield_rule);
 
-      yield_list = *( boost::spirit::classic::comment_p("//")
-                      | boost::spirit::classic::comment_p("/*", "*/")
-                      | yield )
-        ;
+      comments = (bsq::lexeme[bsq::repeat(2)[bsa::char_('/')]
+                              >> +(bsa::char_ - bsq::eol)
+                              >> bsq::eol]
+                  | bsq::lexeme[bsa::char_('/') >>bsa::char_('*') 
+                                >> +(bsa::char_ - bsa::char_('*')) 
+                                >> bsa::char_('*') >> bsa::char_('/')]);
       
-      yield = date[storeSnapshotDate(self._yield)]
-        >> '/' >> airline_code
-        >> yield_end[doEndYield (self._bomRoot, self._yield)]
+      yield_rule =  yield_id
+        >> ';' >> origin >> ';' >> destination
+        >> ';' >> dateRangeStart >> ';' >> dateRangeEnd
+        >> ';' >> timeRangeStart >> ';' >> timeRangeEnd
+        >> ';' >> cabinCode >> ';' >> yield
+        >> +( ';' >> segment )
+        >> yield_rule_end[doEndYield(_bomRoot, _yieldRule)];
         ;
 
-      yield_end =
-        boost::spirit::classic::ch_p(';')
-        ;
+      yield_id = uint1_4_p[storeYieldId(_yieldRule)];
+
+      origin = bsq::repeat(3)[bsa::char_("A-Z")][storeOrigin(_yieldRule)];
       
-      airline_code =
-        boost::spirit::classic::lexeme_d[
-                                (airline_code_p)[storeAirlineCode(self._yield)]
-                                ]
-        ;
-        
-      date =
-        boost::spirit::classic::lexeme_d[
-                                (day_p)[boost::spirit::classic::assign_a(self._yield._itDay)]
-                                >> (month_p)[boost::spirit::classic::assign_a(self._yield._itMonth)]
-                                >> (year_p)[boost::spirit::classic::assign_a(self._yield._itYear)]
-                                ]
-        ;
-	 
-      time =
-        boost::spirit::classic::lexeme_d[
-                                (hours_p)[boost::spirit::classic::assign_a(self._yield._itHours)]
-                                >> (minutes_p)[boost::spirit::classic::assign_a(self._yield._itMinutes)]
-                                >> !((seconds_p)[boost::spirit::classic::assign_a(self._yield._itSeconds)])
-                                ]
-        ;
+      destination =  
+        bsq::repeat(3)[bsa::char_("A-Z")][storeDestination(_yieldRule)];
       
+      dateRangeStart = date[storeDateRangeStart(_yieldRule)];
+
+      dateRangeEnd = date[storeDateRangeEnd(_yieldRule)];
+
+      date = bsq::lexeme
+        [year_p[boost::phoenix::ref(_yieldRule._itYear) = bsq::labels::_1]
+        >> '-'
+        >> month_p[boost::phoenix::ref(_yieldRule._itMonth) = bsq::labels::_1]
+        >> '-'
+        >> day_p[boost::phoenix::ref(_yieldRule._itDay) = bsq::labels::_1] ];
+
+      timeRangeStart = time[storeStartRangeTime(_yieldRule)];
+      
+      timeRangeEnd = time[storeEndRangeTime(_yieldRule)];
+
+      time =  bsq::lexeme
+        [hour_p[boost::phoenix::ref(_yieldRule._itHours) = bsq::labels::_1]
+        >> ':'
+        >> minute_p[boost::phoenix::ref(_yieldRule._itMinutes) = bsq::labels::_1]      
+        >> - (':' >> second_p[boost::phoenix::ref(_yieldRule._itSeconds) = bsq::labels::_1]) ];
+
+      cabinCode = bsa::char_("A-Z")[storeCabinCode(_yieldRule)];
+
+      yield = bsq::double_[storeYield(_yieldRule)];
+
+      segment = bsq::repeat(2)[bsa::char_("A-Z")][storeAirlineCode(_yieldRule)]
+        >> ';'
+        >> bsq::repeat(1,bsq::inf)[bsa::char_("A-Z")][storeClass(_yieldRule)];
+
+      yield_rule_end = bsa::char_(';');
 
       // BOOST_SPIRIT_DEBUG_NODE (YieldParser);
-      BOOST_SPIRIT_DEBUG_NODE (yield_list);
-      BOOST_SPIRIT_DEBUG_NODE (yield);
-      BOOST_SPIRIT_DEBUG_NODE (yield_end); 
-      BOOST_SPIRIT_DEBUG_NODE (airline_code);
+      BOOST_SPIRIT_DEBUG_NODE (start);
+      BOOST_SPIRIT_DEBUG_NODE (comments);
+      BOOST_SPIRIT_DEBUG_NODE (yield_rule);
+      BOOST_SPIRIT_DEBUG_NODE (yield_id);
+      BOOST_SPIRIT_DEBUG_NODE (origin);
+      BOOST_SPIRIT_DEBUG_NODE (destination);
+      BOOST_SPIRIT_DEBUG_NODE (dateRangeStart);
+      BOOST_SPIRIT_DEBUG_NODE (dateRangeEnd);
       BOOST_SPIRIT_DEBUG_NODE (date);
+      BOOST_SPIRIT_DEBUG_NODE (timeRangeStart);
+      BOOST_SPIRIT_DEBUG_NODE (timeRangeEnd);
       BOOST_SPIRIT_DEBUG_NODE (time);
-   }
-
-    // //////////////////////////////////////////////////////////////////
-    template<typename ScannerT>
-    boost::spirit::classic::rule<ScannerT> const&
-    YieldParser::definition<ScannerT>::start() const {
-      return yield_list;
+      BOOST_SPIRIT_DEBUG_NODE (cabinCode);
+      BOOST_SPIRIT_DEBUG_NODE (yield);
+      BOOST_SPIRIT_DEBUG_NODE (segment);
+      BOOST_SPIRIT_DEBUG_NODE (yield_rule_end);
+     
     }
     
   }
@@ -222,58 +377,68 @@ namespace AIRRAC {
 
   // //////////////////////////////////////////////////////////////////////
   void YieldFileParser::init() {
-    // Open the file
-    _startIterator = iterator_t (_filename);
 
-    // Check the filename exists and can be open
-    if (!_startIterator) {
-      std::ostringstream oMessage;
-      oMessage << "The file " << _filename << " can not be open.";
-      throw stdair::FileNotFoundException (oMessage.str());
+    // Check that the file exists and is readable
+    const bool doesExistAndIsReadable =
+      stdair::BasFileMgr::doesExistAndIsReadable (_filename);
+
+    if (doesExistAndIsReadable == false) {
+      STDAIR_LOG_ERROR ("The yield schedule file " << _filename
+                        << " does not exist or can not be  read.");
+      
+      throw YieldInputFileNotFoundException ("The yield file " + _filename + " does not exist or can not be read");
     }
-
-    // Create an EOF iterator
-    _endIterator = _startIterator.make_end();
   }
     
   // //////////////////////////////////////////////////////////////////////
-  bool YieldFileParser::generateYieldStore () {
-    bool oResult = false;
-      
+  bool YieldFileParser::generateYieldStore () {    
     STDAIR_LOG_DEBUG ("Parsing yield store input file: " << _filename);
 
+    // File to be parsed
+    const std::string* lFileName = &_filename;
+    const char *lChar = (*lFileName).c_str();
+    std::ifstream fileToBeParsed(lChar, std::ios_base::in);
+
+    // Check the filename exists and can be open
+    if (fileToBeParsed == false) {
+      STDAIR_LOG_ERROR ("The yield store file " << _filename << " can not be open."
+                          << std::endl);
+
+      throw YieldInputFileNotFoundException ("The file " + _filename + " does not exist or can not be read");
+    }
+    
+    // Create an input iterator
+    stdair::base_iterator_t inputBegin (fileToBeParsed);
+
+    // Convert input iterator to an iterator usable by spirit parser  
+    stdair::iterator_t 
+      start (boost::spirit::make_default_multi_pass (inputBegin));
+    stdair::iterator_t end;
+
     // Initialise the parser (grammar) with the helper/staging structure.
-    YieldParserHelper::YieldParser lYieldParser (_bomRoot, _yield);
+    YieldParserHelper::YieldRuleParser lYParser(_bomRoot, _yieldRule);
       
     // Launch the parsing of the file and, thanks to the doEndYield
     // call-back structure, the building of the whole BomRoot BOM
-    // (i.e., including Yield, Yield, LegDate, SegmentDate, etc.)
-    boost::spirit::classic::parse_info<iterator_t> info =
-      boost::spirit::classic::parse (_startIterator, _endIterator, lYieldParser,
-                                     boost::spirit::classic::space_p);
-
-    // Retrieves whether or not the parsing was successful
-    oResult = info.hit;
+    const bool hasParsingBeenSuccesful = 
+       boost::spirit::qi::phrase_parse (start, end, lYParser,
+                                        boost::spirit::ascii::space);
       
-    const std::string hasBeenFullyReadStr = (info.full == true)?"":"not ";
-    if (oResult == true) {
-      STDAIR_LOG_DEBUG ("Parsing of yield store input file: " << _filename
-                        << " succeeded: read " << info.length
-                        << " characters. The input file has "
-                        << hasBeenFullyReadStr
-                        << "been fully read. Stop point: " << info.stop);
-        
-    } else {
+    if (hasParsingBeenSuccesful == false) {
+      // TODO: decide whether to throw an exceqption
       STDAIR_LOG_ERROR ("Parsing of yield store input file: " << _filename
-                        << " failed: read " << info.length
-                        << " characters. The input file has "
-                        << hasBeenFullyReadStr
-                        << "been fully read. Stop point: " << info.stop);
-      throw stdair::ParserException ("Parsing of yield store input file: "
-                                     + _filename + " failed");
+                        << " failed");
     }
-
-    return oResult;
+    if  (start != end) {
+      // TODO: decide whether to throw an exception
+      STDAIR_LOG_ERROR ("Parsing of yield store input file: " << _filename
+                        << " failed");
+    }
+    if (hasParsingBeenSuccesful == true && start == end) {
+      STDAIR_LOG_DEBUG ("Parsing of yield store input file: " << _filename
+      << " succeeded");
+    }
+    return hasParsingBeenSuccesful;
   }
     
 }

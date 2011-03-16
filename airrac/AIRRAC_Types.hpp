@@ -5,30 +5,69 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <map>
-// Boost
-#include <boost/shared_ptr.hpp>
+#include <vector>
+#include <string>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
-#include <stdair/stdair_basic_types.hpp>
 
 namespace AIRRAC {
 
-  // Forward declarations
-  class AIRRAC_Service;
-
   // ///////// Exceptions ///////////
-  class YielCalculationException : public stdair::RootException {
+  class AirportPairNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    AirportPairNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
   };
 
-  // //////// Type definitions /////////
-  /** Pointer on the AIRRAC Service handler. */
-  typedef boost::shared_ptr<AIRRAC::AIRRAC_Service> AIRRAC_ServicePtr_T;
+  class PosOrChannelNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    PosOrChannelNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FlightDateNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FlightDateNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FlightTimeNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FlightTimeNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class FeaturesNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    FeaturesNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
   
-  /** Typedef which defines a map of airline codes and the corresponding
-      airline inventories. */
-  typedef std::map<const stdair::AirlineCode_T,
-                   AIRRAC_ServicePtr_T> AIRRAC_ServicePtr_Map_T;
+  class AirlineNotFoundException : public stdair::ObjectNotFoundException {
+  public:
+    /** Constructor. */
+    AirlineNotFoundException (const std::string& iWhat)
+      : stdair::ObjectNotFoundException (iWhat) {}
+  };
+
+  class YieldInputFileNotFoundException : public stdair::FileNotFoundException {
+  public:
+    /** Constructor. */
+    YieldInputFileNotFoundException (const std::string& iWhat)
+      : stdair::FileNotFoundException (iWhat) {}
+  };
+
+  class QuotingException : public stdair::RootException {
+  };
+
+  // //////// Type definitions specific to AirRAC /////////
+  /** ID for the Fare Quote system. */
+  typedef unsigned int YieldID_T;
 }
 #endif // __AIRRAC_AIRRAC_TYPES_HPP
 

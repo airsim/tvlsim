@@ -14,20 +14,15 @@ namespace AIRRAC {
 
   // //////////////////////////////////////////////////////////////////////
   void YieldManager::
-  calculateYield (stdair::YieldStore& ioYieldStore,
-                  const stdair::TravelSolutionStruct& iTravelSolution) {
+  calculateYield (stdair::TravelSolutionStruct& iTravelSolution,
+                  const stdair::BomRoot& iBomRoot) {
 
-    try {
       
       // Calculate/retrieve the yield for the given travel solution
       //YieldStore::calculateYield (ioYield, iTravelSolution);
 
       // TODO: update the statistical attributes of the yield.
-      
-    } catch (const std::exception& lStdError) {
-      STDAIR_LOG_ERROR ("Error: " << lStdError.what());
-      throw YielCalculationException();
-    }
+    
   }
 
 }
