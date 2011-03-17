@@ -46,7 +46,6 @@ namespace AIRINV {
 
     // DEBUG
     STDAIR_LOG_DEBUG (iFullSegmentDateKey);
-    
     //
     stdair::SegmentDate* lSegmentDate_ptr =
       stdair::BomRetriever::retrieveSegmentDateFromLongKey (iInventory,

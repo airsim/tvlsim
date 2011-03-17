@@ -16,8 +16,8 @@
 #include <stdair/bom/LegCabin.hpp>
 #include <stdair/bom/FareFamily.hpp>
 #include <stdair/bom/BookingClass.hpp>
-#include <stdair/factory/FacBomManager.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
@@ -185,6 +185,5 @@ namespace AIRINV {
       }      
     }
   }
-
 
 }
