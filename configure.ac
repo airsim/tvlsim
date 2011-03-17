@@ -456,6 +456,7 @@ AC_CONFIG_FILES(
 	test/boost/asio/log_server/Makefile
 	test/boost/asio/logger/Makefile
 	test/boost/asio/chat/Makefile
+	test/boost/date_time/Makefile
 	test/boost/filesystem/Makefile
 	test/boost/intrusive/Makefile
 	test/boost/iostreams/Makefile
