@@ -15,8 +15,8 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   DemandStruct::DemandStruct()
-    : _prefDepDate (stdair::DEFAULT_FLIGHT_DATE),
-      _prefArrDate (stdair::DEFAULT_FLIGHT_DATE),
+    : _prefDepDate (stdair::DEFAULT_DEPARTURE_DATE),
+      _prefArrDate (stdair::DEFAULT_DEPARTURE_DATE),
       _prefCabin (stdair::DEFAULT_CABIN_CODE),
       _itHours (0), _itMinutes (0), _itSeconds (0), _itFFCode ("") {
   }

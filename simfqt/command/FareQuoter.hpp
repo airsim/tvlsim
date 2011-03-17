@@ -20,6 +20,7 @@
 namespace stdair {
   class BomRoot;
   struct BookingRequestStruct;
+  struct ParsedKey;
 }
 
 namespace SIMFQT {
@@ -35,33 +36,23 @@ namespace SIMFQT {
                             const stdair::BomRoot&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const stdair::BomRoot&,
-                            const std::vector<std::string>&,
-                            const std::vector<std::string>&);
-    static void priceQuote (const stdair::BookingRequestStruct&,
-                            stdair::TravelSolutionStruct&,
                             const stdair::AirportPair&,
-                            const std::vector<std::string>&);
+                            const stdair::ParsedKey&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const stdair::PosChannel&,
-                            const std::vector<std::string>&);
+                            const stdair::PosChannel&, const stdair::ParsedKey&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::DatePeriod&,
-                            const stdair::PosChannel&,
-                            const std::vector<std::string>&);
+                            const stdair::PosChannel&, const stdair::ParsedKey&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::TimePeriod&,
-                            const stdair::PosChannel&,
-                            const std::vector<std::string>&);
+                            const stdair::PosChannel&, const stdair::ParsedKey&);
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const FareRuleFeatures&,
-                            const stdair::PosChannel&,
-                            stdair::FareOptionStruct&,
-                            const std::vector<std::string>&);
+                            const FareRuleFeatures&, const stdair::PosChannel&,
+                            stdair::FareOptionStruct&, const stdair::ParsedKey&);
     
 
   private:

@@ -46,12 +46,13 @@ namespace AIRINV {
 
     // DEBUG
     STDAIR_LOG_DEBUG (iFullSegmentDateKey);
-
+    
     //
     stdair::SegmentDate* lSegmentDate_ptr =
       stdair::BomRetriever::retrieveSegmentDateFromLongKey (iInventory,
                                                             iFullSegmentDateKey);
-
+    assert (lSegmentDate_ptr != NULL);
+    
     // Browse the segment-cabins and fill the map with the availability of
     // each booking class.
     const stdair::SegmentCabinList_T& lSegmentCabinList =

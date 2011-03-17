@@ -22,7 +22,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   DemandStream::DemandStream()
     : _key (stdair::DEFAULT_ORIGIN, stdair::DEFAULT_DESTINATION,
-            stdair::DEFAULT_FLIGHT_DATE, stdair::DEFAULT_CABIN_CODE),
+            stdair::DEFAULT_DEPARTURE_DATE, stdair::DEFAULT_CABIN_CODE),
       _parent (NULL),
       _demandCharacteristics (ArrivalPatternCumulativeDistribution_T(),
                               POSProbabilityMassFunction_T(),
@@ -40,7 +40,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   DemandStream::DemandStream (const DemandStream&)
     : _key (stdair::DEFAULT_ORIGIN, stdair::DEFAULT_DESTINATION,
-            stdair::DEFAULT_FLIGHT_DATE, stdair::DEFAULT_CABIN_CODE),
+            stdair::DEFAULT_DEPARTURE_DATE, stdair::DEFAULT_CABIN_CODE),
       _parent (NULL),
       _demandCharacteristics (ArrivalPatternCumulativeDistribution_T(),
                               POSProbabilityMassFunction_T(),

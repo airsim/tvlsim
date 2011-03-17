@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 // StdAir
+#include <stdair/basic/BasConst_BomDisplay.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
@@ -119,11 +120,16 @@ namespace AIRSCHED {
       const stdair::Duration_T lBoardingTime = lSegmentPeriod_ptr->getBoardingTime();
       std::ostringstream oStr;
       oStr << lInventory.getAirlineCode()
-           << ", " << lFlightPeriod.getFlightNumber()
-           << ", " << lReferenceFlightDate
-           << ", " << lBoardingTime
-           << ", " << lSegmentPeriod_ptr->getBoardingPoint()
-           << "-" << lSegmentPeriod_ptr->getOffPoint();
+           << stdair::DEFAULT_KEY_FLD_DELIMITER
+           << lFlightPeriod.getFlightNumber()
+           << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER
+           << boost::gregorian::to_simple_string (lReferenceFlightDate)
+           << stdair::DEFAULT_KEY_FLD_DELIMITER
+           << lSegmentPeriod_ptr->getBoardingPoint()
+           << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER
+           << lSegmentPeriod_ptr->getOffPoint()
+           << stdair::DEFAULT_KEY_FLD_DELIMITER
+           << lBoardingTime;
 
       lTravelSolution.addSegment (oStr.str());
 

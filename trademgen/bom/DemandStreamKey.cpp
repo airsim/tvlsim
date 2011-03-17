@@ -15,7 +15,7 @@ namespace TRADEMGEN {
   DemandStreamKey::DemandStreamKey()
     : _origin (stdair::DEFAULT_ORIGIN),
       _destination (stdair::DEFAULT_DESTINATION),
-      _preferredDepartureDate (stdair::DEFAULT_FLIGHT_DATE),
+      _preferredDepartureDate (stdair::DEFAULT_DEPARTURE_DATE),
       _preferredCabin (stdair::DEFAULT_CABIN_CODE) {
     assert (false);
   }

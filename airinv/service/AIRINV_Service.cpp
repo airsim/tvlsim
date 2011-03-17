@@ -9,6 +9,7 @@
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp> 
+#include <stdair/bom/BomKeyManager.hpp> 
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/bom/AirlineFeature.hpp>
@@ -469,10 +470,11 @@ namespace AIRINV {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lAIRINV_ServiceContext.getSTDAIR_Service();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
-    std::string lInventoryKey;
-    lInventoryKey.append (iSegmentDateKey, 0, 2);
+    const stdair::InventoryKey lInventoryKey =
+      stdair::BomKeyManager::extractInventoryKey (iSegmentDateKey);
     stdair::Inventory& lInventory =
-      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot, lInventoryKey);
+      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot,
+                                                       lInventoryKey.toString());
 
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;

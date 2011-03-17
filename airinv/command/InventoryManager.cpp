@@ -6,6 +6,7 @@
 // StdAir
 #include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/BomKeyManager.hpp> 
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/bom/FlightDate.hpp>
@@ -37,10 +38,11 @@ namespace AIRINV {
     for (stdair::SegmentPath_T::const_iterator itSK = lSegmentPath.begin();
          itSK != lSegmentPath.end(); ++itSK) {
       const std::string& lSegmentKey = *itSK;
-      std::string lInvKey;
-      lInvKey.append (lSegmentKey, 0, 2);
+      const stdair::InventoryKey lInvKey =
+        stdair::BomKeyManager::extractInventoryKey (lSegmentKey);
       stdair::Inventory& lInventory =
-        stdair::BomManager::getObject<stdair::Inventory>(iBomRoot, lInvKey);
+        stdair::BomManager::getObject<stdair::Inventory>(iBomRoot,
+                                                         lInvKey.toString());
 
       InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
                                               ioTravelSolution);

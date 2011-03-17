@@ -69,15 +69,13 @@ namespace TRAVELCCM {
 
           // Retrieve the booking class list for the current segment
           const stdair::ClassList_String_T& lCurrentClassList = *itClassList;
-
+          assert (lCurrentClassList.size() > 0);
+          
           // TODO: instead of just extracting the first booking class,
           //       perform a choice on the full list of classes.
           // Extract one booking class key (class code)
-          const stdair::BookingClassKey& lBCKey = stdair::BomKeyManager::
-            extractBookingClassKeyFromClassList (lCurrentClassList);
-          
-          // Get the corresponding booking class code
-          const stdair::ClassCode_T& lFirstClass = lBCKey.getClassCode();
+          stdair::ClassCode_T lFirstClass;
+          lFirstClass.append (lCurrentClassList, 0, 1);
 
           // Retrieve the booking class map for the current segment
           const stdair::ClassAvailabilityMap_T& lClassAvlMap = *itCAMH;

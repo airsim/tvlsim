@@ -87,6 +87,9 @@ namespace AIRINV {
     const stdair::FlightNumber_T& lFlightNumber = iFlightPeriod._flightNumber;
     stdair::FlightDateKey lFlightDateKey (lFlightNumber, iFlightDate);
 
+    // DEBUG
+    // STDAIR_LOG_DEBUG ("Creating flight-date: " << lFlightDateKey.toString());
+    
     // Check that the flight-date object is not already existing. If a
     // FlightDate object with the same key has already been created,
     // it means that the schedule input file is invalid (two flight-periods

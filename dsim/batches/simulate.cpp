@@ -28,16 +28,16 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_DSIM_DEFAULT_LOG_FILENAME ("simulate.log");
 
 /** Default name and location for the (CSV) demand input file. */
-const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/RDS01/demand.csv");
+const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/rds01/demand.csv");
 
 /** Default name and location for the (CSV) schedule input file. */
-const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/RDS01/schedule.csv");
+const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/rds01/schedule.csv");
 
 /** Default name and location for the (CSV) O&D input file. */
 const std::string K_DSIM_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
 
 /** Default name and location for the (CSV) fare input file. */
-const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/RDS01/fare.csv");
+const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/rds01/fare.csv");
     
 /** Default query string. */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");

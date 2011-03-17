@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/basic/BasConst_Period_BOM.hpp>
 #include <stdair/basic/BasConst_General.hpp>
+#include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/service/Logger.hpp>
 // AIRSCHED
 #include <airsched/bom/OnDPeriodStruct.hpp>
