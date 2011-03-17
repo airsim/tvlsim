@@ -33,7 +33,7 @@ const std::string K_AIRINV_DEFAULT_SCHEDULE_FILENAME (STDAIR_SAMPLE_DIR
 const std::string K_AIRINV_DEFAULT_OND_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
 
 /** Default segment-date key on which the sale should be made. */
-const std::string K_AIRINV_DEFAULT_SEGMENT_DATE_KEY ("SV/5/2010-03-11/KBP.JFK");
+const std::string K_AIRINV_DEFAULT_SEGMENT_DATE_KEY ("SV,5,2010-03-11,KBP,JFK");
 
 /** Default class code for which the sale should be made. */
 const stdair::ClassCode_T K_AIRINV_DEFAULT_CLASS_CODE ("Y");
