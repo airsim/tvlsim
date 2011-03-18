@@ -227,24 +227,11 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   const stdair::AirportCode_T DemandStream::generatePOS() {
-    stdair::AirportCode_T oPOS;
     
     // Generate a random number between 0 and 1.
-    stdair::Probability_T lVariate = _demandCharacteristicsRandomGenerator();
-    oPOS = _demandCharacteristics.getPOSValue (lVariate);
+    const stdair::Probability_T& lVariate = _demandCharacteristicsRandomGenerator();
+    const stdair::AirportCode_T& oPOS = _demandCharacteristics.getPOSValue (lVariate);
 
-    // Check if oPOS is different from 'row'
-    if (oPOS == "row") {
-
-      bool lPOSGenerationSucceeded = false;
-      while (lPOSGenerationSucceeded == false) {
-
-        lVariate = _demandCharacteristicsRandomGenerator();
-        oPOS = _posProMass.getValue (lVariate);
-        lPOSGenerationSucceeded = !_demandCharacteristics.checkPOSValue (oPOS);
-      }
-    }
-    
     return oPOS;
   }
 
