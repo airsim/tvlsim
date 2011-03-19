@@ -60,19 +60,20 @@ BOOST_AUTO_TEST_SUITE (master_test_suite)
  */
 BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
+  // Demand input file name
+  const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
+                                                 "/rds01/demand.csv");
+
   // Schedule input file name
   const stdair::Filename_T lScheduleInputFilename (STDAIR_SAMPLE_DIR
-                                                   "/schedule01.csv");
+                                                   "/rds01/schedule.csv");
     
   // O&D input file name
   const stdair::Filename_T lODInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
 
-  // Demand input file name
-  const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
-                                                 "/demand01.csv");
-
   // Fare input file name
-  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
+  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
+                                               "/rds01/fare.csv");
     
   // Check that the file path given as input corresponds to an actual file
   bool doesExistAndIsReadable =
