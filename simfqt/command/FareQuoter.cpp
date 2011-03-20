@@ -14,10 +14,13 @@
 #include <stdair/bom/InventoryKey.hpp>
 #include <stdair/bom/FlightDateKey.hpp>
 #include <stdair/bom/SegmentDateKey.hpp>
+#include <stdair/bom/AirlineClassList.hpp>
 #include <stdair/bom/AirportPair.hpp>
+#include <stdair/bom/PosChannel.hpp>
+#include <stdair/bom/DatePeriod.hpp>
+#include <stdair/bom/TimePeriod.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
-#include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/bom/key_types.hpp>
 // SimFQT
@@ -25,6 +28,34 @@
 #include <simfqt/command/FareQuoter.hpp>
 
 namespace SIMFQT {
+
+  // //////////////////////////////////////////////////////////////////////
+  FareQuoter::FareQuoter() {
+    assert (false);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  FareQuoter::FareQuoter(const FareQuoter&) {
+    assert (false);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  FareQuoter::~FareQuoter() {
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  void FareQuoter::
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionList_T& ioTravelSolutionList,
+              const stdair::BomRoot& iBomRoot) {
+
+    // Do an independent price quote for each travel solution
+    for (stdair::TravelSolutionList_T::iterator itTravelSolution =
+           ioTravelSolutionList.begin();
+         itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
+      FareQuoter::priceQuote (iBookingRequest, *itTravelSolution, iBomRoot);
+    }
+  }
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::

@@ -6,43 +6,61 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Simfqt
-#include <simfqt/factory/FacServiceAbstract.hpp>
+// StdAir
+#include <stdair/stdair_basic_types.hpp>
+#include <stdair/service/FacServiceAbstract.hpp>
 
 namespace SIMFQT {
 
-  /** Forward declarations. */
+  /// Forward declarations
   class SIMFQT_ServiceContext;
 
-  /** Factory for Bucket. */
-  class FacSimfqtServiceContext : public FacServiceAbstract {
+
+  /**
+   * @brief Factory for the service context.
+   */
+  class FacSimfqtServiceContext : public stdair::FacServiceAbstract {
   public:
 
-    /** Provide the unique instance.
-        <br> The singleton is instantiated when first used
-        @return FacSimfqtServiceContext& */
+    /**
+     * Provide the unique instance.
+     *
+     * The singleton is instantiated when first used.
+     * @return FacServiceContext&
+     */
     static FacSimfqtServiceContext& instance();
 
-    /** Destructor.
-        <br> The Destruction put the _instance to NULL
-        in order to be clean for the next
-        FacSimfqtServiceContext::instance() */
+    /**
+     * Destructor.
+     *
+     * The Destruction put the _instance to NULL in order to be clean
+     * for the next FacSimfqtServiceContext::instance().
+     */
     ~FacSimfqtServiceContext();
 
-    /** Create a new SIMFQT_ServiceContext object.
-        <br>This new object is added to the list of instantiated objects.
-        @return SIMFQT_ServiceContext& The newly created object. */
-    SIMFQT_ServiceContext& create ();
+    /**
+     * Create a new ServiceContext object.
+     *
+     * This new object is added to the list of instantiated objects.
+     *
+     * @return ServiceContext& The newly created object.
+     */
+    SIMFQT_ServiceContext& create();
 
     
   protected:
-    /** Default Constructor.
-        <br>This constructor is protected in order to ensure the singleton
-        pattern.*/
-    FacSimfqtServiceContext () {}
+    /**
+     * Default Constructor.
+     *
+     * This constructor is protected in order to ensure the singleton pattern.
+     */
+    FacSimfqtServiceContext() {}
+
 
   private:
-    /** The unique instance.*/
+    /**
+     * The unique instance.
+     */
     static FacSimfqtServiceContext* _instance;
   };
 

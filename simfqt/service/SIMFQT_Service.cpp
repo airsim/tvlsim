@@ -23,8 +23,7 @@
 namespace SIMFQT {
 
   // //////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::SIMFQT_Service ()
-    : _simfqtServiceContext (NULL) {
+  SIMFQT_Service::SIMFQT_Service() : _simfqtServiceContext (NULL) {
     assert (false);
   }
 
@@ -34,123 +33,145 @@ namespace SIMFQT {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  SIMFQT_Service::SIMFQT_Service (const stdair::BasLogParams& iLogParams,
+                                  const stdair::BasDBParams& iDBParams,
+                                  const stdair::Filename_T& iFareInputFilename) 
+    : _simfqtServiceContext (NULL) {
+    
+    // Initialise the STDAIR service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams, iDBParams);
+    
+    // Initialise the service context
+    initServiceContext();
+
+    // Add the StdAir service context to the SimFQT service context
+    // \note SimFQT owns the STDAIR service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+    
+    // Initialise the (remaining of the) context
+    initSimfqtService (iFareInputFilename);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  SIMFQT_Service::SIMFQT_Service (const stdair::BasLogParams& iLogParams,
+                                  const stdair::Filename_T& iFareInputFilename) 
+    : _simfqtServiceContext (NULL) {
+    
+    // Initialise the STDAIR service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams);
+    
+    // Initialise the service context
+    initServiceContext();
+
+    // Add the StdAir service context to the SimFQT service context
+    // \note SimFQT owns the STDAIR service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+    
+    // Initialise the (remaining of the) context
+    initSimfqtService (iFareInputFilename);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   SIMFQT_Service::
-  SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                    const stdair::Filename_T& iFareInputFilename)
+  SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                  const stdair::Filename_T& iFareInputFilename)
     : _simfqtServiceContext (NULL) {
 
     // Initialise the service context
-    initServiceContext ();
-    
-    // Retrieve the Simfqt service context
-    assert (_simfqtServiceContext != NULL);
-    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
-      *_simfqtServiceContext;
-    
-    // Store the STDAIR service object within the (SIMFQT) service context
-    lSIMFQT_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
+    initServiceContext();
+
+    // Store the STDAIR service object within the (SimFQT) service context
+    // \note SimFQT does not own the STDAIR service resources here.
+    const bool doesNotOwnStdairService = false;
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the context
-    init (iFareInputFilename);
+    initSimfqtService (iFareInputFilename);
   }
-
-  // ////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::
-  SIMFQT_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::BasDBParams& iDBParams,
-                    const stdair::Filename_T& iFareInputFilename) 
-    : _simfqtServiceContext (NULL) {
-    
-    // Initialise the service context
-    initServiceContext ();
-    
-    // Initialise the STDAIR service handler
-    initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the (remaining of the) context
-    init (iFareInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::
-  SIMFQT_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::Filename_T& iFareInputFilename) 
-    : _simfqtServiceContext (NULL) {
-    
-    // Initialise the service context
-    initServiceContext ();
-    
-    // Initialise the STDAIR service handler
-    initStdAirService (iLogParams);
-    
-    // Initialise the (remaining of the) context
-    init (iFareInputFilename);
-  }
-
 
   // //////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::~SIMFQT_Service () {
+  SIMFQT_Service::~SIMFQT_Service() {
     // Delete/Clean all the objects from memory
     finalise();
   }
-  
+
   // //////////////////////////////////////////////////////////////////////
-  void SIMFQT_Service::finalise () {
+  void SIMFQT_Service::finalise() {
     assert (_simfqtServiceContext != NULL);
+    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
+    _simfqtServiceContext->reset();
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void SIMFQT_Service::initServiceContext () {
+  void SIMFQT_Service::initServiceContext() {
     // Initialise the service context
     SIMFQT_ServiceContext& lSIMFQT_ServiceContext = 
-      FacSimfqtServiceContext::instance().create ();
+      FacSimfqtServiceContext::instance().create();
     _simfqtServiceContext = &lSIMFQT_ServiceContext;
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
+  addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                    const bool iOwnStdairService) {
+
+    // Retrieve the SimFQT service context
+    assert (_simfqtServiceContext != NULL);
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+
+    // Store the STDAIR service object within the (SimFQT) service context
+    lSIMFQT_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
+                                              iOwnStdairService);
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_ServicePtr_T SIMFQT_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams,
                      const stdair::BasDBParams& iDBParams) {
 
-    // Retrieve the Simfqt service context
-    assert (_simfqtServiceContext != NULL);
-    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
-      *_simfqtServiceContext;
-    
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The track of the object memory is kept thanks to the
+     * Boost Smart Pointers component.
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     assert (lSTDAIR_Service_ptr != NULL);
     
-    // Store the STDAIR service object within the (SIMFQT) service context
-    lSIMFQT_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
+    return lSTDAIR_Service_ptr;
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void SIMFQT_Service::
+  stdair::STDAIR_ServicePtr_T SIMFQT_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams) {
 
-    // Retrieve the Simfqt service context
-    assert (_simfqtServiceContext != NULL);
-    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
-      *_simfqtServiceContext;
-    
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The track of the object memory is kept thanks to the
+     * Boost Smart Pointers component.
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
     assert (lSTDAIR_Service_ptr != NULL);
 
-    // Store the STDAIR service object within the (SIMFQT) service context
-    lSIMFQT_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
+    return lSTDAIR_Service_ptr;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SIMFQT_Service::initSimfqtService() {
+    // Do nothing at this stage. A sample BOM tree may be built by
+    // calling the buildSampleBom() method
   }
   
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
-  init (const stdair::Filename_T& iFareInputFilename) {
+  initSimfqtService (const stdair::Filename_T& iFareInputFilename) {
 
     // Check that the file path given as input corresponds to an actual file
     const bool doesExistAndIsReadable =
@@ -159,55 +180,99 @@ namespace SIMFQT {
       STDAIR_LOG_ERROR ("The fare input file, '" << iFareInputFilename
                         << "', can not be retrieved on the file-system");
       throw FareInputFileNotFoundException ("The demand file '"
-                                              + iFareInputFilename
-                                              + "' does not exist or can not be read");
+                                            + iFareInputFilename
+                                            + "' does not exist or can not "
+                                            "be read");
     }
 
-    // Retrieve the Simfqt service context
+    // Retrieve the SimFQT service context
     assert (_simfqtServiceContext != NULL);
-    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
-      *_simfqtServiceContext;
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
 
     // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+    stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMFQT_ServiceContext.getSTDAIR_Service();
-    assert (lSTDAIR_Service_ptr != NULL);
     
     // Get the root of the BOM tree, on which all of the other BOM objects
     // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
     // Initialise the fare parser
     FareParser::fareRuleGeneration (iFareInputFilename, lBomRoot);
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void SIMFQT_Service::buildSampleBom() {
+
+    // Retrieve the SimFQT service context
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimFQT service "
+                                                    "has not been initialised");
+    }
+    assert (_simfqtServiceContext != NULL);
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+
+    // Retrieve the STDAIR service object from the (SimFQT) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    // TODO: implement
+    // lSTDAIR_Service.buildSamplePricingBom();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string SIMFQT_Service::csvDisplay() const {
+
+    // Retrieve the AIRINV service context
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimFQT service "
+                                                    "has not been initialised");
+    }
+    assert (_simfqtServiceContext != NULL);
+
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SimFQT) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.csvDisplay();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
-  getFares (const stdair::BookingRequestStruct& iBookingRequest,
-            stdair::TravelSolutionList_T& ioTravelSolutionList) {
+  quotePrices (const stdair::BookingRequestStruct& iBookingRequest,
+               stdair::TravelSolutionList_T& ioTravelSolutionList) {
     
     // Retrieve the Simfqt service context
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimFQT service "
+                                                    "has not been initialised");
+    }
     assert (_simfqtServiceContext != NULL);
-    SIMFQT_ServiceContext& lSIMFQT_ServiceContext =
-      *_simfqtServiceContext;
+
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
 
     // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+    stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMFQT_ServiceContext.getSTDAIR_Service();
-    assert (lSTDAIR_Service_ptr != NULL);
     
     // Get the root of the BOM tree, on which all of the other BOM objects
     // will be attached
-    stdair::BomRoot& lBomRoot = lSTDAIR_Service_ptr->getBomRoot();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
-    // Initialise the fare parser 
-    if (!ioTravelSolutionList.empty()) {
-      for (stdair::TravelSolutionList_T::iterator itTravelSolution =
-	     ioTravelSolutionList.begin();
-	   itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
-	FareQuoter::priceQuote (iBookingRequest, *itTravelSolution, lBomRoot);
-      }
-    }
+    // Delegate the action to the dedicated command
+    stdair::BasChronometer lFareQuoteRetrievalChronometer;
+    lFareQuoteRetrievalChronometer.start();
+    FareQuoter::priceQuote (iBookingRequest, ioTravelSolutionList, lBomRoot);
+
+    // DEBUG
+    const double lFareQuoteRetrievalMeasure =
+      lFareQuoteRetrievalChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
+                      << " - " << lSIMFQT_ServiceContext.display());
   }
   
 }

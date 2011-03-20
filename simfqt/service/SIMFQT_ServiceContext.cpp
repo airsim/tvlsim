@@ -3,32 +3,37 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
 #include <sstream>
-// Simfqt
+// SimFQT
 #include <simfqt/basic/BasConst_SIMFQT_Service.hpp>
 #include <simfqt/service/SIMFQT_ServiceContext.hpp>
 
 namespace SIMFQT {
   
   // //////////////////////////////////////////////////////////////////////
-  SIMFQT_ServiceContext::
-  SIMFQT_ServiceContext (const SIMFQT_ServiceContext&) {
-    assert (false);
+  SIMFQT_ServiceContext::SIMFQT_ServiceContext() : _ownStdairService (false) {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  SIMFQT_ServiceContext::SIMFQT_ServiceContext () {
+  SIMFQT_ServiceContext::SIMFQT_ServiceContext (const SIMFQT_ServiceContext&) {
+    assert (false);
   }
 
   // //////////////////////////////////////////////////////////////////////
   SIMFQT_ServiceContext::~SIMFQT_ServiceContext() {
   }
   
+  // ////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_Service& SIMFQT_ServiceContext::getSTDAIR_Service() const {
+    assert (_stdairService != NULL);
+    return *_stdairService;
+  }
+
   // //////////////////////////////////////////////////////////////////////
   const std::string SIMFQT_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "SIMFQT_ServiceContext: " << std::endl;
+    oStr << "SIMFQT_ServiceContext -- Owns StdAir service: "
+         << _ownStdairService;
     return oStr.str();
   }
 
@@ -37,6 +42,18 @@ namespace SIMFQT {
     std::ostringstream oStr;
     oStr << shortDisplay();
     return oStr.str();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string SIMFQT_ServiceContext::describe() const {
+    return shortDisplay();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void SIMFQT_ServiceContext::reset() {
+    if (_ownStdairService == true) {
+      _stdairService.reset();
+    }
   }
 
 }
