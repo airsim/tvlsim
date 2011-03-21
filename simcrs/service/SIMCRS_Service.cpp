@@ -413,6 +413,7 @@ namespace SIMCRS {
     // Delegate the booking to the dedicated service
     stdair::BasChronometer lTravelSolutionRetrievingChronometer;
     lTravelSolutionRetrievingChronometer.start();
+
     lAIRSCHED_Service.buildSegmentPathList (oTravelSolutionList,
                                             iBookingRequest);
       
@@ -446,7 +447,8 @@ namespace SIMCRS {
     // Delegate the action to the dedicated command
     stdair::BasChronometer lFareQuoteRetrievalChronometer;
     lFareQuoteRetrievalChronometer.start();
-    lSIMFQT_Service.getFares (iBookingRequest, ioTravelSolutionList);
+
+    lSIMFQT_Service.quotePrices (iBookingRequest, ioTravelSolutionList);
 
     // DEBUG
     const double lFareQuoteRetrievalMeasure =
