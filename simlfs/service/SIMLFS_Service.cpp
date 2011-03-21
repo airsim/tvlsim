@@ -250,7 +250,7 @@ namespace SIMLFS {
     // Delegate the action to the dedicated command
     stdair::BasChronometer lFareQuoteRetrievalChronometer;
     lFareQuoteRetrievalChronometer.start();
-    lSIMFQT_Service_ptr->getFares (iBookingRequest, ioTravelSolutionList);
+    lSIMFQT_Service_ptr->quotePrices (iBookingRequest, ioTravelSolutionList);
 
     // DEBUG 
     const double lFareQuoteRetrievalMeasure =
