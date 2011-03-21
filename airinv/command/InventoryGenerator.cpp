@@ -259,20 +259,52 @@ namespace AIRINV {
   void InventoryGenerator::
   createSegmentCabin (stdair::SegmentDate& ioSegmentDate,
                       const SegmentCabinStruct& iCabin) {
+
     // Instantiate an segment-cabin object with the corresponding cabin code
     stdair::SegmentCabinKey lKey (iCabin._cabinCode);
     stdair::SegmentCabin& lSegmentCabin =
       stdair::FacBom<stdair::SegmentCabin>::instance().create (lKey);
-    stdair::FacBomManager::
-      instance().addToListAndMap (ioSegmentDate, lSegmentCabin);
-    stdair::FacBomManager::
-      instance().linkWithParent (ioSegmentDate, lSegmentCabin);
+
+    // Link the segment-cabin to its parent, the segment-date
+    stdair::FacBomManager::instance().addToListAndMap (ioSegmentDate,
+                                                       lSegmentCabin);
+    stdair::FacBomManager::instance().linkWithParent (ioSegmentDate,
+                                                      lSegmentCabin);
     
-    // Set the cegment-cabin attributes
+    // Set the segment-cabin attributes
     iCabin.fill (lSegmentCabin);
 
+    // Create the list of fare families
+    for (FareFamilyStructList_T::const_iterator itFareFamily =
+           iCabin._fareFamilies.begin();
+         itFareFamily != iCabin._fareFamilies.end(); itFareFamily++) {
+      const FareFamilyStruct& lFareFamilyStruct = *itFareFamily;
+
+      //
+      createFareFamily (lSegmentCabin, lFareFamilyStruct);
+    } 
+  }
+    
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryGenerator::
+  createFareFamily (stdair::SegmentCabin& ioSegmentCabin,
+                    const FareFamilyStruct& iFF) {
+    // Instantiate an segment-cabin object with the corresponding cabin code
+    stdair::FareFamilyKey lKey (iFF._familyCode);
+    stdair::FareFamily& lFareFamily =
+      stdair::FacBom<stdair::FareFamily>::instance().create (lKey);
+
+    // Link the fare family to its parent, the segment-cabin
+    stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,
+                                                       lFareFamily);
+    stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,
+                                                      lFareFamily);
+    
+    // Set the fare family attributes
+    iFF.fill (lFareFamily);
+
     // Iterate on the classes
-    const stdair::ClassList_String_T& lClassList = iCabin._classes;
+    const stdair::ClassList_String_T& lClassList = iFF._classes;
     for (stdair::ClassList_String_T::const_iterator itClass =
            lClassList.begin(); itClass != lClassList.end(); ++itClass) {
       // Transform the single-character class code into a STL string
@@ -281,36 +313,32 @@ namespace AIRINV {
       const stdair::ClassCode_T lClassCode (ostr.str());
       
       // Create the booking class branch of the segment-cabin BOM
-      createClass (lSegmentCabin, lClassCode);
+      createClass (lFareFamily, lClassCode);
     }
-
-    // Create the list of fare families if they exist
-    if (iCabin._fareFamilies.size() > 0) {
-      for (FareFamilyStructList_T::const_iterator itFareFamily =
-             iCabin._fareFamilies.begin();
-           itFareFamily != iCabin._fareFamilies.end(); itFareFamily++) {
-         const FareFamilyStruct& lFareFamilyStruct = *itFareFamily;
-         stdair::FareFamilyKey FFlKey (lFareFamilyStruct._familyCode);
-         stdair::FareFamily& lFareFamily =
-           stdair::FacBom<stdair::FareFamily>::instance().create (FFlKey);
-         stdair::FacBomManager::
-           instance().addToListAndMap (lSegmentCabin, lFareFamily);
-         stdair::FacBomManager::
-           instance().linkWithParent (lSegmentCabin, lFareFamily);
-      }
-    } 
   }
-    
+
   // ////////////////////////////////////////////////////////////////////
-  void InventoryGenerator::
-  createClass (stdair::SegmentCabin& ioSegmentCabin,
-               const stdair::ClassCode_T& iClassCode) {
+  void InventoryGenerator::createClass (stdair::FareFamily& ioFareFamily,
+                                        const stdair::ClassCode_T& iClassCode) {
+
     // Instantiate a booking class object with the given class code
     const stdair::BookingClassKey lClassKey (iClassCode);
     stdair::BookingClass& lClass =
       stdair::FacBom<stdair::BookingClass>::instance().create (lClassKey);
-    stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,lClass);
-    stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,lClass);
+
+    // Link the booking-class to the fare family
+    stdair::FacBomManager::instance().addToListAndMap (ioFareFamily, lClass);
+    stdair::FacBomManager::instance().linkWithParent (ioFareFamily, lClass);
+
+    // Link the booking-class to the segment-cabin
+    stdair::SegmentCabin& lSegmentCabin =
+      stdair::BomManager::getParent<stdair::SegmentCabin> (ioFareFamily);
+    stdair::FacBomManager::instance().addToListAndMap (lSegmentCabin, lClass);
+
+    // Link the booking-class to the segment-date
+    stdair::SegmentDate& lSegmentDate =
+      stdair::BomManager::getParent<stdair::SegmentDate> (lSegmentCabin);
+    stdair::FacBomManager::instance().addToListAndMap (lSegmentDate, lClass);
   }
 
   // ////////////////////////////////////////////////////////////////////

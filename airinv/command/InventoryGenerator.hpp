@@ -9,7 +9,7 @@
 // Airinv
 #include <airinv/AIRINV_Types.hpp>
 
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class BomRoot;
   class Inventory;
@@ -18,6 +18,7 @@ namespace stdair {
   class LegCabin;
   class SegmentDate;
   class SegmentCabin;
+  class FareFamily;
 }
 
 namespace AIRINV {
@@ -28,56 +29,86 @@ namespace AIRINV {
   struct SegmentStruct;
   struct LegCabinStruct;
   struct SegmentCabinStruct;
+  struct FareFamilyStruct;
   namespace ScheduleParserHelper {
     struct doEndFlight;
   }
     
-  /** Class handling the generation / instantiation of the Inventory BOM. */
+  /**
+   * @brief Class handling the generation / instantiation of the
+   * Inventory BOM.
+   */
   class InventoryGenerator : public stdair::CmdAbstract {
-    // Only the following class may use methods of InventoryGenerator.
-    // Indeed, as those methods build the BOM, it is not good to expose
-    // them publicly.
+    /**
+     * Only the following class may use methods of InventoryGenerator.
+     * Indeed, as those methods build the BOM, it is not good to expose
+     * them publicly.
+     */
     friend class FlightPeriodFileParser;
     friend class FFFlightPeriodFileParser;
     friend struct ScheduleParserHelper::doEndFlight;
     friend class ScheduleParser;
 
   private:
-    /** Generate the flight-date objects corresponding to the given
-        Flight-Period, and add them to the given BomRoot. */
+    /**
+     * Generate the flight-date objects corresponding to the given
+     * Flight-Period, and add them to the given BomRoot.
+     */
     static void createFlightDate (stdair::BomRoot&,
                                   const FlightPeriodStruct&);
 
-    /** Generate a flight-date. */
+    /**
+     * Generate a flight-date.
+     */
     static stdair::FlightDate& createFlightDate (stdair::Inventory&,
                                                  const stdair::Date_T&,
                                                  const FlightPeriodStruct&);
       
-    /** Generate a leg-date. */
+    /**
+     * Generate a leg-date.
+     */
     static stdair::LegDate& createLegDate (stdair::FlightDate&,
                                            const stdair::Date_T&,
                                            const LegStruct&);
 
-    /** Generate a leg-cabin. */
+    /**
+     * Generate a leg-cabin.
+     */
     static void createLegCabin (stdair::LegDate&, const LegCabinStruct&);
       
-    /** Generate a bucket. */
+    /**
+     * Generate a bucket.
+     */
     static void createBucket (stdair::LegCabin&, const BucketStruct&);
 
-    /** Generate a segment-date. */
+    /**
+     * Generate a segment-date.
+     */
     static void createSegmentDate (stdair::FlightDate&, 
                                    const SegmentStruct&);
       
-    /** Generate a segment-cabin. */
+    /**
+     * Generate a segment-cabin.
+     */
     static void createSegmentCabin (stdair::SegmentDate&,
                                     const SegmentCabinStruct&);
       
-    /** Generate a booking class. */
-    static void createClass (stdair::SegmentCabin&, 
+    /**
+     * Generate a fare family.
+     */
+    static void createFareFamily (stdair::SegmentCabin&,
+                                  const FareFamilyStruct&);
+
+    /**
+     * Generate a booking class.
+     */
+    static void createClass (stdair::FareFamily&, 
                              const stdair::ClassCode_T&);
 
-    /** Create the list of previous built similar flights, e.g. flights
-        departed at the same week day before.*/
+    /**
+     * Create the list of previous built similar flights, e.g.,
+     * flights departed at the same week day before.
+     */
     static void createSimilarFlightDateList (const stdair::FlightDate&,
                                              const stdair::Inventory&,
                                              const stdair::Date_T&,

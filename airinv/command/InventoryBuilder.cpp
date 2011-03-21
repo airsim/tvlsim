@@ -3,7 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// BOOST
+// Boost
 #include <boost/date_time/date_iterator.hpp>
 // StdAir
 #include <stdair/basic/BasConst_BookingClass.hpp>
@@ -15,6 +15,7 @@
 #include <stdair/bom/FlightDate.hpp>
 #include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
+#include <stdair/bom/FareFamily.hpp>
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/LegDate.hpp>
 #include <stdair/bom/LegCabin.hpp>
@@ -22,7 +23,7 @@
 #include <stdair/factory/FacBom.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
-// AIRINV
+// AirInv
 #include <airinv/bom/FlightDateStruct.hpp>
 #include <airinv/command/InventoryBuilder.hpp>
 
@@ -201,7 +202,7 @@ namespace AIRINV {
       lSegmentDateKey (iSegmentDateStruct._boardingPoint,
                        iSegmentDateStruct._offPoint);
     stdair::SegmentDate* lSegmentDate_ptr = stdair::BomManager::
-      getObjectPtr<stdair::SegmentDate> (ioFlightDate,lSegmentDateKey.toString());
+      getObjectPtr<stdair::SegmentDate>(ioFlightDate,lSegmentDateKey.toString());
     if (lSegmentDate_ptr == NULL) {
       // Instantiate a segment-date object for the given key (boarding
       // and off points);
@@ -237,12 +238,14 @@ namespace AIRINV {
     // then just update it, ifnot, create a segment-cabin and update it.
     stdair::SegmentCabin* lSegmentCabin_ptr = stdair::BomManager::
       getObjectPtr<stdair::SegmentCabin> (ioSegmentDate,
-                                         iSegmentCabinStruct._cabinCode);
+                                          iSegmentCabinStruct._cabinCode);
     if (lSegmentCabin_ptr == NULL) {
       // Instantiate a segment-cabin object for the given key (cabin code);
       stdair::SegmentCabinKey lKey (iSegmentCabinStruct._cabinCode);
       lSegmentCabin_ptr = 
         &stdair::FacBom<stdair::SegmentCabin>::instance().create (lKey);
+
+      // Link the segment-cabin to the segment-date
       stdair::FacBomManager::instance().addToListAndMap (ioSegmentDate, 
                                                          *lSegmentCabin_ptr);
       stdair::FacBomManager::instance().linkWithParent (ioSegmentDate, 
@@ -254,35 +257,89 @@ namespace AIRINV {
     // segment-cabin struct.
     iSegmentCabinStruct.fill (*lSegmentCabin_ptr);
 
-    // Browse the list of booking-class struct and create the corresponding BOM.
-    for (BookingClassStructList_T::const_iterator itBookingClass =
-           iSegmentCabinStruct._classList.begin();
-         itBookingClass != iSegmentCabinStruct._classList.end(); 
-         ++itBookingClass) {
-      const BookingClassStruct& lCurrentBookingClassStruct = *itBookingClass;
-      buildBookingClass (*lSegmentCabin_ptr, lCurrentBookingClassStruct);
+    // Browse the list of fare family struct and create the corresponding BOM.
+    for (FareFamilyStructList_T::const_iterator itFareFamily =
+           iSegmentCabinStruct._fareFamilies.begin();
+         itFareFamily != iSegmentCabinStruct._fareFamilies.end(); 
+         ++itFareFamily) {
+      const FareFamilyStruct& lCurrentFareFamilyStruct = *itFareFamily;
+      buildFareFamily (*lSegmentCabin_ptr, lCurrentFareFamilyStruct);
     }
   }
 
   // ////////////////////////////////////////////////////////////////////
   void InventoryBuilder::
-  buildBookingClass (stdair::SegmentCabin& ioSegmentCabin,
-                     const BookingClassStruct& iBookingClassStruct){
+  buildFareFamily (stdair::SegmentCabin& ioSegmentCabin,
+                   const FareFamilyStruct& iFareFamilyStruct) {
+
+    // Check that the fare family object is not already existing. If a
+    // fare family object with the same key has already been created,
+    // then just update it. If not, create a fare family and update it.
+    stdair::FareFamily* lFareFamily_ptr = stdair::BomManager::
+      getObjectPtr<stdair::FareFamily> (ioSegmentCabin,
+                                        iFareFamilyStruct._familyCode);
+    if (lFareFamily_ptr == NULL) {
+      // Instantiate a fare family object for the given key (fare family code);
+      const stdair::FareFamilyKey lFFKey (iFareFamilyStruct._familyCode);
+      lFareFamily_ptr = 
+        &stdair::FacBom<stdair::FareFamily>::instance().create (lFFKey);
+
+      // Link the fare family to the segment-cabin
+      stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,
+                                                         *lFareFamily_ptr);
+      stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,
+                                                        *lFareFamily_ptr);
+    }
+    assert (lFareFamily_ptr != NULL);
+
+    // TODO: Upcabin the BOM fare family with the attributes of the
+    // fare family struct.
+    iFareFamilyStruct.fill (*lFareFamily_ptr);
+
+    // Browse the list of booking-class struct and create the corresponding BOM.
+    for (BookingClassStructList_T::const_iterator itBookingClass =
+           iFareFamilyStruct._classList.begin();
+         itBookingClass != iFareFamilyStruct._classList.end(); 
+         ++itBookingClass) {
+      const BookingClassStruct& lCurrentBookingClassStruct = *itBookingClass;
+      buildBookingClass (*lFareFamily_ptr, lCurrentBookingClassStruct);
+    }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryBuilder::
+  buildBookingClass (stdair::FareFamily& ioFareFamily,
+                     const BookingClassStruct& iBookingClassStruct) {
+
     // Check that the booking class object is not already existing. If a
     // booking-class object with the same key has already been created,
-    // then just upcabin it, ifnot, create a booking-class and upcabin it.
+    // then just update it. If not, create a booking-class and update it.
     stdair::BookingClass* lBookingClass_ptr = stdair::BomManager::
-      getObjectPtr<stdair::BookingClass> (ioSegmentCabin,
-                                         iBookingClassStruct._classCode);
+      getObjectPtr<stdair::BookingClass> (ioFareFamily,
+                                          iBookingClassStruct._classCode);
     if (lBookingClass_ptr == NULL) {
       // Instantiate a booking class object for the given key (class code);
       const stdair::BookingClassKey lClassKey (iBookingClassStruct._classCode);
       lBookingClass_ptr = 
         &stdair::FacBom<stdair::BookingClass>::instance().create (lClassKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,
+
+      // Link the booking-class to the fare family
+      stdair::FacBomManager::instance().addToListAndMap (ioFareFamily,
                                                          *lBookingClass_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,
+      stdair::FacBomManager::instance().linkWithParent (ioFareFamily,
                                                         *lBookingClass_ptr);
+
+      // Link the booking-class to the segment-cabin
+      stdair::SegmentCabin& lSegmentCabin =
+        stdair::BomManager::getParent<stdair::SegmentCabin> (ioFareFamily);
+      stdair::FacBomManager::instance().addToListAndMap (lSegmentCabin,
+                                                         *lBookingClass_ptr);
+
+      // Link the booking-class to the segment-date
+      stdair::SegmentDate& lSegmentDate =
+        stdair::BomManager::getParent<stdair::SegmentDate> (lSegmentCabin);
+      stdair::FacBomManager::instance().addToListAndMap (lSegmentDate,
+                                                         *lBookingClass_ptr);
     }
     assert (lBookingClass_ptr != NULL);
 

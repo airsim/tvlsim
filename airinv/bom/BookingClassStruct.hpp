@@ -7,10 +7,10 @@
 // STL
 #include <string>
 #include <vector>
-// STDAIR
+// StdAir
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
-// AIRINV
+// AirInv
 #include <airinv/AIRINV_Types.hpp>
 
 // Forward declarations

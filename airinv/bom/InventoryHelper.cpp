@@ -10,6 +10,7 @@
 #include <stdair/bom/FlightDate.hpp>
 #include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
+#include <stdair/bom/FareFamily.hpp>
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
@@ -64,30 +65,38 @@ namespace AIRINV {
 
       // TODO: re-implemented this part.
       const stdair::CommittedSpace_T& lCommittedSpace =
-        lSegmentCabin_ptr->getCommittedSpace ();
-      const stdair::BookingClassList_T& lBCList =
-        stdair::BomManager::getList<stdair::BookingClass> (*lSegmentCabin_ptr);
+        lSegmentCabin_ptr->getCommittedSpace();
 
-      for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
-           itBC != lBCList.end(); ++itBC) {
-        const stdair::BookingClass* lBC_ptr = *itBC;
-        assert (lBC_ptr != NULL);
+      const stdair::FareFamilyList_T& lFFList =
+        stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
+      for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
+           itFF != lFFList.end(); ++itFF) {
+        const stdair::FareFamily* lFareFamily_ptr = *itFF;
+        assert (lFareFamily_ptr != NULL);
 
-        const stdair::ClassCode_T& lClassCode = lBC_ptr->getClassCode();
-        const stdair::AuthorizationLevel_T& lAU =
-          lBC_ptr->getAuthorizationLevel();
-        const stdair::Availability_T lAvl = lAU - lCommittedSpace;
-
-       const bool insertSuccessful = lClassAvailabilityMap.
-          insert (stdair::ClassAvailabilityMap_T::value_type (lClassCode,
-                                                              lAvl)).second;
-       assert (insertSuccessful == true);
-
-       // DEBUG
-       STDAIR_LOG_DEBUG ("Class: " << lClassCode
-                         << ", " << "AU: " << lAU << ", "
-                         << "Committed space: " << lCommittedSpace << ", "
-                         << "Avl: " << lAvl);
+        const stdair::BookingClassList_T& lBCList =
+          stdair::BomManager::getList<stdair::BookingClass> (*lFareFamily_ptr);
+        for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
+             itBC != lBCList.end(); ++itBC) {
+          const stdair::BookingClass* lBC_ptr = *itBC;
+          assert (lBC_ptr != NULL);
+          
+          const stdair::ClassCode_T& lClassCode = lBC_ptr->getClassCode();
+          const stdair::AuthorizationLevel_T& lAU =
+            lBC_ptr->getAuthorizationLevel();
+          const stdair::Availability_T lAvl = lAU - lCommittedSpace;
+          
+          const bool insertSuccessful = lClassAvailabilityMap.
+            insert (stdair::ClassAvailabilityMap_T::value_type (lClassCode,
+                                                                lAvl)).second;
+          assert (insertSuccessful == true);
+          
+          // DEBUG
+          STDAIR_LOG_DEBUG ("Class: " << lClassCode
+                            << ", " << "AU: " << lAU << ", "
+                            << "Committed space: " << lCommittedSpace << ", "
+                            << "Avl: " << lAvl);
+        }
       }
     }
 
@@ -103,7 +112,8 @@ namespace AIRINV {
     bool hasSaleBeenSuccessful = false;
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Full key: " << iFullSegmentDateKey);
+    STDAIR_LOG_DEBUG ("Full key: '" << iFullSegmentDateKey
+                      << "', " << iClassCode);
 
     //
     stdair::BookingClass* lBookingClass_ptr =
@@ -121,9 +131,12 @@ namespace AIRINV {
       lBookingClass_ptr->sell (iPartySize);
 
       //
+      stdair::FareFamily& lFareFamily =
+        stdair::BomManager::getParent<stdair::FareFamily> (*lBookingClass_ptr);
+
+      //
       stdair::SegmentCabin& lSegmentCabin =
-        stdair::BomManager::getParent<stdair::SegmentCabin,
-                                      stdair::BookingClass> (*lBookingClass_ptr);
+        stdair::BomManager::getParent<stdair::SegmentCabin> (lFareFamily);
 
       //
       stdair::SegmentDate& lSegmentDate =

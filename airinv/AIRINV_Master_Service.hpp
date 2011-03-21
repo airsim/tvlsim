@@ -299,11 +299,8 @@ namespace AIRINV {
      *
      * No input file is given. A sample BOM tree may be built by
      * calling the buildSampleBom() method.
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input demand file.
      */
-    void initSlaveAirinvService (stdair::STDAIR_ServicePtr_T);
+    void initSlaveAirinvService();
 
     /**
      * Initialise the slave AIRINV_Service.
@@ -311,11 +308,9 @@ namespace AIRINV {
      * The CSV file, describing the airline inventory for the
      * simulator, is parsed and instantiated in memory accordingly.
      *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
      * @param const stdair::Filename_T& Filename of the input demand file.
      */
-    void initSlaveAirinvService (stdair::STDAIR_ServicePtr_T,
-                                 const stdair::Filename_T& iInventoryFilename);
+    void initSlaveAirinvService (const stdair::Filename_T& iInventoryFilename);
 
     /**
      * Initialise the slave AIRINV_Service.
@@ -323,12 +318,10 @@ namespace AIRINV {
      * The CSV file, describing the airline inventory for the
      * simulator, is parsed and instantiated in memory accordingly.
      *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
      */
-    void initSlaveAirinvService (stdair::STDAIR_ServicePtr_T,
-                                 const stdair::Filename_T& iScheduleFilename,
+    void initSlaveAirinvService (const stdair::Filename_T& iScheduleFilename,
                                  const stdair::Filename_T& iODInputFilename);
 
     /**

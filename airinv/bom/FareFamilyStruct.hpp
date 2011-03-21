@@ -7,27 +7,52 @@
 // STL
 #include <string>
 #include <vector>
-// STDAIR
+// StdAir
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
+// AirInv
+#include <airinv/bom/BookingClassStruct.hpp>
+
+/// Forward declarations
+namespace stdair {
+  class FareFamily;
+}
 
 namespace AIRINV {
 
-  /** Utility Structure for the parsing of fare family details. */
+  /**
+   * @brief Utility Structure for the parsing of fare family details.
+   */
   struct FareFamilyStruct : public stdair::StructAbstract {
     // Attributes
     stdair::FamilyCode_T _familyCode;
     stdair::ClassList_String_T _classes;
+    BookingClassStructList_T _classList;
 
-    /** Constructors. */
+    /**
+     * Default constructor.
+     */
+    FareFamilyStruct();
+    /**
+     * Main constructor.
+     */
     FareFamilyStruct (const stdair::FamilyCode_T&,
-                        const stdair::ClassList_String_T&);
+                      const stdair::ClassList_String_T&);
       
-    /** Give a description of the structure (for display purposes). */
+    /**
+     * Fill the FareFamily objects with the attributes of the FareFamilyStruct.
+     */
+    void fill (stdair::FareFamily&) const;
+      
+    /**
+     * Give a description of the structure (for display purposes).
+     */
     const std::string describe() const;
   };
 
-  /** List of FareFamily-Detail structures. */
+  /**
+   * List of FareFamily-Detail structures.
+   */
   typedef std::vector<FareFamilyStruct> FareFamilyStructList_T;
 
 }

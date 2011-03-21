@@ -4,9 +4,9 @@
 // STL
 #include <cassert>
 #include <sstream>
-// STDAIR
+// StdAir
 #include <stdair/bom/SegmentCabin.hpp>
-// AIRINV
+// AirInv
 #include <airinv/bom/SegmentCabinStruct.hpp>
 
 namespace AIRINV {
@@ -14,14 +14,8 @@ namespace AIRINV {
   // //////////////////////////////////////////////////////////////////////
   const std::string SegmentCabinStruct::describe() const {
     std::ostringstream ostr;
-    ostr << "        " << _cabinCode;
 
-    if (_classes.empty() == false) {
-      ostr << " " << _classes;
-    }
-    
-    ostr << ", " << _nbOfBookings
-         << std::endl;
+    ostr << "        " << _cabinCode << ", " << _nbOfBookings << std::endl;
 
     for (FareFamilyStructList_T::const_iterator itFF = _fareFamilies.begin();
          itFF != _fareFamilies.end(); ++itFF) {
@@ -29,15 +23,6 @@ namespace AIRINV {
       ostr << lFF.describe();
     }
     if (_fareFamilies.empty() == false) {
-      ostr << std::endl;
-    }
-
-    for (BookingClassStructList_T::const_iterator itBkgClass= _classList.begin();
-         itBkgClass != _classList.end(); ++itBkgClass) {
-      const BookingClassStruct& lBkgClass = *itBkgClass;
-      ostr << lBkgClass.describe();
-    }
-    if (_classList.empty() == false) {
       ostr << std::endl;
     }
 

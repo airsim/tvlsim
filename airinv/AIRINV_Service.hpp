@@ -46,7 +46,6 @@ namespace AIRINV {
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::BasDBParams& Parameters for the database access.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
      */
     AIRINV_Service (const stdair::BasLogParams&, const stdair::BasDBParams&);
 
@@ -60,7 +59,6 @@ namespace AIRINV {
      * can be directed onto that stream.
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
      */
     AIRINV_Service (const stdair::BasLogParams&);
 
@@ -216,7 +214,9 @@ namespace AIRINV {
     void buildSampleBom (const bool isForRMOL = false,
                          const stdair::CabinCapacity_T iCabinCapacity = 0);
 
-    /** Compute the availability for the given travel solution. */
+    /**
+     * Compute the availability for the given travel solution.
+     */
     void calculateAvailability (stdair::TravelSolutionStruct&);
 
     /**
@@ -249,6 +249,7 @@ namespace AIRINV {
      * Default constructor. It should not be used.
      */
     AIRINV_Service();
+
     /**
      * Default copy constructor. It should not be used.
      */
@@ -279,7 +280,7 @@ namespace AIRINV {
     /**
      * Initialise the RMOL service (including the log service).
      */
-    void initRMOLService (stdair::STDAIR_ServicePtr_T);
+    void initRMOLService();
     
     /**
      * Attach the STDAIR service (holding the log and database services) to
@@ -289,7 +290,7 @@ namespace AIRINV {
      * @param const bool State whether or not AirInv owns the STDAIR service
      *        resources.
      */
-    void addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+    void addStdAirService (stdair::STDAIR_ServicePtr_T,
                            const bool iOwnStdairService);
     
     /**

@@ -235,7 +235,7 @@ namespace AIRINV {
        Leg                 ::= LegKey ';' LegDetails (';' CabinDetails)+
        SegmentKey          ::= BoardingPoint ';' OffPoint
        SegmentCabinDetails ::= CabinCode ';' Classes
-       (';' FamilyCabinDetails)*
+       (';' FamilyCabinDetails)+
        FamilyCabinDetails  ::= FamilyCode ';' Classes
        FullSegmentCabinDetails::= (';' SegmentCabinDetails)+
        GenericSegment      ::= '0' (';' SegmentCabinDetails)+

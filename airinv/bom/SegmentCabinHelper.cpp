@@ -6,8 +6,9 @@
 // StdAir
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/FlightDate.hpp>
-#include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/LegCabin.hpp>
+#include <stdair/bom/SegmentCabin.hpp>
+#include <stdair/bom/FareFamily.hpp>
 #include <stdair/bom/BookingClass.hpp>
 // AirInv
 #include <airinv/bom/SegmentCabinHelper.hpp>
@@ -16,18 +17,21 @@
 namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
-  void SegmentCabinHelper::
-  initialiseAU (stdair::SegmentCabin& iSegmentCabin) {
+  void SegmentCabinHelper::initialiseAU (stdair::SegmentCabin& iSegmentCabin) {
+
     // Initialise the capacity and availability pool.
     const stdair::LegCabinList_T& lLCList =
       stdair::BomManager::getList<stdair::LegCabin> (iSegmentCabin);
+
     stdair::CabinCapacity_T lCapacity =
       std::numeric_limits<stdair::CabinCapacity_T>::max();
     for (stdair::LegCabinList_T::const_iterator itLC = lLCList.begin();
          itLC != lLCList.end(); ++itLC) {
+
       const stdair::LegCabin* lLC_ptr = *itLC;
       assert (lLC_ptr != NULL);
-      const stdair::CabinCapacity_T& lCabinCap = lLC_ptr->getOfferedCapacity ();
+
+      const stdair::CabinCapacity_T& lCabinCap = lLC_ptr->getOfferedCapacity();
       if (lCapacity > lCabinCap) {
         lCapacity = lCabinCap;
       }
@@ -35,15 +39,34 @@ namespace AIRINV {
     iSegmentCabin.setCapacity (lCapacity);
     iSegmentCabin.setAvailabilityPool (lCapacity);
     
+    // Browse the list of booking classes (through the fare families)
+    // and set the AU of each booking class to the availability pool
+    // of the cabin.
+    const stdair::FareFamilyList_T& lFFList =
+      stdair::BomManager::getList<stdair::FareFamily> (iSegmentCabin);
+    for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
+         itFF != lFFList.end(); ++itFF) {
+      stdair::FareFamily* lFF_ptr = *itFF;
+      assert (lFF_ptr != NULL);
+
+      initialiseAU (*lFF_ptr, lCapacity);
+    }
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SegmentCabinHelper::
+  initialiseAU (stdair::FareFamily& iFareFamily,
+                const stdair::CabinCapacity_T& iCabinCapacity) {
+
     // Browse the list of booking classes and set the AU of each booking
     // class to the availability pool of the cabin.
     const stdair::BookingClassList_T& lBCList =
-      stdair::BomManager::getList<stdair::BookingClass> (iSegmentCabin);
+      stdair::BomManager::getList<stdair::BookingClass> (iFareFamily);
     for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
          itBC != lBCList.end(); ++itBC) {
       stdair::BookingClass* lBC_ptr = *itBC;
       assert (lBC_ptr != NULL);
-      lBC_ptr->setAuthorizationLevel (lCapacity);
+      lBC_ptr->setAuthorizationLevel (iCabinCapacity);
     }
   }
   

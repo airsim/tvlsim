@@ -208,6 +208,7 @@ namespace AIRINV {
         break;
       }
     }
+
     // If the segmentCabin key (cabin code) given in the schedule input file
     // does not correspond to the stored cabin codes, throw an exception
     // so that the user knows the schedule input file is corrupted.
@@ -218,10 +219,11 @@ namespace AIRINV {
                                           "there is a flight for which the "
                                           "cabin code does not exist.");
     }
+
     // Add the Cabin structure to the Segment Cabin structure.
     assert (itCabin != lSegment._cabinList.end());
     SegmentCabinStruct& lCabin = *itCabin;
-    lCabin._fareFamilies.push_back(iFareFamily);
+    lCabin._fareFamilies.push_back (iFareFamily);
   }
     
   // //////////////////////////////////////////////////////////////////////
@@ -245,6 +247,7 @@ namespace AIRINV {
           break;
         }
       }
+
       // If the segmentCabin key (cabin code) given in the schedule input file
       // does not correspond to the stored cabin codes, throw an exception
       // so that the user knows the schedule input file is corrupted.
@@ -255,10 +258,11 @@ namespace AIRINV {
                                             "there is a flight for which the "
                                             "cabin code does not exist.");
       }
+
       // Add the Cabin structure to the Segment Cabin structure.
       assert (itCabin != lSegment._cabinList.end());
       SegmentCabinStruct& lCabin = *itCabin;
-      lCabin._fareFamilies.push_back(iFareFamily);
+      lCabin._fareFamilies.push_back (iFareFamily);
     }
   }
 

@@ -311,7 +311,7 @@ namespace AIRINV {
     void storeClasses::operator() (iterator_t iStr,
                                    iterator_t iStrEnd) const {
       std::string lClasses (iStr, iStrEnd);
-      _flightPeriod._itSegmentCabin._classes = lClasses;
+      _flightPeriod._itSegmentCabin._itFareFamily._classes = lClasses;
 
       // The list of classes is the last (according to the arrival order
       // within the schedule input file) detail of the segment cabin. Hence,
@@ -336,7 +336,7 @@ namespace AIRINV {
     void storeFamilyCode::operator() (int iCode) const {
       std::ostringstream ostr;
       ostr << iCode;
-      _flightPeriod._itSegmentCabin._itFamilyCode = ostr.str(); 
+      _flightPeriod._itSegmentCabin._itFareFamily._familyCode = ostr.str(); 
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -349,8 +349,8 @@ namespace AIRINV {
     void storeFClasses::operator() (iterator_t iStr,
                                     iterator_t iStrEnd) const {
       std::string lClasses (iStr, iStrEnd);
-      FareFamilyStruct lFareFamily(_flightPeriod._itSegmentCabin._itFamilyCode,
-                                     lClasses);
+      FareFamilyStruct lFareFamily (_flightPeriod._itSegmentCabin._itFareFamily._familyCode,
+                                    lClasses);
 
       // The list of classes is the last (according to the arrival order
       // within the schedule input file) detail of the segment cabin. Hence,
@@ -583,7 +583,7 @@ namespace AIRINV {
       segment_cabin_details =
         (cabin_code_p)[storeSegmentCabinCode(self._flightPeriod)]
         >> ';' >> (class_code_list_p)[storeClasses(self._flightPeriod)]
-        >> *(';' >> family_cabin_details)
+        >> +(';' >> family_cabin_details)
         ;
 
       family_cabin_details =

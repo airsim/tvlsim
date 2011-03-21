@@ -362,7 +362,8 @@ namespace AIRINV {
       void operator() (double iReal) const;
     };
 
-    /** Store the parsed number of wait-list bookings (at booking class level). */
+    /** Store the parsed number of wait-list bookings (at booking
+        class level). */
     struct storeNbOfWLBkgs : public ParserSemanticAction {
       /** Actor Constructor. */
       storeNbOfWLBkgs (FlightDateStruct&);
@@ -378,7 +379,8 @@ namespace AIRINV {
       void operator() (double iReal) const;
     };
 
-    /** Store the parsed number of net class availability (at booking class level). */
+    /** Store the parsed number of net class availability (at booking
+        class level). */
     struct storeClassAvailability : public ParserSemanticAction {
       /** Actor Constructor. */
       storeClassAvailability (FlightDateStruct&);
@@ -386,7 +388,8 @@ namespace AIRINV {
       void operator() (double iReal) const;
     };
 
-    /** Store the parsed number of segment availability (at booking class level). */
+    /** Store the parsed number of segment availability (at booking
+        class level). */
     struct storeSegmentAvailability : public ParserSemanticAction {
       /** Actor Constructor. */
       storeSegmentAvailability (FlightDateStruct&);
@@ -394,7 +397,8 @@ namespace AIRINV {
       void operator() (double iReal) const;
     };
 
-    /** Store the parsed number of net revenue availability (at booking class level). */
+    /** Store the parsed number of net revenue availability (at
+        booking class level). */
     struct storeRevenueAvailability : public ParserSemanticAction {
       /** Actor Constructor. */
       storeRevenueAvailability (FlightDateStruct&);
@@ -402,14 +406,22 @@ namespace AIRINV {
       void operator() (double iReal) const;
     };
 
-    /** Store the parsed list of class codes. */
-    struct storeClasses : public ParserSemanticAction {
+    /** Store the parsed family code. */
+    struct storeFamilyCode : public ParserSemanticAction {
       /** Actor Constructor. */
-      storeClasses (FlightDateStruct&);
+      storeFamilyCode (FlightDateStruct&);
+      /** Actor Function (functor). */
+      void operator() (int iCode) const;
+    };
+
+    /** Store the parsed list of class codes (for families). */
+    struct storeFClasses : public ParserSemanticAction {
+      /** Actor Constructor. */
+      storeFClasses (FlightDateStruct&);
       /** Actor Function (functor). */
       void operator() (iterator_t iStr, iterator_t iStrEnd) const;
     };
-
+      
     /** Mark the end of the inventory parsing. */
     struct doEndFlightDate : public ParserSemanticAction {
       /** Actor Constructor. */
@@ -458,8 +470,9 @@ namespace AIRINV {
           bucket_list, bucket_details,
           time, segment_list, segment, segment_key, full_segment_cabin_details,
           segment_cabin_list, segment_cabin_key, segment_cabin_details,
-          class_list, class_key, parent_subclass_code, class_protection, class_nego,
-          class_details;
+          class_list, class_key, parent_subclass_code,
+          class_protection, class_nego, class_details,
+          family_cabin_list, family_cabin_details;
 
         /** Entry point of the parser. */
         boost::spirit::classic::rule<ScannerT> const& start() const;

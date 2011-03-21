@@ -273,9 +273,12 @@ int main (int argc, char* argv[]) {
     // Build the sample BOM tree for RMOL
     airinvService.buildSampleBom();
 
+    // Define a specific segment-date key for the sample BOM tree
+    const std::string lSpecificSegmentDateKey ("BA,9,2011-06-10,LHR,SYD");
+
     // Make a booking
-    const bool isSellSuccessful =
-      airinvService.sell (lSegmentDateKey, lClassCode, lPartySize);
+    const bool isSellSuccessful = 
+      airinvService.sell (lSpecificSegmentDateKey, lClassCode, lPartySize);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Sale ('" << lSegmentDateKey << "', " << lClassCode << ": "
@@ -294,6 +297,11 @@ int main (int argc, char* argv[]) {
 
       // DEBUG
       STDAIR_LOG_DEBUG ("Welcome to airinv");
+
+      if (lSegmentDateKey == K_AIRINV_DEFAULT_SEGMENT_DATE_KEY) {
+        // Define a specific segment-date key for the schedule-based inventory
+        lSegmentDateKey = "SQ,11,2010-01-15,SIN,BKK";
+      }
 
       // Make a booking
       const bool isSellSuccessful =

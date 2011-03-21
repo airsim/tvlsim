@@ -37,14 +37,14 @@ namespace AIRINV {
     /**
      * Get the pointer on the STDAIR service handler.
      */
-    stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr () const {
+    stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr() const {
       return _stdairService;
     }
 
     /**
      * Get the STDAIR service handler.
      */
-    stdair::STDAIR_Service& getSTDAIR_Service () const {
+    stdair::STDAIR_Service& getSTDAIR_Service() const {
       assert (_stdairService != NULL);
       return *_stdairService;
     }

@@ -7,15 +7,9 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
-#include <stdair/basic/BasFileMgr.hpp>
-#include <stdair/bom/BomManager.hpp> 
-#include <stdair/bom/BomRoot.hpp>
-#include <stdair/bom/Inventory.hpp>
-#include <stdair/bom/AirlineFeature.hpp>
-#include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
-// Airinv
+// AirInv
 #include <airinv/basic/BasConst_AIRINV_Service.hpp>
 #include <airinv/factory/FacAirinvMasterServiceContext.hpp>
 #include <airinv/command/InventoryParser.hpp>
@@ -58,7 +52,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr);
+    initSlaveAirinvService();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -79,7 +73,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr);
+    initSlaveAirinvService();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -96,7 +90,7 @@ namespace AIRINV {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (ioSTDAIR_Service_ptr);
+    initSlaveAirinvService();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -119,7 +113,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr, iInventoryInputFilename);
+    initSlaveAirinvService (iInventoryInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -141,7 +135,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr, iInventoryInputFilename);
+    initSlaveAirinvService (iInventoryInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -159,7 +153,7 @@ namespace AIRINV {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (ioSTDAIR_Service_ptr, iInventoryInputFilename);
+    initSlaveAirinvService (iInventoryInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -183,8 +177,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr, iScheduleInputFilename,
-                            iODInputFilename);
+    initSlaveAirinvService (iScheduleInputFilename, iODInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -207,8 +200,7 @@ namespace AIRINV {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (lSTDAIR_Service_ptr, iScheduleInputFilename,
-                            iODInputFilename);
+    initSlaveAirinvService (iScheduleInputFilename, iODInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -227,8 +219,7 @@ namespace AIRINV {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
     
     // Initialise the (remaining of the) context
-    initSlaveAirinvService (ioSTDAIR_Service_ptr, iScheduleInputFilename,
-                            iODInputFilename);
+    initSlaveAirinvService (iScheduleInputFilename, iODInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -238,10 +229,17 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::finalise() {
+    assert (_airinvMasterServiceContext != NULL);
+    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
+    _airinvMasterServiceContext->reset();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::initServiceContext() {
     // Initialise the context
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext = 
-      FacAirinvMasterServiceContext::instance().create ();
+      FacAirinvMasterServiceContext::instance().create();
     _airinvMasterServiceContext = &lAIRINV_Master_ServiceContext;
   }
 
@@ -250,7 +248,7 @@ namespace AIRINV {
   addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
                     const bool iOwnStdairService) {
 
-    // Retrieve the Airinv service context
+    // Retrieve the AirInv service context
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
@@ -265,9 +263,13 @@ namespace AIRINV {
   initStdAirService (const stdair::BasLogParams& iLogParams,
                      const stdair::BasDBParams& iDBParams) {
 
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     
@@ -278,9 +280,13 @@ namespace AIRINV {
   stdair::STDAIR_ServicePtr_T AIRINV_Master_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams) {
 
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
 
@@ -288,19 +294,27 @@ namespace AIRINV {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Master_Service::
-  initSlaveAirinvService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr) {
+  void AIRINV_Master_Service::initSlaveAirinvService() {
+
     // Retrieve the AIRINV Master service context.
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
 
-    // Initialise the AIRINV service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    // Retrieve the StdAir service
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lAIRINV_Master_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service_ptr != NULL);
+
+    /**
+     * Initialise the AirInv service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
-      boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr);
+      boost::make_shared<AIRINV_Service> (lSTDAIR_Service_ptr);
 
     // Store the AIRINV service object within the AIRINV Master service context.
     lAIRINV_Master_ServiceContext.setAIRINV_Service (lAIRINV_Service_ptr);
@@ -308,19 +322,27 @@ namespace AIRINV {
   
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
-  initSlaveAirinvService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
-                          const stdair::Filename_T& iInventoryInputFilename) {
+  initSlaveAirinvService (const stdair::Filename_T& iInventoryInputFilename) {
+
     // Retrieve the AIRINV Master service context.
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
 
-    // Initialise the AIRINV service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    // Retrieve the StdAir service
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lAIRINV_Master_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service_ptr != NULL);
+
+    /**
+     * Initialise the AirInv service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
-      boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr,
+      boost::make_shared<AIRINV_Service> (lSTDAIR_Service_ptr,
                                           iInventoryInputFilename);
 
     // Store the AIRINV service object within the AIRINV Master service context.
@@ -329,20 +351,28 @@ namespace AIRINV {
   
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
-  initSlaveAirinvService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
-                          const stdair::Filename_T& iScheduleInputFilename,
+  initSlaveAirinvService (const stdair::Filename_T& iScheduleInputFilename,
                           const stdair::Filename_T& iODInputFilename) {
-    // Retrieve the AIRINV Master service context.
+
+    // Retrieve the AIRINV Master service context
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
 
-    // Initialise the AIRINV service handler
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
+    // Retrieve the StdAir service
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lAIRINV_Master_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service_ptr != NULL);
+
+    /**
+     * Initialise the AirInv service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
-      boost::make_shared<AIRINV_Service> (ioSTDAIR_Service_ptr,
+      boost::make_shared<AIRINV_Service> (lSTDAIR_Service_ptr,
                                           iScheduleInputFilename,
                                           iODInputFilename);
 
@@ -350,13 +380,6 @@ namespace AIRINV {
     lAIRINV_Master_ServiceContext.setAIRINV_Service (lAIRINV_Service_ptr);
   }
   
-  // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Master_Service::finalise() {
-    assert (_airinvMasterServiceContext != NULL);
-    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
-    _airinvMasterServiceContext->reset();
-  }
-
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
   buildSampleBom (const bool isForRMOL,
