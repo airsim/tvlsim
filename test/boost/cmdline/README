@@ -1,0 +1,15 @@
+
+GNU ReadLine examples
+
+See:
+* https://github.com/antirez/linenoise
+* http://www.thrysoee.dk/editline/
+** => wget http://www.thrysoee.dk/editline/libedit-20110227-3.0.tar.gz
+* http://sunsite.ualberta.ca/Documentation/Gnu/readline-4.1/html_node/readline_45.html
+* http://cc.byexamples.com/2008/06/16/gnu-readline-implement-custom-auto-complete/
+* http://satsky.spb.ru/codestore/SReadlineWrapperEng.php
+* http://wanderinghorse.net/computing/readline/
+* http://www.s11n.net/editline/
+* http://www.astro.caltech.edu/~mcs/tecla/index.html
+
+

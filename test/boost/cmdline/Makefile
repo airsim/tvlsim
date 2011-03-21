@@ -1,9 +1,4 @@
 # 
-# GNU ReadLine examples
-#
-# See:
-# * http://sunsite.ualberta.ca/Documentation/Gnu/readline-4.1/html_node/readline_45.html
-# * http://cc.byexamples.com/2008/06/16/gnu-readline-implement-custom-auto-complete/
 
 STD_RDL_PRG = readline_autocomp
 STD_RDL_SRC = ${STD_RDL_PRG:%=%.c}
