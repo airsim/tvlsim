@@ -376,13 +376,6 @@ namespace AIRINV {
     ScheduleParser::generateInventories (iScheduleInputFilename, lBomRoot);
   }
   
-  // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Service::finalise() {
-    assert (_airinvServiceContext != NULL);
-    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
-    _airinvServiceContext->reset();
-  }
-
   // //////////////////////////////////////////////////////////////////////
   void AIRINV_Service::buildSampleBom (const bool isForRMOL,
                                        const stdair::CabinCapacity_T iCapacity) {
