@@ -16,6 +16,7 @@
 #include <stdair/bom/LegDate.hpp>
 #include <stdair/bom/LegCabin.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/FareOptionStruct.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 // AirInv
@@ -45,8 +46,84 @@ namespace AIRINV {
 
       InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
                                               ioTravelSolution);
+
+      // Compute the availabitliy for each fare option using the AU's.
+      calculateAvailabilityByAU (ioTravelSolution);
     }
-  }  
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::
+  calculateAvailabilityByAU (stdair::TravelSolutionStruct& ioTravelSolution) {
+    // Browse the fare options
+    stdair::FareOptionList_T& lFOList = ioTravelSolution.getFareOptionListRef();
+    for (stdair::FareOptionList_T::iterator itFO = lFOList.begin();
+         itFO != lFOList.end(); ++itFO) {
+
+      stdair::FareOptionStruct& lFO = *itFO;
+      
+      // Check the availability
+      const stdair::ClassList_StringList_T& lClassPath = lFO.getClassPath();
+      
+      const stdair::ClassAvailabilityMapHolder_T& lClassAvailabilityMapHolder =
+        ioTravelSolution.getClassAvailabilityMapHolder();
+      
+      // Initialise the flag stating whether the availability is enough
+      stdair::Availability_T lAvl =
+        std::numeric_limits<stdair::Availability_T>::max();
+      
+      // Sanity check: the travel solution must contain two lists,
+      // one for the booking class availabilities, the other for the
+      // fare options.
+      assert (lClassAvailabilityMapHolder.empty() == false
+              && lClassPath.empty() == false);
+      
+      // List of booking class availability maps (one map per segment)
+      stdair::ClassAvailabilityMapHolder_T::const_iterator itCAMH =
+        lClassAvailabilityMapHolder.begin();
+      
+      // List of fare options
+      stdair::ClassList_StringList_T::const_iterator itClassList =
+        lClassPath.begin();
+      
+      // Browse both lists at the same time, i.e., one element per segment
+      for (; itCAMH != lClassAvailabilityMapHolder.end()
+             && itClassList != lClassPath.end(); ++itCAMH, ++itClassList) {
+        
+        // Retrieve the booking class list for the current segment
+        const stdair::ClassList_String_T& lCurrentClassList = *itClassList;
+        assert (lCurrentClassList.size() > 0);
+        
+        // TODO: instead of just extracting the first booking class,
+        //       perform a choice on the full list of classes.
+        // Extract one booking class key (class code)
+        stdair::ClassCode_T lFirstClass;
+        lFirstClass.append (lCurrentClassList, 0, 1);
+        
+        // Retrieve the booking class map for the current segment
+        const stdair::ClassAvailabilityMap_T& lClassAvlMap = *itCAMH;
+        
+        // Retrieve the availability of the chosen booking class
+        const stdair::ClassAvailabilityMap_T::const_iterator itClassAvl =
+          lClassAvlMap.find (lFirstClass);
+        
+        if (itClassAvl == lClassAvlMap.end()) {
+          // DEBUG
+          STDAIR_LOG_DEBUG ("No availability has been set up for the class '"
+                            << lFirstClass << "'. Travel solution: "
+                            << ioTravelSolution.display());
+        }
+        assert (itClassAvl != lClassAvlMap.end());
+        
+        const stdair::Availability_T& lCurrentAvl = itClassAvl->second;
+        if (lAvl > lCurrentAvl) {
+          lAvl = lCurrentAvl;
+        }
+      }
+      
+      lFO.setAvailability (lAvl);
+    }
+  }
 
   // ////////////////////////////////////////////////////////////////////
   bool InventoryManager::sell (stdair::Inventory& ioInventory,

@@ -40,68 +40,11 @@ namespace TRAVELCCM {
            itFO != lFOList.end(); ++itFO) {
         const stdair::FareOptionStruct& lFO = *itFO;
 
-        // Check the availability
-        const stdair::ClassList_StringList_T& lClassPath = lFO.getClassPath();
-
-        const stdair::ClassAvailabilityMapHolder_T& lClassAvailabilityMapHolder =
-          lTS.getClassAvailabilityMapHolder();
-
-        // Initialise the flag stating whether the availability is enough
-        bool isAvlEnough = true;
-
-        // Sanity check: the travel solution must contain two lists,
-        // one for the booking class availabilities, the other for the
-        // fare options.
-        assert (lClassAvailabilityMapHolder.empty() == false
-                && lClassPath.empty() == false);
-
-        // List of booking class availability maps (one map per segment)
-        stdair::ClassAvailabilityMapHolder_T::const_iterator itCAMH =
-          lClassAvailabilityMapHolder.begin();
-
-        // List of fare options
-        stdair::ClassList_StringList_T::const_iterator itClassList =
-          lClassPath.begin();
-
-        // Browse both lists at the same time, i.e., one element per segment
-        for (; itCAMH != lClassAvailabilityMapHolder.end()
-               && itClassList != lClassPath.end(); ++itCAMH, ++itClassList) {
-
-          // Retrieve the booking class list for the current segment
-          const stdair::ClassList_String_T& lCurrentClassList = *itClassList;
-          assert (lCurrentClassList.size() > 0);
-          
-          // TODO: instead of just extracting the first booking class,
-          //       perform a choice on the full list of classes.
-          // Extract one booking class key (class code)
-          stdair::ClassCode_T lFirstClass;
-          lFirstClass.append (lCurrentClassList, 0, 1);
-
-          // Retrieve the booking class map for the current segment
-          const stdair::ClassAvailabilityMap_T& lClassAvlMap = *itCAMH;
-
-          // Retrieve the availability of the chosen booking class
-          const stdair::ClassAvailabilityMap_T::const_iterator itClassAvl =
-            lClassAvlMap.find (lFirstClass);
-
-          if (itClassAvl == lClassAvlMap.end()) {
-            // DEBUG
-            STDAIR_LOG_DEBUG ("No availability has been set up for the class '"
-                              << lFirstClass << "'. Travel solution: "
-                              << lTS.display());
-          }
-          assert (itClassAvl != lClassAvlMap.end());
-
-          const stdair::Availability_T& lAvl = itClassAvl->second;
-          if (lAvl < lPartySize) {
-            isAvlEnough = false;
-          }
-        }
-
         // Choose the current fare option and the current solution
         // if the current fare is lower than the current lowest fare.
         const stdair::Fare_T& lCurrentFare = lFO.getFare();
-        if (lCurrentFare < lLowestFare && isAvlEnough == true
+        const stdair::Availability_T& lCurrentAvl = lFO.getAvailability();
+        if (lCurrentFare < lLowestFare && lCurrentAvl >= lPartySize
             && lCurrentFare <= lWTP) {
           lLowestFare = lCurrentFare;
           oChosenTS_ptr = &lTS;
