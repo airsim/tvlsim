@@ -83,13 +83,38 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   
   // Initialise the service context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  // TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams, lCCMType);
   
-  // Start a mini-simulation
-  // BOOST_CHECK_NO_THROW (travelccmService.simulate());
+  // Build the BOM tree
+  TRAVELCCM::TRAVELCCM_Service travelccmService (lLogParams);
 
-  // TODO: add much more tests
-  //
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Welcome to TravelCCM");
+
+  // Build a list of travel solutions
+  const stdair::BookingRequestStruct& lBookingRequest =
+    travelccmService.buildSampleBookingRequest();
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Booking request: " << lBookingRequest.display());
+
+  // Build the sample BOM tree
+  stdair::TravelSolutionList_T lTSList;
+  travelccmService.buildSampleTravelSolutions (lTSList);
+
+  // DEBUG: Display the list of travel solutions
+  const std::string& lCSVDump = travelccmService.csvDisplay (lTSList);
+  STDAIR_LOG_DEBUG (lCSVDump);
+  
+  // Choose a travel solution
+  const stdair::TravelSolutionStruct* lTS_ptr =
+    travelccmService.chooseTravelSolution (lTSList, lBookingRequest);
+
+  // Check that a solution has been found
+  BOOST_REQUIRE_MESSAGE (lTS_ptr != NULL,
+                         "No travel solution can be found for "
+                         << lBookingRequest.display()
+                         << " within the following list of travel solutions. "
+                         << lCSVDump);
 
   // Close the log file
   logOutputFile.close();
