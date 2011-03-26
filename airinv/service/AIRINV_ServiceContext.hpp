@@ -10,7 +10,6 @@
 #include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_service_types.hpp>
-#include <stdair/bom/Inventory.hpp>
 #include <stdair/service/ServiceAbstract.hpp>
 // RMOL
 #include <rmol/RMOL_Types.hpp>
@@ -20,7 +19,7 @@
 namespace AIRINV {
 
   /**
-   * @brief Class holding the context of the Airinv services.
+   * @brief Class holding the context of the AirInv services.
    */
   class AIRINV_ServiceContext : public stdair::ServiceAbstract {
     /**
@@ -107,7 +106,7 @@ namespace AIRINV {
      */
     AIRINV_ServiceContext();
     /**
-     * Default copy constructor (not to be used).
+     * Copy constructor (not to be used).
      */
     AIRINV_ServiceContext (const AIRINV_ServiceContext&);
 

@@ -15,6 +15,11 @@ namespace AIRINV {
   }
 
   // //////////////////////////////////////////////////////////////////////
+  AIRINV_ServiceContext::AIRINV_ServiceContext (const AIRINV_ServiceContext&)
+    : _ownStdairService (false) {
+  }
+
+  // //////////////////////////////////////////////////////////////////////
   AIRINV_ServiceContext::~AIRINV_ServiceContext() {
   }
   
