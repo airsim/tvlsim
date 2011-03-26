@@ -42,13 +42,37 @@ namespace TRAVELCCM {
 
         // Choose the current fare option and the current solution
         // if the current fare is lower than the current lowest fare.
-        const stdair::Fare_T& lCurrentFare = lFO.getFare();
-        const stdair::Availability_T& lCurrentAvl = lFO.getAvailability();
-        if (lCurrentFare < lLowestFare && lCurrentAvl >= lPartySize
-            && lCurrentFare <= lWTP) {
-          lLowestFare = lCurrentFare;
+        const stdair::Fare_T& lFOFare = lFO.getFare();
+        const stdair::Availability_T& lFOAvl = lFO.getAvailability();
+
+        if (lFOFare < lLowestFare && lFOFare <= lWTP && lFOAvl >= lPartySize) {
+
+          // DEBUG
+          /*
+          STDAIR_LOG_DEBUG ("The travel solution (TS) '" << lTS
+                            << "' is chosen because its fare (" << lFOFare
+                            << ") is lower than the lowest fare (" << lLowestFare
+                            << ") and than the WTP (" << lWTP
+                            << "), and because the party size (" << lPartySize
+                            << ") is lower than the availability (" << lFOAvl
+                            << ")");
+          */
+
+          lLowestFare = lFOFare;
           oChosenTS_ptr = &lTS;
           oChosenTS_ptr->setChosenFareOption (lFO);
+
+        } else {
+          // DEBUG
+          /*
+          STDAIR_LOG_DEBUG ("The travel solution (TS) '" << lTS
+                            << "' is not chosen because either its fare ("
+                            << lFOFare << ") is greater than the lowest fare ("
+                            << lLowestFare << ") or than the WTP (" << lWTP
+                            << "), or because the party size (" << lPartySize
+                            << ") is greater than the availability (" << lFOAvl
+                            << ")");
+          */
         }
       }
     }
