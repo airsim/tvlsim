@@ -116,9 +116,6 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
     trademgenService.getExpectedTotalNumberOfRequestsToBeGenerated();
 
-  // TODO: understand why the tests fail, and do not override
-  // lRefExpectedNbOfEvents
-  lRefExpectedNbOfEvents = 10;
   BOOST_CHECK_EQUAL (lRefExpectedNbOfEvents,
                      std::floor (lExpectedNbOfEventsToBeGenerated));
   
@@ -147,17 +144,16 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                     << lExpectedNbOfEventsToBeGenerated << ", actual: "
                     << lActualNbOfEventsToBeGenerated);
   
-  // TODO: understand why the tests fail, and do not override
-  // lRefExpectedNbOfEvents
-  lRefExpectedNbOfEvents = 8;
-  BOOST_CHECK_EQUAL (lRefExpectedNbOfEvents, lActualNbOfEventsToBeGenerated);
+  // Total number of events, for all the demand streams: 8 (2 + 6)
+  const stdair::Count_T lRefActualNbOfEvents (8);
+  BOOST_CHECK_EQUAL (lRefActualNbOfEvents, lActualNbOfEventsToBeGenerated);
   
-  BOOST_CHECK_MESSAGE (lRefExpectedNbOfEvents == lActualNbOfEventsToBeGenerated,
+  BOOST_CHECK_MESSAGE (lRefActualNbOfEvents == lActualNbOfEventsToBeGenerated,
                        "Actual total number of requests to be generated: "
                        << lExpectedNbOfEventsToBeGenerated
                        << " (=> "
                        << std::floor (lExpectedNbOfEventsToBeGenerated)
-                       << "). Reference value: " << lRefExpectedNbOfEvents);
+                       << "). Reference value: " << lRefActualNbOfEvents);
 
   /** Is the queue empty? */
   const bool isQueueDone = trademgenService.isQueueDone();
@@ -226,7 +222,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
          expected one.
       */
       const stdair::Count_T& lNbOfRequests =
-        lEventStruct.getTypeSpecificExpectedTotalNbOfEvents();
+        lEventStruct.getKeySpecificExpectedTotalNbOfEvents();
 
       BOOST_CHECK_EQUAL (lNbOfRequests, lExpectedTotalNbOfEvents);
       BOOST_CHECK_MESSAGE (lNbOfRequests == lExpectedTotalNbOfEvents,
@@ -291,10 +287,10 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   --idx;
   
   //
-  BOOST_CHECK_EQUAL (idx, lRefExpectedNbOfEvents);
-  BOOST_CHECK_MESSAGE (idx == lRefExpectedNbOfEvents,
-                       "The total expected number of events is "
-                       << lRefExpectedNbOfEvents << ", but " << idx
+  BOOST_CHECK_EQUAL (idx, lRefActualNbOfEvents);
+  BOOST_CHECK_MESSAGE (idx == lRefActualNbOfEvents,
+                       "The total actual number of events is "
+                       << lRefActualNbOfEvents << ", but " << idx
                        << " events have been generated");
   
   /** Reset the context of the demand streams for another demand generation
