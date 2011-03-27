@@ -110,6 +110,38 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  std::string DemandStream::display() const {
+    std::ostringstream oStr;
+
+    oStr << "Demand stream key: " << _key.toString() << std::endl;
+
+    //
+    oStr << _demandCharacteristics.describe();
+
+    //
+    oStr << _demandDistribution.describe() << " => "
+         << _totalNumberOfRequestsToBeGenerated << " to be generated"
+         << std::endl;
+
+    //
+    oStr << "Random generation context: " << _randomGenerationContext
+         << std::endl;
+
+    //
+    oStr << "Random generator for number of requests: "
+         << _numberOfRequestsRandomGenerator << std::endl;
+    oStr << "Random generator for date-time: "
+         << _requestDateTimeRandomGenerator << std::endl;
+    oStr << "Random generator for demand characteristics: "
+         << _demandCharacteristicsRandomGenerator << std::endl;
+
+    //
+    oStr << _posProMass.displayProbabilityMass() << std::endl;
+
+    return oStr.str();
+  }    
+
+  // ////////////////////////////////////////////////////////////////////
   void DemandStream::init() {
     
     // Generate the number of requests

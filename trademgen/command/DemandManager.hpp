@@ -39,6 +39,88 @@ namespace TRADEMGEN {
   private:
     // //////// Business methodes //////////
     /**
+     * Generate a sample BOM tree, made of a single DemandStream object.
+     *
+     * As of now (March 2011), it corresponds to:
+     * <ul>
+     *  <li>Origin: SIN</li>
+     *  <li>Destination: BKK</li>
+     *  <li>Preferred departure date: 2011-02-14</li>
+     *  <li>Preferred cabin: Y (Economy)</li>
+     *  <li>POS distribution:
+     *    <ul>
+     *      <li>BKK: 30%</li>
+     *      <li>SIN: 70%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Channel distribution:
+     *    <ul>
+     *      <li>Direct Offline:   10%</li>
+     *      <li>Direct Online:    30%</li>
+     *      <li>Indirect Offline: 40%</li>
+     *      <li>Indirect Online:  20%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Trip type distribution:
+     *    <ul>
+     *      <li>Outbound: 60%</li>
+     *      <li>Inbound:  20%</li>
+     *      <li>One-way:  20%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Arrival pattern distribution:
+     *    <ul>
+     *      <li>330 DTD:   0%</li>
+     *      <li> 40 DTD:  20%</li>
+     *      <li> 20 DTD:  60%</li>
+     *      <li>  1 DTD: 100%</li>
+     *    </ul>15:0, 60:1
+     *  </li>
+     *  <li>Stay duration distribution:
+     *    <ul>
+     *      <li>0 day:   10%</li>
+     *      <li>1 day:   10%</li>
+     *      <li>2 days:  15%</li>
+     *      <li>3 days:  15%</li>
+     *      <li>4 days:  15%</li>
+     *      <li>5 days:  35%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Frequent flyer distribution:
+     *    <ul>
+     *      <li>Platinum:  1%</li>
+     *      <li>Gold:      5%</li>
+     *      <li>Silver:   15%</li>
+     *      <li>Member:   30%</li>
+     *      <li>No card:  49%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Preferred departure time (cumulative distribution):
+     *    <ul>
+     *      <li>6am:    0%</li>
+     *      <li>7am:   10%</li>
+     *      <li>9am:   30%</li>
+     *      <li>5pm:   40%</li>
+     *      <li>7pm:   80%</li>
+     *      <li>8pm:   95%</li>
+     *      <li>10pm: 100%</li>
+     *    </ul>
+     *  </li>
+     *  <li>Value of time distribution:
+     *    <ul>
+     *      <li>15 min:   0%</li>
+     *      <li>60 min: 100%</li>
+     *    </ul>
+     *  </li>
+     *  <li>WTP: 200</li>
+     *  <li>Number of requests: Normal (mu = 10.0, std_dev = 1.0)</li>
+     *  <li>Change fee: 20; Non refundable; Saturday night stay</li>
+     * </ul>
+     */
+    static void buildSampleBom (stdair::EventQueue&, stdair::RandomGeneration&,
+                                const POSProbabilityMass_T&);
+
+    /**
      * Generate the Demand objects corresponding to the given
      * Flight-Period, and add them to the given EventQueue.
      *

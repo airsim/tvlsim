@@ -57,6 +57,13 @@ const stdair::Filename_T K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME ("request.csv");
 /** Default number of random draws to be generated (best if over 100). */
 const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 100;
 
+/** Default for the input type. It can be either built-in or provided by an
+    input file. That latter must then be given with the -i option. */
+const bool K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT = false;
+
+/** Early return status (so that it can be differentiated from an error). */
+const int K_TRADEMGEN_EARLY_RETURN_STATUS = 99;
+
 
 /** Display the statistics held by the dedicated accumulator. */
 void stat_display (std::ostream& oStream, const stat_acc_type& iStatAcc) {
@@ -87,14 +94,15 @@ template<class T> std::ostream& operator<< (std::ostream& os,
   return os;
 }
 
-/** Early return status (so that it can be differentiated from an error). */
-const int K_TRADEMGEN_EARLY_RETURN_STATUS = 99;
-
 /** Read and parse the command line options. */
-int readConfiguration (int argc, char* argv[], NbOfRuns_T& ioRandomRuns,
+int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
+                       NbOfRuns_T& ioRandomRuns,
                        stdair::Filename_T& ioInputFilename,
                        stdair::Filename_T& ioOutputFilename,
                        stdair::Filename_T& ioLogFilename) {
+
+  // Default for the built-in input
+  ioIsBuiltin = K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT;
 
   // Declare a group of options that will be allowed only on command line
   boost::program_options::options_description generic ("Generic options");
@@ -107,6 +115,8 @@ int readConfiguration (int argc, char* argv[], NbOfRuns_T& ioRandomRuns,
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from an input file. That latter must then be given with the -i/--input option")
     ("draws,d",
      boost::program_options::value<NbOfRuns_T>(&ioRandomRuns)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_DRAWS), 
      "Number of runs for the demand generations")
@@ -166,88 +176,67 @@ int readConfiguration (int argc, char* argv[], NbOfRuns_T& ioRandomRuns,
     return K_TRADEMGEN_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("input")) {
-    ioInputFilename = vm["input"].as< std::string >();
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
+  }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
+
+  if (ioIsBuiltin == false) {
+
+    // The BOM tree should be built from parsing a demand input file
+    if (vm.count ("input")) {
+      ioInputFilename = vm["input"].as< std::string >();
+      std::cout << "Input filename is: " << ioInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no demand input file
+      // is specified
+      std::cerr << "Either one among the -b/--builtin and -i/--input "
+                << "options must be specified" << std::endl;
+    }
   }
 
   if (vm.count ("output")) {
     ioOutputFilename = vm["output"].as< std::string >();
+    std::cout << "Output filename is: " << ioOutputFilename << std::endl;
   }
 
   if (vm.count ("log")) {
     ioLogFilename = vm["log"].as< std::string >();
+    std::cout << "Log filename is: " << ioLogFilename << std::endl;
   }
 
   //
   std::cout << "The number of runs is: " << ioRandomRuns << std::endl;
-  std::cout << "Input filename is: " << ioInputFilename << std::endl;
-  std::cout << "Output filename is: " << ioOutputFilename << std::endl;
-  std::cout << "Log filename is: " << ioLogFilename << std::endl;
   
   return 0;
 }
 
-// /////////////// M A I N /////////////////
-int main (int argc, char* argv[]) {
+// /////////////////////////////////////////////////////////////////////////
+void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
+                     const stdair::Filename_T& iOutputFilename,
+                     const NbOfRuns_T& iNbOfRuns) {
 
-  // Number of random draws to be generated (best if greater than 100)
-  NbOfRuns_T lNbOfRuns;
+  // Open and clean the .csv output file
+  std::ofstream output;
+  output.open (iOutputFilename.c_str());
+  output.clear();
     
   // Initialise the statistics collector/accumulator
   stat_acc_type lStatAccumulator;
 
-  // Input file name
-  stdair::Filename_T lInputFilename;
-
-  // Output file name
-  stdair::Filename_T lOutputFilename;
-
-  // Output log File
-  stdair::Filename_T lLogFilename;
-
-  // Call the command-line option parser
-  const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lNbOfRuns, lInputFilename,
-                       lOutputFilename, lLogFilename);
-
-  if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
-    return 0;
-  }
-
-  // Open and clean the .csv output file
-  std::ofstream output;
-  output.open (lOutputFilename.c_str());
-  output.clear();
-    
-  // Set the log parameters
-  std::ofstream logOutputFile;
-  // Open and clean the log outputfile
-  logOutputFile.open (lLogFilename.c_str());
-  logOutputFile.clear();
-
-  /**
-     Initialise the TraDemGen service object:
-     <ul>
-       <li>Parse the input file;</li>
-       <li>Create the DemandStream objects, and insert them within the
-         BOM tree;</li>
-       <li>Calculate the expected number of events to be generated.</li>
-     </ul>
-  */
-  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
-
   // Retrieve the expected (mean value of the) number of events to be
   // generated
   const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-    trademgenService.getExpectedTotalNumberOfRequestsToBeGenerated();
+    ioTrademgenService.getExpectedTotalNumberOfRequestsToBeGenerated();
 
   // Initialise the (Boost) progress display object
   boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated
-                                            * lNbOfRuns);
+                                            * iNbOfRuns);
 
 
-  for (NbOfRuns_T runIdx = 1; runIdx <= lNbOfRuns; ++runIdx) {
+  for (NbOfRuns_T runIdx = 1; runIdx <= iNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
     output << "Run number: " << runIdx << std::endl;
 
@@ -256,7 +245,7 @@ int main (int argc, char* argv[]) {
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      trademgenService.generateFirstRequests();
+      ioTrademgenService.generateFirstRequests();
 
     // DEBUG
     STDAIR_LOG_DEBUG ("[" << runIdx << "] Expected: "
@@ -266,14 +255,14 @@ int main (int argc, char* argv[]) {
     /**
        Main loop.
        <ul>
-         <li>Pop a request and get its associated type/demand stream.</li>
-         <li>Generate the next request for the same type/demand stream.</li>
+       <li>Pop a request and get its associated type/demand stream.</li>
+       <li>Generate the next request for the same type/demand stream.</li>
        </ul>
     */
-    while (trademgenService.isQueueDone() == false) {
+    while (ioTrademgenService.isQueueDone() == false) {
 
       // Extract the next event from the event queue
-      const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
+      const stdair::EventStruct& lEventStruct = ioTrademgenService.popEvent();
       
       // DEBUG
       STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
@@ -296,7 +285,7 @@ int main (int argc, char* argv[]) {
       
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated = 
-        trademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
+        ioTrademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
 
       // DEBUG
       STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
@@ -308,7 +297,7 @@ int main (int argc, char* argv[]) {
       if (stillHavingRequestsToBeGenerated == true) {
         
         stdair::BookingRequestPtr_T lNextRequest_ptr =
-          trademgenService.generateNextRequest (lDemandStreamKey);
+          ioTrademgenService.generateNextRequest (lDemandStreamKey);
         assert (lNextRequest_ptr != NULL);
 
         // Sanity check
@@ -329,7 +318,7 @@ int main (int argc, char* argv[]) {
         STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
                           << lNextRequest_ptr->describe()
                           << "'. Is queue done? "
-                          << trademgenService.isQueueDone());
+                          << ioTrademgenService.isQueueDone());
       }
 
       // Update the progress display
@@ -340,18 +329,104 @@ int main (int argc, char* argv[]) {
     lStatAccumulator (lActualNbOfEventsToBeGenerated);
     
     // Reset the service (including the event queue) for the next run
-    trademgenService.reset();
+    ioTrademgenService.reset();
   }
 
   // DEBUG
   STDAIR_LOG_DEBUG ("End of the simulation. Let us see some statistics for the "
-                    << lNbOfRuns << " runs.");
-  std::ostringstream oStr;
-  stat_display (oStr, lStatAccumulator);
-  STDAIR_LOG_DEBUG (oStr.str());
-  
+                    << iNbOfRuns << " runs.");
+  std::ostringstream oStatStr;
+  stat_display (oStatStr, lStatAccumulator);
+  STDAIR_LOG_DEBUG (oStatStr.str());
+
+  // DEBUG
+  const std::string& lBOMStr = ioTrademgenService.csvDisplay();
+  STDAIR_LOG_DEBUG (lBOMStr);
+
+  // Close the output file
+  output.close();
+}
+
+
+// /////////////// M A I N /////////////////
+int main (int argc, char* argv[]) {
+
+  // State whether the BOM tree should be built-in or parsed from an input file
+  bool isBuiltin;
+
+  // Number of random draws to be generated (best if greater than 100)
+  NbOfRuns_T lNbOfRuns;
+    
+  // Input file name
+  stdair::Filename_T lInputFilename;
+
+  // Output file name
+  stdair::Filename_T lOutputFilename;
+
+  // Output log File
+  stdair::Filename_T lLogFilename;
+
+  // Call the command-line option parser
+  const int lOptionParserStatus = 
+    readConfiguration (argc, argv, isBuiltin, lNbOfRuns, lInputFilename,
+                       lOutputFilename, lLogFilename);
+
+  if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
+    return 0;
+  }
+
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
+
+  // Set up the log parameters
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+
+  // Check wether or not a (CSV) input file should be read
+  if (isBuiltin == true) {
+    /**
+     * Initialise the TraDemGen service object:
+     * <ul>
+     *  <li>Create a sample DemandStream object, and insert it within the
+     *      BOM tree;</li>
+     *  <li>Calculate the expected number of events to be generated.</li>
+     * </ul>
+     */
+    TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams);
+
+    // Build a sample BOM tree (with a single DemandStream object)
+    trademgenService.buildSampleBom();
+
+    // Delegate the call
+    generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
+
+  } else {
+    /**
+     * Initialise the TraDemGen service object:
+     * <ul>
+     *  <li>Parse the input file;</li>
+     *  <li>Create the DemandStream objects, and insert them within the
+     *      BOM tree;</li>
+     *  <li>Calculate the expected number of events to be generated.</li>
+     * </ul>
+     */
+    TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
+
+    // Delegate the call
+    generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
+  }  
+
   // Close the Log outputFile
   logOutputFile.close();
+
+  /*
+    Note: as that program is not intended to be run on a server in
+    production, it is better not to catch the exceptions. When it
+    happens (that an exception is throwned), that way we get the
+    call stack.
+  */
 
   //
   std::cout << std::endl;

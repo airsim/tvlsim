@@ -283,6 +283,11 @@ namespace TRADEMGEN {
       return _key.toString();
     }
 
+    /**
+     * Dump recursively the content of the DemandStream object.
+     */
+    std::string display() const;
+
 
   protected:
     // ////////// Constructors and destructors /////////

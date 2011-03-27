@@ -8,6 +8,7 @@
 #include <string>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/StructAbstract.hpp>
 // TraDemGen
 #include <trademgen/basic/ContinuousAttribute.hpp>
 
@@ -16,14 +17,8 @@ namespace TRADEMGEN {
   /**
    * @brief Class modeling the distribution of a demand type.
    */
-  struct DemandDistribution {
-    
-    // ////////////// Display Support Methods //////////
-    /**
-     * Display demand distribution.
-     */
-    std::string display() const;
-
+  struct DemandDistribution : public stdair::StructAbstract {
+  public:
     // ////////// Constructors and destructors /////////
     /**
      * Constructor.
@@ -43,7 +38,28 @@ namespace TRADEMGEN {
      */
      ~DemandDistribution();
 
-    
+
+  public:    
+    // ////////////// Display Support Methods //////////
+    /**
+     * Read a Business Object from an input stream.
+     *
+     * @param istream& the input stream.
+     */
+    void fromStream (std::istream& ioIn);
+
+    /**
+     * Display of the structure.
+     */
+    const std::string describe() const;
+
+    /**
+     * Display demand distribution.
+     */
+    std::string display() const;
+
+
+  public:    
     // ////////// Attributes //////////
     /**
      * Mean number of requests.
@@ -57,4 +73,4 @@ namespace TRADEMGEN {
   };
 
 }
-#endif // __STDAIR_BAS_DEMAND_DISTRIBUTION_HPP
+#endif // __TRADEMGEN_BAS_DEMAND_DISTRIBUTION_HPP

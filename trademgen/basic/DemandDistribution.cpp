@@ -34,16 +34,21 @@ namespace TRADEMGEN {
   }
   
   // /////////////////////////////////////////////////////
+  void DemandDistribution::fromStream (std::istream& ioIn) {
+  }
+
+  // /////////////////////////////////////////////////////
+  const std::string DemandDistribution::describe() const {
+    std::ostringstream oStr;
+    oStr << "N (" << _meanNumberOfRequests << ", "
+         << _stdDevNumberOfRequests << ")";
+    return oStr.str();
+  }
+    
+  // /////////////////////////////////////////////////////
   std::string DemandDistribution::display() const {
     std::ostringstream oStr;
-
-    oStr << "****************** Demand distribution ******************"
-         << std::endl;
-    oStr << "Mean number of requests .......... : "
-         << _meanNumberOfRequests << std::endl;
-    oStr << "Std dev of number of requests .... : "
-         << _stdDevNumberOfRequests << std::endl;
-
+    oStr << describe() << std::endl;
     return oStr.str();
   }
     

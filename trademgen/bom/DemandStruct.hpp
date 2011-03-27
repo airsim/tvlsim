@@ -8,6 +8,7 @@
 #include <string>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
 // TraDemGen
@@ -51,8 +52,8 @@ namespace TRADEMGEN {
     stdair::AirportCode_T _origin;
     stdair::AirportCode_T _destination;
     stdair::CabinCode_T _prefCabin;
-    float _demandMean;
-    float _demandStdDev;
+    stdair::MeanValue_T _demandMean;
+    stdair::StdDevValue_T _demandStdDev;
     POSProbabilityMassFunction_T _posProbDist;
     ChannelProbabilityMassFunction_T _channelProbDist;
     TripTypeProbabilityMassFunction_T _tripProbDist;

@@ -21,6 +21,160 @@
 namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
+  void DemandManager::
+  buildSampleBom (stdair::EventQueue& ioEventQueue,
+                  stdair::RandomGeneration& ioSharedGenerator,
+                  const POSProbabilityMass_T& iPOSProbMass) {
+
+    // Key of the demand stream
+    const stdair::AirportCode_T lOrigin ("SIN");
+    const stdair::AirportCode_T lDestination ("BKK");
+    const stdair::Date_T lDepDate (2011, 2, 14);
+    const stdair::CabinCode_T lCabin ("Y");
+
+    //
+    const DemandStreamKey lDemandStreamKey (lOrigin, lDestination, lDepDate,
+                                            lCabin);
+
+    // DEBUG
+    // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
+    
+    // Distribution for the number of requests
+    const stdair::MeanValue_T lDemandMean (10.0);
+    const stdair::StdDevValue_T lDemandStdDev (1.0);
+    const DemandDistribution lDemandDistribution (lDemandMean, lDemandStdDev);
+    
+    // Seed
+    const stdair::RandomSeed_T& lNumberOfRequestsSeed =
+      generateSeed (ioSharedGenerator);
+    const stdair::RandomSeed_T& lRequestDateTimeSeed =
+      generateSeed (ioSharedGenerator);
+    const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
+      generateSeed (ioSharedGenerator);
+
+    //
+    ArrivalPatternCumulativeDistribution_T lDTDProbDist;
+    lDTDProbDist.insert(ArrivalPatternCumulativeDistribution_T::value_type(-330,
+                                                                           0));
+    lDTDProbDist.insert(ArrivalPatternCumulativeDistribution_T::value_type(-40,
+                                                                           0.2));
+    lDTDProbDist.insert(ArrivalPatternCumulativeDistribution_T::value_type(-20,
+                                                                           0.6));
+    lDTDProbDist.insert(ArrivalPatternCumulativeDistribution_T::value_type(-1,
+                                                                           1.0));
+    //
+    POSProbabilityMassFunction_T lPOSProbDist;
+    lPOSProbDist.insert (POSProbabilityMassFunction_T::value_type ("BKK", 0.3));
+    lPOSProbDist.insert (POSProbabilityMassFunction_T::value_type ("SIN", 0.7));
+    //
+    ChannelProbabilityMassFunction_T lChannelProbDist;
+    lChannelProbDist.insert (ChannelProbabilityMassFunction_T::value_type ("DF",
+                                                                           0.1));
+    lChannelProbDist.insert (ChannelProbabilityMassFunction_T::value_type ("DN",
+                                                                           0.3));
+    lChannelProbDist.insert (ChannelProbabilityMassFunction_T::value_type ("IF",
+                                                                           0.4));
+    lChannelProbDist.insert (ChannelProbabilityMassFunction_T::value_type ("IN",
+                                                                           0.2));
+    //
+    TripTypeProbabilityMassFunction_T lTripProbDist;
+    lTripProbDist.insert (TripTypeProbabilityMassFunction_T::value_type ("RO",
+                                                                         0.6));
+    lTripProbDist.insert (TripTypeProbabilityMassFunction_T::value_type ("RI",
+                                                                         0.2));
+    lTripProbDist.insert (TripTypeProbabilityMassFunction_T::value_type ("OW",
+                                                                         0.2));
+    //
+    StayDurationProbabilityMassFunction_T lStayProbDist;
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(0,
+                                                                           0.1));
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(1,
+                                                                           0.1));
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(2,
+                                                                           .15));
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(3,
+                                                                           .15));
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(4,
+                                                                           .15));
+    lStayProbDist.insert(StayDurationProbabilityMassFunction_T::value_type(5,
+                                                                           .35));
+    //
+    FrequentFlyerProbabilityMassFunction_T lFFProbDist;
+    lFFProbDist.insert(FrequentFlyerProbabilityMassFunction_T::value_type("P",
+                                                                          0.01));
+    lFFProbDist.insert(FrequentFlyerProbabilityMassFunction_T::value_type("G",
+                                                                          0.05));
+    lFFProbDist.insert(FrequentFlyerProbabilityMassFunction_T::value_type("S",
+                                                                          0.15));
+    lFFProbDist.insert(FrequentFlyerProbabilityMassFunction_T::value_type("M",
+                                                                          0.3));
+    lFFProbDist.insert(FrequentFlyerProbabilityMassFunction_T::value_type("N",
+                                                                          0.49));
+    //
+    PreferredDepartureTimeContinuousDistribution_T lPrefDepTimeProbDist;
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (6, 0));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (7,
+                                                                          0.1));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (9,
+                                                                          0.3));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (17,
+                                                                          0.4));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (19,
+                                                                          0.80));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (20,
+                                                                          0.95));
+    lPrefDepTimeProbDist.
+      insert (PreferredDepartureTimeContinuousDistribution_T::value_type (22,
+                                                                          1));
+    //
+    ValueOfTimeContinuousDistribution_T lTimeValueProbDist;
+    lTimeValueProbDist.insert(ValueOfTimeContinuousDistribution_T::value_type(15,
+                                                                              0));
+    lTimeValueProbDist.insert(ValueOfTimeContinuousDistribution_T::value_type(60,
+                                                                              1));
+
+    //
+    const stdair::WTP_T lWTP (1000.0);
+
+
+    // Delegate the call to the dedicated command
+    DemandStream& lDemandStream = 
+      createDemandStream (ioEventQueue, lDemandStreamKey, lDTDProbDist,
+                          lPOSProbDist, lChannelProbDist, lTripProbDist,
+                          lStayProbDist, lFFProbDist, lPrefDepTimeProbDist,
+                          lWTP, lTimeValueProbDist, lDemandDistribution,
+                          lNumberOfRequestsSeed, lRequestDateTimeSeed,
+                          lDemandCharacteristicsSeed, iPOSProbMass);
+
+    // Calculate the expected total number of events for the current
+    // demand stream
+    const stdair::NbOfRequests_T& lExpectedTotalNbOfEvents =
+      lDemandStream.getMeanNumberOfRequests();
+
+    /**
+     * Initialise the progress statuses, one specific to the demand
+     * stream, and the other one specific to the booking request type,
+     * both held by the event queue.
+     *
+     * The event queue object, which is part of the StdAir
+     * library, has no information on the DemandStream objects, which
+     * are part of this (TraDemGen) library. As the number of events
+     * to be generated are known from the DemandStream objects only,
+     * the event queue object can not calculate the progress statuses
+     * itself.
+     */
+    ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
+                            lDemandStreamKey.toString(),
+                            lExpectedTotalNbOfEvents);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
   DemandStream& DemandManager::createDemandStream
   (stdair::EventQueue& ioEventQueue,
    const DemandStreamKey& iKey,
