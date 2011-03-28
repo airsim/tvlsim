@@ -332,8 +332,10 @@ namespace AIRINV {
      *       on the Service object, and deletes that object when it is
      *       no longer referenced (e.g., at the end of the process).
      */
+    const stdair::CabinCapacity_T lCabinCapacity = 100.0;
     RMOL::RMOL_ServicePtr_T lRMOL_Service_ptr = 
-      boost::make_shared<RMOL::RMOL_Service> (lSTDAIR_Service_ptr);
+      boost::make_shared<RMOL::RMOL_Service> (lSTDAIR_Service_ptr,
+                                              lCabinCapacity);
     
     // Store the RMOL service object within the (AIRINV) service context
     lAIRINV_ServiceContext.setRMOL_Service (lRMOL_Service_ptr);
