@@ -305,10 +305,7 @@ namespace RMOL {
 
     Optimiser::optimalOptimisationByMCIntegration (K, lLegCabin);
 
-  // ////////////////////////////////////////////////////////////////////
-  RMOL_Service::RMOL_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr,
-                              const stdair::CabinCapacity_T& iCabinCapacity)
-    : _rmolServiceContext (NULL) {
+    const double lOptimisationMeasure = lOptimisationChronometer.elapsed();
     
     // DEBUG
     STDAIR_LOG_DEBUG ("Optimisation by Monte-Carlo performed in "
@@ -386,8 +383,6 @@ namespace RMOL {
 
     Optimiser::heuristicOptimisationByEmsrA (lLegCabin);
 
-    const double lOptimisationMeasure = lOptimisationChronometer.elapsed();
-    
     // DEBUG
     STDAIR_LOG_DEBUG ("Result: " << lLegCabin.displayVirtualClassList());
     
