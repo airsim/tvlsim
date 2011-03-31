@@ -20,6 +20,12 @@ namespace stdair {
 
 namespace AIRINV {
 
+  // //////////////// Type definitions ////////////////
+  typedef std::map<const stdair::Date_T,
+                   const stdair::FlightDate*> DepartureDateFlightDateMap_T;
+  typedef std::map<const stdair::GuillotineNumber_T,
+                   DepartureDateFlightDateMap_T> GuillotineNumberSimilarFlightDateSetMap_T;
+
   /** Command wrapping the travel request process. */
   class InventoryManager {
     friend class AIRINV_Service;
@@ -44,6 +50,14 @@ namespace AIRINV {
     static void createDirectAccesses (stdair::Inventory&);
     static void createDirectAccesses (stdair::FlightDate&);
     static void createDirectAccesses (stdair::SegmentDate&);
+
+    /** Build the similar flight-date sets and the corresponding guillotine
+        blocks for snapshots and other data. */
+    static void buildSimilarFlightDateSets (const stdair::BomRoot&);
+    static void buildSimilarFlightDateSets (stdair::Inventory&);
+    static void buildGuillotineBlock (stdair::Inventory&,
+                                      const stdair::GuillotineNumber_T&,
+                                      const DepartureDateFlightDateMap_T&);
     
   private:
     /** Constructors. */

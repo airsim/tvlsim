@@ -39,6 +39,10 @@ namespace AIRINV {
     // Complete the BomRoot BOM building
     // Create the routings for all the inventories.
     InventoryManager::createDirectAccesses (ioBomRoot);
+
+    // Build the similar flight-date sets and the corresponding guillotine
+    // blocks.
+    InventoryManager::buildSimilarFlightDateSets (ioBomRoot);
   }
 
 }
