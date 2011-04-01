@@ -29,7 +29,7 @@ namespace TRADEMGEN {
     /**
      * Type for the probability mass function.
      */
-    typedef std::multimap<T, stdair::Probability_T> ContinuousDistribution_T;
+    typedef std::map<T, stdair::Probability_T> ContinuousDistribution_T;
     
   public:
     // ////////////////////// Business Methods ////////////////////

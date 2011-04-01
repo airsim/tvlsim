@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 // TraDemGen
+#include <trademgen/basic/BasConst_DemandGeneration.hpp>
 #include <trademgen/basic/DemandCharacteristics.hpp>
 
 namespace TRADEMGEN {
@@ -20,7 +21,7 @@ namespace TRADEMGEN {
       _stayDurationProbabilityMass (StayDurationProbabilityMassFunction_T()),
       _frequentFlyerProbabilityMass (FrequentFlyerProbabilityMassFunction_T()),
       _preferredDepartureTimeCumulativeDistribution (PreferredDepartureTimeContinuousDistribution_T()),
-      _minWTP (stdair::WTP_T()),
+      _minWTP (stdair::WTP_T()), _frat5Pattern (DEFAULT_FRAT5_PATTERN),
       _valueOfTimeCumulativeDistribution (ValueOfTimeContinuousDistribution_T()) {
   }
 
@@ -34,7 +35,7 @@ namespace TRADEMGEN {
       _stayDurationProbabilityMass (iDC._stayDurationProbabilityMass),
       _frequentFlyerProbabilityMass (iDC._frequentFlyerProbabilityMass),
       _preferredDepartureTimeCumulativeDistribution (iDC._preferredDepartureTimeCumulativeDistribution),
-      _minWTP (iDC._minWTP),
+      _minWTP (iDC._minWTP), _frat5Pattern (iDC._frat5Pattern),
       _valueOfTimeCumulativeDistribution (iDC._valueOfTimeCumulativeDistribution) {
   }
 
@@ -56,7 +57,7 @@ namespace TRADEMGEN {
       _stayDurationProbabilityMass (iStayDurationProbMass),
       _frequentFlyerProbabilityMass (iFrequentFlyerProbMass),
       _preferredDepartureTimeCumulativeDistribution (iPreferredDepartureTimeContinuousDistribution),
-      _minWTP (iMinWTP),
+      _minWTP (iMinWTP), _frat5Pattern (DEFAULT_FRAT5_PATTERN),
       _valueOfTimeCumulativeDistribution (iValueOfTimeContinuousDistribution) {
   }
     

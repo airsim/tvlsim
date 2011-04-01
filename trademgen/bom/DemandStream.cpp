@@ -94,15 +94,10 @@ namespace TRADEMGEN {
                               iMinWTP, iValueOfTimeContinuousDistribution);
 
     setDemandDistribution (iDemandDistribution);
-
     setTotalNumberOfRequestsToBeGenerated (0);
-
     setNumberOfRequestsRandomGeneratorSeed (iNumberOfRequestsSeed);
-
     setRequestDateTimeRandomGeneratorSeed (iRequestDateTimeSeed);
-
     setDemandCharacteristicsRandomGeneratorSeed (iDemandCharacteristicsSeed);
-
     setPOSProbabilityMass (iDefaultPOSProbablityMass);
 
     //
@@ -325,9 +320,16 @@ namespace TRADEMGEN {
     const stdair::Date_T lDateThisRequest = iDateTimeThisRequest.date ();
     const stdair::DateOffset_T lAP = iDepartureDate - lDateThisRequest;
     const stdair::DayDuration_T lAPInDays = lAP.days ();
-    stdair::RealNumber_T lVariateUnif = 0.90 +  0.2 * ioGenerator();
-    const stdair::WTP_T lWTP = 
-      lVariateUnif * (365 - lAPInDays) * _demandCharacteristics._minWTP / 36;
+
+    stdair::RealNumber_T lProb =
+      1 - lAPInDays / DEFAULT_MAX_ADVANCE_PURCHASE;
+    if (lProb < 0.0) { lProb = 0.0; }
+    stdair::RealNumber_T lFrat5Coef =
+      _demandCharacteristics._frat5Pattern.getValue (lProb);
+
+    const stdair::WTP_T lWTP =  _demandCharacteristics._minWTP
+      * (1.0 + (lFrat5Coef - 1.0) * log(ioGenerator()) / log(0.5));
+    
     return lWTP;
   }
 
