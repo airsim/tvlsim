@@ -16,7 +16,6 @@
 #include <stdair/bom/AirlineClassList.hpp>
 // SIMFQT
 #include <simfqt/bom/FareRuleStruct.hpp>
-#include <simfqt/bom/FareRuleFeatures.hpp>
 #include <simfqt/command/FareRuleGenerator.hpp>
 
 namespace SIMFQT {
