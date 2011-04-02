@@ -17,6 +17,7 @@ namespace stdair {
   struct BookingRequestStruct;
   struct BasLogParams;
   struct BasDBParams;
+  struct BookingRequestStruct;
 }
 
 namespace SIMFQT {
@@ -30,7 +31,68 @@ namespace SIMFQT {
    */
   class SIMFQT_Service {
   public:
+    
     // ////////////////// Constructors and Destructors //////////////////    
+    /**
+     * Constructor.
+     *
+     * The initSimfqtService() method is called; see the corresponding
+     * documentation for more details.
+     *
+     * A reference on an output stream is given, so that log outputs
+     * can be directed onto that stream.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     */
+    SIMFQT_Service (const stdair::BasLogParams&);
+    
+    /**
+     * Constructor.
+     *
+     * The initSimfqtService() method is called; see the corresponding
+     * documentation for more details.
+     *
+     * A reference on an output stream is given, so that log outputs
+     * can be directed onto that stream.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const stdair::BasDBParams& Parameters for the database access.
+     */
+    SIMFQT_Service (const stdair::BasLogParams&, const stdair::BasDBParams&);
+
+    /**
+     * Constructor.
+     *
+     * The initSimfqtService() method is called; see the corresponding
+     * documentation for more details.
+     *
+     * Moreover, as no reference on any output stream is given,
+     * it is assumed that the StdAir log service has already been
+     * initialised with the proper log output stream by some other
+     * methods in the calling chain (for instance, when the SIMFQT_Service
+     * is itself being initialised by another library service such as
+     * SIMCRS_Service).
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     */
+    SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr);
+
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * A reference on an output stream is given, so that log outputs
+     * can be directed onto that stream.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log
+     *        stream.
+     * @param const stdair::Filename_T& Filename of the input fare file.
+     */
+    SIMFQT_Service (const stdair::BasLogParams&,
+                    const stdair::Filename_T& iFareInputFilename);
+    
     /**
      * Constructor.
      *
@@ -49,22 +111,6 @@ namespace SIMFQT {
      * @param const stdair::Filename_T& Filename of the input fare file.
      */
     SIMFQT_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                    const stdair::Filename_T& iFareInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log
-     *        stream.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     */
-    SIMFQT_Service (const stdair::BasLogParams&,
                     const stdair::Filename_T& iFareInputFilename);
 
     /**
@@ -107,6 +153,33 @@ namespace SIMFQT {
      */
     void buildSampleBom();
 
+	/**
+	 * Build a BookingRequest structure (for test purposes).
+	 *
+	 * @return stdair::BookingRequestStruct The created BookingRequest
+	 *         structure.
+	 */ 
+    stdair::BookingRequestStruct buildBookingRequest();
+
+    /**
+     * Build a sample list of travel solutions.
+     *
+     * As of now (March 2011), that list is made of the following
+     * travel solutions:
+     * <ul>
+     *  <li>BA9</li>
+     *  <li>LHR-SYD</li>
+     *  <li>2011-06-10</li>
+     *  <li>Q</li>
+     *  <li>WTP: 900</li>
+     *  <li>Change fee: 20; Non refundable; Saturday night stay</li>
+     * </ul>
+     *
+     * @param TravelSolutionList_T& Sample list of travel solution structures.
+     *        It should be given empty. It is altered with the returned sample.
+     */
+    void buildSampleTravelSolutions (stdair::TravelSolutionList_T&);
+
     /**
      * Calculate the prices for a given list of travel solutions.
      * 
@@ -130,6 +203,20 @@ namespace SIMFQT {
      *        logged/dumped.
      */
     std::string csvDisplay() const;
+
+    /**
+     * Display (dump in the returned string) the full list of travel
+     * solution structures.
+     *
+     * @return std::string Output string in which the list of travel
+     *        solutions is logged/dumped.
+     */
+    std::string csvDisplay (const stdair::TravelSolutionList_T&) const;
+
+
+  private:
+    // /////// Construction and Destruction helper methods ///////
+    /**
 
 
   private:

@@ -7,8 +7,6 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
-// SimFQT
-#include <simfqt/bom/FareRuleFeatures.hpp>
 
 /// Forward declarations
 namespace stdair {
@@ -20,6 +18,7 @@ namespace stdair {
   class PosChannel;
   class DatePeriod;
   class TimePeriod;
+  class FareFeatures;
 }
 
 namespace SIMFQT {
@@ -121,7 +120,7 @@ namespace SIMFQT {
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const FareRuleFeatures&, const stdair::PosChannel&,
+                            const stdair::FareFeatures&, const stdair::PosChannel&,
                             stdair::FareOptionStruct&, const stdair::ParsedKey&);
 
 
