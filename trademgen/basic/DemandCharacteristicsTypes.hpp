@@ -62,5 +62,9 @@ namespace TRADEMGEN {
 
   /** Define the value of time continuous distribution. */
   typedef ValueOfTimeCumulativeDistribution_T::ContinuousDistribution_T ValueOfTimeContinuousDistribution_T;
+
+  /** Define the FRAT5 pattern type. */
+  typedef ContinuousAttributeLite<stdair::RealNumber_T> CumulativeDistribution_T;
+  typedef CumulativeDistribution_T::ContinuousDistribution_T FRAT5Pattern_T;
 }
 #endif // __TRADEMGEN_BAS_DEMANDCHARACTERISTICSTYPES_HPP

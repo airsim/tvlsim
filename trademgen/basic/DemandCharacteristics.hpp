@@ -119,6 +119,11 @@ namespace TRADEMGEN {
     stdair::WTP_T _minWTP;
 
     /**
+     * FRAT5 pattern, used for the computation of WTP.
+     */
+    CumulativeDistribution_T _frat5Pattern;
+
+    /**
      * Value of time cumulative distribution.
      */
     ValueOfTimeCumulativeDistribution_T _valueOfTimeCumulativeDistribution;

@@ -16,10 +16,17 @@ namespace TRADEMGEN {
   /** Default PoS probability mass. */
   extern const POSProbabilityMassFunction_T DEFAULT_POS_PROBALILITY_MASS;
 
+  /** Default FRAT5 pattern. */
+  extern const FRAT5Pattern_T DEFAULT_FRAT5_PATTERN;
+
   /** Default PoS probability mass. */
   struct DefaultMap {
-    static POSProbabilityMassFunction_T create();
+    static POSProbabilityMassFunction_T createPOSProbMass();
+    static FRAT5Pattern_T createFRAT5Pattern();
   };
+
+  /** Default MAX Advance Purchase. */
+  extern const double DEFAULT_MAX_ADVANCE_PURCHASE;
 
   /** Default base generator. Just here to initialise objects
       (e.g., stdair::RandomGeneration) with default generator. They
