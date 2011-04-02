@@ -3,8 +3,9 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// AIRSCHED
-#include <airsched/factory/FacSupervisor.hpp>
+// StdAir
+#include <stdair/service/FacSupervisor.hpp>
+// AirSched
 #include <airsched/factory/FacAIRSCHEDServiceContext.hpp>
 #include <airsched/service/AIRSCHED_ServiceContext.hpp>
 
@@ -13,7 +14,7 @@ namespace AIRSCHED {
   FacAIRSCHEDServiceContext* FacAIRSCHEDServiceContext::_instance = NULL;
 
   // //////////////////////////////////////////////////////////////////////
-  FacAIRSCHEDServiceContext::~FacAIRSCHEDServiceContext () {
+  FacAIRSCHEDServiceContext::~FacAIRSCHEDServiceContext() {
     _instance = NULL;
   }
 
@@ -24,7 +25,7 @@ namespace AIRSCHED {
       _instance = new FacAIRSCHEDServiceContext();
       assert (_instance != NULL);
       
-      FacSupervisor::instance().registerServiceFactory (_instance);
+      stdair::FacSupervisor::instance().registerServiceFactory (_instance);
     }
     return *_instance;
   }
@@ -33,7 +34,7 @@ namespace AIRSCHED {
   AIRSCHED_ServiceContext& FacAIRSCHEDServiceContext::create () {
     AIRSCHED_ServiceContext* aServiceContext_ptr = NULL;
 
-    aServiceContext_ptr = new AIRSCHED_ServiceContext ();
+    aServiceContext_ptr = new AIRSCHED_ServiceContext();
     assert (aServiceContext_ptr != NULL);
 
     // The new object is added to the Bom pool

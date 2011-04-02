@@ -11,11 +11,12 @@
 #include <list>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_date_time_types.hpp>
 #include <stdair/bom/key_types.hpp>
 
 namespace AIRSCHED {
 
-  // Forward declarations.
+  /// Forward declarations
   class SegmentPathPeriod;
 
   /** Define the segment path list. */

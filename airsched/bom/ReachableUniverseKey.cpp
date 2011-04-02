@@ -3,21 +3,23 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <sstream>
+// Boost.Serialization
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/access.hpp>
+// StdAir
+#include <stdair/basic/BasConst_Inventory.hpp>
 // AirSched
 #include <airsched/bom/ReachableUniverseKey.hpp>
 
 namespace AIRSCHED {
 
   // ////////////////////////////////////////////////////////////////////
-  ReachableUniverseKey::ReachableUniverseKey () : _origin ("ZZZ") {
+  ReachableUniverseKey::ReachableUniverseKey()
+    : _origin (stdair::DEFAULT_ORIGIN) {
+    assert (false);
   }
   
-  // ////////////////////////////////////////////////////////////////////
-  ReachableUniverseKey::
-  ReachableUniverseKey (const stdair::AirportCode_T& iAirportCode)
-    : _origin (iAirportCode) {
-  }
-
   // ////////////////////////////////////////////////////////////////////
   ReachableUniverseKey::
   ReachableUniverseKey (const ReachableUniverseKey& iKey)
@@ -25,7 +27,13 @@ namespace AIRSCHED {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  ReachableUniverseKey::~ReachableUniverseKey () {
+  ReachableUniverseKey::
+  ReachableUniverseKey (const stdair::AirportCode_T& iAirportCode)
+    : _origin (iAirportCode) {
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  ReachableUniverseKey::~ReachableUniverseKey() {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -44,4 +52,26 @@ namespace AIRSCHED {
     return oStr.str();
   }
   
+  // ////////////////////////////////////////////////////////////////////
+  void ReachableUniverseKey::serialisationImplementation() {
+    std::ostringstream oStr;
+    boost::archive::text_oarchive oa (oStr);
+    oa << *this;
+
+    std::istringstream iStr;
+    boost::archive::text_iarchive ia (iStr);
+    ia >> *this;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  template<class Archive>
+  void ReachableUniverseKey::serialize (Archive& ioArchive,
+                                        const unsigned int iFileVersion) {
+    /**
+     * \note The serialised members should not be const (as, as far as
+     *       I understand, they are tracked by Boost.Serialisation).
+     */
+    ioArchive & _origin;
+  }
+
 }

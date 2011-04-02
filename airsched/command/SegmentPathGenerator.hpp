@@ -12,7 +12,7 @@
 // AirSched
 #include <airsched/AIRSCHED_Types.hpp>
 
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class BomRoot;
   class Inventory;
@@ -21,34 +21,51 @@ namespace stdair {
 }
 
 namespace AIRSCHED {
-  //Forward declarations
+
+  /// Forward declarations
   class ReachableUniverse;
   class OriginDestinationSet;
   class SegmentPathPeriod;
   
-  /** Class handling the generation / instantiation of the network BOM. */
+
+  /**
+   * @brief Class handling the generation / instantiation of the network BOM.
+   */
   class SegmentPathGenerator : public stdair::CmdAbstract {
   public:
-    /** Generate the segment path network. */
+    /**
+     * Generate the segment path network.
+     */
     static void createSegmentPathNetwork (const stdair::BomRoot&);
 
-    /** Generate the single-segment segment path periods while browsing the
-        inventory and flight-period lists. */
+  private:
+    /**
+     * Generate the single-segment segment path periods while browsing the
+     * inventory and flight-period lists.
+     */
     static void createSinglePaths (const stdair::Inventory&);
     static void createSinglePaths (const stdair::FlightPeriod&);
 
-    /** Generate the single-segment segment path period with the
-        given segment-period. */
+    /**
+     * Generate the single-segment segment path period with the
+     * given segment-period.
+     */
     static void createSinglePath (stdair::SegmentPeriod&);
     static void createSinglePath (ReachableUniverse&, stdair::SegmentPeriod&);
 
-    /** Generate the i-fixed-length list of segment path period objects. */
+    /**
+     * Generate the i-fixed-length list of segment path period objects.
+     */
     static void buildSegmentPathNetwork (const stdair::BomRoot&,
                                          const stdair::NbOfSegments_T&);
     static void buildSegmentPathNetwork (ReachableUniverse&,
                                          const stdair::NbOfSegments_T&);
 
-    
+    /**
+     * Add a segment path period to the dedicated list.
+     */
+    static void addSegmentPathPeriod (ReachableUniverse&,
+                                      const SegmentPathPeriod&);    
   };
  
 }

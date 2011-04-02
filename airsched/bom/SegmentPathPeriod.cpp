@@ -3,24 +3,49 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-// STDAIR
+#include <sstream>
+// Boost.Serialization
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/access.hpp>
+// StdAir
+#include <stdair/basic/BasConst_General.hpp>
+#include <stdair/basic/BasConst_Inventory.hpp>
+#include <stdair/basic/BasConst_Period_BOM.hpp>
 #include <stdair/basic/BasConst_TravelSolution.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/bom/FlightPeriod.hpp>
 #include <stdair/bom/SegmentPeriod.hpp>
 #include <stdair/bom/BomManager.hpp>
-// AIRSCHED
+// AirSched
 #include <airsched/bom/SegmentPathPeriod.hpp>
 
 namespace AIRSCHED {
 
+  // ////////////////////////////////////////////////////////////////////
+  SegmentPathPeriod::SegmentPathPeriod()
+    :  _key (stdair::PeriodStruct (stdair::BOOST_DEFAULT_DATE_PERIOD,
+                                   stdair::DEFAULT_DOW_STRING),
+             stdair::NULL_BOOST_TIME_DURATION, stdair::NULL_BOOST_TIME_DURATION,
+             DateOffsetList_T(),
+             stdair::DEFAULT_NBOFAIRLINES),
+       _parent (NULL) {
+    assert (false);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  SegmentPathPeriod::SegmentPathPeriod (const SegmentPathPeriod& iSPP)
+    :  _key (iSPP._key), _parent (NULL) {
+    assert (false);
+  }
+  
   // ////////////////////////////////////////////////////////////////////
   SegmentPathPeriod::SegmentPathPeriod (const Key_T& iKey)
     :  _key (iKey), _parent (NULL) {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  SegmentPathPeriod::~SegmentPathPeriod () {
+  SegmentPathPeriod::~SegmentPathPeriod() {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -28,6 +53,24 @@ namespace AIRSCHED {
     std::ostringstream oStr;
     oStr << _key.toString();
     return oStr.str();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SegmentPathPeriod::serialisationImplementation() {
+    std::ostringstream oStr;
+    boost::archive::text_oarchive oa (oStr);
+    oa << *this;
+
+    std::istringstream iStr;
+    boost::archive::text_iarchive ia (iStr);
+    ia >> *this;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  template<class Archive>
+  void SegmentPathPeriod::serialize (Archive& ioArchive,
+                                     const unsigned int iFileVersion) {
+    ioArchive & _key;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -108,7 +151,7 @@ namespace AIRSCHED {
 
     // Retrieve the (only) segment period of the single segment path.
     const stdair::SegmentPeriod* lNextSegmentPeriod_ptr =
-      iSingleSegmentPath.getFirstSegmentPeriod ();
+      iSingleSegmentPath.getFirstSegmentPeriod();
     assert (lNextSegmentPeriod_ptr != NULL);
 
     // Retrive the last segment period of the current segment path and check

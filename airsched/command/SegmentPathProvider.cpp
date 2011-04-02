@@ -15,7 +15,7 @@
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
-// AIRSCHED
+// AirSched
 #include <airsched/bom/ReachableUniverse.hpp>
 #include <airsched/bom/OriginDestinationSet.hpp>
 #include <airsched/bom/SegmentPathPeriod.hpp>

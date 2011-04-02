@@ -4,7 +4,7 @@
 // STL
 #include <cassert>
 #include <vector>
-// STDAIR
+// StdAir
 #include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
@@ -24,6 +24,7 @@ namespace AIRSCHED {
   // ////////////////////////////////////////////////////////////////////
   void SegmentPathGenerator::
   createSegmentPathNetwork (const stdair::BomRoot& iBomRoot) {
+
     // Build the list of single-segment segment path objects.
     const stdair::InventoryList_T& lInventoryList =
       stdair::BomManager::getList<stdair::Inventory> (iBomRoot);
@@ -31,6 +32,8 @@ namespace AIRSCHED {
          itInv != lInventoryList.end(); ++itInv) {
       const stdair::Inventory* lCurrentInventory_ptr = *itInv;
       assert (lCurrentInventory_ptr != NULL);
+
+      //
       createSinglePaths (*lCurrentInventory_ptr);
     }
 
@@ -45,6 +48,7 @@ namespace AIRSCHED {
   // ////////////////////////////////////////////////////////////////////
   void SegmentPathGenerator::
   createSinglePaths (const stdair::Inventory& iInventory) {
+
     const stdair::FlightPeriodList_T& lFlightPeriodList =
       stdair::BomManager::getList<stdair::FlightPeriod> (iInventory);
     for (stdair::FlightPeriodList_T::const_iterator itFlightPeriod =
@@ -52,6 +56,8 @@ namespace AIRSCHED {
          itFlightPeriod != lFlightPeriodList.end(); ++itFlightPeriod) {
       const stdair::FlightPeriod* lCurrentFlightPeriod_ptr = *itFlightPeriod;
       assert (lCurrentFlightPeriod_ptr != NULL);
+
+      //
       createSinglePaths (*lCurrentFlightPeriod_ptr);
     }
   }
@@ -59,6 +65,7 @@ namespace AIRSCHED {
   // ////////////////////////////////////////////////////////////////////
   void SegmentPathGenerator::
   createSinglePaths (const stdair::FlightPeriod& iFlightPeriod) {
+
     const stdair::SegmentPeriodList_T& lSegmentPeriodList =
       stdair::BomManager::getList<stdair::SegmentPeriod> (iFlightPeriod);
     for (stdair::SegmentPeriodList_T::const_iterator itSegmentPeriod =
@@ -66,6 +73,8 @@ namespace AIRSCHED {
          itSegmentPeriod != lSegmentPeriodList.end(); ++itSegmentPeriod) {
       stdair::SegmentPeriod* lCurrentSegmentPeriod_ptr = *itSegmentPeriod;
       assert (lCurrentSegmentPeriod_ptr != NULL);
+
+      //
       createSinglePath (*lCurrentSegmentPeriod_ptr);
     }
   }
@@ -73,7 +82,9 @@ namespace AIRSCHED {
   // ////////////////////////////////////////////////////////////////////
   void SegmentPathGenerator::
   createSinglePath (stdair::SegmentPeriod& ioSegmentPeriod) {
-    const stdair::AirportCode_T& lOrigin = ioSegmentPeriod.getBoardingPoint ();
+
+    // Retrieve the BOM tree root
+    const stdair::AirportCode_T& lOrigin = ioSegmentPeriod.getBoardingPoint();
     const stdair::FlightPeriod& lFlightPeriod =
       stdair::BomManager::getParent<stdair::FlightPeriod> (ioSegmentPeriod);
     const stdair::Inventory& lInventory =
@@ -81,7 +92,7 @@ namespace AIRSCHED {
     stdair::BomRoot& lBomRoot =
       stdair::BomManager::getParent<stdair::BomRoot> (lInventory);      
 
-    // Retrieve the ReachableUniverse (if existed) which corresponds
+    // Retrieve the ReachableUniverse (if existing) which corresponds
     // to the origin. If it does not exist, then create one.
     ReachableUniverse* lReachableUniverse_ptr =
       stdair::BomManager::getObjectPtr<ReachableUniverse> (lBomRoot, lOrigin);
@@ -89,12 +100,16 @@ namespace AIRSCHED {
       ReachableUniverseKey lKey (lOrigin);
       lReachableUniverse_ptr =
         &stdair::FacBom<ReachableUniverse>::instance().create (lKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (lBomRoot, *lReachableUniverse_ptr);
-      stdair::FacBomManager::
-        instance().linkWithParent (lBomRoot, *lReachableUniverse_ptr);
+
+      //
+      stdair::FacBomManager::instance().
+        addToListAndMap (lBomRoot, *lReachableUniverse_ptr);
+      stdair::FacBomManager::instance().
+        linkWithParent (lBomRoot, *lReachableUniverse_ptr);
     }
     assert (lReachableUniverse_ptr != NULL);
+
+    //
     createSinglePath (*lReachableUniverse_ptr, ioSegmentPeriod);
   }
 
@@ -102,21 +117,25 @@ namespace AIRSCHED {
   void SegmentPathGenerator::
   createSinglePath (ReachableUniverse& ioReachableUniverse,
                     stdair::SegmentPeriod& ioSegmentPeriod) {
-    const stdair::AirportCode_T& lDestination = ioSegmentPeriod.getOffPoint ();
 
-    // Retrieve the origin-destination set (if existed) which corresponds
+    const stdair::AirportCode_T& lDestination = ioSegmentPeriod.getOffPoint();
+
+    // Retrieve the origin-destination set (if existing) which corresponds
     // to the destination. If it does not exist, then create one.
     OriginDestinationSet* lOriginDestinationSet_ptr =
       stdair::BomManager::getObjectPtr<OriginDestinationSet>(ioReachableUniverse,
                                                              lDestination);
     if (lOriginDestinationSet_ptr == NULL) {
       OriginDestinationSetKey lKey (lDestination);
+
       lOriginDestinationSet_ptr =
         &stdair::FacBom<OriginDestinationSet>::instance().create (lKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioReachableUniverse,
-                                              *lOriginDestinationSet_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioReachableUniverse,
-                                             *lOriginDestinationSet_ptr);
+
+      //
+      stdair::FacBomManager::instance().
+        addToListAndMap (ioReachableUniverse, *lOriginDestinationSet_ptr);
+      stdair::FacBomManager::instance().
+        linkWithParent (ioReachableUniverse, *lOriginDestinationSet_ptr);
     }
     assert (lOriginDestinationSet_ptr != NULL);
     
@@ -125,38 +144,90 @@ namespace AIRSCHED {
     const stdair::FlightPeriod& lFlightPeriod =
       stdair::BomManager::getParent<stdair::FlightPeriod> (ioSegmentPeriod);
     const stdair::PeriodStruct& lPeriodOfFlight = lFlightPeriod.getPeriod();
+
     // The departure period of the segment is the departure period of
     // the flight plus the boarding date offset of the segment.
     const stdair::DateOffset_T& lBoardingDateOffset = 
       ioSegmentPeriod.getBoardingDateOffset();
+
     const stdair::PeriodStruct lPeriodOfSegment =
       lPeriodOfFlight.addDateOffset (lBoardingDateOffset);
+
     const stdair::Duration_T& lBoardingTime = ioSegmentPeriod.getBoardingTime();
     const stdair::Duration_T& lElapsed = ioSegmentPeriod.getElapsedTime();
+
     DateOffsetList_T lDateOffsetList;
     const stdair::DateOffset_T lFirstDateOffset (0);
     lDateOffsetList.push_back (lFirstDateOffset);
+
     const SegmentPathPeriodKey lSegmentPathKey (lPeriodOfSegment,
                                                 lBoardingTime, lElapsed,
                                                 lDateOffsetList, 1);
+
     SegmentPathPeriod& lSegmentPathPeriod =
       stdair::FacBom<SegmentPathPeriod>::instance().create (lSegmentPathKey);
-    stdair::FacBomManager::
-      instance().addToList (*lOriginDestinationSet_ptr, lSegmentPathPeriod);
-    stdair::FacBomManager::
-      instance().linkWithParent (*lOriginDestinationSet_ptr, lSegmentPathPeriod);
-    stdair::FacBomManager::
-      instance().addToList (lSegmentPathPeriod, ioSegmentPeriod);
-    ioReachableUniverse.addSegmentPathPeriod (lSegmentPathPeriod);
+
+    /**
+     * stdair::FacBomManager is not used below, because the ReachableUniverse
+     * holds a vector/list of lists, instead of a mere list (as all the BOM
+     * objects do, and as, therefore, stdair::FacBomManager knows how
+     * to handle).
+     */
+    addSegmentPathPeriod (ioReachableUniverse, lSegmentPathPeriod);
+
+    // Link the SegmentPathPeriod object with its parent, namely
+    // OriginDestinationSet
+    stdair::FacBomManager::instance().addToList (*lOriginDestinationSet_ptr,
+                                                 lSegmentPathPeriod);
+    stdair::FacBomManager::instance().linkWithParent (*lOriginDestinationSet_ptr,
+                                                      lSegmentPathPeriod);
+
+    // Link the SegmentPathPeriod and SegmentPeriod objects. Note that
+    // the SegmentPeriod object has already a parent, namely FlightPeriod.
+    stdair::FacBomManager::instance().addToList (lSegmentPathPeriod,
+                                                 ioSegmentPeriod);
   }
 
   // ////////////////////////////////////////////////////////////////////
   void SegmentPathGenerator::
+  addSegmentPathPeriod (ReachableUniverse& ioReachableUniverse,
+                        const SegmentPathPeriod& iSegmentPathPeriod) {
+
+    const stdair::NbOfSegments_T& lNbOfSegments =
+      iSegmentPathPeriod.getNbOfSegments();
+
+    assert (lNbOfSegments > 0
+            && lNbOfSegments <= stdair::MAXIMAL_NUMBER_OF_SEGMENTS_IN_OND);
+
+    // If needed, initialise the list of lists with empty fixed-length
+    // segment path period lists.
+    
+    SegmentPathPeriodListList_T& lSegmentPathPeriodListList =
+      ioReachableUniverse._segmentPathPeriodListList;
+    while (lSegmentPathPeriodListList.size() < lNbOfSegments) {
+      SegmentPathPeriodLightList_T lSegmentPathPeriodList;
+      lSegmentPathPeriodListList.push_back (lSegmentPathPeriodList);
+    }
+
+    // Retrieve the i-fixed-length segment path period list (i = number of
+    // segments).
+    SegmentPathPeriodLightList_T& lSegmentPathPeriodList =
+      lSegmentPathPeriodListList.at (lNbOfSegments-1);
+
+    // Add the SegmentPathPeriod to that fixed-length-path list.
+    lSegmentPathPeriodList.push_back (&iSegmentPathPeriod);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SegmentPathGenerator::
   buildSegmentPathNetwork (const stdair::BomRoot& iBomRoot,
                            const stdair::NbOfSegments_T& lNbOfSegments) {
-    // Browse the reachable-universe list and create the i-fixed-length
-    // segment path period objects corresponding to the boarding point of
-    // the current reachable-universe object.
+
+    /**
+     * Browse the reachable-universe list and create the i-fixed-length
+     * segment path period objects corresponding to the boarding point of
+     * the current reachable-universe object.
+     */
     const ReachableUniverseList_T& lReachableUniverseList =
       stdair::BomManager::getList<ReachableUniverse> (iBomRoot);
     for (ReachableUniverseList_T::const_iterator itReachableUniverse =
@@ -165,6 +236,8 @@ namespace AIRSCHED {
          ++itReachableUniverse) {
       ReachableUniverse* lReachableUniverse_ptr = *itReachableUniverse;
       assert (lReachableUniverse_ptr != NULL);
+
+      //
       buildSegmentPathNetwork (*lReachableUniverse_ptr, lNbOfSegments);
     }
   }
@@ -324,21 +397,23 @@ namespace AIRSCHED {
           OriginDestinationSetKey lKey (lDestination_i);
           lOriginDestinationSet_ptr = 
             &stdair::FacBom<OriginDestinationSet>::instance().create (lKey);
-          stdair::FacBomManager::instance().addToListAndMap (ioReachableUniverse,
-                                                  *lOriginDestinationSet_ptr);
-          stdair::FacBomManager::instance().linkWithParent (ioReachableUniverse,
-                                                 *lOriginDestinationSet_ptr);
+
+          //
+          stdair::FacBomManager::instance().
+            addToListAndMap (ioReachableUniverse, *lOriginDestinationSet_ptr);
+          stdair::FacBomManager::instance().
+            linkWithParent (ioReachableUniverse, *lOriginDestinationSet_ptr);
         }
         assert (lOriginDestinationSet_ptr != NULL);
         
         
         SegmentPathPeriod& lSegmentPathPeriod_i = stdair::
           FacBom<SegmentPathPeriod>::instance().create (lSegmentPathPeriodKey_i);
-        stdair::FacBomManager::instance().addToList (*lOriginDestinationSet_ptr,
-                                                     lSegmentPathPeriod_i);
-        stdair::FacBomManager::
-          instance().linkWithParent (*lOriginDestinationSet_ptr,
-                                     lSegmentPathPeriod_i);
+        //
+        stdair::FacBomManager::instance().
+          addToList (*lOriginDestinationSet_ptr, lSegmentPathPeriod_i);
+        stdair::FacBomManager::instance().
+          linkWithParent (*lOriginDestinationSet_ptr, lSegmentPathPeriod_i);
 
         // Clone the list of SegmentPeriod references of the given
         // SegmentPathPeriod object (passed as the second parameter).
@@ -355,8 +430,14 @@ namespace AIRSCHED {
         stdair::FacBomManager::instance().addToList (lSegmentPathPeriod_i,
                                                      *lSegmentPeriod_1_ptr);
         
-        // Link the SegmentPathPeriod to the ReachableUniverse
-        ioReachableUniverse.addSegmentPathPeriod (lSegmentPathPeriod_i);
+        /**
+         * Link the SegmentPathPeriod to the ReachableUniverse.
+         * stdair::FacBomManager is not used below, because the ReachableUniverse
+         * holds a vector/list of lists, instead of a mere list (as all the BOM
+         * objects do, and as, therefore, stdair::FacBomManager knows how
+         * to handle).
+         */
+        addSegmentPathPeriod (ioReachableUniverse, lSegmentPathPeriod_i);
       }
      }
   }

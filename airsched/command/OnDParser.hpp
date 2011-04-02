@@ -10,19 +10,24 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/command/CmdAbstract.hpp>
   
-// Forward declarations
+/// Forward declarations
 namespace stdair {
   class BomRoot;
 }
 
 namespace AIRSCHED {
 
-  /** Class wrapping the parser entry point. */
+  /**
+   * @brief Class wrapping the parser entry point.
+   */
   class OnDParser : public stdair::CmdAbstract {
   public:
-    /** Parse the CSV file describing the O&D.
-        @param const std::string& The file-name of the CSV-formatted fare
-        input file and the container. */
+    /**
+     * Parse the CSV file describing the O&D.
+     *
+     * @param const std::string& The file-name of the CSV-formatted fare
+     *        input file and the container.
+     */
     static void generateOnDPeriods (const stdair::Filename_T&,
                                     stdair::BomRoot&);
   };

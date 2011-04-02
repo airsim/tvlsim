@@ -20,7 +20,9 @@
 
 namespace AIRSCHED {
 
-  /** Utility Structure for the parsing of Flight-Period structures. */
+  /**
+   * Utility Structure for the parsing of Flight-Period structures.
+   */
   struct FlightPeriodStruct : public stdair::StructAbstract {
     
     /** Set the date from the staging details. */
@@ -37,7 +39,7 @@ namespace AIRSCHED {
     void addAirport (const stdair::AirportCode_T&);
 
     /** Build the list of SegmentStruct objects. */
-    void buildSegments ();
+    void buildSegments();
       
     /** Add, to the Segment structure whose key corresponds to the
         given (board point, off point) pair, the specific segment cabin
@@ -73,8 +75,10 @@ namespace AIRSCHED {
     void addFareFamily (const SegmentCabinStruct&,
                         const FareFamilyStruct&);
       
-    /** Constructor. */
-    FlightPeriodStruct ();
+    /**
+     * Constructor.
+     */
+    FlightPeriodStruct();
 
     // Attributes
     stdair::AirlineCode_T _airlineCode;
