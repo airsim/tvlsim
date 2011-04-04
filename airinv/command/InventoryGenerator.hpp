@@ -60,9 +60,9 @@ namespace AIRINV {
     /**
      * Generate a flight-date.
      */
-    static stdair::FlightDate& createFlightDate (stdair::Inventory&,
-                                                 const stdair::Date_T&,
-                                                 const FlightPeriodStruct&);
+    static void createFlightDate (stdair::Inventory&,
+                                  const stdair::Date_T&,
+                                  const FlightPeriodStruct&);
       
     /**
      * Generate a leg-date.
@@ -105,14 +105,6 @@ namespace AIRINV {
     static void createClass (stdair::FareFamily&, 
                              const stdair::ClassCode_T&);
 
-    /**
-     * Create the list of previous built similar flights, e.g.,
-     * flights departed at the same week day before.
-     */
-    static void createSimilarFlightDateList (const stdair::FlightDate&,
-                                             const stdair::Inventory&,
-                                             const stdair::Date_T&,
-                                             const stdair::Date_T&);
   };
 
 }

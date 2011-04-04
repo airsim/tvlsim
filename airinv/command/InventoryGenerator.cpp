@@ -41,10 +41,8 @@ namespace AIRINV {
       stdair::InventoryKey lKey (lAirlineCode);
       lInventory_ptr =
         &stdair::FacBom<stdair::Inventory>::instance().create (lKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (ioBomRoot, *lInventory_ptr);
-      stdair::FacBomManager::
-        instance().linkWithParent (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::addToListAndMap (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::linkWithParent (ioBomRoot, *lInventory_ptr);
     }
     assert (lInventory_ptr != NULL);
     
@@ -66,20 +64,13 @@ namespace AIRINV {
       const bool isDoWActive = lDoWList.getStandardDayOfWeek (currentDoW);
 
       if (isDoWActive == true) {
-        stdair::FlightDate& lFlightDate = createFlightDate (*lInventory_ptr,
-                                                            currentDate,
-                                                            iFlightPeriod);
-        
-        // Create the list of references on previous built similar flight dates
-        const stdair::Date_T& lStartDateRange = lDateRange.begin();
-        createSimilarFlightDateList (lFlightDate, *lInventory_ptr, currentDate,
-                                     lStartDateRange);
+        createFlightDate (*lInventory_ptr, currentDate, iFlightPeriod);
       }
     }
   }
   
   // ////////////////////////////////////////////////////////////////////
-  stdair::FlightDate& InventoryGenerator::
+  void InventoryGenerator::
   createFlightDate (stdair::Inventory& ioInventory,
                     const stdair::Date_T& iFlightDate,
                     const FlightPeriodStruct& iFlightPeriod) {
@@ -107,10 +98,8 @@ namespace AIRINV {
     // flight date)
     lFlightDate_ptr =
       &stdair::FacBom<stdair::FlightDate>::instance().create (lFlightDateKey);
-    stdair::FacBomManager::
-      instance().addToListAndMap (ioInventory, *lFlightDate_ptr);
-    stdair::FacBomManager::
-      instance().linkWithParent (ioInventory, *lFlightDate_ptr);
+    stdair::FacBomManager::addToListAndMap (ioInventory, *lFlightDate_ptr);
+    stdair::FacBomManager::linkWithParent (ioInventory, *lFlightDate_ptr);
       
     // Iterate on the leg-dates
     stdair::Duration_T currentOffTime (0, 0, 0);
@@ -153,9 +142,6 @@ namespace AIRINV {
 
       createSegmentDate (*lFlightDate_ptr, lSegment);
     }
-    assert (lFlightDate_ptr != NULL);
-
-    return *lFlightDate_ptr;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -167,8 +153,8 @@ namespace AIRINV {
     stdair::LegDateKey lKey (iLeg._boardingPoint);
     stdair::LegDate& lLegDate =
       stdair::FacBom<stdair::LegDate>::instance().create (lKey);
-    stdair::FacBomManager::instance().addToListAndMap (ioFlightDate, lLegDate);
-    stdair::FacBomManager::instance().linkWithParent (ioFlightDate, lLegDate);
+    stdair::FacBomManager::addToListAndMap (ioFlightDate, lLegDate);
+    stdair::FacBomManager::linkWithParent (ioFlightDate, lLegDate);
 
     // Set the leg-date attributes
     iLeg.fill (iReferenceDate, lLegDate);
@@ -194,8 +180,8 @@ namespace AIRINV {
     const stdair::LegCabinKey lKey (iCabin._cabinCode);
     stdair::LegCabin& lLegCabin =
       stdair::FacBom<stdair::LegCabin>::instance().create (lKey);
-    stdair::FacBomManager::instance().addToListAndMap (ioLegDate, lLegCabin);
-    stdair::FacBomManager::instance().linkWithParent (ioLegDate, lLegCabin);
+    stdair::FacBomManager::addToListAndMap (ioLegDate, lLegCabin);
+    stdair::FacBomManager::linkWithParent (ioLegDate, lLegCabin);
 
     // Set the Leg-Cabin attributes
     iCabin.fill (lLegCabin);
@@ -218,8 +204,8 @@ namespace AIRINV {
     const stdair::BucketKey lKey (iBucket._seatIndex);
     stdair::Bucket& lBucket =
       stdair::FacBom<stdair::Bucket>::instance().create (lKey);
-    stdair::FacBomManager::instance().addToListAndMap (ioLegCabin, lBucket);
-    stdair::FacBomManager::instance().linkWithParent (ioLegCabin, lBucket);
+    stdair::FacBomManager::addToListAndMap (ioLegCabin, lBucket);
+    stdair::FacBomManager::linkWithParent (ioLegCabin, lBucket);
 
     // Set the Bucket attributes
     iBucket.fill (lBucket);
@@ -236,10 +222,8 @@ namespace AIRINV {
     // Instantiate an segment-date object with the key.
     stdair::SegmentDate& lSegmentDate =
       stdair::FacBom<stdair::SegmentDate>::instance().create (lSegmentDateKey);
-    stdair::FacBomManager::
-      instance().addToListAndMap (ioFlightDate, lSegmentDate);
-     stdair::FacBomManager::
-      instance().linkWithParent (ioFlightDate, lSegmentDate);
+    stdair::FacBomManager::addToListAndMap (ioFlightDate, lSegmentDate);
+    stdair::FacBomManager::linkWithParent (ioFlightDate, lSegmentDate);
     
     // Set the segment-date attributes
     iSegment.fill (lSegmentDate);
@@ -266,10 +250,8 @@ namespace AIRINV {
       stdair::FacBom<stdair::SegmentCabin>::instance().create (lKey);
 
     // Link the segment-cabin to its parent, the segment-date
-    stdair::FacBomManager::instance().addToListAndMap (ioSegmentDate,
-                                                       lSegmentCabin);
-    stdair::FacBomManager::instance().linkWithParent (ioSegmentDate,
-                                                      lSegmentCabin);
+    stdair::FacBomManager::addToListAndMap (ioSegmentDate, lSegmentCabin);
+    stdair::FacBomManager::linkWithParent (ioSegmentDate, lSegmentCabin);
     
     // Set the segment-cabin attributes
     iCabin.fill (lSegmentCabin);
@@ -295,9 +277,9 @@ namespace AIRINV {
       stdair::FacBom<stdair::FareFamily>::instance().create (lKey);
 
     // Link the fare family to its parent, the segment-cabin
-    stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,
+    stdair::FacBomManager::addToListAndMap (ioSegmentCabin,
                                                        lFareFamily);
-    stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,
+    stdair::FacBomManager::linkWithParent (ioSegmentCabin,
                                                       lFareFamily);
     
     // Set the fare family attributes
@@ -327,42 +309,17 @@ namespace AIRINV {
       stdair::FacBom<stdair::BookingClass>::instance().create (lClassKey);
 
     // Link the booking-class to the fare family
-    stdair::FacBomManager::instance().addToListAndMap (ioFareFamily, lClass);
-    stdair::FacBomManager::instance().linkWithParent (ioFareFamily, lClass);
+    stdair::FacBomManager::addToListAndMap (ioFareFamily, lClass);
+    stdair::FacBomManager::linkWithParent (ioFareFamily, lClass);
 
     // Link the booking-class to the segment-cabin
     stdair::SegmentCabin& lSegmentCabin =
       stdair::BomManager::getParent<stdair::SegmentCabin> (ioFareFamily);
-    stdair::FacBomManager::instance().addToListAndMap (lSegmentCabin, lClass);
+    stdair::FacBomManager::addToListAndMap (lSegmentCabin, lClass);
 
     // Link the booking-class to the segment-date
     stdair::SegmentDate& lSegmentDate =
       stdair::BomManager::getParent<stdair::SegmentDate> (lSegmentCabin);
-    stdair::FacBomManager::instance().addToListAndMap (lSegmentDate, lClass);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void InventoryGenerator::
-  createSimilarFlightDateList (const stdair::FlightDate& iFlightDate,
-                               const stdair::Inventory& iInventory,
-                               const stdair::Date_T& iCurrentDate,
-                               const stdair::Date_T& iStartDateRange) {
-
-    // const stdair::FlightNumber_T& lFlightNumber = iFlightDate.getFlightNumber();
-    // const stdair::DateOffset_T lWeek(7);
-    // stdair::Date_T lSimilarDate = iCurrentDate - lWeek;
-    
-    // while (!(iStartDateRange > lSimilarDate)) {
-    //   const stdair::FlightDateKey lFlightDateKey (lFlightNumber, lSimilarDate);
-    //   stdair::FlightDate* lFlightDate_ptr = 
-    //     iInventory.getFlightDate (lFlightDateKey);
-      
-    //   if (lFlightDate_ptr != NULL) {
-    //     // Link the Flight-Date and the similar flight date
-    //     // stdair::FacBomContent::linkSimilarFlightDates (iFlightDate, 
-    //     // *lFlightDate_ptr);
-    //   }
-    //   lSimilarDate = lSimilarDate - lWeek;
-    // }
+    stdair::FacBomManager::addToListAndMap (lSegmentDate, lClass);
   }
 }

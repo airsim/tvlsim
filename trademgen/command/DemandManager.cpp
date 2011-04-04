@@ -206,11 +206,11 @@ namespace TRADEMGEN {
                           iDefaultPOSProbablityMass);
 
     // Link the DemandStream to its parent (EventQueue)
-    stdair::FacBomManager::instance().linkWithParent (ioEventQueue,
+    stdair::FacBomManager::linkWithParent (ioEventQueue,
                                                       oDemandStream);
     
     // Add the DemandStream to the dedicated list and map
-    stdair::FacBomManager::instance().addToListAndMap (ioEventQueue,
+    stdair::FacBomManager::addToListAndMap (ioEventQueue,
                                                        oDemandStream);
 
     return oDemandStream;

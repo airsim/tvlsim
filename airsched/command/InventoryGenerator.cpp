@@ -37,10 +37,8 @@ namespace AIRSCHED {
       stdair::InventoryKey lKey (lAirlineCode);
       lInventory_ptr =
         &stdair::FacBom<stdair::Inventory>::instance().create (lKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (ioBomRoot, *lInventory_ptr);
-      stdair::FacBomManager::
-        instance().linkWithParent (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::addToListAndMap (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::linkWithParent (ioBomRoot, *lInventory_ptr);
     }
     assert (lInventory_ptr != NULL);
 
@@ -62,10 +60,8 @@ namespace AIRSCHED {
     // Instantiate a flight-period object with the given key.
     lFlightPeriod_ptr = &stdair::FacBom<stdair::FlightPeriod>::
       instance().create (lFlightPeriodKey);
-    stdair::FacBomManager::
-      instance().addToListAndMap (*lInventory_ptr, *lFlightPeriod_ptr);
-    stdair::FacBomManager::
-      instance().linkWithParent (*lInventory_ptr, *lFlightPeriod_ptr);
+    stdair::FacBomManager::addToListAndMap (*lInventory_ptr, *lFlightPeriod_ptr);
+    stdair::FacBomManager::linkWithParent (*lInventory_ptr, *lFlightPeriod_ptr);
     
     // Create the segment-periods.
     createSegmentPeriods (*lFlightPeriod_ptr, iFlightPeriodStruct);
@@ -88,10 +84,8 @@ namespace AIRSCHED {
       // Instantiate a segment-perioed with the key.
       stdair::SegmentPeriod& lSegmentPeriod = stdair::
         FacBom<stdair::SegmentPeriod>::instance().create (lSegmentPeriodKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (ioFlightPeriod, lSegmentPeriod);
-      stdair::FacBomManager::
-        instance().linkWithParent (ioFlightPeriod, lSegmentPeriod);
+      stdair::FacBomManager::addToListAndMap (ioFlightPeriod, lSegmentPeriod);
+      stdair::FacBomManager::linkWithParent (ioFlightPeriod, lSegmentPeriod);
       
       // Set the segment-period attributes.
       SegmentPeriodHelper::fill (lSegmentPeriod, lSegment);
