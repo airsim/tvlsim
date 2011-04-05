@@ -40,10 +40,8 @@ namespace SIMFQT {
     if (lAirportPair_ptr == NULL) {
       lAirportPair_ptr =
         &stdair::FacBom<stdair::AirportPair>::instance().create (lAirportPairKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (ioBomRoot, *lAirportPair_ptr);
-      stdair::FacBomManager::
-      instance().linkWithParent (ioBomRoot, *lAirportPair_ptr);
+      stdair::FacBomManager::addToListAndMap (ioBomRoot, *lAirportPair_ptr);
+      stdair::FacBomManager::linkWithParent (ioBomRoot, *lAirportPair_ptr);
     }
     assert (lAirportPair_ptr != NULL);    
 
@@ -64,9 +62,9 @@ namespace SIMFQT {
       lFarePosChannel_ptr =
         &stdair::FacBom<stdair::PosChannel>::instance().create (lFarePosChannelKey);
       stdair::FacBomManager::
-	instance().addToListAndMap (*lAirportPair_ptr, *lFarePosChannel_ptr);
+        addToListAndMap (*lAirportPair_ptr, *lFarePosChannel_ptr);
       stdair::FacBomManager::
-	instance().linkWithParent (*lAirportPair_ptr, *lFarePosChannel_ptr);
+	linkWithParent (*lAirportPair_ptr, *lFarePosChannel_ptr);
     }
     assert (lFarePosChannel_ptr != NULL);   
 
@@ -87,9 +85,9 @@ namespace SIMFQT {
       lFareDatePeriod_ptr =
         &stdair::FacBom<stdair::DatePeriod>::instance().create (lFareDatePeriodKey);
       stdair::FacBomManager::
-        instance().addToListAndMap (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
+        addToListAndMap (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
       stdair::FacBomManager::
-      instance().linkWithParent (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
+        linkWithParent (*lFarePosChannel_ptr, *lFareDatePeriod_ptr);
     }
     assert (lFareDatePeriod_ptr != NULL);
    
@@ -110,9 +108,9 @@ namespace SIMFQT {
       lFareTimePeriod_ptr =
         &stdair::FacBom<stdair::TimePeriod>::instance().create (lFareTimePeriodKey);
       stdair::FacBomManager::
-        instance().addToListAndMap (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
+        addToListAndMap (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
       stdair::FacBomManager::
-      instance().linkWithParent (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
+        linkWithParent (*lFareDatePeriod_ptr, *lFareTimePeriod_ptr);
     }
     assert (lFareTimePeriod_ptr != NULL);
 
@@ -142,9 +140,9 @@ namespace SIMFQT {
 	&stdair::FacBom<stdair::FareFeatures>::instance().create (lFareFeaturesKey);
       assert(lFareFeatures_ptr != NULL); 
       stdair::FacBomManager::
-	instance().addToListAndMap (*lFareTimePeriod_ptr, *lFareFeatures_ptr);
+	addToListAndMap (*lFareTimePeriod_ptr, *lFareRuleFeatures_ptr);
       stdair::FacBomManager::
-	instance().linkWithParent (*lFareTimePeriod_ptr, *lFareFeatures_ptr);  
+	linkWithParent (*lFareTimePeriod_ptr, *lFareRuleFeatures_ptr);  
     }
     assert(lFareFeatures_ptr != NULL); 
 
@@ -160,9 +158,9 @@ namespace SIMFQT {
     stdair::AirlineClassList* lAirlineClassList_ptr =
       &stdair::FacBom<stdair::AirlineClassList>::instance().create (lAirlineClassListKey);
     stdair::FacBomManager::
-      instance().addToListAndMap (*lFareFeatures_ptr, *lAirlineClassList_ptr); 
+      addToListAndMap (*lFareRuleFeatures_ptr, *lAirlineClassList_ptr); 
     stdair::FacBomManager::
-      instance().linkWithParent(*lFareFeatures_ptr, *lAirlineClassList_ptr); 
+      linkWithParent(*lFareRuleFeatures_ptr, *lAirlineClassList_ptr); 
   }
         
 }

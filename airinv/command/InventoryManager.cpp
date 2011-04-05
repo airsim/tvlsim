@@ -213,10 +213,10 @@ namespace AIRINV {
           getObject<stdair::LegDate> (ioFlightDate, currentBoardingPoint);
 
         // Link the SegmentDate and LegDate together
-        stdair::FacBomManager::
-          instance().addToListAndMap (*lCurrentSegmentDate_ptr, lLegDate);
-        stdair::FacBomManager::
-          instance().addToListAndMap (lLegDate, *lCurrentSegmentDate_ptr);
+        stdair::FacBomManager::addToListAndMap (*lCurrentSegmentDate_ptr,
+                                                lLegDate);
+        stdair::FacBomManager::addToListAndMap (lLegDate,
+                                                *lCurrentSegmentDate_ptr);
 
         // Prepare the next iteration
         currentBoardingPoint = lLegDate.getOffPoint();
@@ -276,9 +276,9 @@ namespace AIRINV {
          * Hence, the leg-cabins must be differentiated according to their
          * boarding point as well.
          */
-        stdair::FacBomManager::
-          instance().addToListAndMap (*lCurrentSegmentCabin_ptr,
-                                      lLegCabin, lLegCabin.getFullerKey());
+        stdair::FacBomManager::addToListAndMap (*lCurrentSegmentCabin_ptr,
+                                                lLegCabin,
+                                                lLegCabin.getFullerKey());
 
         /**
          * Add the segment-cabin to the list which the leg-cabin crosses.
@@ -291,8 +291,8 @@ namespace AIRINV {
          * boarding and off points as well.
          */
         stdair::FacBomManager::
-          instance().addToListAndMap (lLegCabin, *lCurrentSegmentCabin_ptr,
-                                      lCurrentSegmentCabin_ptr->getFullerKey());
+          addToListAndMap (lLegCabin, *lCurrentSegmentCabin_ptr,
+                           lCurrentSegmentCabin_ptr->getFullerKey());
       }      
     }
   }
@@ -376,8 +376,7 @@ namespace AIRINV {
     const stdair::GuillotineBlockKey lKey (iGuillotineNumber);
     stdair::GuillotineBlock& lGuillotineBlock =
       stdair::FacBom<stdair::GuillotineBlock>::instance().create (lKey);
-    stdair::FacBomManager::
-      instance().addToListAndMap (ioInventory, lGuillotineBlock);
+    stdair::FacBomManager::addToListAndMap (ioInventory, lGuillotineBlock);
 
     // Build the value type index map.
     DepartureDateFlightDateMap_T::const_iterator itDDFD = iDDFDMap.begin();

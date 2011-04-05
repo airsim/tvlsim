@@ -43,10 +43,8 @@ namespace AIRINV {
       stdair::InventoryKey lKey (lAirlineCode);
       lInventory_ptr =
         &stdair::FacBom<stdair::Inventory>::instance().create (lKey);
-      stdair::FacBomManager::
-        instance().addToListAndMap (ioBomRoot, *lInventory_ptr);
-      stdair::FacBomManager::
-        instance().linkWithParent (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::addToListAndMap (ioBomRoot, *lInventory_ptr);
+      stdair::FacBomManager::linkWithParent (ioBomRoot, *lInventory_ptr);
     }
     assert (lInventory_ptr != NULL);
 
@@ -72,10 +70,8 @@ namespace AIRINV {
       // flight date)
       lFlightDate_ptr =
         &stdair::FacBom<stdair::FlightDate>::instance().create (lFlightDateKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioInventory, 
-                                                         *lFlightDate_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioInventory, 
-                                                        *lFlightDate_ptr);
+      stdair::FacBomManager::addToListAndMap (ioInventory, *lFlightDate_ptr);
+      stdair::FacBomManager::linkWithParent (ioInventory, *lFlightDate_ptr);
     }
     assert (lFlightDate_ptr != NULL);
 
@@ -113,10 +109,8 @@ namespace AIRINV {
       // Instantiate a leg-date object for the given key (boarding point);
       stdair::LegDateKey lKey (iLegDateStruct._boardingPoint);
       lLegDate_ptr = &stdair::FacBom<stdair::LegDate>::instance().create (lKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioFlightDate, 
-                                                         *lLegDate_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioFlightDate, 
-                                                        *lLegDate_ptr);
+      stdair::FacBomManager::addToListAndMap (ioFlightDate, *lLegDate_ptr);
+      stdair::FacBomManager::linkWithParent (ioFlightDate, *lLegDate_ptr);
     }
     assert (lLegDate_ptr != NULL);
 
@@ -145,10 +139,8 @@ namespace AIRINV {
       // Instantiate a leg-cabin object for the given key (cabin code);
       stdair::LegCabinKey lKey (iLegCabinStruct._cabinCode);
       lLegCabin_ptr = &stdair::FacBom<stdair::LegCabin>::instance().create(lKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioLegDate, 
-                                                         *lLegCabin_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioLegDate, 
-                                                        *lLegCabin_ptr);
+      stdair::FacBomManager::addToListAndMap (ioLegDate, *lLegCabin_ptr);
+      stdair::FacBomManager::linkWithParent (ioLegDate, *lLegCabin_ptr);
     }
     assert (lLegCabin_ptr != NULL);
 
@@ -180,10 +172,8 @@ namespace AIRINV {
       // Instantiate a bucket object for the given key (seat index);
       stdair::BucketKey lKey (iBucketStruct._seatIndex);
       lBucket_ptr = &stdair::FacBom<stdair::Bucket>::instance().create (lKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioLegCabin,
-                                                         *lBucket_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioLegCabin, 
-                                                        *lBucket_ptr);
+      stdair::FacBomManager::addToListAndMap (ioLegCabin, *lBucket_ptr);
+      stdair::FacBomManager::linkWithParent (ioLegCabin, *lBucket_ptr);
     }
     assert (lBucket_ptr != NULL);
 
@@ -208,10 +198,8 @@ namespace AIRINV {
       // and off points);
       lSegmentDate_ptr =  &stdair::FacBom<stdair::SegmentDate>::
         instance().create (lSegmentDateKey);
-      stdair::FacBomManager::instance().addToListAndMap (ioFlightDate, 
-                                                         *lSegmentDate_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioFlightDate,
-                                                        *lSegmentDate_ptr);
+      stdair::FacBomManager::addToListAndMap (ioFlightDate, *lSegmentDate_ptr);
+      stdair::FacBomManager::linkWithParent (ioFlightDate, *lSegmentDate_ptr);
     }
     assert (lSegmentDate_ptr != NULL);
 
@@ -246,10 +234,8 @@ namespace AIRINV {
         &stdair::FacBom<stdair::SegmentCabin>::instance().create (lKey);
 
       // Link the segment-cabin to the segment-date
-      stdair::FacBomManager::instance().addToListAndMap (ioSegmentDate, 
-                                                         *lSegmentCabin_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioSegmentDate, 
-                                                        *lSegmentCabin_ptr);
+      stdair::FacBomManager::addToListAndMap (ioSegmentDate, *lSegmentCabin_ptr);
+      stdair::FacBomManager::linkWithParent (ioSegmentDate, *lSegmentCabin_ptr);
     }
     assert (lSegmentCabin_ptr != NULL);
 
@@ -285,10 +271,8 @@ namespace AIRINV {
         &stdair::FacBom<stdair::FareFamily>::instance().create (lFFKey);
 
       // Link the fare family to the segment-cabin
-      stdair::FacBomManager::instance().addToListAndMap (ioSegmentCabin,
-                                                         *lFareFamily_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioSegmentCabin,
-                                                        *lFareFamily_ptr);
+      stdair::FacBomManager::addToListAndMap (ioSegmentCabin, *lFareFamily_ptr);
+      stdair::FacBomManager::linkWithParent (ioSegmentCabin, *lFareFamily_ptr);
     }
     assert (lFareFamily_ptr != NULL);
 
@@ -324,22 +308,18 @@ namespace AIRINV {
         &stdair::FacBom<stdair::BookingClass>::instance().create (lClassKey);
 
       // Link the booking-class to the fare family
-      stdair::FacBomManager::instance().addToListAndMap (ioFareFamily,
-                                                         *lBookingClass_ptr);
-      stdair::FacBomManager::instance().linkWithParent (ioFareFamily,
-                                                        *lBookingClass_ptr);
+      stdair::FacBomManager::addToListAndMap (ioFareFamily, *lBookingClass_ptr);
+      stdair::FacBomManager::linkWithParent (ioFareFamily, *lBookingClass_ptr);
 
       // Link the booking-class to the segment-cabin
       stdair::SegmentCabin& lSegmentCabin =
         stdair::BomManager::getParent<stdair::SegmentCabin> (ioFareFamily);
-      stdair::FacBomManager::instance().addToListAndMap (lSegmentCabin,
-                                                         *lBookingClass_ptr);
+      stdair::FacBomManager::addToListAndMap (lSegmentCabin, *lBookingClass_ptr);
 
       // Link the booking-class to the segment-date
       stdair::SegmentDate& lSegmentDate =
         stdair::BomManager::getParent<stdair::SegmentDate> (lSegmentCabin);
-      stdair::FacBomManager::instance().addToListAndMap (lSegmentDate,
-                                                         *lBookingClass_ptr);
+      stdair::FacBomManager::addToListAndMap (lSegmentDate, *lBookingClass_ptr);
     }
     assert (lBookingClass_ptr != NULL);
 
