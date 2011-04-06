@@ -216,7 +216,6 @@ namespace SIMFQT {
 
   private:
     // /////// Construction and Destruction helper methods ///////
-    /**
 
 
   private:
