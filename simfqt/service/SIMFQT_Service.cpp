@@ -7,7 +7,6 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
-#include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
@@ -231,18 +230,6 @@ namespace SIMFQT {
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
   initSimfqtService (const stdair::Filename_T& iFareInputFilename) {
-
-    // Check that the file path given as input corresponds to an actual file
-    const bool doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iFareInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The fare input file, '" << iFareInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw FareInputFileNotFoundException ("The demand file '"
-                                            + iFareInputFilename
-                                            + "' does not exist or can not "
-                                            "be read");
-    }
 
     // Retrieve the SimFQT service context
     assert (_simfqtServiceContext != NULL);
