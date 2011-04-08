@@ -521,6 +521,8 @@ namespace SIMCRS {
     STDAIR_LOG_DEBUG ("Made a sell of " << iPartySize
                       << " persons on the following travel solution: "
                       << iTravelSolution.describe()
+		      << " with the chosen fare option: "
+		      << iTravelSolution.getChosenFareOption().describe()
                       << ". Successful? " << hasSaleBeenSuccessful);
       
     // DEBUG

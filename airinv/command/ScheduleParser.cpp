@@ -43,6 +43,10 @@ namespace AIRINV {
     // Build the similar flight-date sets and the corresponding guillotine
     // blocks.
     InventoryManager::buildSimilarFlightDateSets (ioBomRoot);
+
+    // To be removed once bid price computation is possible
+    InventoryManager::setDefaultBidPriceVectorAndYield (ioBomRoot);
+
   }
 
 }

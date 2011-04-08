@@ -265,8 +265,8 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       const stdair::EventStruct& lEventStruct = ioTrademgenService.popEvent();
       
       // DEBUG
-      STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
-                        << lEventStruct.describe() << "'.");
+      // STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
+      //                   << lEventStruct.describe() << "'.");
       
       // Extract the corresponding demand/booking request
       const stdair::BookingRequestStruct& lPoppedRequest =

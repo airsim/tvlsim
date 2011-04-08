@@ -3,6 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <exception>
+#include <algorithm> // To use min
 // StdAir
 #include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/basic/BasConst_BomDisplay.hpp>
@@ -23,6 +24,8 @@
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/factory/FacBom.hpp>
 #include <stdair/service/Logger.hpp>
+#include <stdair/bom/FareFamily.hpp> // Contains the definition of FareFamilyList_T
+#include <stdair/bom/BookingClass.hpp> //
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
 #include <airinv/bom/BomRootHelper.hpp>
@@ -48,12 +51,20 @@ namespace AIRINV {
         stdair::BomManager::getObject<stdair::Inventory>(iBomRoot,
                                                          lInvKey.toString());
 
-      InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
-                                              ioTravelSolution);
-    }
+      // InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
+      //                                         ioTravelSolution);
 
+
+      InventoryHelper::getYieldAndBidPrice (lInventory, lSegmentKey,
+      					    ioTravelSolution);
+    }
     // Compute the availabitliy for each fare option using the AU's.
-    calculateAvailabilityByAU (ioTravelSolution);
+    // calculateAvailabilityByAU (ioTravelSolution);
+
+
+    // Compute the availability for each fare option using IBP
+    calculateAvailabilityByBP (ioTravelSolution);
+
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -127,6 +138,163 @@ namespace AIRINV {
       
       lFO.setAvailability (lAvl);
     }
+  }
+
+  //MODIF
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::
+  calculateAvailabilityByBP (stdair::TravelSolutionStruct& ioTravelSolution) {
+    //Yield valuation coefficient for multi-segment travel solutions   
+    double alpha = 0.87;
+    std::ostringstream oStr;
+    const stdair::SegmentPath_T& lSP = ioTravelSolution.getSegmentPath();
+    for (stdair::SegmentPath_T::const_iterator itSP = lSP.begin();
+	 itSP != lSP.end(); itSP++) {
+      oStr << *itSP << ";";
+    }
+
+    //Retrieve bid price vector and yield maps
+    const stdair::ClassYieldMapHolder_T& lClassYieldMapHolder =
+      ioTravelSolution.getClassYieldMapHolder();
+    const stdair::ClassBpvMapHolder_T& lClassBpvMapHolder =
+      ioTravelSolution.getClassBpvMapHolder();
+
+    //Retrieve the list of fare options and browse it
+    stdair::FareOptionList_T& lFOList = ioTravelSolution.getFareOptionListRef();
+    for (stdair::FareOptionList_T::iterator itFO = lFOList.begin();
+	 itFO != lFOList.end(); ++itFO) {
+
+      stdair::FareOptionStruct& lFO = *itFO;
+  
+      stdair::ClassYieldMapHolder_T::const_iterator itCYM = lClassYieldMapHolder.begin();
+      stdair::ClassBpvMapHolder_T::const_iterator itCBPM = lClassBpvMapHolder.begin();
+
+      const stdair::ClassList_StringList_T& lClassPath = lFO.getClassPath();
+      //Sanity test
+      assert (lClassPath.size() == lClassYieldMapHolder.size() && lClassPath.size() ==
+	      lClassBpvMapHolder.size());
+
+      stdair::YieldValue_T lTotalYield = 0;
+      stdair::BidPrice_T lTotalBidPrice = 0;
+
+      //Browse class path, class-yield maps, class-(bid price vector) maps.
+      //Each iteration corresponds to one segment.
+      for(stdair::ClassList_StringList_T::const_iterator itCL = lClassPath.begin();
+	  itCL != lClassPath.end(); ++itCL, ++itCYM, ++itCBPM) {
+	const stdair::ClassList_String_T& lCL = *itCL;
+	stdair::ClassCode_T lCC;
+	lCC.append (lCL, 0, 1);
+	const stdair::ClassYieldMap_T& lCYM = *itCYM;
+	const stdair::ClassBpvMap_T& lCBPM = *itCBPM;
+	stdair::ClassYieldMap_T::const_iterator itCCCYM = lCYM.find (lCC);
+	assert (itCCCYM != lCYM.end());
+	stdair::YieldValue_T lYield = itCCCYM->second;
+	stdair::ClassBpvMap_T::const_iterator itCCCBPM = lCBPM.find (lCC);
+	assert (itCCCBPM != lCBPM.end());
+	const stdair::BidPriceVector_T& lBidPriceVector = itCCCBPM->second;
+	// std::cout << " Bid price vector size = " << lBidPriceVector.size() << std::endl;
+	
+	//Initialization of fare option availability
+	if (itCL == lClassPath.begin()) {
+	  lFO.setAvailability (lBidPriceVector.size());
+	}
+	// Availability update
+	if (lFO.getAvailability() > 0) {
+
+	  /*stdair::BidPriceVector_T::iterator low = std::lower_bound (lBidPriceVector.rbegin(),
+								   lBidPriceVector.rend(), lYield);*/
+	  //Segment availability calculation
+	  stdair::BidPriceVector_T lReverseBPV (lBidPriceVector.size());
+	  std::reverse_copy (lBidPriceVector.begin(), lBidPriceVector.end(), lReverseBPV.begin());
+	  stdair::BidPriceVector_T::iterator low = std::lower_bound (lReverseBPV.begin(),
+								   lReverseBPV.end(), lYield);
+	  stdair::Availability_T lAvl = short (low - lReverseBPV.begin());
+	  lFO.setAvailability (std::min(lFO.getAvailability(), lAvl));
+	  
+	  // Total bid price calculation
+
+	  lTotalBidPrice += lBidPriceVector.back();
+	}
+
+	// Total yield calculation
+	lTotalYield += lYield;
+      }
+      // Multi-segment bid price control
+      if (lClassPath.size() > 1 && lFO.getAvailability() > 0) {
+      	stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice); // binary
+      	lFO.setAvailability (lAvl * lFO.getAvailability());
+      }
+      
+      STDAIR_LOG_DEBUG ("Fare option " << lFO.describe() << ", " << "Availability " << lFO.getAvailability() << ", " << "Segment Path " << oStr.str());
+
+    }
+  }
+  
+  // To be removed once bid price computation is possible
+  //MODIF
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::setDefaultBidPriceVectorAndYield (stdair::BomRoot& iBomRoot) {
+
+    const stdair::InventoryList_T& lInvList =
+      stdair::BomManager::getList<stdair::Inventory> (iBomRoot);
+    for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
+         itInv != lInvList.end(); ++itInv) {
+      stdair::Inventory* lCurrentInv_ptr = *itInv;
+      assert (lCurrentInv_ptr != NULL);
+
+      const stdair::FlightDateList_T& lFlightDateList =
+	stdair::BomManager::getList<stdair::FlightDate> (*lCurrentInv_ptr);
+      for (stdair::FlightDateList_T::const_iterator itFlightDate =
+	     lFlightDateList.begin();
+	   itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+	stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+	assert (lCurrentFlightDate_ptr != NULL);
+
+	const stdair::SegmentDateList_T& lSegmentDateList =
+	  stdair::BomManager::getList<stdair::SegmentDate> (*lCurrentFlightDate_ptr);
+	for (stdair::SegmentDateList_T::const_iterator itSegmentDate =
+	       lSegmentDateList.begin();
+	     itSegmentDate != lSegmentDateList.end(); ++itSegmentDate) {
+	  stdair::SegmentDate* lCurrentSegmentDate_ptr = *itSegmentDate;
+	  assert (lCurrentSegmentDate_ptr != NULL);
+	  
+	  const stdair::SegmentCabinList_T& lSegmentCabinList =
+	    stdair::BomManager::getList<stdair::SegmentCabin> (*lCurrentSegmentDate_ptr);
+	  for (stdair::SegmentCabinList_T::const_iterator itSegmentCabin =
+		 lSegmentCabinList.begin();
+	       itSegmentCabin != lSegmentCabinList.end(); ++itSegmentCabin) {
+	    stdair::SegmentCabin* lCurrentSegmentCabin_ptr = *itSegmentCabin;
+	    assert (lCurrentSegmentCabin_ptr != NULL);
+	    stdair::CabinCapacity_T lCabinCapacity = lCurrentSegmentCabin_ptr->getCapacity();
+	    stdair::BidPriceVector_T lBPV;
+	    for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) lBPV.push_back(440 + 159/sqrt(k+1));
+	    lCurrentSegmentCabin_ptr->setBidPriceVector (lBPV);
+	    // std::cout << " BPV size = " << lBPV.size() << std::endl;
+
+	    stdair::YieldValue_T lYield = 600;
+	    const stdair::FareFamilyList_T& lFFList =
+	      stdair::BomManager::getList<stdair::FareFamily> (*lCurrentSegmentCabin_ptr);
+	    stdair::FareFamilyList_T::size_type lFFSize = lFFList.size();
+	    for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
+	    	 itFF != lFFList.end(); ++itFF) {
+	      stdair::FareFamily* lFareFamily_ptr = *itFF;
+	      assert (lFareFamily_ptr != NULL);
+
+	      const stdair::BookingClassList_T& lBCList =
+	      	stdair::BomManager::getList<stdair::BookingClass> (*lFareFamily_ptr);
+	      stdair::BookingClassList_T::size_type lBCSize = lBCList.size();
+	      for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
+	      	   itBC != lBCList.end(); ++itBC) {
+	      	stdair::BookingClass* lBC_ptr = *itBC;
+	      	assert (lBC_ptr != NULL);
+	      	lBC_ptr->setYield (lYield);
+	      	lYield -= 220/(lFFSize*lBCSize);
+	      }
+	    }
+	  }
+	}
+      }
+    }     
   }
 
   // ////////////////////////////////////////////////////////////////////

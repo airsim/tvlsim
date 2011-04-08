@@ -38,6 +38,10 @@ namespace AIRINV {
     /** Compute the availability for each fare option using the AU's. */
     static void calculateAvailabilityByAU (stdair::TravelSolutionStruct&);
 
+    //MODIF
+    /** Compute the availability for each fare option using BP control. */
+    static void calculateAvailabilityByBP (stdair::TravelSolutionStruct&);
+
     /** Register a booking (segment sell). */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
@@ -58,6 +62,9 @@ namespace AIRINV {
     static void buildGuillotineBlock (stdair::Inventory&,
                                       const stdair::GuillotineNumber_T&,
                                       const DepartureDateFlightDateMap_T&);
+    //MODIF
+    // To be removed once bid price computation is possible
+    static void setDefaultBidPriceVectorAndYield (stdair::BomRoot&);
     
   private:
     /** Constructors. */
