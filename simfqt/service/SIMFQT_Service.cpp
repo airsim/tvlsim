@@ -8,6 +8,7 @@
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/BomDisplay.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
@@ -327,8 +328,14 @@ namespace SIMFQT {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMFQT_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the BOM building to the dedicated service
-    return lSTDAIR_Service.csvDisplay();
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // are attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Delegate the BOM display to the dedicated service
+    std::ostringstream oCSVStr;
+    stdair::BomDisplay::csvSimFQTDisplay (oCSVStr, lBomRoot);
+    return oCSVStr.str(); 
   }
 
   // //////////////////////////////////////////////////////////////////////

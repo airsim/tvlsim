@@ -370,7 +370,7 @@ namespace SIMFQT {
       // Insertion of this class Code list in the whole classCode name
       _fareRule._classCodeList.push_back(classCodeStr);
       // DEBUG
-      STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
+      //STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
     }
     
     // //////////////////////////////////////////////////////////////////
