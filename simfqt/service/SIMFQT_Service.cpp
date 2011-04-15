@@ -7,8 +7,8 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
-#include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/BomDisplay.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
@@ -232,18 +232,6 @@ namespace SIMFQT {
   void SIMFQT_Service::
   initSimfqtService (const stdair::Filename_T& iFareInputFilename) {
 
-    // Check that the file path given as input corresponds to an actual file
-    const bool doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iFareInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The fare input file, '" << iFareInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw FareInputFileNotFoundException ("The demand file '"
-                                            + iFareInputFilename
-                                            + "' does not exist or can not "
-                                            "be read");
-    }
-
     // Retrieve the SimFQT service context
     assert (_simfqtServiceContext != NULL);
     SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
@@ -340,8 +328,14 @@ namespace SIMFQT {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMFQT_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the BOM building to the dedicated service
-    return lSTDAIR_Service.csvDisplay();
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // are attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Delegate the BOM display to the dedicated service
+    std::ostringstream oCSVStr;
+    stdair::BomDisplay::csvSimFQTDisplay (oCSVStr, lBomRoot);
+    return oCSVStr.str(); 
   }
 
   // //////////////////////////////////////////////////////////////////////
