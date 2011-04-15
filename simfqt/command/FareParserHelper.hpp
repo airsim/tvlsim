@@ -95,7 +95,7 @@ namespace SIMFQT {
                        boost::spirit::qi::unused_type) const;
     };
 
-    /** Store the parsed end start range time. */
+    /** Store the parsed end range time. */
     struct storeEndRangeTime : public ParserSemanticAction {
       /** Actor Constructor. */
       storeEndRangeTime (FareRuleStruct&);
@@ -205,7 +205,7 @@ namespace SIMFQT {
                        boost::spirit::qi::unused_type) const;
     };
 
-    /** Store the parsed class. */
+    /** Store the parsed class code. */
     struct storeClass : public ParserSemanticAction {
       /** Actor Constructor. */
       storeClass (FareRuleStruct&);
@@ -259,46 +259,6 @@ namespace SIMFQT {
      AirlineCode             (2-char airline code)
      ClassList               (List of 1-char class code)
      
-     Grammar:
-      Demand ::= PrefDepDate ';' Origin ';' Destination ';' PassengerType
-         ';' DemandParams ';' PosDist ';' ChannelDist ';'  TripDist
-         ';' StayDist ';' FfDist ';'  PrefDepTimeDist
-         ';' minWTP ';' TimeValueDist ';'  DtdDist
-         EndOfDemand
-      PrefDepDate ::= date
-      PassengerType ::= 'T' | 'F'
-      DemandParams ::= DemandMean ';' DemandStdDev
-      PosDist ::= PosPair (',' PosPair)*
-      PosPair ::= PosCode ':' PosShare
-      PosCode ::= AirportCode | "row"
-      PosShare ::= real
-      ChannelDist ::= ChannelPair (',' ChannelPair)*
-      ChannelPair ::= Channel_Code ':' ChannelShare
-      ChannelCode ::= "DF" | "DN" | "IF" | "IN"
-      ChannelShare ::= real
-      TripDist ::= TripPair (',' TripPair)*
-      TripPair ::= TripCode ':' TripShare
-      TripCode ::= "RO" | "RI" | "OW"
-      TripShare ::= real
-      StayDist ::= StayPair (',' StayPair)*
-      StayPair ::= [0;3]-digit-integer ':' stay_share
-      StayShare ::= real
-      FFDist ::= FF_Pair (',' FF_Pair)*
-      FFPair ::= FFCode ':' FFShare
-      FFCode ::= 'P' | 'G' | 'S' | 'M' | 'N'
-      FFShare ::= real
-      PrefDepTimeDist ::= PrefDepTimePair (',' PrefDepTimePair)*
-      PrefDepTimePair ::= time ':' PrefDepTimeShare
-      PrefDepTimeShare ::= real
-      minWTP ::= real
-      TimeValueDist ::= TimeValuePair (',' TimeValuePair)*
-      TimeValuePair ::= [0;2]-digit-integer ':' TimeValueShare
-      TimeValueShare ::= real
-      DTDDist ::= DTDPair (',' DTDPair)*
-      DTDPair ::= real ':' DTDShare
-      DTDShare ::= real
-      EndOfDemand ::= ';'
-     
     */ 
 
     /** Grammar for the Fare-Rule parser. */
@@ -341,7 +301,7 @@ namespace SIMFQT {
     FareRuleFileParser (stdair::BomRoot& ioBomRoot,
                         const stdair::Filename_T& iFilename);
 
-    /** Parse the input file and generate the Inventories. */
+    /** Parse the input file and generate the fare rules. */
     bool generateFareRules ();
       
   private:
@@ -350,7 +310,7 @@ namespace SIMFQT {
       
   private:
     // Attributes
-    /** File-name of the CSV-formatted schedule input file. */
+    /** File-name of the CSV-formatted fare input file. */
     stdair::Filename_T _filename;
 
     /** stdair::BomRoot. */

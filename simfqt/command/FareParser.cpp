@@ -29,11 +29,11 @@ namespace SIMFQT {
                                             "be read");
     }
 
-    // Initialise the Fare file parser.
+    // Initialise the fare file parser.
     FareRuleFileParser lFareRuleFileParser (ioBomRoot, iFilename);
 
-    // Parse the CSV-formatted fare input file generate the
-    // corresponding fare rules and fulfill the WorldSchedule.
+    // Parse the CSV-formatted fare input file and generate the
+    // corresponding fare rules.
     lFareRuleFileParser.generateFareRules ();
 
   }

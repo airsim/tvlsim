@@ -107,7 +107,8 @@ namespace SIMFQT {
 
     const stdair::ParsedKey& lParsedKey =
       stdair::BomKeyManager::extractKeys (lFirstSegmentDateKey);
-    priceQuote(iBookingRequest, ioTravelSolution, *lAirportPair_ptr, lParsedKey);
+    const stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
+    priceQuote(iBookingRequest, ioTravelSolution, lAirportPair, lParsedKey);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -121,7 +122,8 @@ namespace SIMFQT {
     const stdair::CityCode_T& lPointOfSale = iBookingRequest.getPOS();
 
     // Get the booking request channel.
-    const stdair::ChannelLabel_T& lChannel = iBookingRequest.getBookingChannel();
+    const stdair::ChannelLabel_T& lChannel =
+      iBookingRequest.getBookingChannel();
 
     // Construct the corresponding point_of_sale-channel primary key.
     const stdair::PosChannelKey lFarePosChannelKey (lPointOfSale, lChannel);
@@ -144,7 +146,8 @@ namespace SIMFQT {
     }
     assert(lFarePosChannel_ptr != NULL);
 
-    priceQuote (iBookingRequest, ioTravelSolution, *lFarePosChannel_ptr,
+    const stdair::PosChannel& lFarePosChannel= *lFarePosChannel_ptr;
+    priceQuote (iBookingRequest, ioTravelSolution, lFarePosChannel,
                 iParsedKey);
   }
 
@@ -169,7 +172,7 @@ namespace SIMFQT {
            lFareDatePeriodList.begin();
          itDateRange != lFareDatePeriodList.end(); ++itDateRange) {
 
-      const stdair::DatePeriod* lCurrentFareDatePeriod_ptr =  *itDateRange ;
+      const stdair::DatePeriod* lCurrentFareDatePeriod_ptr = *itDateRange ;
       assert (lCurrentFareDatePeriod_ptr != NULL);
 
       // Select the fare rules having a corresponding date range
@@ -178,9 +181,10 @@ namespace SIMFQT {
 
       if (isDepartureDateValid == true) {
         isThereAtLeastOneAvailableDateRule = true;
-
+        const stdair::DatePeriod& lCurrentFareDatePeriod =
+          *lCurrentFareDatePeriod_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
-                    *lCurrentFareDatePeriod_ptr, iFarePosChannel, iParsedKey);
+                    lCurrentFareDatePeriod, iFarePosChannel, iParsedKey);
       }
     }
       
@@ -229,9 +233,10 @@ namespace SIMFQT {
       if (lCurrentFareTimePeriod_ptr->isDepartureTimeValid (lSPTime) == true) {
 
         lAtLeastOneAvailableTimeRule = true;
-
+        const stdair::TimePeriod& lCurrentFareTimePeriod =
+          *lCurrentFareTimePeriod_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
-                    *lCurrentFareTimePeriod_ptr, iFarePosChannel, iParsedKey);
+                    lCurrentFareTimePeriod, iFarePosChannel, iParsedKey);
       }
     }
       
@@ -308,9 +313,10 @@ namespace SIMFQT {
           setNonRefundable (lCurrentFareFeatures_ptr->getRefundableOption());
         lFareOption.
           setSaturdayStay (lCurrentFareFeatures_ptr->getSaturdayStay());
-
+        const stdair::FareFeatures& lCurrentFareFeatures =
+          *lCurrentFareFeatures_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
-                    *lCurrentFareFeatures_ptr, iFarePosChannel,
+                    lCurrentFareFeatures, iFarePosChannel,
                     lFareOption, iParsedKey);
       }
     }
@@ -415,7 +421,8 @@ namespace SIMFQT {
         for (stdair::ClassList_StringList_T::const_iterator itClassCodeList =
                lClassCodeList.begin();
              itClassCodeList != lClassCodeList.end(); ++itClassCodeList ) {
-          iFareOption.addClassList (*itClassCodeList);
+          const stdair::ClassList_String_T& lClassCodeList = *itClassCodeList;
+          iFareOption.addClassList (lClassCodeList);
         }
 
         //

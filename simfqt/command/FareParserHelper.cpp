@@ -388,7 +388,7 @@ namespace SIMFQT {
       // DEBUG
       // STDAIR_LOG_DEBUG ("Do End");
       // Generation of the fare rule object.
-      FareRuleGenerator::createFareRule (_bomRoot, _fareRule);
+      FareRuleGenerator::createAirportPair (_bomRoot, _fareRule);
       STDAIR_LOG_DEBUG(_fareRule.describe());
     }  
 
@@ -573,7 +573,7 @@ namespace SIMFQT {
     const char *lChar = (*lFileName).c_str();
     std::ifstream fileToBeParsed(lChar, std::ios_base::in);
 
-    // Check the filename exists and can be open
+    // Check if the filename exist and can be open
     if (fileToBeParsed == false) {
       STDAIR_LOG_ERROR ("The fare file " << _filename << " can not be open."
                           << std::endl);
@@ -594,7 +594,6 @@ namespace SIMFQT {
       
     // Launch the parsing of the file and, thanks to the doEndFare
     // call-back structure, the building of the whole BomRoot BOM
-
     const bool hasParsingBeenSuccesful = 
        boost::spirit::qi::phrase_parse (start, end, lFPParser,
                                         boost::spirit::ascii::space);

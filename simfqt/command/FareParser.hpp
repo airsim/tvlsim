@@ -21,9 +21,9 @@ namespace SIMFQT {
   class FareParser : public stdair::CmdAbstract {
   public:
     /** Parses the CSV file describing the fares for the
-        simulator, and generates the inventories accordingly.
+        simulator, and generates the fare bom tree accordingly.
         @param const stdair::Filename_T& The file-name of the CSV-formatted 
-        schedule input file.
+        fare input file.
         @param stdair::BomRoot& Root of the BOM tree. */
     static void fareRuleGeneration (const stdair::Filename_T&, stdair::BomRoot&);
   };
