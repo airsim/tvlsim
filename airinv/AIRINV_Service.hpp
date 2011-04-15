@@ -230,6 +230,11 @@ namespace AIRINV {
     bool sell (const std::string& iSegmentDateKey, const stdair::ClassCode_T&,
                const stdair::PartySize_T&);
 
+    /**
+     * Take inventory snapshots.
+     */
+    void takeSnapshots (const stdair::AirlineCode_T&, const stdair::DateTime_T&);
+    
 
   public:
     // //////////////// Display support methods /////////////////

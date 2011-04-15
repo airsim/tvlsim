@@ -49,7 +49,7 @@ namespace DSIM {
     /**
      * Get the pointer on the STDAIR service handler.
      */
-    stdair::STDAIR_ServicePtr_T getSTDAIR_Service() const {
+    stdair::STDAIR_ServicePtr_T getSTDAIR_Service_Ptr() const {
       return _stdairService;
     }
     
@@ -95,6 +95,13 @@ namespace DSIM {
       return *_travelccmService.get();
     }
     
+    /**
+     * Get a reference on the STDAIR service handler.
+     */
+    stdair::STDAIR_Service& getSTDAIR_Service() const {
+      return *_stdairService.get();
+    }
+    
     // ///////// Setters //////////
     /**
      * Set the pointer on the STDAIR service handler.
@@ -108,13 +115,6 @@ namespace DSIM {
       _simulatorID = iSimulatorID;
     }
 
-    /**
-     * Set the configuration parameters.
-     */
-    void setConfigurationParameters (const ConfigurationParameters& iConfigurationParameters) {
-      _configurationParameters = iConfigurationParameters;
-    }
-    
     /**
      * Set the RDS parameters.
      */
@@ -159,11 +159,12 @@ namespace DSIM {
     /**
      * Default constructor.
      */
-    DSIM_ServiceContext();
+    DSIM_ServiceContext (const stdair::Date_T&, const stdair::Date_T&);
     /**
      * Constructor.
      */
-    DSIM_ServiceContext (const SimulatorID_T&);
+    DSIM_ServiceContext (const SimulatorID_T&,
+                         const stdair::Date_T&, const stdair::Date_T&);
     /**
      * Copy constructor.
      */

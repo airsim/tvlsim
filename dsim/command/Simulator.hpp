@@ -9,7 +9,9 @@
 
 // Forward declarations
 namespace stdair {
-  struct BookingRequestStruct;
+  class STDAIR_Service;
+  struct EventStruct;
+  struct ProgressStatusSet;
 }
 namespace SIMCRS {
   class SIMCRS_Service;
@@ -29,14 +31,19 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate (SIMCRS::SIMCRS_Service&,
-                          TRADEMGEN::TRADEMGEN_Service&,
-                          TRAVELCCM::TRAVELCCM_Service&);
+    static void simulate (SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
+                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
+                                    TRADEMGEN::TRADEMGEN_Service&,
                                     TRAVELCCM::TRAVELCCM_Service&,
-                                    const stdair::BookingRequestStruct&);
+                                    const stdair::EventStruct&,
+                                    stdair::ProgressStatusSet&);
+
+    /** Play a snapshot event. */
+    static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
+                                   const stdair::EventStruct&);
 
   private:
     /** Constructors. */

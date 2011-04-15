@@ -12,6 +12,7 @@
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/FareFamily.hpp>
 #include <stdair/bom/BookingClass.hpp>
+#include <stdair/bom/GuillotineBlock.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // AirInv
@@ -155,5 +156,21 @@ namespace AIRINV {
     }
 
     return hasSaleBeenSuccessful;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryHelper::takeSnapshots (const stdair::Inventory& iInventory,
+                                       const stdair::DateTime_T& iSnapshotTime) {
+    // Browse the guillotine block list and take the snapshots for
+    // each guillotine.
+    const stdair::GuillotineBlockList_T& lGuillotineBlockList =
+      stdair::BomManager::getList<stdair::GuillotineBlock> (iInventory);
+    for (stdair::GuillotineBlockList_T::const_iterator itGB =
+           lGuillotineBlockList.begin();
+         itGB != lGuillotineBlockList.end(); ++itGB) {
+      stdair::GuillotineBlock* lGuillotineBlock_ptr = *itGB;
+
+      //GuillotineBlockHelper::takeSnapshots (*lGuillotineBlock_ptr,iSnapshotTime);
+    }    
   }
 }

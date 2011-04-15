@@ -6,13 +6,13 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
 // Forward declarations
 namespace stdair {
-  class AirlineFeatureSet;
   struct BasLogParams;
   struct BasDBParams;
 }
@@ -36,11 +36,14 @@ namespace DSIM {
         session can be created on the corresponding database.
         @param const stdair::BasLogParams& Parameters for the output log stream.
         @param const stdair::BasDBParams& Parameters for the database access.
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input fare file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
+                  const stdair::Date_T&, const stdair::Date_T&,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename,
@@ -55,11 +58,14 @@ namespace DSIM {
         the proper log output stream by some other methods in the
         calling chain (for instance, when the DSIM_Service is
         itself being initialised by another library service).
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input Fare file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (stdair::STDAIR_ServicePtr_T,
+                  const stdair::Date_T&, const stdair::Date_T&,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename,
@@ -86,8 +92,11 @@ namespace DSIM {
     DSIM_Service (const DSIM_Service&);
 
     /** Initialise the (DSIM) service context (i.e., the
-        DSIM_ServiceContext object). */
-    void initServiceContext ();
+        DSIM_ServiceContext object). 
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
+    */
+    void initServiceContext (const stdair::Date_T&, const stdair::Date_T&);
 
     /** Initialise the STDAIR service (including the log service).
         <br>A reference on the root of the BOM tree, namely the BomRoot object,
@@ -101,7 +110,6 @@ namespace DSIM {
     /** Initialise.
         <br>The CSV file, describing the airline schedules for the
         simulator, is parsed and the inventories are generated accordingly.
-        @param const stdair::AirlineFeatureSet& Set of airline features.
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input Fare file.
@@ -110,6 +118,12 @@ namespace DSIM {
                const stdair::Filename_T& iODInputFilename,
                const stdair::Filename_T& iFareInputFilename,
                const stdair::Filename_T& iDemandInputFilename);
+
+    /** Initialise the snapshot events for the inventories.
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
+     */
+    void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&);
     
     /** Finalise. */
     void finalise ();

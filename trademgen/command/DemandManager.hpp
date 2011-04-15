@@ -17,6 +17,7 @@
 // Forward declarations
 namespace stdair {
   class EventQueue;
+  struct ProgressStatusSet;
 }
 
 namespace TRADEMGEN {
@@ -187,12 +188,14 @@ namespace TRADEMGEN {
      * @param stdair::EventQueue& Reference on the top of the BOM tree.
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
+     * @param stdair::ProgressStatusSet
      * @return bool Whether or not there are still some events to be
      *   generated.
      */
     static const bool
     stillHavingRequestsToBeGenerated (const stdair::EventQueue&,
-                                      const stdair::DemandStreamKeyStr_T&);
+                                      const stdair::DemandStreamKeyStr_T&,
+                                      stdair::ProgressStatusSet&);
 
     /**
      * Generate the first event/booking request for every demand

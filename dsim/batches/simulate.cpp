@@ -281,6 +281,12 @@ int main (int argc, char* argv[]) {
   // Query
   std::string lQuery;
 
+  // Start date
+  stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
+  
+  // End date
+  stdair::Date_T lEndDate (2011, boost::gregorian::Jan, 01);
+
   // Demand input file name
   stdair::Filename_T lDemandInputFilename;
 
@@ -326,7 +332,7 @@ int main (int argc, char* argv[]) {
 
   // Initialise the simulation context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lScheduleInputFilename, lOnDInputFilename,
                                   lFareInputFilename, lDemandInputFilename);
 
