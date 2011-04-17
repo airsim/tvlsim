@@ -21,7 +21,7 @@
 
 // //////// Constants //////
 /** Default name and location for the log file. */
-const std::string K_AIRINV_DEFAULT_LOG_FILENAME ("airinv.log");
+const std::string K_AIRINV_DEFAULT_LOG_FILENAME ("parseInventory.log");
 
 /** Default name and location for the (CSV) input files. */
 const std::string K_AIRINV_DEFAULT_INVENTORY_FILENAME (STDAIR_SAMPLE_DIR
@@ -260,82 +260,47 @@ int main (int argc, char* argv[]) {
 
   // Initialise the inventory service
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  
+  AIRINV::AIRINV_Master_Service airinvService (lLogParams);
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Welcome to airinv");
+
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
-
-    // Build the BOM tree from parsing an inventory dump file
-    AIRINV::AIRINV_Master_Service airinvService (lLogParams);
-
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Welcome to airinv");
 
     // Build the sample BOM tree for RMOL
     airinvService.buildSampleBom();
 
     // Define a specific segment-date key for the sample BOM tree
-    const std::string lSpecificSegmentDateKey ("BA,9,2011-06-10,LHR,SYD");
-
-    // Make a booking
-    const bool isSellSuccessful = 
-      airinvService.sell (lSpecificSegmentDateKey, lClassCode, lPartySize);
-
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Sale ('" << lSegmentDateKey << "', " << lClassCode << ": "
-                      << lPartySize << ") successful? " << isSellSuccessful);
-
-    // DEBUG: Display the whole BOM tree
-    const std::string& lCSVDump = airinvService.csvDisplay();
-    STDAIR_LOG_DEBUG (lCSVDump);
+    lSegmentDateKey = "BA,9,2011-06-10,LHR,SYD";
 
   } else {
     if (isForSchedule == true) {
       // Build the BOM tree from parsing a schedule file (and O&D list)
-      AIRINV::AIRINV_Master_Service airinvService (lLogParams,
-                                                   lScheduleInputFilename,
-                                                   lODInputFilename);
-
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Welcome to airinv");
+      airinvService.parseAndLoad (lScheduleInputFilename, lODInputFilename);
 
       if (lSegmentDateKey == K_AIRINV_DEFAULT_SEGMENT_DATE_KEY) {
         // Define a specific segment-date key for the schedule-based inventory
         lSegmentDateKey = "SQ,11,2010-01-15,SIN,BKK";
       }
 
-      // Make a booking
-      const bool isSellSuccessful =
-        airinvService.sell (lSegmentDateKey, lClassCode, lPartySize);
-
-      // DEBUG
-      STDAIR_LOG_DEBUG("Sale ('" << lSegmentDateKey << "', " << lClassCode<< ": "
-                       << lPartySize << ") successful? " << isSellSuccessful);
-
-      // DEBUG: Display the whole BOM tree
-      const std::string& lCSVDump = airinvService.csvDisplay();
-      STDAIR_LOG_DEBUG (lCSVDump);
-
     } else {
       // Build the BOM tree from parsing an inventory dump file
-      AIRINV::AIRINV_Master_Service airinvService (lLogParams,
-                                                   lInventoryFilename);
-
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Welcome to airinv");
-
-      // Make a booking
-      const bool isSellSuccessful =
-        airinvService.sell (lSegmentDateKey, lClassCode, lPartySize);
-
-      // DEBUG
-      STDAIR_LOG_DEBUG("Sale ('" << lSegmentDateKey << "', " << lClassCode<< ": "
-                       << lPartySize << ") successful? " << isSellSuccessful);
-
-      // DEBUG: Display the whole BOM tree
-      const std::string& lCSVDump = airinvService.csvDisplay();
-      STDAIR_LOG_DEBUG (lCSVDump);
+      airinvService.parseAndLoad (lInventoryFilename);
     }
   }
+
+  // Make a booking
+  const bool isSellSuccessful =
+    airinvService.sell (lSegmentDateKey, lClassCode, lPartySize);
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("Sale ('" << lSegmentDateKey << "', " << lClassCode << ": "
+                    << lPartySize << ") successful? " << isSellSuccessful);
+
+  // DEBUG: Display the whole BOM tree
+  const std::string& lCSVDump = airinvService.csvDisplay();
+  STDAIR_LOG_DEBUG (lCSVDump);
 
   // Close the Log outputFile
   logOutputFile.close();

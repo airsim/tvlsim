@@ -81,113 +81,26 @@ namespace AIRINV {
     AIRINV_Service (stdair::STDAIR_ServicePtr_T);
 
     /**
-     * Constructor.
+     * Parse the inventory dump and load it into memory.
      *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
+     * The CSV file, describing the airline inventory for the
+     * simulator, is parsed and instantiated in memory accordingly.
      *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * Moreover, database connection parameters are given, so that a
-     * session can be created on the corresponding database.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
+     * @param const stdair::Filename_T& Filename of the input demand file.
      */
-    AIRINV_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                    const stdair::Filename_T& iInventoryInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iInventoryFilename);
 
     /**
-     * Constructor.
+     * Parse the schedule and O&D input files, and load them into memory.
      *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
+     * The CSV files, describing the airline schedule and the O&Ds for
+     * the simulator, are parsed and instantiated in memory accordingly.
      *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
-     */
-    AIRINV_Service (const stdair::BasLogParams&, 
-                    const stdair::Filename_T& iInventoryInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * Moreover, as no reference on any output stream is given, it is
-     * assumed that the StdAir log service has already been initialised
-     * with the proper log output stream by some other methods in the
-     * calling chain (for instance, when the AIRINV_Master_Service is
-     * itself being initialised by another library service such as
-     * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
-     */
-    AIRINV_Service (stdair::STDAIR_ServicePtr_T,
-                    const stdair::Filename_T& iInventoryInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * Moreover, a reference on an output stream is given, so that log
-     * outputs can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
      */
-    AIRINV_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * Moreover, a reference on an output stream is given, so
-     * that log outputs can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    AIRINV_Service (const stdair::BasLogParams&,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirinvService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * Moreover, as no reference on any output stream is given, it is
-     * assumed that the StdAir log service has already been initialised
-     * with the proper log output stream by some other methods in the
-     * calling chain (for instance, when the AIRINV_Master_Service is
-     * itself being initialised by another library service such as
-     * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    AIRINV_Service (stdair::STDAIR_ServicePtr_T,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iScheduleFilename,
+                       const stdair::Filename_T& iODInputFilename);
 
     /**
      * Destructor.
@@ -241,6 +154,21 @@ namespace AIRINV {
      *        logged/dumped.
      */
     std::string csvDisplay() const;
+
+    /**
+     * Recursively display (dump in the returned string) the flight-date
+     * corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to display.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to display.
+     * @param const stdair::Date_T& Departure date of the flight to display.
+     * @return std::string Output string in which the BOM tree is
+     *        logged/dumped.
+     */
+    std::string csvDisplay (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
 
 
   private:
@@ -306,28 +234,6 @@ namespace AIRINV {
      * calling the buildSampleBom() method.
      */
     void initAirinvService();
-
-    /**
-     * Initialise.
-     *
-     * The CSV file, describing the airline inventory for the
-     * simulator, is parsed and instantiated in memory accordingly.
-     *
-     * @param const stdair::Filename_T& Filename of the input demand file.
-     */
-    void initAirinvService (const stdair::Filename_T& iInventoryInputFilename);
-
-    /**
-     * Initialise.
-     *
-     * The CSV file, describing the airline inventory for the
-     * simulator, is parsed and instantiated in memory accordingly.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    void initAirinvService (const stdair::Filename_T& iScheduleInputFilename,
-                            const stdair::Filename_T& iODInputFilename);
 
     /**
      * Finalise.
