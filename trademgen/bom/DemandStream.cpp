@@ -389,23 +389,24 @@ namespace TRADEMGEN {
     //  (into the command layer, e.g., within the DemandManager command).
     
     // Create the booking request
-    stdair::BookingRequestPtr_T oBookingRequest_ptr =
-      stdair::BookingRequestPtr_T (new
-                                   stdair::BookingRequestStruct (lOrigin,
-                                                                 lDestination,
-                                                                 lPOS,
-                                                                 lPreferredDepartureDate,
-                                                                 lDateTimeThisRequest,
-                                                                 lPreferredCabin,
-                                                                 lPartySize,
-                                                                 lChannelLabel,
-                                                                 lTripType,
-                                                                 lStayDuration,
-                                                                 lFrequentFlyer,
-                                                                 lPreferredDepartureTime,
-                                                                 lWTP,
-                                                                 lValueOfTime));
-  
+    stdair::BookingRequestPtr_T oBookingRequest_ptr = stdair::
+      BookingRequestPtr_T (new
+                           stdair::BookingRequestStruct (describeKey(),
+                                                         lOrigin,
+                                                         lDestination,
+                                                         lPOS,
+                                                         lPreferredDepartureDate,
+                                                         lDateTimeThisRequest,
+                                                         lPreferredCabin,
+                                                         lPartySize,
+                                                         lChannelLabel,
+                                                         lTripType,
+                                                         lStayDuration,
+                                                         lFrequentFlyer,
+                                                         lPreferredDepartureTime,
+                                                         lWTP,
+                                                         lValueOfTime));
+    
     // DEBUG
     // STDAIR_LOG_DEBUG ("\n[BKG] " << oBookingRequest_ptr->describe());
     

@@ -117,6 +117,14 @@ if test -z "${CXXFLAGS}"; then
    CXXFLAGS="-g -Wall"
 fi
 
+# -----------------------------------------------------------------
+# Readline: http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+# -----------------------------------------------------------------
+AM_PATH_READLINE([6.0])
+AC_SUBST(READLINE_VERSION)
+AC_SUBST(READLINE_CFLAGS)
+AC_SUBST(READLINE_LIBS)
+
 # -----------------------------------------------------------
 # Python: http://www.python.org
 # -----------------------------------------------------------
@@ -391,6 +399,8 @@ AC_CONFIG_FILES(
 	airinv/core/Makefile
 	airinv/batches/Makefile
 	airinv/server/Makefile
+	airinv/ui/Makefile
+	airinv/ui/cmdline/Makefile
 	avlcal/Makefile
 	avlcal/basic/Makefile
 	avlcal/bom/Makefile
@@ -543,15 +553,20 @@ Compiler/linker flags/libs/defs:
   - LIBS ................... : ${LIBS}
 
 External libraries:
+  - Readline ............... :
+    o READLINE_VERSION ..... : ${READLINE_VERSION}
+    o READLINE_CFLAGS ...... : ${READLINE_CFLAGS}
+    o READLINE_LIBS ........ : ${READLINE_LIBS} 
+
 ${OPENMPI_OUTPUT}
 
 ${MPICH2_OUTPUT}
 
-  - Python .................. :
-    o PYTHON_VERSION ........ : ${PYTHON_VERSION}
-    o PYTHON_CFLAGS ......... : ${PYTHON_CFLAGS}
-    o PYTHON_LIBS ........... : ${PYTHON_LIBS} 
-    o PYTHON_ADD_LIBS ....... : ${PYTHON_ADD_LIBS} 
+  - Python ................. :
+    o PYTHON_VERSION ....... : ${PYTHON_VERSION}
+    o PYTHON_CFLAGS ........ : ${PYTHON_CFLAGS}
+    o PYTHON_LIBS .......... : ${PYTHON_LIBS} 
+    o PYTHON_ADD_LIBS ...... : ${PYTHON_ADD_LIBS} 
 
   - Boost .................. :
     o BOOST_VERSION ........ : ${BOOST_VERSION}

@@ -302,12 +302,31 @@ namespace SIMCRS {
      * longer referenced (e.g., at the end of the process).
      */
     AIRINV_Master_ServicePtr_T lAIRINV_Master_Service_ptr =
-      boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr,
-                                                         iScheduleInputFilename,
-                                                         iODInputFilename);
+      boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr);
+
+    // Parse and load the schedule and O&D input files
+    lAIRINV_Master_Service_ptr->parseAndLoad (iScheduleInputFilename,
+                                              iODInputFilename);
 
     // Store the Airinv service object within the (SimCRS) service context
     lSIMCRS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::initSnapshotEvents (const stdair::Date_T& iStartDate,
+                                           const stdair::Date_T& iEndDate) {
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+
+    lAIRINV_Master_Service.initSnapshotEvents (iStartDate, iEndDate);
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -531,6 +550,22 @@ namespace SIMCRS {
                       << lSIMCRS_ServiceContext.display());
 
     return hasSaleBeenSuccessful;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::takeSnapshots (const stdair::SnapshotStruct& iSnapshot) {
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+
+    lAIRINV_Master_Service.takeSnapshots (iSnapshot);
   }
   
 }

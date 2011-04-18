@@ -4,32 +4,64 @@
 // //////////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////////
-// DSIM
-#include <dsim/bom/StructAbstract.hpp>
+// StdAir
+#include <stdair/stdair_date_time_types.hpp>
+#include <stdair/basic/StructAbstract.hpp>
 
 namespace DSIM {
 
   /** Structure wrapping the configuration parameters. */
-  struct ConfigurationParameters : public StructAbstract {
+  struct ConfigurationParameters : public stdair::StructAbstract {
   public:
     // //////// GETTERS /////////     
+    /** Get the start date of the simulation. */
+    const stdair::Date_T& getStartDate () const {
+      return _startDate;
+    }
+      
+    /** Get the end date of the simulation. */
+    const stdair::Date_T& getEndDate () const {
+      return _endDate;
+    }
     
-    // //////// SETTERS /////////
-    
-    /////////// DISPLAY METHOD ///////////
-    const std::string describe() const;
+    // /////////// Display support method /////////////
+    /** Dump a Business Object into an output stream.
+        @param ostream& the output stream. */
+    void toStream (std::ostream& ioOut) const;
 
+    /** Read a Business Object from an input stream.
+        @param istream& the input stream. */
+    void fromStream (std::istream& ioIn);
+
+    /** Display of the structure. */
+    const std::string describe() const;
     
+        
+    // /////////////// Constructors and Destructors /////////////////
   public:
-    /** Costructor. */
-    ConfigurationParameters ();
+    /** Constructor. */
+    ConfigurationParameters (const stdair::Date_T&, const stdair::Date_T&);
+
+    /** Copy constructor. */
     ConfigurationParameters (const ConfigurationParameters&);
     
+  private:
+    /** Default constructor.
+        <br>It is private so that it can not be used. */
+    ConfigurationParameters ();
+
+  public:
     /** Destructor. */
-    ~ConfigurationParameters ();
-    
+    ~ConfigurationParameters();
+
+
   public:
     // ///////// Attributes //////////
+    /** Start date of the simulation. */
+    stdair::Date_T _startDate;
+
+    /** End date of the simulation. */
+    stdair::Date_T _endDate;
   };
   
 }

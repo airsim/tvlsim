@@ -7,6 +7,7 @@
 // STL
 #include <string>
 // StdAir
+#include <stdair/stdair_date_time_types.hpp>
 #include <stdair/service/FacServiceAbstract.hpp>
 
 namespace DSIM {
@@ -32,7 +33,7 @@ namespace DSIM {
     /** Create a new DSIM_ServiceContext object.
         <br>This new object is added to the list of instantiated objects.
         @return DSIM_ServiceContext& The newly created object. */
-    DSIM_ServiceContext& create();
+    DSIM_ServiceContext& create (const stdair::Date_T&, const stdair::Date_T&);
 
     
   protected:
