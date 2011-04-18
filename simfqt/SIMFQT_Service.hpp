@@ -213,11 +213,6 @@ namespace SIMFQT {
      */
     std::string csvDisplay (const stdair::TravelSolutionList_T&) const;
 
-
-  private:
-    // /////// Construction and Destruction helper methods ///////
-
-
   private:
     // /////// Construction and Destruction helper methods ///////
     /**

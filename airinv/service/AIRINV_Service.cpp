@@ -237,7 +237,7 @@ namespace AIRINV {
     ScheduleParser::generateInventories (iScheduleInputFilename, lBomRoot);
   }
   
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::buildSampleBom (const bool isForRMOL,
                                        const stdair::CabinCapacity_T iCapacity) {
 
@@ -258,7 +258,7 @@ namespace AIRINV {
     lSTDAIR_Service.buildSampleBom (isForRMOL, iCapacity);
   }
 
-  // //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   std::string AIRINV_Service::csvDisplay() const {
 
     // Retrieve the AIRINV service context
@@ -364,6 +364,33 @@ namespace AIRINV {
                       << lAIRINV_ServiceContext.display());
 
     return saleControl;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Service::takeSnapshots (const stdair::AirlineCode_T& iAirlineCode,
+                                      const stdair::DateTime_T& iSnapshotTime) {
+
+    if (_airinvServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInv service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvServiceContext != NULL);
+    AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
+
+    // TODO: Retrieve the corresponding inventory.
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    const stdair::InventoryList_T lInventoryList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
+         itInv != lInventoryList.end(); ++itInv) {
+      const stdair::Inventory* lInv_ptr = *itInv;
+      assert (lInv_ptr != NULL);
+      
+      InventoryManager::takeSnapshots (*lInv_ptr, iSnapshotTime); 
+    }
   }
   
 }

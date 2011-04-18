@@ -11,14 +11,20 @@
 namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_ServiceContext::DSIM_ServiceContext ()
-    : _simulatorID (DEFAULT_DSIM_ID) {
+  DSIM_ServiceContext::
+  DSIM_ServiceContext (const stdair::Date_T& iStartDate,
+                       const stdair::Date_T& iEndDate)
+    : _simulatorID (DEFAULT_DSIM_ID),
+      _configurationParameters (iStartDate, iEndDate) {
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::
-  DSIM_ServiceContext (const SimulatorID_T& iSimulatorID)
-    : _simulatorID (iSimulatorID) {
+  DSIM_ServiceContext (const SimulatorID_T& iSimulatorID,
+                       const stdair::Date_T& iStartDate,
+                       const stdair::Date_T& iEndDate)
+    : _simulatorID (iSimulatorID),
+      _configurationParameters (iStartDate, iEndDate) {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -28,7 +34,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   const std::string DSIM_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "DSIM_ServiceContext: Simulator ID: " << _simulatorID;
+    oStr << "DSIM_ServiceContext: Simulator ID: " << _simulatorID
+         << ", configuration parameters: " <<_configurationParameters.describe();
     return oStr.str();
   }
 

@@ -4,13 +4,13 @@
 // //////////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////////
-// DSIM
-#include <dsim/bom/StructAbstract.hpp>
+// StdAir
+#include <stdair/basic/StructAbstract.hpp>
 
 namespace DSIM {
 
   /** Structure wrapping the Reference Data Set parameters. */
-  struct RDSParameters : public StructAbstract {
+  struct RDSParameters : public stdair::StructAbstract {
     
   public:
     // //////// GETTERS /////////  
@@ -25,7 +25,16 @@ namespace DSIM {
       _scheduleInputFilename = iInputFilename;
     }
     
-    /////////// DISPLAY METHOD ///////////
+    // /////////// Display support method /////////////
+    /** Dump a Business Object into an output stream.
+        @param ostream& the output stream. */
+    void toStream (std::ostream& ioOut) const;
+
+    /** Read a Business Object from an input stream.
+        @param istream& the input stream. */
+    void fromStream (std::istream& ioIn);
+
+    /** Display of the structure. */
     const std::string describe() const;
     
 

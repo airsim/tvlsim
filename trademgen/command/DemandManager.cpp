@@ -4,6 +4,7 @@
 // STL
 #include <cassert>
 // StdAir
+#include <stdair/basic/ProgressStatusSet.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
@@ -158,19 +159,9 @@ namespace TRADEMGEN {
       lDemandStream.getMeanNumberOfRequests();
 
     /**
-     * Initialise the progress statuses, one specific to the demand
-     * stream, and the other one specific to the booking request type,
-     * both held by the event queue.
-     *
-     * The event queue object, which is part of the StdAir
-     * library, has no information on the DemandStream objects, which
-     * are part of this (TraDemGen) library. As the number of events
-     * to be generated are known from the DemandStream objects only,
-     * the event queue object can not calculate the progress statuses
-     * itself.
+     * Initialise the progress statuses, specific to the booking request type
      */
     ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
-                            lDemandStreamKey.toString(),
                             lExpectedTotalNbOfEvents);
   }
 
@@ -206,12 +197,10 @@ namespace TRADEMGEN {
                           iDefaultPOSProbablityMass);
 
     // Link the DemandStream to its parent (EventQueue)
-    stdair::FacBomManager::linkWithParent (ioEventQueue,
-                                                      oDemandStream);
+    stdair::FacBomManager::linkWithParent (ioEventQueue, oDemandStream);
     
     // Add the DemandStream to the dedicated list and map
-    stdair::FacBomManager::addToListAndMap (ioEventQueue,
-                                                       oDemandStream);
+    stdair::FacBomManager::addToListAndMap (ioEventQueue, oDemandStream);
 
     return oDemandStream;
   }
@@ -264,19 +253,10 @@ namespace TRADEMGEN {
       lDemandStream.getMeanNumberOfRequests();
 
     /**
-     * Initialise the progress statuses, one specific to the demand
-     * stream, and the other one specific to the booking request type,
-     * both held by the event queue.
-     *
-     * The event queue object, which is part of the StdAir
-     * library, has no information on the DemandStream objects, which
-     * are part of this (TraDemGen) library. As the number of events
-     * to be generated are known from the DemandStream objects only,
-     * the event queue object can not calculate the progress statuses
-     * itself.
+     * Initialise the progress statuses, one specific to the
+     * booking request type.
      */
     ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
-                            lDemandStreamKey.toString(),
                             lExpectedTotalNbOfEvents);
   }
 
@@ -291,10 +271,18 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   const bool DemandManager::
   stillHavingRequestsToBeGenerated (const stdair::EventQueue& iEventQueue,
-                                    const stdair::DemandStreamKeyStr_T& iKey) {
+                                    const stdair::DemandStreamKeyStr_T& iKey,
+                                    stdair::ProgressStatusSet& ioPSS) {
     // Retrieve the DemandStream which corresponds to the given key.
     const DemandStream& lDemandStream =
       stdair::BomManager::getObject<DemandStream> (iEventQueue, iKey);
+
+    // Retrieve the progress status of the demand stream.
+    stdair::ProgressStatus
+      lProgressStatus (lDemandStream.getNumberOfRequestsGeneratedSoFar(),
+                       lDemandStream.getMeanNumberOfRequests(),
+                       lDemandStream.getTotalNumberOfRequestsToBeGenerated());
+    ioPSS.setSpecificGeneratorStatus (lProgressStatus);
     
     return lDemandStream.stillHavingRequestsToBeGenerated();
   }
@@ -314,7 +302,7 @@ namespace TRADEMGEN {
       lDemandStream.generateNextRequest (ioGenerator);
 
     // Create an event structure
-    stdair::EventStruct lEventStruct (stdair::EventType::BKG_REQ, iKey,
+    stdair::EventStruct lEventStruct (stdair::EventType::BKG_REQ,
                                       lBookingRequest);
 
     /**
@@ -359,9 +347,6 @@ namespace TRADEMGEN {
       // Update the progress status for the given event type (i.e.,
       // booking request)
       ioEventQueue.updateStatus (stdair::EventType::BKG_REQ, lActualNbOfEvents);
-
-      // Update the progress status for the given demand stream key
-      ioEventQueue.updateStatus (lKey.toString(), lActualNbOfEvents);
 
       // Check whether there are still booking requests to be generated
       const bool stillHavingRequestsToBeGenerated =

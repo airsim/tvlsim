@@ -14,10 +14,11 @@
 /// Forward declarations
 namespace stdair {
   class AirlineFeatureSet;
+  class Inventory;
   class STDAIR_Service;
   struct BasLogParams;
   struct BasDBParams;
-  class Inventory;
+  struct SnapshotStruct;
   struct TravelSolutionStruct;
 }
 
@@ -107,6 +108,12 @@ namespace AIRINV {
      * Destructor.
      */
     ~AIRINV_Master_Service();
+
+    /** Initialise the snapshot events for the inventories.
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
+     */
+    void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&);
     
 
   public:
@@ -144,6 +151,11 @@ namespace AIRINV {
     bool sell (const std::string& iSegmentDateKey, const stdair::ClassCode_T&,
                const stdair::PartySize_T&);
 
+    /**
+     * Take inventory snapshots.
+     */
+    void takeSnapshots (const stdair::SnapshotStruct&);
+    
 
   public:
     // //////////////// Display support methods /////////////////

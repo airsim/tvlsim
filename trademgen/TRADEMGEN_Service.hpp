@@ -13,12 +13,13 @@
 
 // Forward declarations
 namespace stdair {
+  class EventQueue;
+  struct ProgressStatusSet;
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
   struct DemandCharacteristics;
   struct DemandDistribution;
-  class EventQueue;
   struct EventStruct;
 }
 
@@ -301,7 +302,8 @@ namespace TRADEMGEN {
      *   generated for that demand stream.
      */
     const bool
-    stillHavingRequestsToBeGenerated(const stdair::DemandStreamKeyStr_T&) const;
+    stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T&,
+                                      stdair::ProgressStatusSet&) const;
 
     /**
      * Browse the list of demand streams and generate the first
@@ -340,7 +342,7 @@ namespace TRADEMGEN {
      * @return stdair::EventStruct A copy of the event structure,
      *   which comes first in time from within the event queue.
      */
-    stdair::EventStruct popEvent() const;
+    stdair::ProgressStatusSet popEvent (stdair::EventStruct&) const;
 
     /**
      * States whether the event queue has reached the end.

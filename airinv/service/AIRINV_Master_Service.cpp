@@ -7,6 +7,7 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
+#include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
 // AirInv
@@ -237,6 +238,32 @@ namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
+  initSnapshotEvents (const stdair::Date_T& iStartDate,
+                      const stdair::Date_T& iEndDate) {
+
+    // Retrieve the AIRINV service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+    
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lAIRINV_Master_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service_ptr != NULL);
+
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lSTDAIR_Service_ptr->getEventQueue();
+
+    InventoryManager::initSnapshotEvents (iStartDate, iEndDate, lQueue);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::
   buildSampleBom (const bool isForRMOL,
                   const stdair::CabinCapacity_T iCapacity) {
 
@@ -374,6 +401,32 @@ namespace AIRINV {
 
     //
     return hasBeenSaleSuccessful;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::
+  takeSnapshots (const stdair::SnapshotStruct& iSnapshot) {
+
+    // Retrieve the AIRINV service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+  
+    // Retrieve the slave AIRINV service object from the (AIRINV)
+    // service context
+    AIRINV_Service& lAIRINV_Service =
+      lAIRINV_Master_ServiceContext.getAIRINV_Service();
+
+    // Retrieve  the snapshot time and the airline code.
+    const stdair::DateTime_T& lSnapshotTime = iSnapshot.getSnapshotTime();
+    const stdair::AirlineCode_T lAirlineCode = iSnapshot.getAirlineCode();
+
+    lAIRINV_Service.takeSnapshots (lAirlineCode, lSnapshotTime);
   }
   
 }

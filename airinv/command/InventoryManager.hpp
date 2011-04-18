@@ -15,6 +15,7 @@ namespace stdair {
   class Inventory;
   class FlightDate;
   class SegmentDate;
+  class EventQueue;
   struct TravelSolutionStruct;
 }
 
@@ -28,9 +29,14 @@ namespace AIRINV {
 
   /** Command wrapping the travel request process. */
   class InventoryManager {
+    friend class AIRINV_Master_Service;
     friend class AIRINV_Service;
 
   private:
+    /** Initialise the snapshot events for the inventories. */
+    static void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&,
+                                    stdair::EventQueue&);
+    
     /** Compute the availability for the given travel solution. */
     static void calculateAvailability (const stdair::BomRoot&,
                                        stdair::TravelSolutionStruct&);
@@ -42,6 +48,9 @@ namespace AIRINV {
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
 
+    /** Take inventory snapshots. */
+    static void takeSnapshots (const stdair::Inventory&,
+                               const stdair::DateTime_T&);
 
   public:
     /** Create the direct accesses within the invetories suck as links between

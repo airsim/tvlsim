@@ -20,6 +20,7 @@
 //#include <boost/progress.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/ProgressStatusSet.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
@@ -262,11 +263,13 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
     while (ioTrademgenService.isQueueDone() == false) {
 
       // Extract the next event from the event queue
-      const stdair::EventStruct& lEventStruct = ioTrademgenService.popEvent();
+      stdair::EventStruct lEventStruct;
+      stdair::ProgressStatusSet lProgressStatusSet =
+        ioTrademgenService.popEvent (lEventStruct);
       
       // DEBUG
-      STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
-                        << lEventStruct.describe() << "'.");
+      // STDAIR_LOG_DEBUG ("[" << runIdx << "] Poped event: '"
+      //                   << lEventStruct.describe() << "'.");
       
       // Extract the corresponding demand/booking request
       const stdair::BookingRequestStruct& lPoppedRequest =
@@ -280,14 +283,16 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       // stdair::BomDisplay::csvDisplay (output, lPoppedRequest);
         
       // Retrieve the corresponding demand stream key
-      const stdair::EventContentKey_T& lDemandStreamKey =
-        lEventStruct.getEventContentKey();
+      const stdair::DemandGeneratorKey_T& lDemandStreamKey =
+        lPoppedRequest.getDemandGeneratorKey();
       
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated = 
-        ioTrademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
+        ioTrademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey,
+                                                             lProgressStatusSet);
 
       // DEBUG
+      STDAIR_LOG_DEBUG (lProgressStatusSet.describe());
       STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
                         << "Still generate events for that demand stream? "
                         << stillHavingRequestsToBeGenerated);
@@ -320,7 +325,9 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
                           << "'. Is queue done? "
                           << ioTrademgenService.isQueueDone());
       }
-
+      // DEBUG
+      STDAIR_LOG_DEBUG ("");
+      
       // Update the progress display
       ++lProgressDisplay;
     }

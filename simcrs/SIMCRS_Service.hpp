@@ -17,6 +17,7 @@ namespace stdair {
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
+  struct SnapshotStruct;
   struct TravelSolutionStruct;
 }
 
@@ -101,6 +102,12 @@ namespace SIMCRS {
                     const stdair::Filename_T& iODInputFilename,
                     const stdair::Filename_T& iFareInputFilename);
 
+    /** Initialise the snapshot events for the inventories.
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
+     */
+    void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&);
+
     /**
      * Destructor.
      */
@@ -132,6 +139,11 @@ namespace SIMCRS {
      */
     bool sell (const stdair::TravelSolutionStruct&, const stdair::PartySize_T&);
 
+    /**
+     * Take inventory snapshots.
+     */
+    void takeSnapshots (const stdair::SnapshotStruct&);
+    
     /**
      * Build a sample list of travel solutions.
      *

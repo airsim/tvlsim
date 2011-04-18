@@ -44,6 +44,8 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                              const stdair::Date_T& iStartDate,
+                              const stdair::Date_T& iEndDate,
                               const stdair::Filename_T& iScheduleInputFilename,
                               const stdair::Filename_T& iODInputFilename,
                               const stdair::Filename_T& iFareInputFilename,
@@ -51,7 +53,7 @@ namespace DSIM {
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
-    initServiceContext ();
+    initServiceContext (iStartDate, iEndDate);
     
     // Retrieve the DSim service context
     assert (_dsimServiceContext != NULL);
@@ -63,11 +65,16 @@ namespace DSIM {
     // Initialise the context
     init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
           iDemandInputFilename);
+
+    // Initialise the snapshot events
+    initSnapshotEvents (iStartDate, iEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
+                              const stdair::Date_T& iStartDate,
+                              const stdair::Date_T& iEndDate,
                               const stdair::Filename_T& iScheduleInputFilename,
                               const stdair::Filename_T& iODInputFilename,
                               const stdair::Filename_T& iFareInputFilename,
@@ -75,7 +82,7 @@ namespace DSIM {
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
-    initServiceContext ();
+    initServiceContext (iStartDate, iEndDate);
     
     // Initialise the STDAIR service handler
     initStdAirService (iLogParams, iDBParams);
@@ -83,6 +90,9 @@ namespace DSIM {
     // Initialise the (remaining of the) context
     init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
           iDemandInputFilename);
+
+    // Initialise the snapshot events
+    initSnapshotEvents (iStartDate, iEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -92,10 +102,11 @@ namespace DSIM {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initServiceContext () {
+  void DSIM_Service::initServiceContext (const stdair::Date_T& iStartDate,
+                                         const stdair::Date_T& iEndDate) {
     // Initialise the context
     DSIM_ServiceContext& lDSIM_ServiceContext =
-      FacDsimServiceContext::instance().create ();
+      FacDsimServiceContext::instance().create (iStartDate, iEndDate);
     _dsimServiceContext = &lDSIM_ServiceContext;
   }
 
@@ -132,7 +143,7 @@ namespace DSIM {
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lDSIM_ServiceContext.getSTDAIR_Service();
+      lDSIM_ServiceContext.getSTDAIR_Service_Ptr();
     assert (lSTDAIR_Service_ptr != NULL);
     
     // TODO: do not hardcode the CRS code (e.g., take it from a
@@ -161,6 +172,20 @@ namespace DSIM {
       boost::make_shared<TRAVELCCM::TRAVELCCM_Service> (lSTDAIR_Service_ptr);
     lDSIM_ServiceContext.setTRAVELCCM_Service (lTRAVELCCM_Service);
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initSnapshotEvents (const stdair::Date_T& iStartDate,
+                                         const stdair::Date_T& iEndDate) {
+    // Retrieve the service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Get a reference on the SIMCRS service handler
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+
+    lSIMCRS_Service.initSnapshotEvents (iStartDate, iEndDate);
+  }
   
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::finalise () {
@@ -188,10 +213,15 @@ namespace DSIM {
     TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
       lDSIM_ServiceContext.getTRAVELCCM_Service();
 
+    // Get a reference on the STDAIR service handler
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSimulationChronometer;
     lSimulationChronometer.start();
-    Simulator::simulate (lSIMCRS_Service,lTRADEMGEN_Service,lTRAVELCCM_Service);
+    Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
+                         lTRAVELCCM_Service, lSTDAIR_Service);
     const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
     // DEBUG
