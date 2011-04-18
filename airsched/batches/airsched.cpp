@@ -208,9 +208,6 @@ int readConfiguration (int argc, char* argv[],
 // //////////////////////////////////////////////////////////////
 stdair::BookingRequestStruct
 parseBookingRequest (const std::string& iRequestOption) {
-  // Demand generator key.
-  const stdair::DemandGeneratorKey_T lGeneratorKey ("");
-  
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(" -:");
 
@@ -304,7 +301,7 @@ parseBookingRequest (const std::string& iRequestOption) {
   const stdair::PriceValue_T iValueOfTime = 20.0;
 
   // Build and return the booking request structure
-  return stdair::BookingRequestStruct (lGeneratorKey, iOrigin,
+  return stdair::BookingRequestStruct (iOrigin,
                                        iDestination, iPOS,
                                        iDepartureDate, iRequestDateTime,
                                        iPreferredCabin, iPartySize,
