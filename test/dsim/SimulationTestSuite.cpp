@@ -60,6 +60,12 @@ BOOST_AUTO_TEST_SUITE (master_test_suite)
  */
 BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
+  // Start date
+  stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
+  
+  // End date
+  stdair::Date_T lEndDate (2011, boost::gregorian::Jan, 01);
+
   // Demand input file name
   const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
                                                  "/rds01/demand.csv");
@@ -116,7 +122,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
                                        "sim_dsim");
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams,
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lScheduleInputFilename, lODInputFilename,
                                   lFareInputFilename, lDemandInputFilename);
   
