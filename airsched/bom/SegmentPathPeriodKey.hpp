@@ -79,7 +79,7 @@ namespace AIRSCHED {
     /**
      * Get the number of segments.
      */
-    const stdair::NbOfSegments_T& getNbOfSegments() const {
+    const stdair::NbOfSegments_T getNbOfSegments() const {
       return _boardingDateOffsetList.size();
     }
     
