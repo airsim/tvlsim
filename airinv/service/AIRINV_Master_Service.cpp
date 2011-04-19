@@ -428,5 +428,4 @@ namespace AIRINV {
 
     lAIRINV_Service.takeSnapshots (lAirlineCode, lSnapshotTime);
   }
-  
 }
