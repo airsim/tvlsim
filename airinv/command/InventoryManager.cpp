@@ -422,7 +422,6 @@ namespace AIRINV {
     stdair::ValueTypeIndexMap_T lValueTypeIndexMap;
     stdair::BlockIndex_T lBlockIndex = 0;
 
-        
     // Browse the fare family list
     const stdair::FareFamilyList_T& lFFList =
       stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
