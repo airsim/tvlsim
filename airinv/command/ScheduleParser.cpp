@@ -42,7 +42,7 @@ namespace AIRINV {
 
     // Build the similar flight-date sets and the corresponding guillotine
     // blocks.
-    InventoryManager::buildSimilarFlightDateSets (ioBomRoot);
+    InventoryManager::buildSimilarSegmentCabinSets (ioBomRoot);
   }
 
 }

@@ -15,6 +15,7 @@ namespace stdair {
   class Inventory;
   class FlightDate;
   class SegmentDate;
+  class SegmentCabin;
   class EventQueue;
   struct TravelSolutionStruct;
 }
@@ -23,9 +24,9 @@ namespace AIRINV {
 
   // //////////////// Type definitions ////////////////
   typedef std::map<const stdair::Date_T,
-                   const stdair::FlightDate*> DepartureDateFlightDateMap_T;
-  typedef std::map<const stdair::GuillotineNumber_T,
-                   DepartureDateFlightDateMap_T> GuillotineNumberSimilarFlightDateSetMap_T;
+                   const stdair::SegmentCabin*> DepartureDateSegmentCabinMap_T;
+  typedef std::map<const std::string,
+                   DepartureDateSegmentCabinMap_T> SimilarSegmentCabinSetMap_T;
 
   /** Command wrapping the travel request process. */
   class InventoryManager {
@@ -60,13 +61,13 @@ namespace AIRINV {
     static void createDirectAccesses (stdair::FlightDate&);
     static void createDirectAccesses (stdair::SegmentDate&);
 
-    /** Build the similar flight-date sets and the corresponding guillotine
+    /** Build the similar segment-cabin sets and the corresponding guillotine
         blocks for snapshots and other data. */
-    static void buildSimilarFlightDateSets (const stdair::BomRoot&);
-    static void buildSimilarFlightDateSets (stdair::Inventory&);
+    static void buildSimilarSegmentCabinSets (const stdair::BomRoot&);
+    static void buildSimilarSegmentCabinSets (stdair::Inventory&);
     static void buildGuillotineBlock (stdair::Inventory&,
                                       const stdair::GuillotineNumber_T&,
-                                      const DepartureDateFlightDateMap_T&);
+                                      const DepartureDateSegmentCabinMap_T&);
     
   private:
     /** Constructors. */

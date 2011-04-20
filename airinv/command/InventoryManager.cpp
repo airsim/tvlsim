@@ -146,8 +146,8 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void InventoryManager::takeSnapshots (const stdair::Inventory& iInventory,
-                                        const stdair::DateTime_T& iSnapshotTime){
+  void InventoryManager::takeSnapshots(const stdair::Inventory& iInventory,
+                                       const stdair::DateTime_T& iSnapshotTime){
 
     // Make the snapshots within the inventory
     InventoryHelper::takeSnapshots (iInventory, iSnapshotTime);
@@ -312,7 +312,7 @@ namespace AIRINV {
     
   // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
-  buildSimilarFlightDateSets (const stdair::BomRoot& iBomRoot) {
+  buildSimilarSegmentCabinSets (const stdair::BomRoot& iBomRoot) {
     // Browse the list of inventories and create direct accesses
     // within each inventory.
     const stdair::InventoryList_T& lInvList =
@@ -322,61 +322,82 @@ namespace AIRINV {
       stdair::Inventory* lCurrentInv_ptr = *itInv;
       assert (lCurrentInv_ptr != NULL);
 
-      buildSimilarFlightDateSets (*lCurrentInv_ptr);
+      buildSimilarSegmentCabinSets (*lCurrentInv_ptr);
     }
   }
     
   // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
-  buildSimilarFlightDateSets (stdair::Inventory& ioInventory) {
-    // For instance, we consider two flight-dates are similar if they have the
-    // same flight number.
+  buildSimilarSegmentCabinSets (stdair::Inventory& ioInventory) {
+    // For instance, we consider two flight-dates are
+    // similar if they have the same flight number and the same
+    // day-of-the-week departure.
 
-    // By conseconquence, the guillotine blocks will have the same identify
-    // number as the flight-dates within it.
+    // Browse the segment-cabin list and build the sets of segment-cabin
+    // which have the same flight number and origin-destination
+    SimilarSegmentCabinSetMap_T lSSCSM;
 
-    // Browse the flight-date list and build the sets of flight-date
-    // which have the same flight number.
-    GuillotineNumberSimilarFlightDateSetMap_T lGNSFDSM;
+    // Browsing the flight-date list
     const stdair::FlightDateList_T& lFlightDateList =
       stdair::BomManager::getList<stdair::FlightDate> (ioInventory);
-    for (stdair::FlightDateList_T::const_iterator itFD = lFlightDateList.begin();
+    for (stdair::FlightDateList_T::const_iterator itFD= lFlightDateList.begin();
          itFD != lFlightDateList.end(); ++itFD) {
-      stdair::FlightDate* lFD_ptr = *itFD;
+      const stdair::FlightDate* lFD_ptr = *itFD;
       assert (lFD_ptr != NULL);
-
       const stdair::FlightNumber_T& lFlightNumber = lFD_ptr->getFlightNumber();
-      const stdair::Date_T& lDepartureDate = lFD_ptr->getDepartureDate();
 
-      // Set the guillotine number for the flight-date.
-      lFD_ptr->setGuillotineBlockNumber (lFlightNumber);
-      
-      GuillotineNumberSimilarFlightDateSetMap_T::iterator itGNSFDSM =
-        lGNSFDSM.find (lFlightNumber);
-      if (itGNSFDSM == lGNSFDSM.end()) {
-        DepartureDateFlightDateMap_T lDDFDMap;
-        lDDFDMap.insert (DepartureDateFlightDateMap_T::
-                         value_type (lDepartureDate, lFD_ptr));
-        lGNSFDSM.
-          insert (GuillotineNumberSimilarFlightDateSetMap_T::
-                  value_type(lFlightNumber, lDDFDMap));
-      } else {
-        DepartureDateFlightDateMap_T& lDDFDMap = itGNSFDSM->second;
-        lDDFDMap.insert (DepartureDateFlightDateMap_T::
-                         value_type (lDepartureDate, lFD_ptr));
+      // Browsing the segment-date list and retrieve the departure
+      // date, the origine and the destination of the segment
+      const stdair::SegmentDateList_T& lSegmentDateList =
+        stdair::BomManager::getList<stdair::SegmentDate> (*lFD_ptr);
+      for (stdair::SegmentDateList_T::const_iterator itSD =
+             lSegmentDateList.begin(); itSD != lSegmentDateList.end(); ++itSD) {
+        const stdair::SegmentDate* lSD_ptr = *itSD;
+        assert (lSD_ptr != NULL);
+
+        const stdair::Date_T& lDepartureDate = lSD_ptr->getBoardingDate();
+        const stdair::AirportCode_T& lOrigin = lSD_ptr->getBoardingPoint();
+        const stdair::AirportCode_T& lDestination = lSD_ptr->getOffPoint();
+
+        // Browsing the segment-cabin list and retrieve the cabin code and
+        // build the corresponding key map.
+        const stdair::SegmentCabinList_T& lSegmentCabinList =
+          stdair::BomManager::getList<stdair::SegmentCabin> (*lSD_ptr);
+        for (stdair::SegmentCabinList_T::const_iterator itSC =
+               lSegmentCabinList.begin();
+             itSC != lSegmentCabinList.end(); ++itSC) {
+          const stdair::SegmentCabin* lSC_ptr = *itSC;
+          assert (lSC_ptr != NULL);
+
+          std::ostringstream oStr;
+          oStr << lFlightNumber << lDepartureDate.day_of_week()
+               << lOrigin << lDestination << lSC_ptr->getCabinCode();
+          const std::string lMapKey = oStr.str();
+
+          // Add the segment cabin to the similar segment cabin set map.
+          SimilarSegmentCabinSetMap_T::iterator itSSCS = lSSCSM.find (lMapKey);
+          if (itSSCS == lSSCSM.end()) {
+            DepartureDateSegmentCabinMap_T lDDSCMap;
+            lDDSCMap.insert (DepartureDateSegmentCabinMap_T::
+                             value_type (lDepartureDate, lSC_ptr));
+            lSSCSM.insert (SimilarSegmentCabinSetMap_T::
+                           value_type (lMapKey, lDDSCMap));
+          } else {
+            DepartureDateSegmentCabinMap_T& lDDSCMap = itSSCS->second;
+            lDDSCMap.insert (DepartureDateSegmentCabinMap_T::
+                             value_type (lDepartureDate, lSC_ptr));
+          }
+        }
       }
     }
 
-    // Browse the flight number - departure date set map and initialised the
-    // guillotine blocks.
-    for (GuillotineNumberSimilarFlightDateSetMap_T::const_iterator itGNSFDSM =
-           lGNSFDSM.begin(); itGNSFDSM != lGNSFDSM.end(); ++itGNSFDSM) {
-      const stdair::FlightNumber_T& lFlightNumber = itGNSFDSM->first;
-      const DepartureDateFlightDateMap_T& lDepartureDateFlightDateMap =
-        itGNSFDSM->second;
+    // Initialise the guillotine blocks.
+    stdair::GuillotineNumber_T lGuillotineNumber = 1;
+    for (SimilarSegmentCabinSetMap_T::const_iterator itSSCS = lSSCSM.begin();
+         itSSCS != lSSCSM.end(); ++itSSCS, ++lGuillotineNumber) {
+      const DepartureDateSegmentCabinMap_T& lDDSCMap = itSSCS->second;
 
-      buildGuillotineBlock (ioInventory, lFlightNumber,
-                            lDepartureDateFlightDateMap);
+      buildGuillotineBlock (ioInventory, lGuillotineNumber, lDDSCMap);
     }    
   }
 
@@ -384,7 +405,7 @@ namespace AIRINV {
   void InventoryManager::
   buildGuillotineBlock (stdair::Inventory& ioInventory,
                         const stdair::GuillotineNumber_T& iGuillotineNumber,
-                        const DepartureDateFlightDateMap_T& iDDFDMap) {
+                        const DepartureDateSegmentCabinMap_T& iDDSCMap) {
     // Build an empty guillotine block.
     const stdair::GuillotineBlockKey lKey (iGuillotineNumber);
     stdair::GuillotineBlock& lGuillotineBlock =
@@ -392,82 +413,59 @@ namespace AIRINV {
     stdair::FacBomManager::addToListAndMap (ioInventory, lGuillotineBlock);
 
     // Build the value type index map.
-    DepartureDateFlightDateMap_T::const_iterator itDDFD = iDDFDMap.begin();
-    assert (itDDFD != iDDFDMap.end());
-    const stdair::FlightDate* lFlightDate_ptr = itDDFD->second;
+    DepartureDateSegmentCabinMap_T::const_iterator itDDSC = iDDSCMap.begin();
+    assert (itDDSC != iDDSCMap.end());
+    const stdair::SegmentCabin* lSegmentCabin_ptr = itDDSC->second;
     
     // Browse the fare family list and build the value type for the classes
     // as well as for the family (Q-equivalent).
     stdair::ValueTypeIndexMap_T lValueTypeIndexMap;
     stdair::BlockIndex_T lBlockIndex = 0;
 
-    // Browse the segment-date list
-    const stdair::SegmentDateList_T& lSDList =
-      stdair::BomManager::getList<stdair::SegmentDate> (*lFlightDate_ptr);
-    for (stdair::SegmentDateList_T::const_iterator itSD = lSDList.begin();
-         itSD != lSDList.end(); ++itSD) {
-      const stdair::SegmentDate* lSegmentDate_ptr = *itSD;
-      assert (lSegmentDate_ptr != NULL);
-
-      // Browse the segment-cabin list
-      const stdair::SegmentCabinList_T& lSCList =
-        stdair::BomManager::getList<stdair::SegmentCabin> (*lSegmentDate_ptr);
-      for (stdair::SegmentCabinList_T::const_iterator itSC = lSCList.begin();
-         itSC != lSCList.end(); ++itSC) {
-        const stdair::SegmentCabin* lSegmentCabin_ptr = *itSC;
-        assert (lSegmentCabin_ptr != NULL);
-
-        std::ostringstream lCabinMapKey;
-        lCabinMapKey << stdair::DEFAULT_SEGMENT_CABIN_VALUE_TYPE
-                     << lSegmentCabin_ptr->describeKey();
-        lValueTypeIndexMap.insert (stdair::ValueTypeIndexMap_T::
-                                   value_type (lCabinMapKey.str(), lBlockIndex));
-        ++lBlockIndex;
         
-        // Browse the fare family list
-        const stdair::FareFamilyList_T& lFFList =
-          stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
-        for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
-             itFF != lFFList.end(); ++itFF) {
-          const stdair::FareFamily* lFareFamily_ptr = *itFF;
-          assert (lFareFamily_ptr != NULL);
+    // Browse the fare family list
+    const stdair::FareFamilyList_T& lFFList =
+      stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
+    for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
+         itFF != lFFList.end(); ++itFF) {
+      const stdair::FareFamily* lFareFamily_ptr = *itFF;
+      assert (lFareFamily_ptr != NULL);
           
-          std::ostringstream lFFMapKey;
-          lFFMapKey << stdair::DEFAULT_FARE_FAMILY_VALUE_TYPE
-                       << lFareFamily_ptr->describeKey();
-          lValueTypeIndexMap.insert (stdair::ValueTypeIndexMap_T::
-                                     value_type (lFFMapKey.str(), lBlockIndex));
-          ++lBlockIndex;
+      std::ostringstream lFFMapKey;
+      lFFMapKey << stdair::DEFAULT_FARE_FAMILY_VALUE_TYPE
+                << lFareFamily_ptr->describeKey();
+      lValueTypeIndexMap.insert (stdair::ValueTypeIndexMap_T::
+                                 value_type (lFFMapKey.str(), lBlockIndex));
+      ++lBlockIndex;
 
-          // Browse the booking class list
-          const stdair::BookingClassList_T& lBCList =
-            stdair::BomManager::getList<stdair::BookingClass> (*lFareFamily_ptr);
-          for (stdair::BookingClassList_T::const_iterator itBC = lBCList.begin();
-               itBC != lBCList.end(); ++itBC) {
-            const stdair::BookingClass* lBookingClass_ptr = *itBC;
-            assert (lBookingClass_ptr != NULL);
-            lValueTypeIndexMap.
-              insert (stdair::ValueTypeIndexMap_T::
-                      value_type (lBookingClass_ptr->describeKey(),lBlockIndex));
-            ++lBlockIndex;
-          }
-        }
+      // Browse the booking class list
+      const stdair::BookingClassList_T& lBCList =
+        stdair::BomManager::getList<stdair::BookingClass>(*lFareFamily_ptr);
+      for (stdair::BookingClassList_T::const_iterator itBC= lBCList.begin();
+           itBC != lBCList.end(); ++itBC) {
+        const stdair::BookingClass* lBookingClass_ptr = *itBC;
+        assert (lBookingClass_ptr != NULL);
+        lValueTypeIndexMap.
+          insert (stdair::ValueTypeIndexMap_T::
+                  value_type(lBookingClass_ptr->describeKey(),lBlockIndex));
+        ++lBlockIndex;
       }
     }
 
     // Build the flight-date index map
-    stdair::FlightDateIndexMap_T lFlightDateIndexMap;
+    stdair::SegmentCabinIndexMap_T lSegmentCabinIndexMap;
     stdair::BlockNumber_T lBlockNumber = 0;
-    for (; itDDFD != iDDFDMap.end(); ++itDDFD, ++lBlockNumber) {
-      const stdair::FlightDate* lCurrentFD_ptr = itDDFD->second;
-      assert (lCurrentFD_ptr != NULL);
-      lFlightDateIndexMap.
-        insert (stdair::FlightDateIndexMap_T::value_type (lCurrentFD_ptr,
-                                                          lBlockNumber));
+    for (; itDDSC != iDDSCMap.end(); ++itDDSC, ++lBlockNumber) {
+      const stdair::SegmentCabin* lCurrentSC_ptr = itDDSC->second;
+      assert (lCurrentSC_ptr != NULL);
+      lSegmentCabinIndexMap.
+        insert (stdair::SegmentCabinIndexMap_T::value_type (lCurrentSC_ptr,
+                                                            lBlockNumber));
     }
 
     // Initialise the guillotine block.
-    lGuillotineBlock.initSnapshotBlocks (lFlightDateIndexMap,lValueTypeIndexMap);
+    lGuillotineBlock.initSnapshotBlocks(lSegmentCabinIndexMap,
+                                        lValueTypeIndexMap);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -485,8 +483,8 @@ namespace AIRINV {
          lSnapshotTime < lEndSnapshotTime; lSnapshotTime += lOneDayDuration) {
       // Create the snapshot event structure
       stdair::SnapshotPtr_T lSnapshotStruct =
-        boost::make_shared<stdair::SnapshotStruct> (stdair::DEFAULT_AIRLINE_CODE,
-                                                    lSnapshotTime);
+        boost::make_shared<stdair::SnapshotStruct>(stdair::DEFAULT_AIRLINE_CODE,
+                                                   lSnapshotTime);
       // Create the event structure
       stdair::EventStruct lEventStruct (stdair::EventType::SNAPSHOT,
                                         lSnapshotStruct);
