@@ -580,16 +580,14 @@ namespace TRADEMGEN {
     assert (_trademgenServiceContext != NULL);
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
-    
+
     // Retrieve the StdAir service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lTRADEMGEN_ServiceContext.getSTDAIR_Service();
-
     // Retrieve the event queue object instance
     stdair::EventQueue& lQueue = lSTDAIR_Service.getEventQueue();
     
     // Delegate the call to the dedicated command
     DemandManager::reset (lQueue);
   }
-
 }

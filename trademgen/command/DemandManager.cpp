@@ -282,7 +282,7 @@ namespace TRADEMGEN {
       lProgressStatus (lDemandStream.getNumberOfRequestsGeneratedSoFar(),
                        lDemandStream.getMeanNumberOfRequests(),
                        lDemandStream.getTotalNumberOfRequestsToBeGenerated());
-    ioPSS.setSpecificGeneratorStatus (lProgressStatus);
+    ioPSS.setSpecificGeneratorStatus (lProgressStatus, iKey);
     
     return lDemandStream.stillHavingRequestsToBeGenerated();
   }
