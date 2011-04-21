@@ -392,5 +392,4 @@ namespace AIRINV {
       InventoryManager::takeSnapshots (*lInv_ptr, iSnapshotTime); 
     }
   }
-  
 }
