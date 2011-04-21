@@ -191,7 +191,8 @@ namespace AIRINV {
           STDAIR_LOG_DEBUG ("Class: " << lClassCode
                             << ", " << "Yield: " << lYld << ", "
                             << "Bid price: " << lBpvVal << ", "
-	  		    << "Remaining capacity: " << lAvailabilityPool);
+	  		    << "Remaining capacity: " << lAvailabilityPool << " "
+			    << "Segment date: " << iFullSegmentDateKey);
         }
       }
     }

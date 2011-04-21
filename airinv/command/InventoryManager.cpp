@@ -75,6 +75,15 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
   calculateAvailabilityByAU (stdair::TravelSolutionStruct& ioTravelSolution) {
+
+    // MODIF: segment path string for availability display
+    std::ostringstream oStr;
+    const stdair::SegmentPath_T& lSP = ioTravelSolution.getSegmentPath();
+    for (stdair::SegmentPath_T::const_iterator itSP = lSP.begin();
+	 itSP != lSP.end(); itSP++) {
+      oStr << *itSP << ";";
+    }
+
     // Browse the fare options
     stdair::FareOptionList_T& lFOList = ioTravelSolution.getFareOptionListRef();
     for (stdair::FareOptionList_T::iterator itFO = lFOList.begin();
@@ -142,6 +151,9 @@ namespace AIRINV {
       }
       
       lFO.setAvailability (lAvl);
+      //MODIF: availability display
+      STDAIR_LOG_DEBUG ("Fare option " << lFO.describe() << ", " << "Availability " << lFO.getAvailability() << ", " << "Segment Path " << oStr.str());
+
     }
   }
 
@@ -184,8 +196,19 @@ namespace AIRINV {
 
       //Browse class path, class-yield maps, class-(bid price vector) maps.
       //Each iteration corresponds to one segment.
+
+      std::ostringstream oCPStr;
       for(stdair::ClassList_StringList_T::const_iterator itCL = lClassPath.begin();
 	  itCL != lClassPath.end(); ++itCL, ++itCYM, ++itCBPM) {
+
+	// Class path determination
+	if (itCL == lClassPath.begin()) {
+	  oCPStr << *itCL;
+	}
+	else {
+	  oCPStr << "-" << *itCL;
+	}
+
 	const stdair::ClassList_String_T& lCL = *itCL;
 	stdair::ClassCode_T lCC;
 	lCC.append (lCL, 0, 1);
@@ -205,9 +228,7 @@ namespace AIRINV {
 	}
 	// Availability update
 	if (lFO.getAvailability() > 0) {
-
-	  /*stdair::BidPriceVector_T::iterator low = std::lower_bound (lBidPriceVector.rbegin(),
-								   lBidPriceVector.rend(), lYield);*/
+	  
 	  //Segment availability calculation
 	  stdair::BidPriceVector_T lReverseBPV (lBidPriceVector.size());
 	  std::reverse_copy (lBidPriceVector.begin(), lBidPriceVector.end(), lReverseBPV.begin());
@@ -225,11 +246,18 @@ namespace AIRINV {
 	lTotalYield += lYield;
       }
       // Multi-segment bid price control
-      if (lClassPath.size() > 1 && lFO.getAvailability() > 0) {
-      	stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice); // binary
-      	lFO.setAvailability (lAvl * lFO.getAvailability());
-      }
-      
+
+      // if (lClassPath.size() > 1 && lFO.getAvailability() > 0) {
+      // 	stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      // 	lFO.setAvailability (lAvl * lFO.getAvailability());
+      // 	STDAIR_LOG_DEBUG ("Class: " << oCPStr.str()
+      // 			  << ", " << "Yield: " << alpha*lTotalYield << ", "
+      // 			  << "Bid price: " << lTotalBidPrice << ", "
+      // 			  << "Remaining capacity: " << "Undefined" << " "
+      // 			  << "Segment date: " << oStr.str());
+      // }
+
+         
       STDAIR_LOG_DEBUG ("Fare option " << lFO.describe() << ", " << "Availability " << lFO.getAvailability() << ", " << "Segment Path " << oStr.str());
 
     }
