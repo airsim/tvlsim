@@ -69,7 +69,7 @@ namespace AIRINV {
 
     // Compute the availability for each fare option using IBP
     calculateAvailabilityByBP (ioTravelSolution);
-
+     
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ namespace AIRINV {
   void InventoryManager::
   calculateAvailabilityByBP (stdair::TravelSolutionStruct& ioTravelSolution) {
     //Yield valuation coefficient for multi-segment travel solutions   
-    double alpha = 0.87;
+    double alpha = 0.97;
     std::ostringstream oStr;
     const stdair::SegmentPath_T& lSP = ioTravelSolution.getSegmentPath();
     for (stdair::SegmentPath_T::const_iterator itSP = lSP.begin();
@@ -187,6 +187,8 @@ namespace AIRINV {
       stdair::ClassBpvMapHolder_T::const_iterator itCBPM = lClassBpvMapHolder.begin();
 
       const stdair::ClassList_StringList_T& lClassPath = lFO.getClassPath();
+
+      
       //Sanity test
       assert (lClassPath.size() == lClassYieldMapHolder.size() && lClassPath.size() ==
 	      lClassBpvMapHolder.size());
@@ -236,9 +238,11 @@ namespace AIRINV {
 								   lReverseBPV.end(), lYield);
 	  stdair::Availability_T lAvl = short (low - lReverseBPV.begin());
 	  lFO.setAvailability (std::min(lFO.getAvailability(), lAvl));
-	  
-	  // Total bid price calculation
+     
+	}
 
+	// Total bid price calculation
+	if (lBidPriceVector.size() > 0) {
 	  lTotalBidPrice += lBidPriceVector.back();
 	}
 
@@ -247,15 +251,21 @@ namespace AIRINV {
       }
       // Multi-segment bid price control
 
-      // if (lClassPath.size() > 1 && lFO.getAvailability() > 0) {
-      // 	stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
-      // 	lFO.setAvailability (lAvl * lFO.getAvailability());
-      // 	STDAIR_LOG_DEBUG ("Class: " << oCPStr.str()
-      // 			  << ", " << "Yield: " << alpha*lTotalYield << ", "
-      // 			  << "Bid price: " << lTotalBidPrice << ", "
-      // 			  << "Remaining capacity: " << "Undefined" << " "
-      // 			  << "Segment date: " << oStr.str());
-      // }
+      if (lClassPath.size() > 1) {
+      	if (lFO.getAvailability() > 0) {
+      	  stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      	  lFO.setAvailability (lAvl * lFO.getAvailability());
+      	}
+      	// else {
+      	//   stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      	//   lFO.setAvailability (lAvl);
+      	// }
+      	STDAIR_LOG_DEBUG ("Class: " << oCPStr.str()
+      			  << ", " << "Yield: " << alpha*lTotalYield << ", "
+      			  << "Bid price: " << lTotalBidPrice << ", "
+      			  << "Remaining capacity: " << "Undefined" << " "
+      			  << "Segment date: " << oStr.str());
+      }
 
          
       STDAIR_LOG_DEBUG ("Fare option " << lFO.describe() << ", " << "Availability " << lFO.getAvailability() << ", " << "Segment Path " << oStr.str());
@@ -300,11 +310,11 @@ namespace AIRINV {
 	    assert (lCurrentSegmentCabin_ptr != NULL);
 	    stdair::CabinCapacity_T lCabinCapacity = lCurrentSegmentCabin_ptr->getCapacity();
 	    stdair::BidPriceVector_T lBPV;
-	    for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) lBPV.push_back(440 + 159/sqrt(k+1));
+	    for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) lBPV.push_back(440 + 239/sqrt(k+1));
 	    lCurrentSegmentCabin_ptr->setBidPriceVector (lBPV);
 	    // std::cout << " BPV size = " << lBPV.size() << std::endl;
 
-	    stdair::YieldValue_T lYield = 600;
+	    stdair::YieldValue_T lYield = 680;
 	    const stdair::FareFamilyList_T& lFFList =
 	      stdair::BomManager::getList<stdair::FareFamily> (*lCurrentSegmentCabin_ptr);
 	    stdair::FareFamilyList_T::size_type lFFSize = lFFList.size();
@@ -321,7 +331,7 @@ namespace AIRINV {
 	      	stdair::BookingClass* lBC_ptr = *itBC;
 	      	assert (lBC_ptr != NULL);
 	      	lBC_ptr->setYield (lYield);
-	      	lYield -= 220/(lFFSize*lBCSize);
+	      	lYield -= 350/(lFFSize*lBCSize);
 	      }
 	    }
 	  }
@@ -330,6 +340,7 @@ namespace AIRINV {
     }     
   }
 
+  
   // ////////////////////////////////////////////////////////////////////
   bool InventoryManager::sell (stdair::Inventory& ioInventory,
                                const std::string& iSegmentDateKey,

@@ -65,6 +65,7 @@ namespace AIRINV {
     static void createDirectAccesses (stdair::FlightDate&);
     static void createDirectAccesses (stdair::SegmentDate&);
 
+
     /** Build the similar segment-cabin sets and the corresponding guillotine
         blocks for snapshots and other data. */
     static void buildSimilarSegmentCabinSets (const stdair::BomRoot&);
@@ -72,6 +73,7 @@ namespace AIRINV {
     static void buildGuillotineBlock (stdair::Inventory&,
                                       const stdair::GuillotineNumber_T&,
                                       const DepartureDateSegmentCabinMap_T&);
+
 
     //MODIF
     // To be removed once bid price computation is possible

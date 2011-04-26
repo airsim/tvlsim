@@ -141,6 +141,7 @@ namespace AIRINV {
 
       stdair::BidPriceVector_T lBPV = lSegmentCabin_ptr->getBidPriceVector();
 
+
       // const stdair::CabinCapacity_T& lCabinCapacity = lSegmentCabin_ptr->getCapacity();
       // const stdair::CommittedSpace_T& lCommittedSpace = lSegmentCabin_ptr->getCommittedSpace();
       // assert (lCabinCapacity - lCommittedSpace > 0);
@@ -149,6 +150,7 @@ namespace AIRINV {
       const stdair::Availability_T& lAvailabilityPool = lSegmentCabin_ptr->getAvailabilityPool();
       //assert (lAvailabilityPool > 0);
       lBPV.resize(lAvailabilityPool);
+
 
 
       ioTravelSolution.addBidPriceVector(lBPV);
@@ -193,6 +195,8 @@ namespace AIRINV {
                             << "Bid price: " << lBpvVal << ", "
 	  		    << "Remaining capacity: " << lAvailabilityPool << " "
 			    << "Segment date: " << iFullSegmentDateKey);
+
+
         }
       }
     }
