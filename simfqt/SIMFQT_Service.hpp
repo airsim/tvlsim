@@ -78,59 +78,14 @@ namespace SIMFQT {
     SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr);
 
     /**
-     * Constructor.
+     * Parse the fare dump and load it into memory.
      *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
+     * The CSV file, describing the fare rule for the
+     * simulator, is parsed and instantiated in memory accordingly.
      *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log
-     *        stream.
      * @param const stdair::Filename_T& Filename of the input fare file.
      */
-    SIMFQT_Service (const stdair::BasLogParams&,
-                    const stdair::Filename_T& iFareInputFilename);
-    
-    /**
-     * Constructor.
-     *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * Moreover, database connection parameters are given, so that a
-     * session can be created on the corresponding database.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log
-     *        stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     */
-    SIMFQT_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                    const stdair::Filename_T& iFareInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The init() method is called; see the corresponding documentation
-     * for more details.
-     *
-     * Moreover, as no reference on any output stream is given, it is
-     * assumed that the StdAir log service has already been initialised
-     * with the proper log output stream by some other methods in the
-     * calling chain (for instance, when the SIMFQT_Service is itself
-     * being initialised by another library service such as SIMCRS_Service).
-     *
-     * @param const stdair::STDAIR_ServicePtr_T Reference on the STDAIR_Service
-     *        holding log (and potentially database) parameters.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     */
-    SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                    const stdair::Filename_T& iFareInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iFareInputFilename);
 
     /**
      * Destructor.

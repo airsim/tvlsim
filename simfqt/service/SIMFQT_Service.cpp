@@ -90,67 +90,6 @@ namespace SIMFQT {
     // Initialise the context
     initSimfqtService();
   }
-  
-  // ////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::SIMFQT_Service (const stdair::BasLogParams& iLogParams,
-                                  const stdair::Filename_T& iFareInputFilename) 
-    : _simfqtServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams);
-    
-    // Initialise the service context
-    initServiceContext();
-
-    // Add the StdAir service context to the SimFQT service context
-    // \note SimFQT owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initSimfqtService (iFareInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::SIMFQT_Service (const stdair::BasLogParams& iLogParams,
-                                  const stdair::BasDBParams& iDBParams,
-                                  const stdair::Filename_T& iFareInputFilename) 
-    : _simfqtServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the service context
-    initServiceContext();
-
-    // Add the StdAir service context to the SimFQT service context
-    // \note SimFQT owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initSimfqtService (iFareInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  SIMFQT_Service::
-  SIMFQT_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
-                  const stdair::Filename_T& iFareInputFilename)
-    : _simfqtServiceContext (NULL) {
-
-    // Initialise the service context
-    initServiceContext();
-
-    // Store the STDAIR service object within the (SimFQT) service context
-    // \note SimFQT does not own the STDAIR service resources here.
-    const bool doesNotOwnStdairService = false;
-    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
-    
-    // Initialise the context
-    initSimfqtService (iFareInputFilename);
-  }
 
   // //////////////////////////////////////////////////////////////////////
   SIMFQT_Service::~SIMFQT_Service() {
@@ -227,27 +166,22 @@ namespace SIMFQT {
     // Do nothing at this stage. A sample BOM tree may be built by
     // calling the buildSampleBom() method
   }
-  
+
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
-  initSimfqtService (const stdair::Filename_T& iFareInputFilename) {
+  parseAndLoad (const stdair::Filename_T& iInventoryInputFilename) {
 
-    // Retrieve the SimFQT service context
+    // Retrieve the BOM root object.
     assert (_simfqtServiceContext != NULL);
     SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
-
-    // Retrieve the StdAir service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMFQT_ServiceContext.getSTDAIR_Service();
-    
-    // Get the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
     
-    // Initialise the fare parser
-    FareParser::fareRuleGeneration (iFareInputFilename, lBomRoot);
+    // Initialise the airline inventories
+    FareParser::fareRuleGeneration (iInventoryInputFilename, lBomRoot);
   }
-
+ 
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::buildSampleBom() {
 
@@ -315,7 +249,7 @@ namespace SIMFQT {
   // ////////////////////////////////////////////////////////////////////
   std::string SIMFQT_Service::csvDisplay() const {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the SIMFQT service context
     if (_simfqtServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimFQT service "
                                                     "has not been initialised");
