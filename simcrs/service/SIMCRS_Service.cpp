@@ -273,11 +273,13 @@ namespace SIMCRS {
      * longer referenced (e.g., at the end of the process).
      */
     SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
-      boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr,
-                                                  iFareInputFilename);
+      boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr);
 
-    // Store the Simfqt service object within the (SimCRS) service context
-    lSIMCRS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
+    // Store the Simfqt service object within the (SimLFS) service context
+    lSIMLFS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
+
+    // Parse the fare input file and load its content into memory
+    lSIMFQT_Service_ptr->parseAndLoad (iFareInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -565,5 +567,4 @@ namespace SIMCRS {
 
     lAIRINV_Master_Service.takeSnapshots (iSnapshot);
   }
-  
 }
