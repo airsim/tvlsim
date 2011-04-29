@@ -276,7 +276,7 @@ namespace SIMCRS {
       boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr);
 
     // Store the Simfqt service object within the (SimLFS) service context
-    lSIMLFS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
+    lSIMCRS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
 
     // Parse the fare input file and load its content into memory
     lSIMFQT_Service_ptr->parseAndLoad (iFareInputFilename);
