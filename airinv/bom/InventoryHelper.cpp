@@ -18,6 +18,7 @@
 // AirInv
 #include <airinv/bom/InventoryHelper.hpp>
 #include <airinv/bom/FlightDateHelper.hpp>
+#include <airinv/bom/GuillotineBlockHelper.hpp>
 #include <airinv/bom/SegmentCabinHelper.hpp>
 
 namespace AIRINV {
@@ -50,8 +51,8 @@ namespace AIRINV {
     STDAIR_LOG_DEBUG (iFullSegmentDateKey);
     //
     stdair::SegmentDate* lSegmentDate_ptr =
-      stdair::BomRetriever::retrieveSegmentDateFromLongKey (iInventory,
-                                                            iFullSegmentDateKey);
+      stdair::BomRetriever::retrieveSegmentDateFromLongKey(iInventory,
+                                                           iFullSegmentDateKey);
     assert (lSegmentDate_ptr != NULL);
     
     // Browse the segment-cabins and fill the map with the availability of
@@ -118,9 +119,9 @@ namespace AIRINV {
 
     //
     stdair::BookingClass* lBookingClass_ptr =
-      stdair::BomRetriever::retrieveBookingClassFromLongKey (ioInventory,
-                                                             iFullSegmentDateKey,
-                                                             iClassCode);
+      stdair::BomRetriever::retrieveBookingClassFromLongKey(ioInventory,
+                                                            iFullSegmentDateKey,
+                                                            iClassCode);
 
     // DEBUG
     const std::string hasFoundBookingClassStr =
@@ -159,8 +160,8 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void InventoryHelper::takeSnapshots (const stdair::Inventory& iInventory,
-                                       const stdair::DateTime_T& iSnapshotTime) {
+  void InventoryHelper::takeSnapshots(const stdair::Inventory& iInventory,
+                                      const stdair::DateTime_T& iSnapshotTime) {
     // Browse the guillotine block list and take the snapshots for
     // each guillotine.
     const stdair::GuillotineBlockList_T& lGuillotineBlockList =
@@ -170,7 +171,7 @@ namespace AIRINV {
          itGB != lGuillotineBlockList.end(); ++itGB) {
       stdair::GuillotineBlock* lGuillotineBlock_ptr = *itGB;
 
-      //GuillotineBlockHelper::takeSnapshots (*lGuillotineBlock_ptr,iSnapshotTime);
+      GuillotineBlockHelper::takeSnapshots(*lGuillotineBlock_ptr,iSnapshotTime);
     }    
   }
 }

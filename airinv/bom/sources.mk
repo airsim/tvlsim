@@ -16,9 +16,8 @@ airinv_bom_h_sources = \
 		$(top_srcdir)/airinv/bom/SegmentDateHelper.hpp \
 		$(top_srcdir)/airinv/bom/LegCabinHelper.hpp \
 		$(top_srcdir)/airinv/bom/SegmentCabinHelper.hpp \
-		$(top_srcdir)/airinv/bom/BookingClassHelper.hpp
-#  \
-#		$(top_srcdir)/airinv/bom/DCPEventStruct.hpp
+		$(top_srcdir)/airinv/bom/BookingClassHelper.hpp \
+		$(top_srcdir)/airinv/bom/GuillotineBlockHelper.hpp 
 airinv_bom_cc_sources = \
 		$(top_srcdir)/airinv/bom/BomAbstract.cpp \
 		$(top_srcdir)/airinv/bom/FlightPeriodStruct.cpp \
@@ -36,6 +35,5 @@ airinv_bom_cc_sources = \
 		$(top_srcdir)/airinv/bom/SegmentDateHelper.cpp \
 		$(top_srcdir)/airinv/bom/LegCabinHelper.cpp \
 		$(top_srcdir)/airinv/bom/SegmentCabinHelper.cpp \
-		$(top_srcdir)/airinv/bom/BookingClassHelper.cpp
-#  \
-#		$(top_srcdir)/airinv/bom/DCPEventStruct.cpp
+		$(top_srcdir)/airinv/bom/BookingClassHelper.cpp \
+		$(top_srcdir)/airinv/bom/GuillotineBlockHelper.cpp
