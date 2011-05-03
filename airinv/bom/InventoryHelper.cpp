@@ -186,10 +186,11 @@ namespace AIRINV {
 	  // 		    << "Remaining capacity: " << lCabinCapacity - lCommittedSpace);
   
 
-	  std::string lBpvVal ("Undefined");
+	  stdair::BidPrice_T lBpvVal = std::numeric_limits<double>::max();
 	  if (lBpvRef.size() > 0) {
-	    lBpvVal = boost::lexical_cast<std::string> (lBpvRef.back());
+	    lBpvVal = lBpvRef.back();
 	  }
+	  //lBpvVal = boost::lexical_cast<std::string> (lBpvRef.back());
           STDAIR_LOG_DEBUG ("Class: " << lClassCode
                             << ", " << "Yield: " << lYld << ", "
                             << "Bid price: " << lBpvVal << ", "

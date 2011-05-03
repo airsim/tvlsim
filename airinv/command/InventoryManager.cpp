@@ -245,6 +245,9 @@ namespace AIRINV {
 	if (lBidPriceVector.size() > 0) {
 	  lTotalBidPrice += lBidPriceVector.back();
 	}
+	else {
+	  lTotalBidPrice = std::numeric_limits<double>::max();
+	}
 
 	// Total yield calculation
 	lTotalYield += lYield;
@@ -256,10 +259,11 @@ namespace AIRINV {
       	  stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
       	  lFO.setAvailability (lAvl * lFO.getAvailability());
       	}
-      	// else {
-      	//   stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
-      	//   lFO.setAvailability (lAvl);
-      	// }
+      	else {
+      	  stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      	  lFO.setAvailability (lAvl);
+      	}
+      
       	STDAIR_LOG_DEBUG ("Class: " << oCPStr.str()
       			  << ", " << "Yield: " << alpha*lTotalYield << ", "
       			  << "Bid price: " << lTotalBidPrice << ", "
