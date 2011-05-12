@@ -9,7 +9,7 @@
 //  A runtime-configurable date parser
 //
 //  [ RB July 2010 ]     spirit2
-//
+//  See also: http://lists.boost.org/Archives/boost/2011/05/181622.php
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/shared_ptr.hpp>
 #include <boost/config/warning_disable.hpp>
