@@ -1,0 +1,185 @@
+[/==============================================================================
+    Copyright (C) 2010 Roland Bock
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+===============================================================================/]
+
+[section Runtime-Configurable Date Parser]
+
+[import ../../example/qi/date_parser.cpp]
+
+This section demonstrates:
+
+* complex validation rules using `_pass`
+* multiple semantic actions
+* numeric parser specializations
+* `phoenix::construct`
+* `phoenix::new_`
+
+The section also revisits:
+
+* signature / inherited attributes
+* locals
+
+If you never tried to parse date information from various different sources, 
+you might wonder why anybody might want to have a runtime configurable date 
+parser? Why not just write a date parser and be done with it? 
+
+Well, the truth is, there are hundreds of different ways for writing a date: 
+
+[table Some date/time samples for motivation
+    [[Sample]                          [Origin]]
+    [[Fri Jul 30 10:14:25 CEST 2010]   [linux date command]]
+    [[Fri, 30 Jul 2010 07:57:45 +0200] [timestamp of an RSS item]]
+    [[07/30/2010 07:57 AM]             [firefox, displaying same RSS item]]
+    [[30. Juli 2010, 10:35 Uhr]        [German news portal]]
+    [[30.7.2010, 8:53]                 [another German news portal]]
+    [[July 30, 2010 -- Updated 0721 GMT] [US news portal]]
+    [[July 30 2010 12:01AM]            [UK news portal]]
+    [[2010-07-30 04:26:48]             [lists.boost.org]]
+    [[2010-07-30 04:29:13 EDT]         [lists.boost.org]]
+    [[2010/07]                         [lists.boost.org]]
+    [[May 6th, 2010 12:00 GMT]         [www.boost.org]]
+    [[13th-19th of June]               [www.boost.org]]
+    [[2010-05-06 07:05:24 -0400]       [www.boost.org]]
+    [[Thu, 06 May 2010]                [www.boost.org]]
+    [[January 19 2006]                 [www.boost.org]]
+    [[09/09/08 04:16:56]               [svn.boost.org]]
+    [[2008-09-09T04%3A16%3A56-04%3A00] [svn.boost.org (a link)]]
+]
+
+This is just a small collection. There is no way a single parser can handle 
+them all correctly. That is why many programming languages or libraries feature
+some way of parsing date/time information based on a format definition which is 
+interpreted at runtime (see [@boost:/libs/date_time/index.html Boost.DateTime], 
+for instance).
+
+In this tutorial we take a glimpse at how you could approach the task of writing 
+such a configurable date parser using Spirit.
+
+
+[heading Strategy]
+
+As always, there are different ways to approach this task. Here is one:
+
+# Create specialized classes for parsing certain date/time elements, 
+  e.g. year, numerical month, day of month.
+# Come up with a way to combine them into a sequence to parse a complete
+  date.
+# Write a grammar to build such a sequence from a given format string.
+
+
+[heading Parsing Months And Days]
+
+Let's ignore month names (you can use Spirit symbol tables for those) and take 
+a look at the requirements of a numerical month: 
+
+* unsigned integer
+* one or two digits
+* values 1 through 12
+
+This can easily be translated into a Spirit rule with an `unsigned int` 
+synthesized attribute:
+
+[tutorial_rule_month]
+
+The 1-2 digits unsigned int requirements can be enforced by using a 
+specialization of the [@../reference/numeric/uint.html uint_parser]. The 
+second parameter defines the radix base, the third and fourth parameter 
+define the minimum and maximum number of allowed digits.
+
+Then, a semantic action is used to check if the parsed value is within the 
+expected value range. [@../quick_reference/phoenix.html _pass] is one 
+of Spirit.Qi's __phoenix__ placeholders. If assigned to `false`, it enforces
+a parser failure, which is exactly what we need here.
+
+Since the default action (assigning the parsed value to the synthesized 
+attribute) has been overruled by our `_pass` action, we need a second 
+semantic action to assign the value. Luckily, semantic actions can be chained...
+
+OK. Cool. This covers months. And if we ignore all the gory details 
+for days of a month (e.g. 28-31 days, leap years), the rule for parsing 
+days is pretty much the same as for parsing months:
+
+[tutorial_rule_day]
+
+[heading Parsing Years]
+
+Parsing years differs from parsing months or days in several aspects. 
+
+# Years could be given as 1-4 digits and the context defines what is meant by 
+  one or two digits. We will ignore this and require years to be 4 digit unsigned 
+  integer values.
+# It might also be required to limit the value range, but in contrast to 
+  months or days there is no /natural/ interval. Instead, it depends on what 
+  you want to do with the date information, later on. For instance, if you 
+  want to turn it into a unix timestamp, the year should not be less than 
+  1970.
+
+Here is a Spirit rule that lets us parse a year with limits we define at 
+runtime:
+
+[tutorial_rule_year]
+
+Again, the synthesized attribute is an `unsigned int`, but there are also two 
+inherited attributes. Their names =min= and =max= are irrelevant for the 
+compiler, but can be used here to explain the semantics to a human reader 
+of the code. We will need to provide values for =min= and =max= whenever we 
+use this rule.
+
+Inside the rule, the inherited attributes can be accessed by using another
+type of Spirit.Qi's __phoenix__ placeholders: 
+[@../quick_reference/phoenix.html _r1, _r2, ...]
+
+And here is how we parse the year:
+
+[tutorial_parse_year]
+
+
+[heading Combining Date Elements]
+
+Now that we have rules for parsing year, month and day, it is time to think 
+of combining them. In this tutorial, we limit ourselves to simple sequences.
+A real world date parser would probably also have to deal with alternatives 
+and optional elements at the very least.
+
+Hmm, we could try to create a grammar with a rule as synthesized attribute.
+And when we parse the format string and stumble over something that represents 
+a year, we could have a semantic action that says 
+=_val = _val << _1=. 
+But no, that is NOT a good idea! Although it would work for simple sequences, this 
+approach would fail for alternatives and optional elements which would require
+temporary `rule` objects.
+
+[warning Qi rules are combined using references. Building rules from temporary 
+rule variables therefore is bound to lead to trouble!]
+
+Instead, we put the rules into classes derived from an interface like this
+
+[tutorial_element]
+
+and then also define derived operator classes like this sequence operator:
+
+[tutorial_operator_sequence]
+
+Now, what's left is to write a grammar for the date format definition that will 
+create a date parser from our building blocks:
+
+[tutorial_grammar_format]
+
+Since our sequence operator works with shared pointers, we need to construct them 
+in the semantic actions. __phoenix__ offers two nice helpers for this: `construct`
+and `new_`. Their use should be pretty obvious here.
+
+The local attributes in the year rule are not really necesssary, but this way, the 
+element_year constructor can be given a min and max value instead of an 
+`boost::optional<std::vector<unsigned> >`.
+
+
+The full cpp code for this example can be found here: 
+[@../../example/qi/date_parser.cpp]
+
+
+[endsect]
+
