@@ -288,8 +288,8 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated = 
-        ioTrademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey,
-                                                             lProgressStatusSet);
+        ioTrademgenService.stillHavingRequestsToBeGenerated(lDemandStreamKey,
+                                                            lProgressStatusSet);
 
       // DEBUG
       STDAIR_LOG_DEBUG (lProgressStatusSet.describe());

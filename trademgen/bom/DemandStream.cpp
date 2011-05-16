@@ -3,6 +3,7 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <iostream>
 #include <sstream>
 #include <cmath>
 // Boost
@@ -186,35 +187,34 @@ namespace TRADEMGEN {
     // Sequential generation
     const stdair::Probability_T& lCumulativeProbabilitySoFar =
       _randomGenerationContext.getCumulativeProbabilitySoFar();
-
+   
     const stdair::Probability_T& lVariate = _requestDateTimeRandomGenerator();
-
+   
     //
     const double lRemainingRate =
       1.0 / static_cast<double> (lRemainingNumberOfRequestsToBeGenerated);
-
+   
     //
     const stdair::Probability_T lComplementOfCumulativeProbabilitySoFar =
       1.0 - lCumulativeProbabilitySoFar;
-      
+    
     //
+    double lFactor = std::pow (1.0 - lVariate, lRemainingRate);
     const stdair::Probability_T lCumulativeProbabilityThisRequest =
-      1.0 -
-      lComplementOfCumulativeProbabilitySoFar * std::pow (1 - lVariate,
-                                                          lRemainingRate);
-
+      1.0 - lComplementOfCumulativeProbabilitySoFar * lFactor;
+    
     //
     const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
       _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);
-
+    
     // Convert the number of days in number of seconds + number of milliseconds
     const stdair::FloatDuration_T lNumberOfSeconds =
       lNumberOfDaysBetweenDepartureAndThisRequest * stdair::SECONDS_IN_ONE_DAY;
-
+    
     //
     const stdair::IntDuration_T lIntNumberOfSeconds =
       std::floor (lNumberOfSeconds);
-
+    
     //
     const stdair::FloatDuration_T lNumberOfMilliseconds =
       (lNumberOfSeconds - lIntNumberOfSeconds)

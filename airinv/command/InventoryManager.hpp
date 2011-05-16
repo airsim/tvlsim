@@ -8,6 +8,7 @@
 #include <string>
 // STDAIR
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/bom/RMEventTypes.hpp>
 
 // Forward declarations
 namespace stdair {
@@ -35,8 +36,18 @@ namespace AIRINV {
 
   private:
     /** Initialise the snapshot events for the inventories. */
-    static void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&,
+    static void initSnapshotEvents (const stdair::Date_T&, 
+                                    const stdair::Date_T&,
                                     stdair::EventQueue&);
+    
+    /** Initialise the RM events for the inventories. */
+    static stdair::RMEventList_T initRMEvents (const stdair::Inventory&,
+                                               const stdair::Date_T&,
+                                               const stdair::Date_T&);
+
+    /** Add the RM events to the event queue. */
+    static void addRMEventsToEventQueue (stdair::EventQueue&,
+                                         stdair::RMEventList_T&);
     
     /** Compute the availability for the given travel solution. */
     static void calculateAvailability (const stdair::BomRoot&,

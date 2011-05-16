@@ -36,7 +36,7 @@ namespace TRADEMGEN {
     /**
      * Get value from inverse cumulative distribution.
      */
-    const T getValue(const stdair::Probability_T& iCumulativeProbability) const {
+    const T getValue(const stdair::Probability_T& iCumulativeProbability) const{
       const DictionaryKey_T& lKey =
         DictionaryManager::valueToKey (iCumulativeProbability);
 
@@ -69,7 +69,7 @@ namespace TRADEMGEN {
         return lValuePreviousPoint;
       }
 
-      T oValue = lValuePreviousPoint + (lValueCurrentPoint - lValuePreviousPoint)
+      T oValue= lValuePreviousPoint + (lValueCurrentPoint - lValuePreviousPoint)
         * (iCumulativeProbability - lCumulativePreviousPoint)
         / (lCumulativeCurrentPoint - lCumulativePreviousPoint);
 

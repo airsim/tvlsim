@@ -45,6 +45,11 @@ namespace DSIM {
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
                                    const stdair::EventStruct&);
 
+
+    /** Play a RM event. */
+    static void playRMEvent (SIMCRS::SIMCRS_Service&,
+                             const stdair::EventStruct&);
+
   private:
     /** Constructors. */
     Simulator() {}

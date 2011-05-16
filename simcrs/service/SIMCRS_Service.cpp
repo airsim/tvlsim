@@ -49,7 +49,8 @@ namespace SIMCRS {
                   const CRSCode_T& iCRSCode,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename)
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename)
     : _simcrsServiceContext (NULL) {
 
     // Initialise the service context
@@ -63,7 +64,8 @@ namespace SIMCRS {
     lSIMCRS_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
     // Initialise the context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -73,7 +75,8 @@ namespace SIMCRS {
                   const CRSCode_T& iCRSCode,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename)
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename)
     : _simcrsServiceContext (NULL) {
     
     // Initialise the service context
@@ -83,7 +86,8 @@ namespace SIMCRS {
     initStdAirService (iLogParams, iDBParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -92,7 +96,8 @@ namespace SIMCRS {
                   const CRSCode_T& iCRSCode,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename)
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename)
     : _simcrsServiceContext (NULL) {
     
     // Initialise the service context
@@ -102,7 +107,8 @@ namespace SIMCRS {
     initStdAirService (iLogParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -174,13 +180,15 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::init (const stdair::Filename_T& iScheduleInputFilename,
                              const stdair::Filename_T& iODInputFilename,
-                             const stdair::Filename_T& iFareInputFilename) {
+                             const stdair::Filename_T& iFareInputFilename,
+                             const stdair::Filename_T& iYieldInputFilename) {
 
     // Initialise the children AirSched service context
     initAIRSCHEDService (iScheduleInputFilename, iODInputFilename);
 
     // Initialise the children AirInv service context
-    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename);
+    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename,
+                               iYieldInputFilename);
 
     // Initialise the children SimFQT service context
     initSIMFQTService (iFareInputFilename);
@@ -285,7 +293,8 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   initAIRINV_Master_Service (const stdair::Filename_T& iScheduleInputFilename,
-                             const stdair::Filename_T& iODInputFilename) {
+                             const stdair::Filename_T& iODInputFilename,
+                             const stdair::Filename_T& iYieldInputFilename) {
     
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
@@ -308,15 +317,17 @@ namespace SIMCRS {
 
     // Parse and load the schedule and O&D input files
     lAIRINV_Master_Service_ptr->parseAndLoad (iScheduleInputFilename,
-                                              iODInputFilename);
+                                              iODInputFilename,
+                                              iYieldInputFilename);
 
     // Store the Airinv service object within the (SimCRS) service context
     lSIMCRS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::initSnapshotEvents (const stdair::Date_T& iStartDate,
-                                           const stdair::Date_T& iEndDate) {
+  void SIMCRS_Service::
+  initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
+                           const stdair::Date_T& iEndDate) {
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -328,7 +339,7 @@ namespace SIMCRS {
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
       lSIMCRS_ServiceContext.getAIRINV_Master_Service();
 
-    lAIRINV_Master_Service.initSnapshotEvents (iStartDate, iEndDate);
+    lAIRINV_Master_Service.initSnapshotAndRMEvents (iStartDate, iEndDate);
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -566,5 +577,21 @@ namespace SIMCRS {
       lSIMCRS_ServiceContext.getAIRINV_Master_Service();
 
     lAIRINV_Master_Service.takeSnapshots (iSnapshot);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::optimise (const stdair::RMEventStruct& iRMEvent) {
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+
+    lAIRINV_Master_Service.optimise (iRMEvent);
   }
 }

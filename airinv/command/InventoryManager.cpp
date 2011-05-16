@@ -25,6 +25,7 @@
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
+#include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/factory/FacBom.hpp>
 #include <stdair/service/Logger.hpp>
@@ -500,5 +501,69 @@ namespace AIRINV {
     }
 
     ioQueue.addStatus (stdair::EventType::SNAPSHOT, lNbOfSnapshots);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  stdair::RMEventList_T InventoryManager::
+  initRMEvents (const stdair::Inventory& iInventory,
+                const stdair::Date_T& iStartDate,
+                const stdair::Date_T& iEndDate) {
+    stdair::RMEventList_T oList;
+    const stdair::Duration_T lTimeZero (0, 0, 0);
+    const stdair::Duration_T lTime (0, 0, 10);
+    const stdair::Duration_T lOneDayDuration (24, 0, 0);
+    const stdair::DateTime_T lEarliestEventTime (iStartDate, lTimeZero);
+    const stdair::DateTime_T lLatestEventTime (iEndDate, lTimeZero);
+
+    const stdair::AirlineCode_T& lAirlineCode = iInventory.getAirlineCode();
+
+    // Browse the list of flight-dates and initialise the RM events for
+    // each flight-date.
+    const stdair::FlightDateList_T& lFDList =
+      stdair::BomManager::getList<stdair::FlightDate> (iInventory);
+    for (stdair::FlightDateList_T::const_iterator itFD = lFDList.begin();
+         itFD != lFDList.end(); ++itFD) {
+      const stdair::FlightDate* lFD_ptr = *itFD;
+      assert (lFD_ptr != NULL);
+
+      // Retrive the departure date and initialise the RM events with
+      // the data collection points of the inventory.
+      const stdair::Date_T& lDepartureDate = lFD_ptr->getDepartureDate();
+      const stdair::DateTime_T lDepatureDateTime (lDepartureDate, lTime);
+      for (stdair::DCPList_T::const_iterator itDCP =
+             stdair::DEFAULT_DCP_LIST.begin();
+           itDCP != stdair::DEFAULT_DCP_LIST.end(); ++itDCP) {
+        const stdair::DCP_T& lDCP = *itDCP;
+
+        // Create the event time and check if it is in the validate interval
+        const stdair::DateTime_T lEventTime =
+          lDepatureDateTime - lOneDayDuration * lDCP;
+        if (lEventTime >= lEarliestEventTime && lEventTime <= lLatestEventTime){
+          const stdair::KeyDescription_T lKeyDes = lFD_ptr->describeKey();
+          stdair::RMEventStruct lRMEvent (lAirlineCode, lKeyDes, lEventTime);
+          oList.push_back (lRMEvent);
+        }
+      }      
+    }
+    
+    return oList;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::
+  addRMEventsToEventQueue (stdair::EventQueue& ioQueue,
+                           stdair::RMEventList_T& ioRMEventList) {
+    // Browse the RM event list and add them to the queue.
+    for (stdair::RMEventList_T::iterator itRMEvent = ioRMEventList.begin();
+         itRMEvent != ioRMEventList.end(); ++itRMEvent) {
+      stdair::RMEventStruct& lRMEvent = *itRMEvent;
+      stdair::RMEventPtr_T lRMEventPtr =
+        boost::make_shared<stdair::RMEventStruct> (lRMEvent);
+      stdair::EventStruct lEventStruct (stdair::EventType::RM, lRMEventPtr);
+      ioQueue.addEvent (lEventStruct);
+    }
+
+    // Update the status of RM events within the event queue.
+    ioQueue.updateStatus (stdair::EventType::RM, ioRMEventList.size());
   }
 }

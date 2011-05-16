@@ -49,6 +49,7 @@ namespace DSIM {
                               const stdair::Filename_T& iScheduleInputFilename,
                               const stdair::Filename_T& iODInputFilename,
                               const stdair::Filename_T& iFareInputFilename,
+                              const stdair::Filename_T& iYieldInputFilename,
                               const stdair::Filename_T& iDemandInputFilename)
     : _dsimServiceContext (NULL) {
     
@@ -64,10 +65,10 @@ namespace DSIM {
     
     // Initialise the context
     init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iDemandInputFilename);
+          iYieldInputFilename, iDemandInputFilename);
 
-    // Initialise the snapshot events
-    initSnapshotEvents (iStartDate, iEndDate);
+    // Initialise the snapshot and RM events
+    initSnapshotAndRMEvents (iStartDate, iEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -78,6 +79,7 @@ namespace DSIM {
                               const stdair::Filename_T& iScheduleInputFilename,
                               const stdair::Filename_T& iODInputFilename,
                               const stdair::Filename_T& iFareInputFilename,
+                              const stdair::Filename_T& iYieldInputFilename,
                               const stdair::Filename_T& iDemandInputFilename)
     : _dsimServiceContext (NULL) {
     
@@ -89,10 +91,10 @@ namespace DSIM {
     
     // Initialise the (remaining of the) context
     init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iDemandInputFilename);
+          iYieldInputFilename, iDemandInputFilename);
 
-    // Initialise the snapshot events
-    initSnapshotEvents (iStartDate, iEndDate);
+    // Initialise the snapshot and RM events
+    initSnapshotAndRMEvents (iStartDate, iEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -136,6 +138,7 @@ namespace DSIM {
   void DSIM_Service::init (const stdair::Filename_T& iScheduleInputFilename,
                            const stdair::Filename_T& iODInputFilename,
                            const stdair::Filename_T& iFareInputFilename,
+                           const stdair::Filename_T& iYieldInputFilename,
                            const stdair::Filename_T& iDemandInputFilename) {
     // Retrieve the service context
     assert (_dsimServiceContext != NULL);
@@ -158,7 +161,8 @@ namespace DSIM {
       boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr, lCRSCode,
                                                   iScheduleInputFilename,
                                                   iODInputFilename,
-                                                  iFareInputFilename);
+                                                  iFareInputFilename,
+                                                  iYieldInputFilename);
     lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
 
     // Initialise the TRADEMGEN service handler
@@ -174,8 +178,8 @@ namespace DSIM {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initSnapshotEvents (const stdair::Date_T& iStartDate,
-                                         const stdair::Date_T& iEndDate) {
+  void DSIM_Service::initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
+                                              const stdair::Date_T& iEndDate) {
     // Retrieve the service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
@@ -184,7 +188,7 @@ namespace DSIM {
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
 
-    lSIMCRS_Service.initSnapshotEvents (iStartDate, iEndDate);
+    lSIMCRS_Service.initSnapshotAndRMEvents (iStartDate, iEndDate);
   }
   
   // //////////////////////////////////////////////////////////////////////
