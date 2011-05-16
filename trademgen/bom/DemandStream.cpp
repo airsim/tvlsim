@@ -196,12 +196,17 @@ namespace TRADEMGEN {
     //
     const stdair::Probability_T lComplementOfCumulativeProbabilitySoFar =
       1.0 - lCumulativeProbabilitySoFar;
+
+    // to avoid numerical problems in the case of big number of requests
+    double lFactor = std::pow (1 - lVariate, lRemainingRate);
+    if (lFactor >= 1 - 1e-6){
+      lFactor = 1 - 1e-6;
+    }
       
     //
     const stdair::Probability_T lCumulativeProbabilityThisRequest =
       1.0 -
-      lComplementOfCumulativeProbabilitySoFar * std::pow (1 - lVariate,
-                                                          lRemainingRate);
+      lComplementOfCumulativeProbabilitySoFar * lFactor;
 
     //
     const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
