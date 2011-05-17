@@ -45,44 +45,13 @@ namespace SIMFQT {
     assert (lAirportPair_ptr != NULL);
 
     stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
-    createPOSChannel (lAirportPair, iFareRuleStruct);
+    createDateRange (lAirportPair, iFareRuleStruct);
 
   }
 
   // //////////////////////////////////////////////////////////////////////
   void FareRuleGenerator::
-  createPOSChannel (stdair::AirportPair& iAirportPair,
-                    const FareRuleStruct& iFareRuleStruct) {
-
-    // Create the point-of-sale-channel primary key.
-    const stdair::CityCode_T& lPosition = iFareRuleStruct._pos;
-    const stdair::ChannelLabel_T& lChannel = iFareRuleStruct._channel;
-    const stdair::PosChannelKey lFarePosChannelKey (lPosition, lChannel);
-
-    // Check that the point_of_sale-channel object is not already existing.
-    // If a point_of_sale-channel object with the same key has not already
-    // been created, create it and link it to the airport-pair object.     
-    stdair::PosChannel* lFarePosChannel_ptr = stdair::BomManager::
-      getObjectPtr<stdair::PosChannel> (iAirportPair, 
-                                        lFarePosChannelKey.toString());
-    if (lFarePosChannel_ptr == NULL) {
-      lFarePosChannel_ptr = &stdair::FacBom<stdair::PosChannel>::instance().
-        create (lFarePosChannelKey);
-      stdair::FacBomManager::addToListAndMap (iAirportPair,
-                                              *lFarePosChannel_ptr);
-      stdair::FacBomManager::linkWithParent (iAirportPair,
-                                             *lFarePosChannel_ptr);
-    }
-    assert (lFarePosChannel_ptr != NULL);
-
-    stdair::PosChannel& lPosChannel = *lFarePosChannel_ptr;
-    createDateRange (lPosChannel, iFareRuleStruct);
-
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void FareRuleGenerator::
-  createDateRange (stdair::PosChannel& iPosChannel,
+  createDateRange (stdair::AirportPair& iAirportPair,
                    const FareRuleStruct& iFareRuleStruct) {
 
     // Create the fare date-period primary key.
@@ -93,28 +62,60 @@ namespace SIMFQT {
 
     // Check that the date-period object is not already existing.
     // If a date-period object with the same key has not already been
-    // created, create it and link it to the point_of_sale-channel object.         
+    // created, create it and link it to the airport-pair object.         
     stdair::DatePeriod* lFareDatePeriod_ptr = stdair::BomManager::
-      getObjectPtr<stdair::DatePeriod> (iPosChannel, 
+      getObjectPtr<stdair::DatePeriod> (iAirportPair, 
                                         lFareDatePeriodKey.toString());
     if (lFareDatePeriod_ptr == NULL) {
       lFareDatePeriod_ptr = &stdair::FacBom<stdair::DatePeriod>::instance().
         create (lFareDatePeriodKey);
-      stdair::FacBomManager::addToListAndMap (iPosChannel,
+      stdair::FacBomManager::addToListAndMap (iAirportPair,
                                               *lFareDatePeriod_ptr);
-      stdair::FacBomManager::linkWithParent (iPosChannel,
+      stdair::FacBomManager::linkWithParent (iAirportPair,
                                              *lFareDatePeriod_ptr);
     }
     assert (lFareDatePeriod_ptr != NULL);
 
     stdair::DatePeriod& lDateRange = *lFareDatePeriod_ptr;
-    createTimeRange (lDateRange, iFareRuleStruct);
+    createPOSChannel (lDateRange, iFareRuleStruct);
 
   }
 
   // //////////////////////////////////////////////////////////////////////
   void FareRuleGenerator::
-  createTimeRange (stdair::DatePeriod& iDatePeriod,
+  createPOSChannel (stdair::DatePeriod& iDatePeriod,
+                    const FareRuleStruct& iFareRuleStruct) {
+
+    // Create the point-of-sale-channel primary key.
+    const stdair::CityCode_T& lPosition = iFareRuleStruct._pos;
+    const stdair::ChannelLabel_T& lChannel = iFareRuleStruct._channel;
+    const stdair::PosChannelKey lFarePosChannelKey (lPosition, lChannel);
+
+    // Check that the point_of_sale-channel object is not already existing.
+    // If a point_of_sale-channel object with the same key has not already
+    // been created, create it and link it to the date-period object.     
+    stdair::PosChannel* lFarePosChannel_ptr = stdair::BomManager::
+      getObjectPtr<stdair::PosChannel> (iDatePeriod,
+                                        lFarePosChannelKey.toString());
+    if (lFarePosChannel_ptr == NULL) {
+      lFarePosChannel_ptr = &stdair::FacBom<stdair::PosChannel>::instance().
+        create (lFarePosChannelKey);
+      stdair::FacBomManager::addToListAndMap (iDatePeriod,
+                                              *lFarePosChannel_ptr);
+      stdair::FacBomManager::linkWithParent (iDatePeriod,
+                                             *lFarePosChannel_ptr);
+    }
+    assert (lFarePosChannel_ptr != NULL);
+
+    stdair::PosChannel& lPosChannel = *lFarePosChannel_ptr;
+    createTimeRange (lPosChannel, iFareRuleStruct);
+
+  }
+
+
+  // //////////////////////////////////////////////////////////////////////
+  void FareRuleGenerator::
+  createTimeRange (stdair::PosChannel& iPosChannel,
                    const FareRuleStruct& iFareRuleStruct) {
     
     // Create the fare time-period primary key.
@@ -125,16 +126,16 @@ namespace SIMFQT {
 
     // Check that the time-period object is not already existing.
     // If a time-period object with the same key has not already been
-    // created, create it and link it to the date-period object.       
+    // created, create it and link it to the point_of_sale-channel object.       
     stdair::TimePeriod* lFareTimePeriod_ptr = stdair::BomManager::
-      getObjectPtr<stdair::TimePeriod> (iDatePeriod,
+      getObjectPtr<stdair::TimePeriod> (iPosChannel,
                                         lFareTimePeriodKey.toString());
     if (lFareTimePeriod_ptr == NULL) {
       lFareTimePeriod_ptr = &stdair::FacBom<stdair::TimePeriod>::instance().
         create (lFareTimePeriodKey);
-      stdair::FacBomManager::addToListAndMap (iDatePeriod,
+      stdair::FacBomManager::addToListAndMap (iPosChannel,
                                               *lFareTimePeriod_ptr);
-      stdair::FacBomManager::linkWithParent (iDatePeriod,
+      stdair::FacBomManager::linkWithParent (iPosChannel,
                                              *lFareTimePeriod_ptr);
     }
     assert (lFareTimePeriod_ptr != NULL);
@@ -207,7 +208,7 @@ namespace SIMFQT {
     stdair::FacBomManager::addToListAndMap (iFareFeatures,
                                             *lAirlineClassList_ptr); 
     stdair::FacBomManager::linkWithParent(iFareFeatures,
-                                          *lAirlineClassList_ptr); 
+                                          *lAirlineClassList_ptr);
   }
         
 }

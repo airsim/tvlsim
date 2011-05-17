@@ -73,25 +73,25 @@ namespace SIMFQT {
      *
      * @param const stdair::BookingRequestStruct&
      * @param stdair::TravelSolutionStruct&
-     * @param const stdair::PosChannel&
+     * @param const stdair::DatePeriod&
+     * @param const stdair::AirportPair&
      * @param const stdair::ParsedKey&
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const stdair::PosChannel&, const stdair::ParsedKey&);
+                            const stdair::DatePeriod&,
+                            const stdair::AirportPair&, const stdair::ParsedKey&);
 
     /**
      * Quote a single travel solution (with a price).
      *
      * @param const stdair::BookingRequestStruct&
      * @param stdair::TravelSolutionStruct&
-     * @param const stdair::DatePeriod&
      * @param const stdair::PosChannel&
      * @param const stdair::ParsedKey&
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
-                            const stdair::DatePeriod&,
                             const stdair::PosChannel&, const stdair::ParsedKey&);
 
     /**

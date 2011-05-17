@@ -294,6 +294,30 @@ namespace SIMFQT {
     return lSTDAIR_Service.csvDisplay (ioTravelSolutionList);
   }
 
+  // //////////////////////////////////////////////////////////////////////
+  std::string SIMFQT_Service::
+  csvDisplay (const stdair::AirportCode_T& iOrigin,
+              const stdair::AirportCode_T& iDestination,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the SIMFQT service context
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Simfqt service "
+                                                    "has not been initialised");
+    }
+    assert (_simfqtServiceContext != NULL);
+
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMFQT) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lSTDAIR_Service.csvDisplay (iOrigin, iDestination,
+                                       iDepartureDate);
+  }
+
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
   quotePrices (const stdair::BookingRequestStruct& iBookingRequest,
