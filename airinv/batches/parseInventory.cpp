@@ -31,6 +31,8 @@ const std::string K_AIRINV_DEFAULT_SCHEDULE_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/schedule01.csv");
 /** Default name and location for the (CSV) input files. */
 const std::string K_AIRINV_DEFAULT_OND_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
+/** Default name and location for the (CSV) input files. */
+const std::string K_AIRINV_DEFAULT_YIELD_FILENAME (STDAIR_SAMPLE_DIR "/yield01.csv");
 
 /** Default segment-date key on which the sale should be made. */
 const std::string K_AIRINV_DEFAULT_SEGMENT_DATE_KEY ("SV,5,2010-03-11,KBP,JFK");
@@ -67,6 +69,7 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioInventoryFilename,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioODInputFilename,
+                       stdair::Filename_T& ioYieldInputFilename,
                        std::string& ioSegmentDateKey,
                        stdair::ClassCode_T& ioClassCode,
                        stdair::PartySize_T& ioPartySize,
@@ -102,6 +105,9 @@ int readConfiguration (int argc, char* argv[],
     ("ond,o",
      boost::program_options::value< std::string >(&ioODInputFilename)->default_value(K_AIRINV_DEFAULT_OND_FILENAME),
      "(CVS) input file for the O&D")
+    ("yield,o",
+     boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_AIRINV_DEFAULT_YIELD_FILENAME),
+     "(CVS) input file for the yield")
     ("segment_date_key,k",
      boost::program_options::value< std::string >(&ioSegmentDateKey)->default_value(K_AIRINV_DEFAULT_SEGMENT_DATE_KEY),
      "Segment-date key")
@@ -209,6 +215,12 @@ int readConfiguration (int argc, char* argv[],
         ioODInputFilename = vm["ond"].as< std::string >();
         std::cout << "Input O&D filename is: " << ioODInputFilename << std::endl;
       }
+
+      if (vm.count ("yield")) {
+        ioYieldInputFilename = vm["yield"].as< std::string >();
+        std::cout << "Input yield filename is: "
+                  << ioYieldInputFilename << std::endl;
+      }
     }
   }
 
@@ -233,6 +245,7 @@ int main (int argc, char* argv[]) {
   stdair::Filename_T lInventoryFilename;
   stdair::Filename_T lScheduleInputFilename;
   stdair::Filename_T lODInputFilename;
+  stdair::Filename_T lYieldInputFilename;
 
   // Parameters for the sale
   std::string lSegmentDateKey;
@@ -246,7 +259,8 @@ int main (int argc, char* argv[]) {
   const int lOptionParserStatus =
     readConfiguration (argc, argv, isBuiltin, isForSchedule, lInventoryFilename,
                        lScheduleInputFilename, lODInputFilename,
-                       lSegmentDateKey, lClassCode, lPartySize, lLogFilename);
+                       lYieldInputFilename, lSegmentDateKey, lClassCode,
+                       lPartySize, lLogFilename);
 
   if (lOptionParserStatus == K_AIRINV_EARLY_RETURN_STATUS) {
     return 0;
@@ -277,7 +291,8 @@ int main (int argc, char* argv[]) {
   } else {
     if (isForSchedule == true) {
       // Build the BOM tree from parsing a schedule file (and O&D list)
-      airinvService.parseAndLoad (lScheduleInputFilename, lODInputFilename);
+      airinvService.parseAndLoad (lScheduleInputFilename, lODInputFilename,
+                                  lYieldInputFilename);
 
       if (lSegmentDateKey == K_AIRINV_DEFAULT_SEGMENT_DATE_KEY) {
         // Define a specific segment-date key for the schedule-based inventory

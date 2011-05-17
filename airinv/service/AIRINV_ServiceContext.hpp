@@ -13,6 +13,8 @@
 #include <stdair/service/ServiceAbstract.hpp>
 // RMOL
 #include <rmol/RMOL_Types.hpp>
+// AIRRAC
+#include <airrac/AIRRAC_Types.hpp>
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
 
@@ -48,7 +50,7 @@ namespace AIRINV {
     }
 
     /**
-     * State whether or not RMOL owns the STDAIR service resources.
+     * State whether or not AIRINV owns the STDAIR service resources.
      */
     const bool getOwnStdairServiceFlag() const {
       return _ownStdairService;
@@ -60,6 +62,14 @@ namespace AIRINV {
     RMOL::RMOL_Service& getRMOL_Service() const {
       assert (_rmolService != NULL);
       return *_rmolService;
+    }
+
+    /**
+     * Get the AIRRAC service handler.
+     */
+    AIRRAC::AIRRAC_Service& getAIRRAC_Service() const {
+      assert (_airracService != NULL);
+      return *_airracService;
     }
     
 
@@ -78,6 +88,13 @@ namespace AIRINV {
      */
     void setRMOL_Service (RMOL::RMOL_ServicePtr_T ioRMOL_ServicePtr) {
       _rmolService = ioRMOL_ServicePtr;
+    }
+    
+    /**
+     * Set the pointer on the AIRRAC service handler.
+     */
+    void setAIRRAC_Service (AIRRAC::AIRRAC_ServicePtr_T ioAIRRAC_ServicePtr) {
+      _airracService = ioAIRRAC_ServicePtr;
     }
 
 
@@ -129,7 +146,7 @@ namespace AIRINV {
     stdair::STDAIR_ServicePtr_T _stdairService;
 
     /**
-     * State whether or not RMOL owns the STDAIR service resources.
+     * State whether or not AIRINV owns the STDAIR service resources.
      */
     bool _ownStdairService;
 
@@ -137,6 +154,11 @@ namespace AIRINV {
      * Standard Airline (RMOL) Service Handler.
      */
     RMOL::RMOL_ServicePtr_T _rmolService;
+
+    /**
+     * Standart Airline Yield service Handler.
+     */
+    AIRRAC::AIRRAC_ServicePtr_T _airracService;
   };
 
 }

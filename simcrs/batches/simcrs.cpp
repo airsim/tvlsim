@@ -28,6 +28,9 @@ const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ond01
 
 /** Default name and location for the (CSV) fare input file. */
 const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare01.csv");
+
+/** Default name and location for the (CSV) yield input file. */
+const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/yield01.csv");
     
 
 /** Default name and location for the Xapian database. */
@@ -53,6 +56,7 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
+                       stdair::Filename_T& ioYieldInputFilename,
                        stdair::Filename_T& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
@@ -78,6 +82,9 @@ int readConfiguration (int argc, char* argv[],
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME),
      "(CVS) input file for the fares")
+    ("yield,f",
+     boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME),
+     "(CVS) input file for the yields")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_SIMCRS_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
@@ -159,6 +166,11 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
   }
 
+  if (vm.count ("yield")) {
+    ioYieldInputFilename = vm["yield"].as< std::string >();
+    std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
+  }
+
   if (vm.count ("log")) {
     ioLogFilename = vm["log"].as< std::string >();
     std::cout << "Log filename is: " << ioLogFilename << std::endl;
@@ -204,6 +216,9 @@ int main (int argc, char* argv[]) {
   // Fare input filename
   stdair::Filename_T lFareInputFilename;
     
+  // Yield input filename
+  stdair::Filename_T lYieldInputFilename;
+    
   // Output log File
   stdair::Filename_T lLogFilename;
 
@@ -220,7 +235,7 @@ int main (int argc, char* argv[]) {
   // Call the command-line option parser
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, lScheduleInputFilename, lOnDInputFilename,
-                       lFareInputFilename, lLogFilename,
+                       lFareInputFilename, lYieldInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_SIMCRS_EARLY_RETURN_STATUS) {
@@ -254,6 +269,15 @@ int main (int argc, char* argv[]) {
     return -1;
   }
 
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
+  if (doesExistAndIsReadable == false) {
+    STDAIR_LOG_ERROR ("The '" << lYieldInputFilename
+                      << "' input file can not be open and read");
+    return -1;
+  }
+
   // Set the database parameters
   const stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
                                        lDBDBName);
@@ -268,8 +292,8 @@ int main (int argc, char* argv[]) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
                                         lScheduleInputFilename,
-                                        lOnDInputFilename,
-                                        lFareInputFilename);
+                                        lOnDInputFilename, lFareInputFilename,
+                                        lYieldInputFilename);
 
   // TODO: instead of building a sample, read the parameters from the
   //       command-line options, and build the corresponding booking request

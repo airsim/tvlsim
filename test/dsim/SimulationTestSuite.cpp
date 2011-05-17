@@ -80,6 +80,10 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Fare input file name
   const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
                                                "/rds01/fare.csv");
+
+  // Yield input file name
+  const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR
+                                               "/rds01/yield.csv");
     
   // Check that the file path given as input corresponds to an actual file
   bool doesExistAndIsReadable =
@@ -109,6 +113,13 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                        "The '" << lFareInputFilename
                        << "' input file can not be open and read");
 
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lYieldInputFilename
+                       << "' input file can not be open and read");
+
   // Output log File
   const stdair::Filename_T lLogFilename ("SimulationTestSuite.log");
 
@@ -124,7 +135,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                        "sim_dsim");
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lScheduleInputFilename, lODInputFilename,
-                                  lFareInputFilename, lDemandInputFilename);
+                                  lFareInputFilename, lYieldInputFilename,
+                                  lDemandInputFilename);
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);

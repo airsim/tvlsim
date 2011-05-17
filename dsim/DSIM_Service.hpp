@@ -41,12 +41,14 @@ namespace DSIM {
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input fare file.
+        @param const stdair::Filename_T& Filename of the input yield file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                   const stdair::Date_T&, const stdair::Date_T&,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename,
                   const stdair::Filename_T& iDemandInputFilenames);
 
     /** Constructor.
@@ -63,12 +65,14 @@ namespace DSIM {
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input Fare file.
+        @param const stdair::Filename_T& Filename of the input Yield file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     DSIM_Service (stdair::STDAIR_ServicePtr_T,
                   const stdair::Date_T&, const stdair::Date_T&,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
                   const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename,
                   const stdair::Filename_T& iDemandInputFilenames);
 
     /** Destructor. */
@@ -113,18 +117,20 @@ namespace DSIM {
         @param const stdair::Filename_T& Filename of the input schedule file.
         @param const stdair::Filename_T& Filename of the input O&D file.
         @param const stdair::Filename_T& Filename of the input Fare file.
+        @param const stdair::Filename_T& Filename of the input Yield file.
         @param const stdair::Filename_T& Filename of the input demand file. */
     void init (const stdair::Filename_T& iScheduleInputFilename,
                const stdair::Filename_T& iODInputFilename,
                const stdair::Filename_T& iFareInputFilename,
+               const stdair::Filename_T& iYieldInputFilename,
                const stdair::Filename_T& iDemandInputFilename);
 
-    /** Initialise the snapshot events for the inventories.
+    /** Initialise the snapshot and RM events for the inventories.
         @param const stdiar::Date_T& Parameters for the start date.
         @param const stdiar::Date_T& Parameters for the end date.
      */
-    void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&);
-    
+    void initSnapshotAndRMEvents (const stdair::Date_T&, const stdair::Date_T&);
+
     /** Finalise. */
     void finalise ();
 

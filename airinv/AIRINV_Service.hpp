@@ -9,6 +9,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/bom/RMEventTypes.hpp>
 
 /// Forward declarations
 namespace stdair {
@@ -74,11 +75,8 @@ namespace AIRINV {
      * calling chain (for instance, when the AIRINV_Master_Service is
      * itself being initialised by another library service such as
      * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input inventory file.
      */
-    AIRINV_Service (stdair::STDAIR_ServicePtr_T);
+    AIRINV_Service ();
 
     /**
      * Parse the inventory dump and load it into memory.
@@ -98,9 +96,11 @@ namespace AIRINV {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
+     * @param const stdair::Filename_T& Filename of the input yield file.
      */
     void parseAndLoad (const stdair::Filename_T& iScheduleFilename,
-                       const stdair::Filename_T& iODInputFilename);
+                       const stdair::Filename_T& iODInputFilename,
+                       const stdair::Filename_T& iYieldInputFilename);
 
     /**
      * Destructor.
@@ -127,6 +127,13 @@ namespace AIRINV {
     void buildSampleBom (const bool isForRMOL = false,
                          const stdair::CabinCapacity_T iCabinCapacity = 0);
 
+    /** Initialise the RM events for the inventory.
+        @param const stdiar::Date_T& Parameters for the start date.
+        @param const stdiar::Date_T& Parameters for the end date.
+     */
+    stdair::RMEventList_T initRMEvents (const stdair::Date_T&,
+                                        const stdair::Date_T&);
+    
     /**
      * Compute the availability for the given travel solution.
      */
@@ -146,8 +153,13 @@ namespace AIRINV {
     /**
      * Take inventory snapshots.
      */
-    void takeSnapshots (const stdair::AirlineCode_T&, const stdair::DateTime_T&);
+    void takeSnapshots (const stdair::AirlineCode_T&,const stdair::DateTime_T&);
     
+    /**
+     * Optimise (revenue management) an flight-date/network-date
+     */
+    void optimise (const stdair::AirlineCode_T&,
+                   const stdair::KeyDescription_T&, const stdair::DateTime_T&);
 
   public:
     // //////////////// Display support methods /////////////////
@@ -164,7 +176,7 @@ namespace AIRINV {
      * Recursively display (dump in the returned string) the flight-date
      * corresponding to the parameters given as input.
      *
-     * @param const stdair::AirlineCode_T& Airline code of the flight to display.
+     * @param const stdair::AirlineCode_T& Airline code of the flight to display
      * @param const stdair::FlightNumber_T& Flight number of the
      *        flight to display.
      * @param const stdair::Date_T& Departure date of the flight to display.
@@ -178,11 +190,6 @@ namespace AIRINV {
 
   private:
     // /////// Construction and Destruction helper methods ///////
-    /**
-     * Default constructor. It should not be used.
-     */
-    AIRINV_Service();
-
     /**
      * Default copy constructor. It should not be used.
      */
@@ -211,9 +218,22 @@ namespace AIRINV {
     stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
     
     /**
+     * Initialise the STDAIR service (including the log service).
+     *
+     * A reference on the root of the BOM tree, namely the BomRoot object,
+     * is stored within the service context for later use.
+     */
+    stdair::STDAIR_ServicePtr_T initStdAirService ();
+    
+    /**
      * Initialise the RMOL service (including the log service).
      */
     void initRMOLService();
+    
+    /**
+     * Initialise the AIRRAC service (including the log service).
+     */
+    void initAIRRACService();
     
     /**
      * Attach the STDAIR service (holding the log and database services) to

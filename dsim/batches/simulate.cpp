@@ -42,6 +42,10 @@ const std::string K_DSIM_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /** Default name and location for the (CSV) fare input file. */
 const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/rds01/fare.csv");
+
+/** Default name and location for the (CSV) yield input file. */
+const std::string K_DSIM_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                      "/rds01/yield.csv");
     
 /** Default query string. */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
@@ -112,6 +116,7 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
+                       stdair::Filename_T& ioYieldInputFilename,
                        std::string& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
@@ -149,6 +154,9 @@ int readConfiguration (int argc, char* argv[],
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
      "(CVS) input file for the fares")
+    ("yield,f",
+     boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
+     "(CVS) input file for the yields")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
@@ -233,6 +241,11 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
   }
 
+  if (vm.count ("yield")) {
+    ioYieldInputFilename = vm["yield"].as< std::string >();
+    std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
+  }
+
   if (vm.count ("schedule")) {
     ioScheduleInputFilename = vm["schedule"].as< std::string >();
     std::cout << "Schedule input filename is: " << ioScheduleInputFilename
@@ -299,6 +312,9 @@ int main (int argc, char* argv[]) {
   // Fare input filename
   std::string lFareInputFilename;
     
+  // Yield input filename
+  std::string lYieldInputFilename;
+    
   // Output log File
   std::string lLogFilename;
 
@@ -313,7 +329,7 @@ int main (int argc, char* argv[]) {
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, lQuery, lDemandInputFilename,
                        lScheduleInputFilename, lOnDInputFilename,
-                       lFareInputFilename, lLogFilename,
+                       lFareInputFilename, lYieldInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -334,7 +350,8 @@ int main (int argc, char* argv[]) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lScheduleInputFilename, lOnDInputFilename,
-                                  lFareInputFilename, lDemandInputFilename);
+                                  lFareInputFilename, lYieldInputFilename, 
+                                  lDemandInputFilename);
 
   // Perform a simulation
   dsimService.simulate();

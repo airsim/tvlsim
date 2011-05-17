@@ -13,6 +13,7 @@
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
+#include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
@@ -87,6 +88,8 @@ namespace DSIM {
                                                            lPSS); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
+      case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
+                                               lEventStruct); break;
       default: assert (false); break;
       }
 
@@ -195,7 +198,6 @@ namespace DSIM {
     }
   }
   
-
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playSnapshotEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
@@ -208,5 +210,18 @@ namespace DSIM {
     STDAIR_LOG_DEBUG ("Taking snapshots: " << lSnapshotStruct.describe());
 
     ioSIMCRS_Service.takeSnapshots (lSnapshotStruct);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void Simulator::
+  playRMEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+               const stdair::EventStruct& iEventStruct) {
+    // Retrieve the RM event struct from the event.
+    const stdair::RMEventStruct lRMEvent = iEventStruct.getRMEvent();
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
+
+    ioSIMCRS_Service.optimise (lRMEvent);
   }
 }

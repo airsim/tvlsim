@@ -19,6 +19,7 @@ namespace stdair {
   struct BasLogParams;
   struct BasDBParams;
   struct SnapshotStruct;
+  struct RMEventStruct;
   struct TravelSolutionStruct;
 }
 
@@ -100,20 +101,22 @@ namespace AIRINV {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
+     * @param const stdair::Filename_T& Filename of the input yield file.
      */
     void parseAndLoad (const stdair::Filename_T& iScheduleFilename,
-                       const stdair::Filename_T& iODInputFilename);
+                       const stdair::Filename_T& iODInputFilename,
+                       const stdair::Filename_T& iYieldInputFilename);
 
     /**
      * Destructor.
      */
     ~AIRINV_Master_Service();
 
-    /** Initialise the snapshot events for the inventories.
+    /** Initialise the snapshot and RM events for the inventories.
         @param const stdiar::Date_T& Parameters for the start date.
         @param const stdiar::Date_T& Parameters for the end date.
      */
-    void initSnapshotEvents (const stdair::Date_T&, const stdair::Date_T&);
+    void initSnapshotAndRMEvents (const stdair::Date_T&, const stdair::Date_T&);
     
 
   public:
@@ -156,6 +159,10 @@ namespace AIRINV {
      */
     void takeSnapshots (const stdair::SnapshotStruct&);
     
+    /**
+     * Optimise (revenue management) an flight-date/network-date
+     */
+    void optimise (const stdair::RMEventStruct&);    
 
   public:
     // //////////////// Display support methods /////////////////
