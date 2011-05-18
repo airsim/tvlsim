@@ -427,6 +427,7 @@ AC_CONFIG_FILES(
 	simfqt/config/Makefile
 	simfqt/core/Makefile
 	simfqt/batches/Makefile
+	simfqt/ui/Makefile
 	simcrs/Makefile
 	simcrs/basic/Makefile
 	simcrs/bom/Makefile
