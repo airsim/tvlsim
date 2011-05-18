@@ -41,9 +41,8 @@ namespace AIRINV {
                                     stdair::EventQueue&);
     
     /** Initialise the RM events for the inventories. */
-    static stdair::RMEventList_T initRMEvents (const stdair::Inventory&,
-                                               const stdair::Date_T&,
-                                               const stdair::Date_T&);
+    static void initRMEvents (const stdair::Inventory&, stdair::RMEventList_T&,
+                              const stdair::Date_T&, const stdair::Date_T&);
 
     /** Add the RM events to the event queue. */
     static void addRMEventsToEventQueue (stdair::EventQueue&,

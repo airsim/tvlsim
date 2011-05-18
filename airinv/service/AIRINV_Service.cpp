@@ -32,6 +32,11 @@
 namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
+  AIRINV_Service::AIRINV_Service () : _airinvServiceContext (NULL) {
+    assert (false);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::AIRINV_Service (const AIRINV_Service& iService)
   : _airinvServiceContext (NULL) {
     assert (false);
@@ -89,31 +94,30 @@ namespace AIRINV {
     // Initialise the (remaining of the) context
     initAirinvService();
   }
+  // //////////////////////////////////////////////////////////////////////
+  AIRINV_Service::
+  AIRINV_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr)
+    : _airinvServiceContext (NULL) {
 
-  // ////////////////////////////////////////////////////////////////////
-  AIRINV_Service::AIRINV_Service () : _airinvServiceContext (NULL) {
-
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = initStdAirService ();
-    
     // Initialise the service context
     initServiceContext();
-
-    // Add the StdAir service context to the AIRINV service context
-    // \note AIRINV owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-
+    
+    // Store the STDAIR service object within the (AIRINV) service context
+    // \note AirInv does not own the STDAIR service resources here.
+    const bool doesNotOwnStdairService = false;
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
+    
     // Initalise the RMOL service.
     initRMOLService();
-
+    
     // Initalise the AIRRAC service.
     initAIRRACService();
-
+    
     // Initialise the (remaining of the) context
     initAirinvService();
+    
   }
-
+  
   // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::~AIRINV_Service() {
     // Delete/Clean all the objects from memory
@@ -180,22 +184,6 @@ namespace AIRINV {
      */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
-
-    return lSTDAIR_Service_ptr;
-  }
-  
-  // ////////////////////////////////////////////////////////////////////
-  stdair::STDAIR_ServicePtr_T AIRINV_Service::initStdAirService () {
-
-    /**
-     * Initialise the STDAIR service handler.
-     *
-     * \note The (Boost.)Smart Pointer keeps track of the references
-     *       on the Service object, and deletes that object when it is
-     *       no longer referenced (e.g., at the end of the process).
-     */
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      boost::make_shared<stdair::STDAIR_Service> ();
 
     return lSTDAIR_Service_ptr;
   }
@@ -375,6 +363,7 @@ namespace AIRINV {
       lAIRINV_ServiceContext.getSTDAIR_Service();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
+    stdair::RMEventList_T oRMEventList;
     const stdair::InventoryList_T lInventoryList =
       stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
     for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
@@ -382,8 +371,11 @@ namespace AIRINV {
       const stdair::Inventory* lInv_ptr = *itInv;
       assert (lInv_ptr != NULL);
       
-      return InventoryManager::initRMEvents (*lInv_ptr, iStartDate, iEndDate); 
+      InventoryManager::initRMEvents (*lInv_ptr, oRMEventList,
+                                      iStartDate, iEndDate); 
     }
+
+    return oRMEventList;
   }
   
   // ////////////////////////////////////////////////////////////////////

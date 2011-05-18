@@ -31,6 +31,7 @@ const std::string K_AIRINV_DEFAULT_SCHEDULE_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/schedule01.csv");
 /** Default name and location for the (CSV) input files. */
 const std::string K_AIRINV_DEFAULT_OND_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
+
 /** Default name and location for the (CSV) input files. */
 const std::string K_AIRINV_DEFAULT_YIELD_FILENAME (STDAIR_SAMPLE_DIR "/yield01.csv");
 
