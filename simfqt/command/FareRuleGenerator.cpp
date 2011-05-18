@@ -158,10 +158,9 @@ namespace SIMFQT {
     const stdair::NonRefundable_T& lNonRefundable =
       iFareRuleStruct._nonRefundable;
     const stdair::DayDuration_T& lMinimumStay = iFareRuleStruct._minimumStay;
-    const stdair::Fare_T& lFare = iFareRuleStruct._fare; 
     const stdair::FareFeaturesKey
       lFareFeaturesKey (lAdvancePurchase, lSaturdayStay, lChangeFees,
-                        lNonRefundable, lMinimumStay, lFare);
+                        lNonRefundable, lMinimumStay);
 
     // Check that the fare features object is not already existing.
     // If a fare features object with the same key has not already been
@@ -199,12 +198,14 @@ namespace SIMFQT {
     const stdair::AirlineClassListKey
       lAirlineClassListKey (iFareRuleStruct._airlineCodeList,
                             iFareRuleStruct._classCodeList);
-
+    const stdair::Fare_T& lFare = iFareRuleStruct._fare;
+    
     // Create the airline class list object and link it to the fare features
     // object.        
     stdair::AirlineClassList* lAirlineClassList_ptr =
       &stdair::FacBom<stdair::AirlineClassList>::instance().
       create (lAirlineClassListKey);
+    lAirlineClassList_ptr->setFare(lFare);
     stdair::FacBomManager::addToListAndMap (iFareFeatures,
                                             *lAirlineClassList_ptr); 
     stdair::FacBomManager::linkWithParent(iFareFeatures,

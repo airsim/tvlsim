@@ -307,7 +307,6 @@ namespace SIMFQT {
         AtLeastOneAvailableFeaturesRule = true;
         // Set the travel fare option.
         stdair::FareOptionStruct lFareOption;
-        lFareOption.setFare (lCurrentFareFeatures_ptr->getFare());
         lFareOption.
           setChangeFees (lCurrentFareFeatures_ptr->getChangeFees());
         lFareOption.
@@ -417,6 +416,7 @@ namespace SIMFQT {
         lAtLeastOneAvailableAirlineRule = true;
 
         // Set the travel fare option.
+        iFareOption.setFare (lCurrentAirlineClassList_ptr->getFare());
         const stdair::ClassList_StringList_T& lClassCodeList =
           lCurrentAirlineClassList_ptr->getClassCodeList();
         for (stdair::ClassList_StringList_T::const_iterator itClassCodeList =
