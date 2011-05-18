@@ -279,6 +279,9 @@ namespace AIRINV {
     AIRRAC::AIRRAC_Service& lAIRRAC_Service =
       lAIRINV_ServiceContext.getAIRRAC_Service();
     lAIRRAC_Service.parseAndLoad (iYieldInputFilename);
+
+    // Update yield values for booking classes and O&D.
+    lAIRRAC_Service.updateYields();
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -423,9 +426,8 @@ namespace AIRINV {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
     const stdair::InventoryKey lInventoryKey =
       stdair::BomKeyManager::extractInventoryKey (iSegmentDateKey);
-    stdair::Inventory& lInventory =
-      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot,
-                                                       lInventoryKey.toString());
+    stdair::Inventory& lInventory = stdair::BomManager::
+      getObject<stdair::Inventory>(lBomRoot, lInventoryKey.toString());
 
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
