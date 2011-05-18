@@ -14,8 +14,8 @@ namespace stdair {
   class BomRoot;
   class FareRule;
   class AirportPair;
-  class PosChannel;
   class DatePeriod;
+  class PosChannel;
   class TimePeriod;
   class FareFeatures;
   class AirlineClassList;
@@ -46,24 +46,24 @@ namespace SIMFQT {
                                    const FareRuleStruct&);
 
     /**
-     * Generate the point_of_sale-channel objects corresponding to
-     * the given fareRule.
-     */
-    static void createPOSChannel (stdair::AirportPair&,
-                                  const FareRuleStruct&);
-    
-    /**
      * Generate the date-period objects corresponding to
      * the given fareRule.
      */
-    static void createDateRange (stdair::PosChannel&,
+    static void createDateRange (stdair::AirportPair&,
                                  const FareRuleStruct&);
-
+    
+    /**
+     * Generate the point_of_sale-channel objects corresponding to
+     * the given fareRule.
+     */
+    static void createPOSChannel (stdair::DatePeriod&,
+                                  const FareRuleStruct&);
+    
     /**
      * Generate the time-period objects corresponding to
      * the given fareRule.
      */
-    static void createTimeRange (stdair::DatePeriod&,
+    static void createTimeRange (stdair::PosChannel&,
                                  const FareRuleStruct&);
 
     /**

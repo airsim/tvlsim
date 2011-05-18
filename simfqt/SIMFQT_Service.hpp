@@ -168,6 +168,22 @@ namespace SIMFQT {
      */
     std::string csvDisplay (const stdair::TravelSolutionList_T&) const;
 
+    /**
+     * Recursively display (dump in the returned string) the fare-rules
+     * corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirportCode_T& Origin airport of the fare-rules
+     *        to display
+     * @param const stdair::AirportCode_T& Destination airport of the fare-
+     *        rules to display.
+     * @param const stdair::Date_T& Departure date of the fare-rules to display.
+     * @return std::string Output string in which the BOM tree is
+     *        logged/dumped.
+     */
+    std::string csvDisplay (const stdair::AirportCode_T& ioOrigin,
+                            const stdair::AirportCode_T& ioDestination,
+                            const stdair::Date_T& ioDepartureDate) const;
+    
   private:
     // /////// Construction and Destruction helper methods ///////
     /**
