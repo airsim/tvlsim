@@ -75,9 +75,6 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   // Fare input filename
   const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
     
-  // Yield input filename
-  const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR "/yield01.csv");
-    
   // Check that the file path given as input corresponds to an actual file
   bool doesExistAndIsReadable =
     stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
@@ -98,13 +95,6 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
                        "The '" << lFareInputFilename
                        << "' input file can not be open and read");
-  
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lYieldInputFilename
-                       << "' input file can not be open and read");
 
   // Output log File
   const stdair::Filename_T lLogFilename ("CRSTestSuite.log");
@@ -119,16 +109,15 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
                                         lScheduleInputFilename,
-                                        lOnDInputFilename, lFareInputFilename,
-                                        lYieldInputFilename);
+                                        lOnDInputFilename, lFareInputFilename);
 
   // Create an empty booking request structure
   // TODO: fill the booking request structure from the input parameters
   const stdair::AirportCode_T lOrigin ("SIN");
   const stdair::AirportCode_T lDestination ("BKK");
   const stdair::AirportCode_T lPOS ("SIN");
-  const stdair::Date_T lPreferredDepartureDate(2010, boost::gregorian::Jan, 30);
-  const stdair::Date_T lRequestDate (2010, boost::gregorian::Jan, 22);
+  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Feb, 10);
+  const stdair::Date_T lRequestDate (2011, boost::gregorian::Jan, 22);
   const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
   const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
   const stdair::CabinCode_T lPreferredCabin ("Eco");
@@ -189,7 +178,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   lTravelSolution.setChosenFareOption (lFareOption);
 
   //  
-  const unsigned int lExpectedPrice = 200;
+  const unsigned int lExpectedPrice = 320;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("The price given by the fare quoter for '"
