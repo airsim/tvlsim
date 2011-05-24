@@ -3,9 +3,12 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <cmath>
 // Boost
 #include <boost/make_shared.hpp>
 // StdAir
+#include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/BomRoot.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/EventType.hpp>
 #include <stdair/bom/EventQueue.hpp>
@@ -13,6 +16,13 @@
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+#include <stdair/bom/YieldFeatures.hpp>
+#include <stdair/bom/AirportPair.hpp>
+#include <stdair/bom/PosChannel.hpp>
+#include <stdair/bom/DatePeriod.hpp>
+#include <stdair/bom/TimePeriod.hpp>
+#include <stdair/bom/AirlineClassList.hpp>
+#include <stdair/basic/BasConst_Request.hpp>
 // AirInv
 #include <airinv/basic/BasConst_AIRINV_Service.hpp>
 #include <airinv/factory/FacAirinvMasterServiceContext.hpp>
@@ -21,6 +31,8 @@
 #include <airinv/service/AIRINV_Master_ServiceContext.hpp>
 #include <airinv/AIRINV_Service.hpp>
 #include <airinv/AIRINV_Master_Service.hpp>
+// Trademgen
+#include <trademgen/bom/DemandStream.hpp>
 
 namespace AIRINV {
 
@@ -205,7 +217,8 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from the (AIRINV) service context
+    // Retrieve the slave AIRINV service object from the (AIRINV)
+    // service context
     AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
 
@@ -473,4 +486,246 @@ namespace AIRINV {
 
     lAIRINV_Service.optimise (lAirlineCode, lFDDescription, lRMEventTime);
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::forecast () {
+
+    // Retrieve the AIRINV service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    // Retrieve the airinv context
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+
+
+    // Retrieve the master bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_Master_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Retrieve the demand stream list
+    const stdair::EventQueueList_T lEventQueueList =
+        stdair::BomManager::getList<stdair::EventQueue> (lBomRoot);
+    assert(lEventQueueList.begin() != lEventQueueList.end());
+    const stdair::EventQueue* lEventQueue_ptr = lEventQueueList.front();
+    const TRADEMGEN::DemandStreamList_T lDemandStreamList =
+      stdair::BomManager::getList<TRADEMGEN::DemandStream> (*lEventQueue_ptr);
+
+    // Browse the demand stream list
+    for (TRADEMGEN::DemandStreamList_T::const_iterator itDS = lDemandStreamList.begin();
+         itDS != lDemandStreamList.end(); ++itDS) {
+      TRADEMGEN::DemandStream* lDemandStream_ptr = *itDS;
+
+      stdair::YieldFeatures* lYieldFeatures_ptr =
+        getYieldFeatures(*lDemandStream_ptr, lBomRoot);
+
+      if (lYieldFeatures_ptr == NULL) {
+        const TRADEMGEN::DemandStreamKey& lDemandStreamKey =
+          lDemandStream_ptr->getKey();
+        STDAIR_LOG_ERROR ("Cannot find yield corresponding to the Demand"
+                          << " Stream: " << lDemandStreamKey.toString());
+        assert (false);
+      }
+
+      forecast (*lYieldFeatures_ptr, *lDemandStream_ptr, lBomRoot);
+     
+    }
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  stdair::YieldFeatures* AIRINV_Master_Service::
+  getYieldFeatures(const TRADEMGEN::DemandStream& iDemandStream,
+                   stdair::BomRoot& iBomRoot) {
+
+    const stdair::AirportCode_T& lOrigin = iDemandStream.getOrigin();
+    const stdair::AirportCode_T& lDestination = iDemandStream.getDestination();
+
+    const stdair::Date_T& lPreferredDepartureDate =
+      iDemandStream.getPreferredDepartureDate();
+    const stdair::CabinCode_T& lPreferredCabin = iDemandStream.getPreferredCabin();
+
+    // Build the airport pair key out of O&D and get the airport pair object
+    const stdair::AirportPairKey lAirportPairKey(lOrigin, lDestination);
+    stdair::AirportPair* lAirportPair_ptr = stdair::BomManager::
+      getObjectPtr<stdair::AirportPair> (iBomRoot,
+                                         lAirportPairKey.toString());
+    if (lAirportPair_ptr == NULL) {
+      STDAIR_LOG_ERROR ("Cannot find yield corresponding to the airport "
+                        << "pair: " << lAirportPairKey.toString());
+      assert (false);
+    }
+    // Retrieve the PoS-Channel.
+    const stdair::PosChannelKey lPosChannelKey (stdair::DEFAULT_POS,
+                                                stdair::DEFAULT_CHANNEL);
+    stdair::PosChannel* lPosChannel_ptr = stdair::BomManager::
+      getObjectPtr<stdair::PosChannel> (*lAirportPair_ptr,
+                                        lPosChannelKey.toString());
+    if (lPosChannel_ptr == NULL) {
+      STDAIR_LOG_ERROR ("Cannot find yield corresponding to the PoS-"
+                        << "Channel: " << lPosChannelKey.toString());
+      assert (false);
+    }
+
+    // Retrieve the corresponding date period to lPreferredDepartureDate.
+    const stdair::DatePeriodList_T lDatePeriodList =
+      stdair::BomManager::getList<stdair::DatePeriod> (*lPosChannel_ptr);
+    for (stdair::DatePeriodList_T::const_iterator itDatePeriod =
+           lDatePeriodList.begin();
+         itDatePeriod != lDatePeriodList.end(); ++itDatePeriod) {
+      const stdair::DatePeriod* lDatePeriod_ptr = *itDatePeriod;
+      assert (lDatePeriod_ptr != NULL);
+      
+      const bool isDepartureDateValid =
+        lDatePeriod_ptr->isDepartureDateValid (lPreferredDepartureDate);
+      
+      if (isDepartureDateValid == true) {
+          // Retrieve the corresponding time period.
+          const stdair::TimePeriodList_T lTimePeriodList = stdair::
+            BomManager::getList<stdair::TimePeriod> (*lDatePeriod_ptr);
+          for (stdair::TimePeriodList_T::const_iterator itTimePeriod =
+                 lTimePeriodList.begin();
+               itTimePeriod != lTimePeriodList.end(); ++itTimePeriod) {
+            const stdair::TimePeriod* lTimePeriod_ptr = *itTimePeriod;
+            assert (lTimePeriod_ptr != NULL);
+            
+            
+            const stdair::YieldFeaturesKey lYieldFeaturesKey (lPreferredCabin);
+            stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
+              getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
+                                                  lYieldFeaturesKey.toString());
+            if (oYieldFeatures_ptr != NULL) {
+              return oYieldFeatures_ptr;
+            }
+          }
+        }
+      }
+    return NULL;
+
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::
+  forecast(const stdair::YieldFeatures& iYieldFeatures,
+           const TRADEMGEN::DemandStream& iDemandStream,
+           stdair::BomRoot& iBomRoot) {
+
+    const stdair::AirlineClassListList_T lAirlineClassListList = stdair::BomManager::
+      getList<stdair::AirlineClassList> (iYieldFeatures);
+    assert (lAirlineClassListList.begin() != lAirlineClassListList.end());
+
+    // Yield order check
+    stdair::AirlineClassListList_T::const_iterator  itACL = lAirlineClassListList.begin();
+    stdair::Yield_T lPreviousYield((*itACL)->getYield());
+    ++itACL;
+    for (; itACL != lAirlineClassListList.end(); ++itACL) {
+      const stdair::AirlineClassList* lAirlineClassList = *itACL;
+      const stdair::Yield_T& lYield = lAirlineClassList->getYield();
+      if (lYield <= lPreviousYield) {
+        lPreviousYield = lYield;
+      }
+      else{
+        STDAIR_LOG_ERROR ("Yields should be given in a descendant order"
+                          << " in the yield input file") ;
+        assert (false);
+      }
+    }
+    // Proportion factor list initialisation
+    // Each element corresponds to a yield rule
+    stdair::ProportionFactorList_T lProportionFactorList;
+    stdair::ProportionFactor_T lPreviousProportionFactor = 0;
+
+    
+    const TRADEMGEN::DemandCharacteristics& lDemandCharacteristics =
+      iDemandStream.getDemandCharacteristics();
+    const stdair::WTP_T& lMinWTP = lDemandCharacteristics.getMinWTP();
+
+    // TODO define lDTD properly
+    stdair::FloatDuration_T lDTD = -40;
+
+    // Retrieve the remaining percentage of booking requests
+    const TRADEMGEN::ContinuousFloatDuration_T& lArrivalPattern =
+     lDemandCharacteristics.getArrivalPattern();
+    const stdair::Probability_T lRemainingProportion =
+      lArrivalPattern.getRemainingProportion(lDTD);
+
+    const stdair::NbOfRequests_T& lMeanNumberOfRequests =
+      lRemainingProportion*iDemandStream.getMeanNumberOfRequests();
+    const stdair::StdDevValue_T& lStdDevNumberOfRequests =
+      lRemainingProportion*iDemandStream.getStdDevNumberOfRequests();
+
+    // TODO define the frat5 coef properly
+    stdair::RealNumber_T lFrat5Coef = 2.0;
+
+    // Proportion list computation
+    itACL = lAirlineClassListList.begin();
+    for (; itACL != lAirlineClassListList.end(); ++itACL) {
+      const stdair::AirlineClassList* lAirlineClassList = *itACL;
+      const stdair::Yield_T& lYield = lAirlineClassList->getYield();
+      stdair::ProportionFactor_T lProportionFactor =
+        exp ((lYield - lMinWTP)*log(0.5)/(lMinWTP*(lFrat5Coef-1.0)))/lMeanNumberOfRequests;
+      lProportionFactorList.push_back(lProportionFactor - lPreviousProportionFactor);      
+      lPreviousProportionFactor = lProportionFactor;
+    }
+
+    // Sanity check
+    assert (lAirlineClassListList.size() == lProportionFactorList.size());
+
+    // Store the forecast in the booking classes
+    stdair::ProportionFactorList_T::const_iterator itPF = lProportionFactorList.begin();
+    itACL = lAirlineClassListList.begin();
+    for (; itACL != lAirlineClassListList.end(); ++itACL, ++itPF) {
+      const stdair::AirlineClassList* lAirlineClassList = *itACL;
+      const stdair::ProportionFactor_T& lProportionFactor = *itPF;
+      stdair::NbOfRequests_T lNumberOfRequests = lProportionFactor*lMeanNumberOfRequests;
+      stdair::StdDevValue_T lStdDevValue = lProportionFactor*lStdDevNumberOfRequests;
+      setForecast(*lAirlineClassList, lNumberOfRequests, lStdDevValue,
+                  iDemandStream, iBomRoot);
+    }  
+    
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void AIRINV_Master_Service::
+  setForecast (const stdair::AirlineClassList& iAirlineClassList,
+               const stdair::NbOfRequests_T& iNumberOfRequests,
+               const stdair::StdDevValue_T& iStdDevValue,
+               const TRADEMGEN::DemandStream& iDemandStream,
+               stdair::BomRoot& iBomRoot) {
+    
+    const stdair::AirportCode_T& lOrigin = iDemandStream.getOrigin();
+    const stdair::AirportCode_T& lDestination = iDemandStream.getDestination();
+
+    const stdair::Date_T& lPreferredDepartureDate =
+      iDemandStream.getPreferredDepartureDate();
+    const stdair::CabinCode_T& lPreferredCabin = iDemandStream.getPreferredCabin();
+
+    const stdair::AirlineCodeList_T& lAirlineCodeList =
+      iAirlineClassList.getAirlineCodeList();
+
+    const stdair::ClassList_StringList_T& lClassCodeList =
+      iAirlineClassList.getClassCodeList();
+
+    // Sanity check
+    assert (lAirlineCodeList.size() == lClassCodeList.size());
+    assert (!lAirlineCodeList.empty());
+    
+    if (lAirlineCodeList.size() == 1) {
+      stdair::AirlineCode_T lAirlineCode = lAirlineCodeList.front();
+      //setForecast(lAirlineCode, iNumberOfRequests, iStdDevValue,
+      //iDemandStream,iBomRoot);
+    }
+    else {
+      stdair::AirlineCodeList_T::const_iterator itAC = lAirlineCodeList.begin();
+      stdair::ClassList_StringList_T::const_iterator itCC = lClassCodeList.begin();
+
+      for (; itAC != lAirlineCodeList.end(); ++itAC, ++itCC) {
+        
+      }
+    }
+  }
+
 }

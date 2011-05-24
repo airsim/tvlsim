@@ -10,6 +10,7 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/stdair_inventory_types.hpp>
+#include <stdair/stdair_maths_types.hpp>
 
 /// Forward declarations
 namespace stdair {
@@ -21,6 +22,14 @@ namespace stdair {
   struct SnapshotStruct;
   struct RMEventStruct;
   struct TravelSolutionStruct;
+
+  class AirlineClassList;
+  class YieldFeatures;
+}
+
+namespace TRADEMGEN {
+  class DemandStream;
+  class DemandStreamKey;
 }
 
 namespace AIRINV {
@@ -162,7 +171,20 @@ namespace AIRINV {
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-    void optimise (const stdair::RMEventStruct&);    
+    void optimise (const stdair::RMEventStruct&);
+
+    /**
+     * Forecaster utility
+     * Forecast
+     */
+    void forecast ();
+    stdair::YieldFeatures* getYieldFeatures(const TRADEMGEN::DemandStream&,
+                                          stdair::BomRoot&);
+    void forecast (const stdair::YieldFeatures&, const TRADEMGEN::DemandStream&,
+                   stdair::BomRoot&);
+    void setForecast (const stdair::AirlineClassList&, const stdair::NbOfRequests_T&,
+                      const stdair::StdDevValue_T&, const TRADEMGEN::DemandStream&,
+                      stdair::BomRoot&);
 
   public:
     // //////////////// Display support methods /////////////////

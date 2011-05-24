@@ -76,7 +76,7 @@ namespace AIRINV {
      * itself being initialised by another library service such as
      * SIMCRS_Service).
      */
-    AIRINV_Service ();
+     AIRINV_Service ();
 
     /**
      * Parse the inventory dump and load it into memory.
@@ -106,7 +106,7 @@ namespace AIRINV {
      * Destructor.
      */
     ~AIRINV_Service();
-    
+
 
   public:
     // /////////// Business Methods /////////////
@@ -190,6 +190,11 @@ namespace AIRINV {
 
   private:
     // /////// Construction and Destruction helper methods ///////
+    /**
+     * Default constructor. It should not be used.
+     */
+    //AIRINV_Service ();
+    
     /**
      * Default copy constructor. It should not be used.
      */

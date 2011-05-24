@@ -206,9 +206,8 @@ namespace TRADEMGEN {
       
     //
     const stdair::Probability_T lCumulativeProbabilityThisRequest =
-      1.0 -
-      lComplementOfCumulativeProbabilitySoFar * lFactor;
-
+      1.0 - lComplementOfCumulativeProbabilitySoFar * lFactor;
+    
     //
     const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
       _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);

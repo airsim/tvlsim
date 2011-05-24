@@ -33,6 +33,21 @@ namespace TRADEMGEN {
      */
     bool checkPOSValue (const stdair::AirportCode_T& iPOS) const;
 
+    /**
+     * Forecaster utility
+     * Get the minimal wtp
+     */
+    const stdair::WTP_T& getMinWTP() const {
+      return _minWTP;
+    }
+
+    /**
+     * Forecaster utility
+     * Get the arrival pattern
+     */
+    const ContinuousFloatDuration_T& getArrivalPattern() const {
+      return _arrivalPattern;
+    }
 
   public:
     // ////////////// Display support methods //////////
