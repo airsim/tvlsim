@@ -75,8 +75,11 @@ namespace AIRINV {
      * calling chain (for instance, when the AIRINV_Master_Service is
      * itself being initialised by another library service such as
      * SIMCRS_Service).
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     * @param const stdair::Filename_T& Filename of the input inventory file.
      */
-     AIRINV_Service ();
+    AIRINV_Service (stdair::STDAIR_ServicePtr_T);
 
     /**
      * Parse the inventory dump and load it into memory.
@@ -106,7 +109,7 @@ namespace AIRINV {
      * Destructor.
      */
     ~AIRINV_Service();
-
+    
 
   public:
     // /////////// Business Methods /////////////
@@ -193,7 +196,7 @@ namespace AIRINV {
     /**
      * Default constructor. It should not be used.
      */
-    //AIRINV_Service ();
+    AIRINV_Service ();
     
     /**
      * Default copy constructor. It should not be used.
@@ -221,14 +224,6 @@ namespace AIRINV {
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      */
     stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
-    
-    /**
-     * Initialise the STDAIR service (including the log service).
-     *
-     * A reference on the root of the BOM tree, namely the BomRoot object,
-     * is stored within the service context for later use.
-     */
-    stdair::STDAIR_ServicePtr_T initStdAirService ();
     
     /**
      * Initialise the RMOL service (including the log service).
