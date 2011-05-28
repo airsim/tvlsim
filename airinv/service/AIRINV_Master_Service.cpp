@@ -270,6 +270,32 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  std::string AIRINV_Master_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the AIRINV service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+  
+    // Retrieve the slave AIRINV service object from
+    // the (AIRINV) service context
+    AIRINV_Service& lAIRINV_Service =
+      lAIRINV_Master_ServiceContext.getAIRINV_Service();
+
+    // Delegate the BOM dump to the dedicated service
+    return lAIRINV_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   std::string AIRINV_Master_Service::csvDisplay() const {
 
     // Retrieve the AIRINV service context
