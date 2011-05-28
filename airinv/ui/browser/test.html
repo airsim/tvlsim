@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Test Call</title>
+<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.13.custom.min.js"></script>
+</head>
+<body>
+<p>Company Code: <input id="tbCompanyName" type="text" />
+Flight Number: <input id="tbFlightNumber" type="text" />
+Date: <input type="text" id="datepicker">
+<input name="" type="button" value="Test Call" onclick="testCallJSON()"/></p>
+
+<label name="lblCallResult"></label>
+</body>
+
+
+<script type="text/javascript">
+$('#datepicker').datepicker({
+					inline: true
+				});
+</script>
+
+<script type="text/javascript" charset="utf-8">
+	
+/*	//New Request + Browser Test
+	function testCall()
+	{
+		var xmlhttp = null;
+		if (window.XMLHttpRequest) {
+		  xmlhttp = new XMLHttpRequest();
+		  if ( typeof xmlhttp.overrideMimeType != 'undefined') { 
+		    xmlhttp.overrideMimeType('text/xml'); 
+		  }
+		} else if (window.ActiveXObject) {
+		  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} else {
+		  alert('Perhaps your browser does not support xmlhttprequests?');
+		}
+		
+		//Call for vars stored in Django
+		xmlhttp.open('GET', 'http://ncevsediri-fed:8000/api/airinv/SV+5+2010-Mar-10/', true);
+		xmlhttp.send(null);
+		
+		//
+		xmlhttp.onreadystatechange = function() {
+	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+	  $(lblCallResult).html(xmlhttp.responseText);  
+		//document.getElementsByName(lblCallResult).innerHTML=xmlhttp.responseText;
+	  } else {
+	    // wait for the call to complete
+	  }
+	};
+	}
+	
+	function testCall2()
+	{
+		var xmlhttp = null;
+		xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","http://192.168.56.101:8000/api/airinv/SV+5+2010-Mar-10/",true);
+		 xmlhttp.onreadystatechange=function() {
+		  if (xmlhttp.readyState==4) {
+		   if (xmlhttp.status!=404) {
+			var local=new Function("return "+xmlhttp.responseText)();
+			//alert("Code - Name\n"+local[0].id+' - '+local[0].name);
+		   	alert(xmlhttp.responseText);
+			document.getElementsByName('lblCallResult').innerHTML=xmlhttp.responseText;
+		   } else {
+			alert("Not Found");
+		   }
+		  }
+		 }
+		 xmlhttp.send(null);
+	}
+	*/
+	function testCallJSON()
+	{
+		$.getJSON( 'http://ncevsediri-fed/api/airinv/SV+5+2010-Mar-10', 
+				  function(data) 
+				  {
+				   //document.getElementsByName('lblCallResult').innerHTML=data.airportcodes;
+				   alert(data.airport_codes);
+				  }
+				  );	
+	}
+ 
+</script>
+</html>
