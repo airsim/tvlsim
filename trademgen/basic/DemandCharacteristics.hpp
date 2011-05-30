@@ -34,7 +34,7 @@ namespace TRADEMGEN {
     bool checkPOSValue (const stdair::AirportCode_T& iPOS) const;
 
     /**
-     * Forecaster utility
+     * Forecaster
      * Get the minimal wtp
      */
     const stdair::WTP_T& getMinWTP() const {
@@ -42,7 +42,7 @@ namespace TRADEMGEN {
     }
 
     /**
-     * Forecaster utility
+     * Forecaster
      * Get the arrival pattern
      */
     const ContinuousFloatDuration_T& getArrivalPattern() const {

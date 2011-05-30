@@ -83,7 +83,7 @@ namespace TRADEMGEN {
      */
     const stdair::Probability_T getRemainingProportion(const T& iValue) const {     
 
-      // Find the first value smaller or equal to iValue.
+      // Find the first value smaller than iValue.
       unsigned int idx = 0;
       for (; idx < _size; ++idx) {
         if (_valueArray.at(idx) < iValue) {
