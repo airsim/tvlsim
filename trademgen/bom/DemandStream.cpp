@@ -204,7 +204,6 @@ namespace TRADEMGEN {
       lFactor = 1 - 1e-6;
     }
       
-    //
     const stdair::Probability_T lCumulativeProbabilityThisRequest =
       1.0 - lComplementOfCumulativeProbabilitySoFar * lFactor;
     

@@ -164,7 +164,7 @@ namespace AIRINV {
      * Optimise (revenue management) an flight-date/network-date
      */
     void optimise (const stdair::RMEventStruct&);
-    
+
   public:
     // //////////////// Display support methods /////////////////
     /**

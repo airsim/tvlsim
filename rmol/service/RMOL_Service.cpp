@@ -165,7 +165,7 @@ namespace RMOL {
   // ////////////////////////////////////////////////////////////////////
   RMOL_Service::RMOL_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr)
     : _rmolServiceContext (NULL), _previousForecastDate (NULL) {
-    
+
     // Initialise the context
     initServiceContext();
     
