@@ -154,7 +154,7 @@ int readConfiguration (int argc, char* argv[],
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
      "(CVS) input file for the fares")
-    ("yield,f",
+    ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
     ("log,l",
