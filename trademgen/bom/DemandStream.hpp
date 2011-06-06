@@ -205,6 +205,14 @@ namespace TRADEMGEN {
                  const stdair::RandomSeed_T& iRequestDateTimeSeed,
                  const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
                  const POSProbabilityMass_T&);
+
+    /**
+     * Set the boolean describing if it is the first time we generate a
+     * request for a demand stream.
+     */
+    void setBoolFirstDateTimeRequest (const bool& iFirstDateTimeRequest) {
+      _firstDateTimeRequest = iFirstDateTimeRequest;
+    }
     
 
   public:
@@ -217,8 +225,13 @@ namespace TRADEMGEN {
     /** Check whether enough requests have already been generated. */
     const bool stillHavingRequestsToBeGenerated() const;
 
-    /** Generate the time of the next request. */
-    const stdair::DateTime_T generateTimeOfRequest();
+    /** Generate the time of the next request with exponential law. */
+    const stdair::DateTime_T generateTimeOfRequestExponentialLaw();
+
+    const stdair::Duration_T drawInterArrivalTime (double);
+
+    /** Generate the time of the next request with statistic order */
+    const stdair::DateTime_T generateTimeOfRequestStatisticOrder();
 
     /** Generate the POS. */
     const stdair::AirportCode_T generatePOS();
@@ -248,7 +261,8 @@ namespace TRADEMGEN {
     const stdair::PriceValue_T generateValueOfTime();
     
     /** Generate the next request. */
-    stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&);
+    stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
+                                                     const bool);
 
     /** Reset all the contexts of the demand stream. */
     void reset();
@@ -287,6 +301,9 @@ namespace TRADEMGEN {
      * Dump recursively the content of the DemandStream object.
      */
     std::string display() const;
+
+    const stdair::Duration_T convertFloatIntoDuration (const stdair::FloatDuration_T);
+    
 
 
   protected:
@@ -345,7 +362,7 @@ namespace TRADEMGEN {
      * Random generation context.
      */
     RandomGenerationContext _randomGenerationContext;
-  
+
     /**
      * Random generator for number of requests.
      */
@@ -366,6 +383,12 @@ namespace TRADEMGEN {
      * is drawn.
      */
     POSProbabilityMass_T _posProMass;
+
+  private:
+
+    bool _firstDateTimeRequest;
+
+    stdair::DateTime_T _dateTimeLastRequest;
   };
 
 }

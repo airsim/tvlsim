@@ -481,7 +481,8 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  stdair::Count_T TRADEMGEN_Service::generateFirstRequests() const {
+  stdair::Count_T TRADEMGEN_Service::
+  generateFirstRequests(const bool iGenerateRequestWithStatisticOrder) const {
 
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -501,7 +502,8 @@ namespace TRADEMGEN {
 
     // Delegate the call to the dedicated command
     const stdair::Count_T& oActualTotalNbOfEvents =
-      DemandManager::generateFirstRequests (lQueue, lGenerator);
+      DemandManager::generateFirstRequests (lQueue, lGenerator,
+                                            iGenerateRequestWithStatisticOrder);
 
     //
     return oActualTotalNbOfEvents;
@@ -509,7 +511,8 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T TRADEMGEN_Service::
-  generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey) const {
+  generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey,
+                       const bool iGenerateRequestWithStatisticOrder) const {
 
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -528,7 +531,8 @@ namespace TRADEMGEN {
       lTRADEMGEN_ServiceContext.getUniformGenerator();
 
     // Delegate the call to the dedicated command
-    return DemandManager::generateNextRequest (lQueue, lGenerator, iKey);
+    return DemandManager::generateNextRequest (lQueue, lGenerator, iKey,
+                                               iGenerateRequestWithStatisticOrder);
   }
 
   // ////////////////////////////////////////////////////////////////////

@@ -75,6 +75,40 @@ namespace TRADEMGEN {
 
       return oValue;
     }
+
+    /**
+     * Get the value of the derivative function in a key point.
+     */
+    const double getDerivativeValue(const T iKey) const{
+
+      // Find the first key value greater or equal to iKey.
+      unsigned int idx = 0;
+      for (; idx < _size; ++idx) {
+        if (_valueArray.at(idx) > iKey) {
+          break;
+        }
+      }
+
+      assert (idx != 0);
+      assert (idx != _size);
+
+      // 
+      const stdair::Probability_T& lCumulativeCurrentPoint =
+        DictionaryManager::keyToValue (_cumulativeDistribution.at(idx));
+      const T& lValueCurrentPoint = _valueArray.at(idx);
+
+      //
+      const stdair::Probability_T& lCumulativePreviousPoint =
+        DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
+      const T& lValuePreviousPoint = _valueArray.at(idx-1);
+
+      assert (lValueCurrentPoint != lValuePreviousPoint);
+      
+      const double oValue= (lCumulativeCurrentPoint - lCumulativePreviousPoint)
+        / (lValueCurrentPoint - lValuePreviousPoint);
+
+      return oValue;
+    }
     
   public:
     // ////////////// Display Support Methods ////////////////

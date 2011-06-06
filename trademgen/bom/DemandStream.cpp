@@ -34,7 +34,8 @@ namespace TRADEMGEN {
                               PreferredDepartureTimeContinuousDistribution_T(),
                               0.0,
                               ValueOfTimeContinuousDistribution_T()),
-      _posProMass (DEFAULT_POS_PROBALILITY_MASS) {
+      _posProMass (DEFAULT_POS_PROBALILITY_MASS),
+      _firstDateTimeRequest (true) {
     assert (false);
   }
 
@@ -52,12 +53,15 @@ namespace TRADEMGEN {
                               PreferredDepartureTimeContinuousDistribution_T(),
                               0.0,
                               ValueOfTimeContinuousDistribution_T()),
-      _posProMass (DEFAULT_POS_PROBALILITY_MASS) {
+      _posProMass (DEFAULT_POS_PROBALILITY_MASS),
+      _firstDateTimeRequest (true) {
     assert (false);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  DemandStream::DemandStream (const Key_T& iKey) : _key (iKey) {
+  DemandStream::DemandStream (const Key_T& iKey) :
+    _key (iKey),
+    _firstDateTimeRequest (true) {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -173,61 +177,10 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::DateTime_T DemandStream::generateTimeOfRequest() {
-    
-    // Assert that there are requests to be generated.
-    const stdair::Count_T& lNbOfRequestsGeneratedSoFar =
-      _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
+  const stdair::DateTime_T DemandStream::generateTimeOfRequestExponentialLaw() {
 
-    const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
-      _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
-    assert (lRemainingNumberOfRequestsToBeGenerated > 0);
-
-    // The request date-time is derived from departure date and arrival pattern.
-    // Sequential generation
-    const stdair::Probability_T& lCumulativeProbabilitySoFar =
-      _randomGenerationContext.getCumulativeProbabilitySoFar();
-   
-    const stdair::Probability_T& lVariate = _requestDateTimeRandomGenerator();
-   
-    //
-    const double lRemainingRate =
-      1.0 / static_cast<double> (lRemainingNumberOfRequestsToBeGenerated);
-   
-    //
-    const stdair::Probability_T lComplementOfCumulativeProbabilitySoFar =
-      1.0 - lCumulativeProbabilitySoFar;
-    
-    //
-    double lFactor = std::pow (1.0 - lVariate, lRemainingRate);
-    const stdair::Probability_T lCumulativeProbabilityThisRequest =
-      1.0 - lComplementOfCumulativeProbabilitySoFar * lFactor;
-    
-    //
-    const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
-      _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);
-    
-    // Convert the number of days in number of seconds + number of milliseconds
-    const stdair::FloatDuration_T lNumberOfSeconds =
-      lNumberOfDaysBetweenDepartureAndThisRequest * stdair::SECONDS_IN_ONE_DAY;
-    
-    //
-    const stdair::IntDuration_T lIntNumberOfSeconds =
-      std::floor (lNumberOfSeconds);
-    
-    //
-    const stdair::FloatDuration_T lNumberOfMilliseconds =
-      (lNumberOfSeconds - lIntNumberOfSeconds)
-      * stdair::MILLISECONDS_IN_ONE_SECOND;
-
-    // +1 is a trick to ensure that the next Event is strictly later
-    // than the current one
-    const stdair::IntDuration_T lIntNumberOfMilliseconds =
-      std::floor (lNumberOfMilliseconds) + 1;
-
-    const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
-      boost::posix_time::seconds (lIntNumberOfSeconds)
-      + boost::posix_time::millisec (lIntNumberOfMilliseconds);
+    const ContinuousFloatDuration_T& lArrivalPattern =
+      _demandCharacteristics._arrivalPattern;
 
     const stdair::Time_T lHardcodedReferenceDepartureTime =
       boost::posix_time::hours (8);
@@ -236,13 +189,177 @@ namespace TRADEMGEN {
       boost::posix_time::ptime (_key.getPreferredDepartureDate(),
                                 lHardcodedReferenceDepartureTime);
 
+    if (_firstDateTimeRequest) {
+
+      const stdair::Probability_T lProbabilityFirstRequest = 0;
+      
+      const stdair::FloatDuration_T lNumberOfDays =
+        lArrivalPattern.getValue (lProbabilityFirstRequest);
+
+      const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
+        convertFloatIntoDuration (lNumberOfDays);
+
+      // The request date-time is derived from departure date and arrival pattern.
+      const stdair::DateTime_T oDateTimeThisRequest =
+        lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
+
+      _dateTimeLastRequest = oDateTimeThisRequest;
+      _firstDateTimeRequest = false;
+
+      // Update the counter of requests generated so far.
+      incrementGeneratedRequestsCounter();
+
+      return oDateTimeThisRequest;
+      
+    }
+    std::cout << "\n Generate new request: \n";
+
+    std::cout << "Last Request: " <<  _dateTimeLastRequest << "\n";
+    
+    assert(_firstDateTimeRequest == false);
+
+    const stdair::Duration_T lDaysBeforeDepartureLastRequest =
+      lDepartureDateTime - _dateTimeLastRequest;
+
+    double lDailyRate =
+      lArrivalPattern.getDerivativeValue (-lDaysBeforeDepartureLastRequest.hours()/24);
+
+    const double lDemandMean = _demandDistribution._meanNumberOfRequests;
+
+    lDailyRate *= lDemandMean;
+
+    std::cout << "Daily Rate: " <<  lDailyRate << "\n";
+
+    const stdair::Duration_T lExponentialVariable = drawInterArrivalTime (lDailyRate);
+
+    std::cout << "Exponential Variable: " << lExponentialVariable  << "\n";
+    
+    const stdair::DateTime_T oDateTimeThisRequest =
+      _dateTimeLastRequest + lExponentialVariable;
+
+    std::cout << "Date Time Request: " << oDateTimeThisRequest << "\n";
+
+    _dateTimeLastRequest = oDateTimeThisRequest;
+
+    // Update the counter of requests generated so far.
+    incrementGeneratedRequestsCounter();
+
+    return oDateTimeThisRequest;
+
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  const stdair::Duration_T DemandStream::
+    drawInterArrivalTime (double iDailyRate) {
+    
+    // Generate a random variate, expressed in (fractional) day
+    const double lExponentialVariateInDays =
+      _requestDateTimeRandomGenerator.generateExponential (iDailyRate);
+
+    std::cout << "!!!!!!!! Exponential law: " << lExponentialVariateInDays << "\n";
+    
+    // Convert the variate in a number of seconds
+    const double lExponentialVariateInSeconds =
+      (lExponentialVariateInDays * stdair::SECONDS_IN_ONE_DAY);
+    assert (lExponentialVariateInSeconds > 0);
+
+    // At least the returned inter-arrival time is equal to 1 sec
+    int lExponentialVariateInSecondsInt = 1;
+    if (lExponentialVariateInSeconds > 1) {
+      lExponentialVariateInSecondsInt =
+        static_cast<int>(lExponentialVariateInSeconds);
+    }
+
+    // Convert the variate in a (Boost typedef) time duration
+    stdair::Duration_T lExponentialVariate =
+      boost::posix_time::seconds (lExponentialVariateInSecondsInt);
+      
+    return lExponentialVariate;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  const stdair::DateTime_T DemandStream::generateTimeOfRequestStatisticOrder() {
+   
+    /**
+     * Sequential Generation in Increasing Order.
+     * The k-th order statistic of a statistical sample is its k-th
+     * smallest value, and is usually denoted by X(k).
+     * Here, the time of the k-th request must be generated, given the
+     * value of X(k-1).
+     *
+     * The total number of requests to be generated is denoted by n.
+     * The number of requests generated so far is denoted by k - 1.
+     * X(k) follow the distribution of the k-th order statistic,
+     * given the value of X(k-1).
+     * F^{-1}_{ X(k) | X(k - 1) = x(k - 1) } (y)
+     *               = 1 - (1 - x(k - 1))(1 - y)^{1/(n - k + 1)}
+     *
+     */
+
+    //
+    // Calculate the result of the formula above step by step.
+    //
+    
+    // 1) Get the number of requests generated so far.
+    //    (equal to k - 1)
+    const stdair::Count_T& lNbOfRequestsGeneratedSoFar =
+      _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
+
+    // 2) Deduce the number of requests not generated yet.
+    //    (equal to n - k + 1)
+    const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
+      _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
+
+    // Assert that there are still requests to be generated.
+    assert (lRemainingNumberOfRequestsToBeGenerated > 0);
+
+    // 3) Inverse the number of requests not generated yet.
+    //    1/(n - k + 1)
+    const double lRemainingRate =
+      1.0 / static_cast<double> (lRemainingNumberOfRequestsToBeGenerated);
+   
+    // 4) Get the cumulative probality so far and take its complement.
+    //    (equal to 1 - x(k-1))
+    const stdair::Probability_T& lCumulativeProbabilitySoFar =
+      _randomGenerationContext.getCumulativeProbabilitySoFar();
+    const stdair::Probability_T lComplementOfCumulativeProbabilitySoFar =
+      1.0 - lCumulativeProbabilitySoFar;
+
+    // 5) Draw a random variable y and calculate the factor equal to 
+    //    (1 - y)^(1/(n - k + 1)).
+    const stdair::Probability_T& lVariate = _requestDateTimeRandomGenerator();
+    double lFactor = std::pow (1.0 - lVariate, lRemainingRate);
+
+    // 6) Apply the whole formula above to calculate the cumulative probability
+    //    of the new request.
+    //    (equal to 1 - (1 - x(k-1))(1 - y)^(1/(n - k + 1)))
+    const stdair::Probability_T lCumulativeProbabilityThisRequest =
+      1.0 - lComplementOfCumulativeProbabilitySoFar * lFactor;
+    
+    // Now that the cumulative proportion of events generated has been
+    // calculated, we deduce from the arrival pattern the arrival time of the
+    // k-th event.
+    const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
+      _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);
+    
+    const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
+      convertFloatIntoDuration (lNumberOfDaysBetweenDepartureAndThisRequest);
+
+    const stdair::Time_T lHardcodedReferenceDepartureTime =
+      boost::posix_time::hours (8);
+    
+    const stdair::DateTime_T lDepartureDateTime =
+      boost::posix_time::ptime (_key.getPreferredDepartureDate(),
+                                lHardcodedReferenceDepartureTime);
+
+    // The request date-time is derived from departure date and arrival pattern.
     const stdair::DateTime_T oDateTimeThisRequest =
       lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
     
     // Update random generation context
     _randomGenerationContext.setCumulativeProbabilitySoFar (lCumulativeProbabilityThisRequest);
 
-    //
+    // Update the counter of requests generated so far.
     incrementGeneratedRequestsCounter();
 
     // DEBUG
@@ -344,7 +461,8 @@ namespace TRADEMGEN {
   
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T DemandStream::
-  generateNextRequest (stdair::RandomGeneration& ioGenerator) {
+  generateNextRequest (stdair::RandomGeneration& ioGenerator,
+                       const bool iGenerateRequestWithStatisticOrder) {
 
     // Origin
     const stdair::AirportCode_T& lOrigin = _key.getOrigin();
@@ -359,8 +477,16 @@ namespace TRADEMGEN {
     const stdair::NbOfSeats_T lPartySize = stdair::DEFAULT_PARTY_SIZE;
     // POS
     const stdair::AirportCode_T lPOS = generatePOS();
-    // Time of request.    
-    const stdair::DateTime_T lDateTimeThisRequest = generateTimeOfRequest();
+    
+    // Time of request.
+    stdair::DateTime_T lDateTimeThisRequest;
+    if (iGenerateRequestWithStatisticOrder) {
+      lDateTimeThisRequest = generateTimeOfRequestStatisticOrder();
+    } else {
+      lDateTimeThisRequest =
+        generateTimeOfRequestExponentialLaw();
+    }
+    
     // Booking channel.
     const stdair::ChannelLabel_T lChannelLabel = generateChannel();
     // Trip type.
@@ -417,6 +543,36 @@ namespace TRADEMGEN {
   void DemandStream::reset() {
     _randomGenerationContext.reset();
     init();
-  }  
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+
+  const stdair::Duration_T DemandStream::
+  convertFloatIntoDuration (const stdair::FloatDuration_T iNumberOfDays) {
+    
+    // Convert the number of days in number of seconds + number of milliseconds
+    const stdair::FloatDuration_T lNumberOfSeconds =
+      iNumberOfDays * stdair::SECONDS_IN_ONE_DAY;
+    
+    //
+    const stdair::IntDuration_T lIntNumberOfSeconds =
+      std::floor (lNumberOfSeconds);
+    
+    //
+    const stdair::FloatDuration_T lNumberOfMilliseconds =
+      (lNumberOfSeconds - lIntNumberOfSeconds)
+      * stdair::MILLISECONDS_IN_ONE_SECOND;
+
+    // +1 is a trick to ensure that the next Event is strictly later
+    // than the current one
+    const stdair::IntDuration_T lIntNumberOfMilliseconds =
+      std::floor (lNumberOfMilliseconds) + 1;
+
+    const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
+      boost::posix_time::seconds (lIntNumberOfSeconds)
+      + boost::posix_time::millisec (lIntNumberOfMilliseconds);
+
+    return lDifferenceBetweenDepartureAndThisRequest;
+  }
 
 }
