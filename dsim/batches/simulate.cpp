@@ -353,8 +353,11 @@ int main (int argc, char* argv[]) {
                                   lFareInputFilename, lYieldInputFilename, 
                                   lDemandInputFilename);
 
+  // Generate the date time request with the statistic order.
+  const bool lGenerateDemandWithStatisticOrder = true;
+  
   // Perform a simulation
-  dsimService.simulate();
+  dsimService.simulate(lGenerateDemandWithStatisticOrder);
 
   // DEBUG
   // Display the airlines stored in the database
