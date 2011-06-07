@@ -35,7 +35,8 @@ namespace DSIM {
   void Simulator::simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
-                            stdair::STDAIR_Service& ioSTDAIR_Service) {
+                            stdair::STDAIR_Service& ioSTDAIR_Service,
+                            const bool iGenerateDemandWithStatisticOrder) {
 
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
@@ -50,7 +51,7 @@ namespace DSIM {
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests();
+      ioTRADEMGEN_Service.generateFirstRequests(iGenerateDemandWithStatisticOrder);
 
     // Initialise the (Boost) progress display object
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -85,7 +86,8 @@ namespace DSIM {
                                                            ioTRADEMGEN_Service,
                                                            ioTRAVELCCM_Service,
                                                            lEventStruct,
-                                                           lPSS); break;
+                                                           lPSS,
+                                                           iGenerateDemandWithStatisticOrder); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -107,7 +109,8 @@ namespace DSIM {
                       TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
-                      stdair::ProgressStatusSet& ioPSS) {
+                      stdair::ProgressStatusSet& ioPSS,
+                      const bool iGenerateDemandWithStatisticOrder) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -135,7 +138,8 @@ namespace DSIM {
     // generate and add them to the event queue
     if (stillHavingRequestsToBeGenerated) {
       stdair::BookingRequestPtr_T lNextRequest_ptr =
-        ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey);
+        ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
+                                                 iGenerateDemandWithStatisticOrder);
       assert (lNextRequest_ptr != NULL);
   
       // Sanity check

@@ -206,7 +206,8 @@ namespace TRADEMGEN {
      *         be generated, for all the demand stream.
      */
     static stdair::Count_T generateFirstRequests (stdair::EventQueue&,
-                                                  stdair::RandomGeneration&);
+                                                  stdair::RandomGeneration&,
+                                                  const bool);
 
     /**
      * Generate a request with the demand stream, for which the key is
@@ -225,7 +226,7 @@ namespace TRADEMGEN {
      */
     static stdair::BookingRequestPtr_T
     generateNextRequest (stdair::EventQueue&, stdair::RandomGeneration&,
-                         const stdair::DemandStreamKeyStr_T&);
+                         const stdair::DemandStreamKeyStr_T&, const bool);
 
     /**
      * Reset the context of the demand streams for another demand

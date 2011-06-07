@@ -197,7 +197,7 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::simulate() {
+  void DSIM_Service::simulate(const bool iGenerateDemandWithStatisticOrder) {
 
     if (_dsimServiceContext == NULL) {
       throw NonInitialisedServiceException();
@@ -225,7 +225,8 @@ namespace DSIM {
     stdair::BasChronometer lSimulationChronometer;
     lSimulationChronometer.start();
     Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
-                         lTRAVELCCM_Service, lSTDAIR_Service);
+                         lTRAVELCCM_Service, lSTDAIR_Service,
+                         iGenerateDemandWithStatisticOrder);
     const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
     // DEBUG
