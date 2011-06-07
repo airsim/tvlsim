@@ -33,6 +33,7 @@
 #include <airinv/AIRINV_Types.hpp>
 #include <airinv/bom/BomRootHelper.hpp>
 #include <airinv/bom/InventoryHelper.hpp>
+#include <airinv/bom/FlightDateHelper.hpp>
 #include <airinv/command/InventoryManager.hpp>
 
 namespace AIRINV {
@@ -144,6 +145,14 @@ namespace AIRINV {
     // Make the sale within the inventory.
     return InventoryHelper::sell (ioInventory, iSegmentDateKey,
                                   iClassCode, iPartySize);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::
+  updateBookingControls (stdair::FlightDate& ioFlightDate) {
+
+    // Forward the call to FlightDateHelper.
+    FlightDateHelper::updateBookingControls (ioFlightDate);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -367,7 +376,7 @@ namespace AIRINV {
         for (stdair::SegmentCabinList_T::const_iterator itSC =
                lSegmentCabinList.begin();
              itSC != lSegmentCabinList.end(); ++itSC) {
-          const stdair::SegmentCabin* lSC_ptr = *itSC;
+          stdair::SegmentCabin* lSC_ptr = *itSC;
           assert (lSC_ptr != NULL);
 
           std::ostringstream oStr;
@@ -418,49 +427,42 @@ namespace AIRINV {
     assert (itDDSC != iDDSCMap.end());
     const stdair::SegmentCabin* lSegmentCabin_ptr = itDDSC->second;
     
-    // Browse the fare family list and build the value type for the classes
-    // as well as for the family (Q-equivalent).
+    // Browse the booking class list and build the value type for the classes
+    // as well as for the cabin (Q-equivalent).
     stdair::ValueTypeIndexMap_T lValueTypeIndexMap;
     stdair::BlockIndex_T lBlockIndex = 0;
-
-    // Browse the fare family list
-    const stdair::FareFamilyList_T& lFFList =
-      stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
-    for (stdair::FareFamilyList_T::const_iterator itFF = lFFList.begin();
-         itFF != lFFList.end(); ++itFF) {
-      const stdair::FareFamily* lFareFamily_ptr = *itFF;
-      assert (lFareFamily_ptr != NULL);
-          
-      std::ostringstream lFFMapKey;
-      lFFMapKey << stdair::DEFAULT_FARE_FAMILY_VALUE_TYPE
-                << lFareFamily_ptr->describeKey();
-      lValueTypeIndexMap.insert (stdair::ValueTypeIndexMap_T::
-                                 value_type (lFFMapKey.str(), lBlockIndex));
+    std::ostringstream lSCMapKey;
+    lSCMapKey << stdair::DEFAULT_SEGMENT_CABIN_VALUE_TYPE
+              << lSegmentCabin_ptr->describeKey();
+    lValueTypeIndexMap.insert (stdair::ValueTypeIndexMap_T::
+                               value_type (lSCMapKey.str(), lBlockIndex));
+    ++lBlockIndex;
+    
+    // Browse the booking class list
+    const stdair::BookingClassList_T& lBCList =
+      stdair::BomManager::getList<stdair::BookingClass>(*lSegmentCabin_ptr);
+    for (stdair::BookingClassList_T::const_iterator itBC= lBCList.begin();
+         itBC != lBCList.end(); ++itBC) {
+      const stdair::BookingClass* lBookingClass_ptr = *itBC;
+      assert (lBookingClass_ptr != NULL);
+      lValueTypeIndexMap.
+        insert (stdair::ValueTypeIndexMap_T::
+                value_type(lBookingClass_ptr->describeKey(),lBlockIndex));
       ++lBlockIndex;
-
-      // Browse the booking class list
-      const stdair::BookingClassList_T& lBCList =
-        stdair::BomManager::getList<stdair::BookingClass>(*lFareFamily_ptr);
-      for (stdair::BookingClassList_T::const_iterator itBC= lBCList.begin();
-           itBC != lBCList.end(); ++itBC) {
-        const stdair::BookingClass* lBookingClass_ptr = *itBC;
-        assert (lBookingClass_ptr != NULL);
-        lValueTypeIndexMap.
-          insert (stdair::ValueTypeIndexMap_T::
-                  value_type(lBookingClass_ptr->describeKey(),lBlockIndex));
-        ++lBlockIndex;
-      }
     }
 
-    // Build the flight-date index map
+    // Build the segment-cabin index map
     stdair::SegmentCabinIndexMap_T lSegmentCabinIndexMap;
     stdair::BlockNumber_T lBlockNumber = 0;
     for (; itDDSC != iDDSCMap.end(); ++itDDSC, ++lBlockNumber) {
-      const stdair::SegmentCabin* lCurrentSC_ptr = itDDSC->second;
+      stdair::SegmentCabin* lCurrentSC_ptr = itDDSC->second;
       assert (lCurrentSC_ptr != NULL);
       lSegmentCabinIndexMap.
         insert (stdair::SegmentCabinIndexMap_T::value_type (lCurrentSC_ptr,
                                                             lBlockNumber));
+
+      // Added the guillotine to the segment-cabin.
+      lCurrentSC_ptr->setGuillotineBlock (lGuillotineBlock);
     }
 
     // Initialise the guillotine block.

@@ -346,10 +346,10 @@ namespace SIMFQT {
     FareQuoter::priceQuote (iBookingRequest, ioTravelSolutionList, lBomRoot);
 
     // DEBUG
-    const double lFareQuoteRetrievalMeasure =
-      lFareQuoteRetrievalChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
-                      << " - " << lSIMFQT_ServiceContext.display());
+    // const double lFareQuoteRetrievalMeasure =
+    //   lFareQuoteRetrievalChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
+    //                   << " - " << lSIMFQT_ServiceContext.display());
   }
   
 }

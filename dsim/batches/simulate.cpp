@@ -295,10 +295,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2010, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2010, boost::gregorian::Jan, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Feb, 15);
+  stdair::Date_T lEndDate (2011, boost::gregorian::Mar, 01);
 
   // Demand input file name
   stdair::Filename_T lDemandInputFilename;

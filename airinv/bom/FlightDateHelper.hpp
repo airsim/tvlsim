@@ -27,6 +27,9 @@ namespace AIRINV {
         reservation. */
     static void updateAvailablityPool (const stdair::FlightDate&,
                                        const stdair::CabinCode_T&);
+
+    /** Update booking controls after optimisation. */
+    static void updateBookingControls (stdair::FlightDate&);
   };
 
 }

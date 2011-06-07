@@ -11,6 +11,7 @@
 #include <stdair/bom/BomKeyManager.hpp> 
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
+#include <stdair/bom/FlightDate.hpp>
 #include <stdair/bom/AirlineFeature.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/factory/FacBomManager.hpp>
@@ -401,11 +402,11 @@ namespace AIRINV {
     stdair::BasChronometer lAvlChronometer;
     lAvlChronometer.start();
     InventoryManager::calculateAvailability (lBomRoot, ioTravelSolution);
-    const double lAvlMeasure = lAvlChronometer.elapsed();
+    // const double lAvlMeasure = lAvlChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
-                      << lAIRINV_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+    //                   << lAIRINV_ServiceContext.display());
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -435,11 +436,11 @@ namespace AIRINV {
     const bool saleControl = 
       InventoryManager::sell(lInventory, iSegmentDateKey,
                              iClassCode, iPartySize);
-    const double lSellMeasure = lSellChronometer.elapsed();
+    // const double lSellMeasure = lSellChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                      << lAIRINV_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+    //                   << lAIRINV_ServiceContext.display());
 
     return saleControl;
   }
@@ -482,9 +483,25 @@ namespace AIRINV {
     assert (_airinvServiceContext != NULL);
     AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
 
+    // Retrieve the corresponding inventory & flight-date
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    stdair::Inventory& lInventory =
+      stdair::BomManager::getObject<stdair::Inventory> (lBomRoot, iAirlineCode);
+    stdair::FlightDate& lFlightDate =
+      stdair::BomManager::getObject<stdair::FlightDate> (lInventory,
+                                                         iFDDescription);
+
     // Retrieve the RMOL service.
     RMOL::RMOL_Service& lRMOL_Service =lAIRINV_ServiceContext.getRMOL_Service();
 
-    lRMOL_Service.optimise (iAirlineCode, iFDDescription, iRMEventTime);
+    // Optimise the flight-date.
+    bool isOptimised = lRMOL_Service.optimise (lFlightDate, iRMEventTime);
+
+    // Update the inventory with the new controls.
+    if (isOptimised == true) {
+      InventoryManager::updateBookingControls (lFlightDate);
+    }
   }
 }

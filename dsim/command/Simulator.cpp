@@ -129,6 +129,7 @@ namespace DSIM {
     // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
     //                   << "Still generate events for that demand stream? "
     //                   << stillHavingRequestsToBeGenerated);
+    STDAIR_LOG_DEBUG ("Progress status" << ioPSS.describe());
 
     // If there are still events to be generated for that demand stream,
     // generate and add them to the event queue
@@ -207,7 +208,7 @@ namespace DSIM {
       iEventStruct.getSnapshotStruct();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Taking snapshots: " << lSnapshotStruct.describe());
+    // STDAIR_LOG_DEBUG ("Taking snapshots: " << lSnapshotStruct.describe());
 
     ioSIMCRS_Service.takeSnapshots (lSnapshotStruct);
   }

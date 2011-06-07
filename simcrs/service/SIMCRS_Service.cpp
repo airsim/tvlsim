@@ -450,11 +450,11 @@ namespace SIMCRS {
                                             iBookingRequest);
       
     // DEBUG
-    const double lSegmentPathRetrievingMeasure =
-      lTravelSolutionRetrievingChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Travel solution retrieving: "
-                      << lSegmentPathRetrievingMeasure << " - "
-                      << lSIMCRS_ServiceContext.display());
+    // const double lSegmentPathRetrievingMeasure =
+    //   lTravelSolutionRetrievingChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Travel solution retrieving: "
+    //                   << lSegmentPathRetrievingMeasure << " - "
+    //                   << lSIMCRS_ServiceContext.display());
 
     return oTravelSolutionList;
   }
@@ -483,10 +483,10 @@ namespace SIMCRS {
     lSIMFQT_Service.quotePrices (iBookingRequest, ioTravelSolutionList);
 
     // DEBUG
-    const double lFareQuoteRetrievalMeasure =
-      lFareQuoteRetrievalChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
-                      << " - " << lSIMCRS_ServiceContext.display());
+    // const double lFareQuoteRetrievalMeasure =
+    //   lFareQuoteRetrievalChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Fare Quote retrieving: " << lFareQuoteRetrievalMeasure
+    //                   << " - " << lSIMCRS_ServiceContext.display());
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -515,9 +515,9 @@ namespace SIMCRS {
                                                 ioTravelSolutionList);
     
     // DEBUG
-    const double lAvlMeasure = lAvlChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
-                      << lSIMCRS_ServiceContext.display());
+    // const double lAvlMeasure = lAvlChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+    //                   << lSIMCRS_ServiceContext.display());
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -556,9 +556,9 @@ namespace SIMCRS {
                       << ". Successful? " << hasSaleBeenSuccessful);
       
     // DEBUG
-    const double lSellMeasure = lSellChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                      << lSIMCRS_ServiceContext.display());
+    // const double lSellMeasure = lSellChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+    //                   << lSIMCRS_ServiceContext.display());
 
     return hasSaleBeenSuccessful;
   }

@@ -382,10 +382,9 @@ namespace AIRINV {
     lAIRINV_Service.calculateAvailability (ioTravelSolution);
 
     // DEBUG
-    const double lAvlMeasure = lAvlChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
-                      << lAIRINV_Master_ServiceContext.display());
-    
+    // const double lAvlMeasure = lAvlChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+    //                   << lAIRINV_Master_ServiceContext.display());
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -416,11 +415,11 @@ namespace AIRINV {
     const bool hasBeenSaleSuccessful =
       lAIRINV_Service.sell (iSegmentDateKey, iClassCode, iPartySize);
 
-    const double lSellMeasure = lSellChronometer.elapsed();
+    // const double lSellMeasure = lSellChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                      << lAIRINV_Master_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+    //                   << lAIRINV_Master_ServiceContext.display());
 
     //
     return hasBeenSaleSuccessful;
