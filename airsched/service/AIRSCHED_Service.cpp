@@ -316,10 +316,10 @@ namespace AIRSCHED {
     // Parse the schedule input file, and generate the Inventories
     stdair::BasChronometer lINVGeneration; lINVGeneration.start();
     ScheduleParser::generateInventories (iScheduleInputFilename, lBomRoot);
-    // const double lGenerationMeasure = lINVGeneration.elapsed();
+    const double lGenerationMeasure = lINVGeneration.elapsed();
 
     // DEBUG
-    // STDAIR_LOG_DEBUG ("Inv generation time: " << lGenerationMeasure);
+    STDAIR_LOG_DEBUG ("Inv generation time: " << lGenerationMeasure);
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -341,10 +341,10 @@ namespace AIRSCHED {
     // Parse the schedule input file, and generate the Inventories
     stdair::BasChronometer lOnDGeneration; lOnDGeneration.start();
     OnDParser::generateOnDPeriods (iODInputFilename, lBomRoot);
-    // const double lGenerationMeasure = lOnDGeneration.elapsed();
+    const double lGenerationMeasure = lOnDGeneration.elapsed();
 
     // DEBUG
-    // STDAIR_LOG_DEBUG ("O&D generation time: " << lGenerationMeasure);
+    STDAIR_LOG_DEBUG ("O&D generation time: " << lGenerationMeasure);
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -436,11 +436,11 @@ namespace AIRSCHED {
     stdair::BasChronometer lBuildChronometer; lBuildChronometer.start();
     SegmentPathProvider::buildSegmentPathList (ioTravelSolutionList,
 					       lBomRoot, iBookingRequest);
-    // const double lBuildMeasure = lBuildChronometer.elapsed();
+    const double lBuildMeasure = lBuildChronometer.elapsed();
 
     // DEBUG
-    // STDAIR_LOG_DEBUG ("Segment-path build: " << lBuildMeasure << " - "
-    //                   << lAIRSCHED_ServiceContext.display());
+    STDAIR_LOG_DEBUG ("Segment-path build: " << lBuildMeasure << " - "
+                      << lAIRSCHED_ServiceContext.display());
   }
 
 }
