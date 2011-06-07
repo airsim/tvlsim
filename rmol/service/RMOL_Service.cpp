@@ -46,13 +46,14 @@
 namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
-  RMOL_Service::RMOL_Service() : _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+  RMOL_Service::RMOL_Service() : _rmolServiceContext (NULL),
+                                 _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
     assert (false);
   }
 
   // ////////////////////////////////////////////////////////////////////
   RMOL_Service::RMOL_Service (const RMOL_Service& iService) :
-    _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
     assert (false);
   }
 
@@ -61,7 +62,7 @@ namespace RMOL {
                               const stdair::BasDBParams& iDBParams,
                               const stdair::CabinCapacity_T& iCabinCapacity,
                               const stdair::Filename_T& iInputFileName) :
-    _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
 
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
@@ -83,7 +84,7 @@ namespace RMOL {
   RMOL_Service::RMOL_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::CabinCapacity_T& iCabinCapacity,
                               const stdair::Filename_T& iInputFileName) :
-    _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
 
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
@@ -105,7 +106,7 @@ namespace RMOL {
   RMOL_Service::RMOL_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
                               const stdair::CabinCapacity_T& iCabinCapacity) :
-    _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
 
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
@@ -126,7 +127,7 @@ namespace RMOL {
   // ////////////////////////////////////////////////////////////////////
   RMOL_Service::RMOL_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::CabinCapacity_T& iCabinCapacity) :
-    _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
 
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
@@ -148,7 +149,7 @@ namespace RMOL {
   RMOL_Service::RMOL_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr,
                               const stdair::CabinCapacity_T& iCabinCapacity,
                               const stdair::Filename_T& iInputFileName)
-    : _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    : _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
     
     // Initialise the context
     initServiceContext();
@@ -164,7 +165,7 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   RMOL_Service::RMOL_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr)
-    : _rmolServiceContext (NULL), _previousForecastDate (NULL) {
+    : _rmolServiceContext (NULL), _previousForecastDate (stdair::Date_T (2000, 1, 1)) {
 
     // Initialise the context
     initServiceContext();
@@ -445,7 +446,8 @@ namespace RMOL {
       stdair::BomManager::getObject<stdair::FlightDate> (lInventory,
                                                          iFDDescription);
 
-    if (_previousForecastDate == NULL || *_previousForecastDate < iRMEventTime.date()) {
+    
+    if (_previousForecastDate < iRMEventTime.date()) {
       forecast (iRMEventTime);
     }
 
@@ -468,17 +470,14 @@ namespace RMOL {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
     // Retrieve the demand stream list
-    const stdair::EventQueueList_T lEventQueueList =
-        stdair::BomManager::getList<stdair::EventQueue> (lBomRoot);
-    assert(lEventQueueList.begin() != lEventQueueList.end());
-    const stdair::EventQueue* lEventQueue_ptr = lEventQueueList.front();
+    stdair::EventQueue& lEventQueue = lSTDAIR_Service.getEventQueue();    
     const TRADEMGEN::DemandStreamList_T lDemandStreamList =
-      stdair::BomManager::getList<TRADEMGEN::DemandStream> (*lEventQueue_ptr);
+      stdair::BomManager::getList<TRADEMGEN::DemandStream> (lEventQueue);
 
     // Retrieve the date from the RM event
     const stdair::Date_T lDate = iRMEventTime.date();
 
-    *_previousForecastDate = lDate;
+    _previousForecastDate = lDate;
 
     // Browse the demand stream list
     for (TRADEMGEN::DemandStreamList_T::const_iterator itDS = lDemandStreamList.begin();
@@ -623,8 +622,13 @@ namespace RMOL {
     // Retrieve the remaining percentage of booking requests
     const TRADEMGEN::ContinuousFloatDuration_T& lArrivalPattern =
      lDemandCharacteristics.getArrivalPattern();
+    STDAIR_LOG_DEBUG (lArrivalPattern.displayCumulativeDistribution());
     const stdair::Probability_T lRemainingProportion =
-      lArrivalPattern.getRemainingProportion(float(iDTD));
+      lArrivalPattern.getRemainingProportion(-float(iDTD));
+
+    STDAIR_LOG_DEBUG ("Remaining proportion " << lRemainingProportion << " Total "
+                      << iDemandStream.getMeanNumberOfRequests() << " StdDev "
+                      << iDemandStream.getStdDevNumberOfRequests());
 
     // Compute the characteristics (mean and std dev) of the total forecast demand to come
     const stdair::NbOfRequests_T& lMeanNumberOfRequests =
@@ -646,7 +650,7 @@ namespace RMOL {
       const stdair::AirlineClassList* lAirlineClassList = *itACL;
       const stdair::Yield_T& lYield = lAirlineClassList->getYield();
       stdair::ProportionFactor_T lProportionFactor =
-        exp ((lYield - lMinWTP)*log(0.5)/(lMinWTP*(lFrat5Coef-1.0)))/lMeanNumberOfRequests;
+        exp ((lYield - lMinWTP)*log(0.5)/(lMinWTP*(lFrat5Coef-1.0)));
       lProportionFactorList.push_back(lProportionFactor - lPreviousProportionFactor);      
       lPreviousProportionFactor = lProportionFactor;
     }
@@ -893,7 +897,7 @@ namespace RMOL {
                   }
                 }
                   
-                STDAIR_LOG_DEBUG ("Airlines " << oACStr.str() << " Classes " << oCCStr.str()
+                STDAIR_LOG_DEBUG (oACStr.str() << " Classes " << oCCStr.str()
                                   << " Mean " << iNumberOfRequests << " Std Dev " << iStdDevValue);
               }
             }

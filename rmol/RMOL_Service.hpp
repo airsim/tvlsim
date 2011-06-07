@@ -369,7 +369,7 @@ namespace RMOL {
     RMOL_ServiceContext* _rmolServiceContext;
 
     /** Forecaster : previous forecast date. */
-    stdair::Date_T* _previousForecastDate;
+    stdair::Date_T _previousForecastDate;
   };
 }
 #endif // __RMOL_SVC_RMOL_SERVICE_HPP
