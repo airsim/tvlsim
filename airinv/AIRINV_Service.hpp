@@ -75,8 +75,11 @@ namespace AIRINV {
      * calling chain (for instance, when the AIRINV_Master_Service is
      * itself being initialised by another library service such as
      * SIMCRS_Service).
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     * @param const stdair::Filename_T& Filename of the input inventory file.
      */
-    AIRINV_Service ();
+    AIRINV_Service (stdair::STDAIR_ServicePtr_T);
 
     /**
      * Parse the inventory dump and load it into memory.
@@ -180,6 +183,22 @@ namespace AIRINV {
 
 
   public:
+    // //////////////// Export support methods /////////////////
+    /**
+     * Recursively dump, in the returned string and in JSON format,
+     * the flight-date corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to dump.
+     * @param const stdair::Date_T& Departure date of the flight to dump.
+     * @return std::string Output string in which the BOM tree is JSON-ified.
+     */
+    std::string jsonExport (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
+
+  public:
     // //////////////// Display support methods /////////////////
     /**
      * Recursively display (dump in the returned string) the objects
@@ -209,14 +228,11 @@ namespace AIRINV {
   private:
     // /////// Construction and Destruction helper methods ///////
     /**
-<<<<<<< HEAD
-=======
      * Default constructor. It should not be used.
      */
     AIRINV_Service ();
     
     /**
->>>>>>> trunk
      * Default copy constructor. It should not be used.
      */
     AIRINV_Service (const AIRINV_Service&);
@@ -242,14 +258,6 @@ namespace AIRINV {
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      */
     stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
-    
-    /**
-     * Initialise the STDAIR service (including the log service).
-     *
-     * A reference on the root of the BOM tree, namely the BomRoot object,
-     * is stored within the service context for later use.
-     */
-    stdair::STDAIR_ServicePtr_T initStdAirService ();
     
     /**
      * Initialise the RMOL service (including the log service).

@@ -12,13 +12,18 @@
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/service/ServiceAbstract.hpp>
+#include <stdair/bom/BomRoot.hpp>
+#include <stdair/bom/EventQueueTypes.hpp>
+#include <stdair/bom/BomManager.hpp>
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
+// Trademgen
+#include <trademgen/bom/DemandStreamTypes.hpp>
 
 namespace AIRINV {
 
   /// Forward declarations
-  class AIRINV_Service;
+  class AIRINV_Service;;
 
   /**
    * Class holding the context of the Airinv services.

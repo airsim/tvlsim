@@ -10,6 +10,7 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/stdair_maths_types.hpp>
 // RMOL
 #include <rmol/RMOL_Types.hpp>
 
@@ -18,6 +19,15 @@ namespace stdair {
   class FlightDate;
   struct BasLogParams;
   struct BasDBParams;
+
+  class BomRoot;
+  class AirlineClassList;
+  class YieldFeatures;
+}
+
+namespace TRADEMGEN {
+  class DemandStream;
+  class DemandStreamKey;
 }
 
 namespace RMOL {
@@ -179,6 +189,32 @@ namespace RMOL {
      */
     bool optimise (stdair::FlightDate&, const stdair::DateTime_T&);
 
+    /**
+     * Forecaster
+     */
+
+    void forecast (const stdair::DateTime_T&);
+    
+    stdair::YieldFeatures* getYieldFeatures(const TRADEMGEN::DemandStream&,
+                                          stdair::BomRoot&);
+    
+    void forecast (const stdair::DTD_T&, const stdair::YieldFeatures&,
+                   const TRADEMGEN::DemandStream&, stdair::BomRoot&);
+
+    void setForecast (const stdair::AirlineClassList&, const stdair::NbOfRequests_T&,
+                      const stdair::StdDevValue_T&, const TRADEMGEN::DemandStream&,
+                      stdair::BomRoot&);
+
+    // Single leg
+    void setForecast (const stdair::AirlineCode_T&,  const stdair::Date_T&, const stdair::AirportCode_T&,
+                      const stdair::AirportCode_T&, const stdair::CabinCode_T&, const stdair::ClassCode_T&,
+                      const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&, stdair::BomRoot&);
+    // Multiple leg
+    bool setForecast (stdair::AirlineCodeList_T::const_iterator&, const stdair::AirlineCodeList_T&,
+                      const stdair::Date_T&, stdair::AirportCode_T&, const stdair::AirportCode_T&,
+                      const stdair::CabinCode_T&, stdair::ClassCodeList_T::const_iterator&,
+                      const stdair::ClassCodeList_T&, const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&,
+                      const stdair::Yield_T&, stdair::AirportCodeList_T&, stdair::BomRoot&);
 
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.
@@ -329,6 +365,9 @@ namespace RMOL {
      * Service Context.
      */
     RMOL_ServiceContext* _rmolServiceContext;
+
+    /** Forecaster : previous forecast date. */
+    stdair::Date_T _previousForecastDate;
   };
 }
 #endif // __RMOL_SVC_RMOL_SERVICE_HPP

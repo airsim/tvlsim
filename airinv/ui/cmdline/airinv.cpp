@@ -132,11 +132,7 @@ int readConfiguration (int argc, char* argv[],
     ("ond,o",
      boost::program_options::value< std::string >(&ioODInputFilename)->default_value(K_AIRINV_DEFAULT_OND_FILENAME),
      "(CVS) input file for the O&D")
-<<<<<<< HEAD
-    ("yield,o",
-=======
     ("yield,y",
->>>>>>> trunk
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_AIRINV_DEFAULT_YIELD_FILENAME),
      "(CVS) input file for the yield")
     ("segment_date_key,k",

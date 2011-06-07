@@ -81,6 +81,50 @@ namespace TRADEMGEN {
      */
     const double getDerivativeValue(const T iKey) const{
 
+      // Find the first value greater than iValue.
+      unsigned int idx = 0;
+      for (; idx < _size; ++idx) {
+        if (_valueArray.at(idx) > iValue) {
+          break;
+        }
+      }
+      if (idx == 0) {
+        const stdair::Probability_T& oCumulativeProbability =
+          DictionaryManager::keyToValue (_cumulativeDistribution.at(idx));
+        return 1 - oCumulativeProbability;
+      }
+      if (idx == _size) {
+        const stdair::Probability_T& oCumulativeProbability =
+          DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
+        return 1 - oCumulativeProbability;        
+      }
+>>>>>>> 48fb35233315d0392145f16c70537f57dbca0cef
+
+      // 
+      const stdair::Probability_T& lCumulativeCurrentPoint =
+        DictionaryManager::keyToValue (_cumulativeDistribution.at(idx));
+      const T& lValueCurrentPoint = _valueArray.at(idx);
+
+      //
+      const stdair::Probability_T& lCumulativePreviousPoint =
+        DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
+      const T& lValuePreviousPoint = _valueArray.at(idx-1);
+
+      assert (lValueCurrentPoint != lValuePreviousPoint);
+      
+      const double oValue= (lCumulativeCurrentPoint - lCumulativePreviousPoint)
+        / (lValueCurrentPoint - lValuePreviousPoint);
+
+      return oValue;
+    }
+
+  public:
+    // ////////////////////// Business Methods ////////////////////
+    /**
+     * Get the value of the derivative function in a key point.
+     */
+    const double getDerivativeValue(const T iKey) const{
+
       // Find the first key value greater or equal to iKey.
       unsigned int idx = 0;
       for (; idx < _size; ++idx) {
@@ -88,7 +132,6 @@ namespace TRADEMGEN {
           break;
         }
       }
-
       assert (idx != 0);
       assert (idx != _size);
 
@@ -101,7 +144,6 @@ namespace TRADEMGEN {
       const stdair::Probability_T& lCumulativePreviousPoint =
         DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
       const T& lValuePreviousPoint = _valueArray.at(idx-1);
-
       assert (lValueCurrentPoint != lValuePreviousPoint);
       
       const double oValue= (lCumulativeCurrentPoint - lCumulativePreviousPoint)

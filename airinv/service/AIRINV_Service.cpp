@@ -100,9 +100,6 @@ namespace AIRINV {
   AIRINV_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr)
     : _airinvServiceContext (NULL) {
 
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = initStdAirService ();
-    
     // Initialise the service context
     initServiceContext();
     
@@ -188,22 +185,6 @@ namespace AIRINV {
      */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
-
-    return lSTDAIR_Service_ptr;
-  }
-  
-  // ////////////////////////////////////////////////////////////////////
-  stdair::STDAIR_ServicePtr_T AIRINV_Service::initStdAirService () {
-
-    /**
-     * Initialise the STDAIR service handler.
-     *
-     * \note The (Boost.)Smart Pointer keeps track of the references
-     *       on the Service object, and deletes that object when it is
-     *       no longer referenced (e.g., at the end of the process).
-     */
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      boost::make_shared<stdair::STDAIR_Service> ();
 
     return lSTDAIR_Service_ptr;
   }

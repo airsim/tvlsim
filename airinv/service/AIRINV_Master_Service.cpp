@@ -3,9 +3,12 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
+#include <cmath>
 // Boost
 #include <boost/make_shared.hpp>
 // StdAir
+#include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/BomRoot.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/EventType.hpp>
 #include <stdair/bom/EventQueue.hpp>
@@ -13,6 +16,13 @@
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+#include <stdair/bom/YieldFeatures.hpp>
+#include <stdair/bom/AirportPair.hpp>
+#include <stdair/bom/PosChannel.hpp>
+#include <stdair/bom/DatePeriod.hpp>
+#include <stdair/bom/TimePeriod.hpp>
+#include <stdair/bom/AirlineClassList.hpp>
+#include <stdair/basic/BasConst_Request.hpp>
 // AirInv
 #include <airinv/basic/BasConst_AIRINV_Service.hpp>
 #include <airinv/factory/FacAirinvMasterServiceContext.hpp>
@@ -176,6 +186,11 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
 
+    // Retrieve the StdAir service
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lAIRINV_Master_ServiceContext.getSTDAIR_ServicePtr();
+    assert (lSTDAIR_Service_ptr != NULL);
+
     /**
      * Initialise the AirInv service handler.
      *
@@ -186,7 +201,7 @@ namespace AIRINV {
      * \note Each Airinv slave service has its own StdAir Service.
      */
     AIRINV_ServicePtr_T lAIRINV_Service_ptr =
-      boost::make_shared<AIRINV_Service> ();
+      boost::make_shared<AIRINV_Service> (lSTDAIR_Service_ptr);
 
     // Store the AIRINV service object within the AIRINV Master service context.
     lAIRINV_Master_ServiceContext.setAIRINV_Service (lAIRINV_Service_ptr);

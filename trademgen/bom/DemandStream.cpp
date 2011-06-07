@@ -329,6 +329,9 @@ namespace TRADEMGEN {
     //    (1 - y)^(1/(n - k + 1)).
     const stdair::Probability_T& lVariate = _requestDateTimeRandomGenerator();
     double lFactor = std::pow (1.0 - lVariate, lRemainingRate);
+    if (lFactor >= 1 - 1e-6){
+      lFactor = 1 - 1e-6;
+    }
 
     // 6) Apply the whole formula above to calculate the cumulative probability
     //    of the new request.
@@ -341,7 +344,7 @@ namespace TRADEMGEN {
     // k-th event.
     const stdair::FloatDuration_T lNumberOfDaysBetweenDepartureAndThisRequest =
       _demandCharacteristics._arrivalPattern.getValue (lCumulativeProbabilityThisRequest);
-    
+
     const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
       convertFloatIntoDuration (lNumberOfDaysBetweenDepartureAndThisRequest);
 

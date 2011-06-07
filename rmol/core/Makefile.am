@@ -20,6 +20,7 @@ librmol_la_LIBADD = \
 	$(top_builddir)/rmol/command/librmolcmd.la \
 	$(top_builddir)/rmol/service/librmolsvc.la
 librmol_la_LDFLAGS = \
+	$(top_builddir)/trademgen/core/libtrademgen.la \
 	$(BOOST_DATE_TIME_LIB) $(BOOST_PROGRAM_OPTIONS_LIB) \
 	$(BOOST_FILESYSTEM_LIB) $(STDAIR_LIBS) \
 	-version-info $(GENERIC_LIBRARY_VERSION)
