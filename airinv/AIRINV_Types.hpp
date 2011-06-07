@@ -10,7 +10,7 @@
 #include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
-#include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_inventory_types.hpp>
 
 namespace AIRINV {
 
@@ -38,6 +38,8 @@ namespace AIRINV {
   typedef std::map<const stdair::AirlineCode_T,
                    AIRINV_ServicePtr_T> AIRINV_ServicePtr_Map_T;
 
+  /** Define the FRAT5 curve. */
+  typedef std::map<const stdair::DTD_T, double> FRAT5Curve_T;
 }
 #endif // __AIRINV_AIRINV_TYPES_HPP
 

@@ -7,6 +7,10 @@ ZEROMQ_PRG = airinvServer airinvClient
 ASIO_PRG = airinvServer_ASIO airinvClient_ASIO
 bin_PROGRAMS = $(ZEROMQ_PRG) $(ASIO_PRG)
 
+##
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = ${bin_PROGRAMS:%=%.log}
+
 # ZeroMQ Server
 airinvServer_SOURCES = $(airinv_svr_zmq_h_sources) $(airinv_svr_zmq_cc_sources)
 airinvServer_CXXFLAGS = $(BOOST_CFLAGS) $(ZEROMQ_CFLAGS) $(STDAIR_CFLAGS)

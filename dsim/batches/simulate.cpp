@@ -298,7 +298,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Feb, 15);
+  stdair::Date_T lEndDate (2011, boost::gregorian::Mar, 01);
 
   // Demand input file name
   stdair::Filename_T lDemandInputFilename;
@@ -353,8 +353,11 @@ int main (int argc, char* argv[]) {
                                   lFareInputFilename, lYieldInputFilename, 
                                   lDemandInputFilename);
 
+  // Generate the date time request with the statistic order.
+  const bool lGenerateDemandWithStatisticOrder = true;
+  
   // Perform a simulation
-  dsimService.simulate();
+  dsimService.simulate(lGenerateDemandWithStatisticOrder);
 
   // DEBUG
   // Display the airlines stored in the database

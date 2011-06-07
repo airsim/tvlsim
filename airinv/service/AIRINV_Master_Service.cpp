@@ -280,6 +280,32 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  std::string AIRINV_Master_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the AIRINV service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+  
+    // Retrieve the slave AIRINV service object from
+    // the (AIRINV) service context
+    AIRINV_Service& lAIRINV_Service =
+      lAIRINV_Master_ServiceContext.getAIRINV_Service();
+
+    // Delegate the BOM dump to the dedicated service
+    return lAIRINV_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   std::string AIRINV_Master_Service::csvDisplay() const {
 
     // Retrieve the AIRINV service context
@@ -392,10 +418,9 @@ namespace AIRINV {
     lAIRINV_Service.calculateAvailability (ioTravelSolution);
 
     // DEBUG
-    const double lAvlMeasure = lAvlChronometer.elapsed();
-    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
-                      << lAIRINV_Master_ServiceContext.display());
-    
+    // const double lAvlMeasure = lAvlChronometer.elapsed();
+    // STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+    //                   << lAIRINV_Master_ServiceContext.display());
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -426,11 +451,11 @@ namespace AIRINV {
     const bool hasBeenSaleSuccessful =
       lAIRINV_Service.sell (iSegmentDateKey, iClassCode, iPartySize);
 
-    const double lSellMeasure = lSellChronometer.elapsed();
+    // const double lSellMeasure = lSellChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                      << lAIRINV_Master_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+    //                   << lAIRINV_Master_ServiceContext.display());
 
     //
     return hasBeenSaleSuccessful;

@@ -305,14 +305,17 @@ namespace SIMFQT {
       // Search for the fare rules having corresponding features.
       if (IsStayDurationValid && IsAdvancePurchaseValid){
         AtLeastOneAvailableFeaturesRule = true;
-        // Set the travel fare option.
+        // Set the travel fare options.
         stdair::FareOptionStruct lFareOption;
-        lFareOption.
-          setChangeFees (lCurrentFareFeatures_ptr->getChangeFees());
-        lFareOption.
-          setNonRefundable (lCurrentFareFeatures_ptr->getRefundableOption());
-        lFareOption.
-          setSaturdayStay (lCurrentFareFeatures_ptr->getSaturdayStay());
+        const stdair::ChangeFees_T& lChangeFees =
+          lCurrentFareFeatures_ptr->getChangeFees();
+        lFareOption.setChangeFees (lChangeFees);
+        const stdair::NonRefundable_T& lNonRefundable =
+          lCurrentFareFeatures_ptr->getRefundableOption();
+        lFareOption.setNonRefundable (lNonRefundable);
+        const stdair::SaturdayStay_T& lSaturdayStay =
+          lCurrentFareFeatures_ptr->getSaturdayStay();
+        lFareOption.setSaturdayStay (lSaturdayStay);
         const stdair::FareFeatures& lCurrentFareFeatures =
           *lCurrentFareFeatures_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
@@ -356,7 +359,8 @@ namespace SIMFQT {
               const stdair::ParsedKey& iParsedKey) {
     
     // Get the segment-path of the travel solution.
-    const stdair::SegmentPath_T& lSegmentPath = ioTravelSolution.getSegmentPath();
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();
 
     // Get the list of the fare rules.
     const stdair::AirlineClassListList_T& lAirlineClassListList =
@@ -416,7 +420,9 @@ namespace SIMFQT {
         lAtLeastOneAvailableAirlineRule = true;
 
         // Set the travel fare option.
-        iFareOption.setFare (lCurrentAirlineClassList_ptr->getFare());
+        const stdair::Fare_T& lFare =
+          lCurrentAirlineClassList_ptr->getFare();
+        iFareOption.setFare (lFare);
         const stdair::ClassList_StringList_T& lClassCodeList =
           lCurrentAirlineClassList_ptr->getClassCodeList();
         for (stdair::ClassList_StringList_T::const_iterator itClassCodeList =

@@ -236,6 +236,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
   boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated
                                             * iNbOfRuns);
 
+  const bool lGenerateDemandWithStatisticOrder = false;
 
   for (NbOfRuns_T runIdx = 1; runIdx <= iNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
@@ -246,7 +247,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTrademgenService.generateFirstRequests();
+      ioTrademgenService.generateFirstRequests(lGenerateDemandWithStatisticOrder);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("[" << runIdx << "] Expected: "
@@ -302,7 +303,8 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       if (stillHavingRequestsToBeGenerated == true) {
         
         stdair::BookingRequestPtr_T lNextRequest_ptr =
-          ioTrademgenService.generateNextRequest (lDemandStreamKey);
+          ioTrademgenService.generateNextRequest (lDemandStreamKey,
+                                                  lGenerateDemandWithStatisticOrder);
         assert (lNextRequest_ptr != NULL);
 
         // Sanity check
