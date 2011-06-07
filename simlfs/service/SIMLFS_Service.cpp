@@ -16,11 +16,11 @@
 #include <stdair/STDAIR_Service.hpp>
 // Airline Inventory
 #include <airinv/AIRINV_Master_Service.hpp>
-// Fare Quote
+//Fare Quote
 #include <simfqt/SIMFQT_Service.hpp>
 // SimLFS
 #include <simlfs/basic/BasConst_SIMLFS_Service.hpp>
-#include <simlfs/command/LowFareSearchManager.hpp>
+//#include <simlfs/command/LowYieldSearchManager.hpp>
 #include <simlfs/factory/FacSimlfsServiceContext.hpp>
 #include <simlfs/service/SIMLFS_ServiceContext.hpp>
 #include <simlfs/SIMLFS_Service.hpp>
@@ -42,7 +42,8 @@ namespace SIMLFS {
   SIMLFS_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename)
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename)
     : _simlfsServiceContext (NULL) {
 
     // Initialise the service context
@@ -56,7 +57,8 @@ namespace SIMLFS {
     lSIMLFS_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
     // Initialise the context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -65,7 +67,8 @@ namespace SIMLFS {
                   const stdair::BasDBParams& iDBParams,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename) 
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename) 
     : _simlfsServiceContext (NULL) {
     
     // Initialise the service context
@@ -75,7 +78,8 @@ namespace SIMLFS {
     initStdAirService (iLogParams, iDBParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -83,7 +87,8 @@ namespace SIMLFS {
   SIMLFS_Service (const stdair::BasLogParams& iLogParams,
                   const stdair::Filename_T& iScheduleInputFilename,
                   const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename) 
+                  const stdair::Filename_T& iFareInputFilename,
+                  const stdair::Filename_T& iYieldInputFilename) 
     : _simlfsServiceContext (NULL) {
     
     // Initialise the service context
@@ -93,7 +98,8 @@ namespace SIMLFS {
     initStdAirService (iLogParams);
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename);
+    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
+          iYieldInputFilename);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -155,7 +161,8 @@ namespace SIMLFS {
   // ////////////////////////////////////////////////////////////////////
   void SIMLFS_Service::init (const stdair::Filename_T& iScheduleInputFilename,
                              const stdair::Filename_T& iODInputFilename,
-                             const stdair::Filename_T& iFareInputFilename) {
+                             const stdair::Filename_T& iFareInputFilename,
+                             const stdair::Filename_T& iYieldInputFilename) {
 
     // Check that the file path given as input corresponds to an actual file
     const bool doesExistAndIsReadable =
@@ -170,7 +177,8 @@ namespace SIMLFS {
     }
 
     // Initialise the children AirInv service context
-    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename);
+    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename,
+                               iYieldInputFilename);
 
     // Initialise the children SimFQT service context
     initSIMFQTService (iFareInputFilename);
@@ -206,7 +214,8 @@ namespace SIMLFS {
   // ////////////////////////////////////////////////////////////////////
   void SIMLFS_Service::
   initAIRINV_Master_Service (const stdair::Filename_T& iScheduleInputFilename,
-                             const stdair::Filename_T& iODInputFilename) {
+                             const stdair::Filename_T& iODInputFilename,
+                             const stdair::Filename_T& iYieldInputFilename) {
     
     // Retrieve the SimLFS service context
     assert (_simlfsServiceContext != NULL);
@@ -226,7 +235,8 @@ namespace SIMLFS {
 
     // Parse and load the schedule and O&D input files
     lAIRINV_Master_Service_ptr->parseAndLoad (iScheduleInputFilename,
-                                              iODInputFilename);
+                                              iODInputFilename,
+                                              iYieldInputFilename);
 
     // Store the Airinv service object within the (SimLFS) service context
     lSIMLFS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);

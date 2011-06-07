@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Welcome to AirInv</title>
+<link type="text/css" href="libs/jQueryUI/css/redmond/jquery-ui-1.8.13.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="libs/jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="libs/jQueryUI/js/jquery-ui-1.8.13.custom.min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="libs/extJS/resources/css/ext-all.css">
+        <link rel="stylesheet" type="text/css" href="libs/extJS/examples/shared/example.css">
+        <script type="text/javascript" src="libs/extJS/bootstrap.js"></script>
+        <script type="text/javascript" src="libs/extJS/ext-all-debug.js"></script>
+        <script type="text/javascript" src="js/airinv-grid.js"></script>
+</head>
+<body>
+<p align="center"><img src="assets/images/airinvlogo.jpg" width="262" height="110" alt="AirInvLogo"></p>
+<p align="center">
+Company Code: <input id="tbCompanyCode" type="text" value="SV" />
+  Flight Number: <input id="tbFlightNumber" type="text" value="5"/>
+  Date: <input type="text" id="datepicker" value="2010-Mar-11">
+</p>
+<p align="center">
+  <input name="" type="button" value="Fetch!" onClick="fetch()"/>
+</p>
+
+<div id="flights-GridDisplay" align="center"></div><div id="legs-GridDisplay" align="center"></div>
+
+<script type="text/javascript">
+$('#datepicker').datepicker({
+					inline: true
+				});
+</script>
+
+<script type="text/javascript" charset="utf-8">
+	function fetch()
+	{
+		var companyCode=document.getElementById('tbCompanyCode').value;
+		var flightNumber=document.getElementById('tbFlightNumber').value;
+		var date=document.getElementById('datepicker').value;
+		//In js/airinv-grid
+		queryBuild(companyCode, flightNumber, date)
+	}
+</script>
+
+
+</html>

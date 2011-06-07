@@ -137,10 +137,13 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lScheduleInputFilename, lODInputFilename,
                                   lFareInputFilename, lYieldInputFilename,
                                   lDemandInputFilename);
+
+  // Generate the request date time with statistic order.
+  const bool lGenerateDemandWithStatisticOrder = true;
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate());
+  BOOST_CHECK_NO_THROW (dsimService.simulate(lGenerateDemandWithStatisticOrder));
 
   // Close the log file
   logOutputFile.close();

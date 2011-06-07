@@ -20,6 +20,7 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
+#include <stdair/basic/ProgressStatusSet.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
@@ -172,7 +173,8 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   while (trademgenService.isQueueDone() == false) {
 
     // Get the next event from the event queue
-    const stdair::EventStruct& lEventStruct = trademgenService.popEvent();
+    stdair::EventStruct lEventStruct;
+    stdair::ProgressStatusSet lPPS = trademgenService.popEvent (lEventStruct);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
@@ -186,8 +188,8 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                       << lPoppedRequest.describe() << "'.");
     
     // Retrieve the corresponding demand stream
-    const stdair::EventContentKey_T& lDemandStreamKey =
-      lEventStruct.getEventContentKey();
+    const stdair::DemandGeneratorKey_T& lDemandStreamKey =
+      lPoppedRequest.getDemandGeneratorKey();
 
     // Check that the number of booking requests to be generated are correct
     const NbOfEventsByDemandStreamMap_T::iterator itNbOfEventsMap =
@@ -209,6 +211,10 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
     stdair::Count_T lCurrentNbOfEvents = lNbOfEventsPair.first;
     const stdair::Count_T& lExpectedTotalNbOfEvents = lNbOfEventsPair.second;
 
+    // Assess whether more events should be generated for that demand stream
+    const bool stillHavingRequestsToBeGenerated = 
+      trademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey, lPPS);
+
     /**
        The first time an event is popped from the queue for that demand stream,
        check that the actual total number of requests to be generated (as
@@ -221,8 +227,10 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
          to be generated, so that that number can be compared to the
          expected one.
       */
+      const stdair::ProgressStatus& lDemandStreamProgressStatus =
+        lPPS.getSpecificGeneratorStatus();
       const stdair::Count_T& lNbOfRequests =
-        lEventStruct.getKeySpecificExpectedTotalNbOfEvents();
+        lDemandStreamProgressStatus.getExpectedNb();
 
       BOOST_CHECK_EQUAL (lNbOfRequests, lExpectedTotalNbOfEvents);
       BOOST_CHECK_MESSAGE (lNbOfRequests == lExpectedTotalNbOfEvents,
@@ -231,10 +239,6 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                            << lNbOfRequests << "). Expected value: "
                            << lExpectedTotalNbOfEvents);
     }
-
-    // Assess whether more events should be generated for that demand stream
-    const bool stillHavingRequestsToBeGenerated = 
-      trademgenService.stillHavingRequestsToBeGenerated (lDemandStreamKey);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "][" << lCurrentNbOfEvents
@@ -285,7 +289,6 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   }
   // Compensate for the last iteration
   --idx;
-  
   //
   BOOST_CHECK_EQUAL (idx, lRefActualNbOfEvents);
   BOOST_CHECK_MESSAGE (idx == lRefActualNbOfEvents,

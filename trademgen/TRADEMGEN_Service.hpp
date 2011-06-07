@@ -312,7 +312,7 @@ namespace TRADEMGEN {
      * @return stdair::Count_T The expected total number of events to
      *         be generated
      */
-    stdair::Count_T generateFirstRequests() const;
+    stdair::Count_T generateFirstRequests(const bool) const;
 
     /**
      * Generate a request with the demand stream which corresponds to
@@ -324,7 +324,8 @@ namespace TRADEMGEN {
      *   the booking request structure, which has just been created.
      */
     stdair::BookingRequestPtr_T
-    generateNextRequest (const stdair::DemandStreamKeyStr_T&) const;
+    generateNextRequest (const stdair::DemandStreamKeyStr_T&,
+                         const bool) const;
 
     /**
      * Pop the next coming (in time) event, and remove it from the

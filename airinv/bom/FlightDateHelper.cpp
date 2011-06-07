@@ -16,8 +16,39 @@
 #include <airinv/bom/SegmentCabinHelper.hpp>
 
 namespace AIRINV {
+
   // ////////////////////////////////////////////////////////////////////
-  void FlightDateHelper::fillFromRouting (const stdair::FlightDate& iFlightDate){
+  void FlightDateHelper::
+  updateBookingControls (stdair::FlightDate& ioFlightDate) {
+
+    // Parse the segment-cabin list and build the pseudo bid price vector.
+    const stdair::SegmentDateList_T& lSDList =
+      stdair::BomManager::getList<stdair::SegmentDate> (ioFlightDate);
+    for (stdair::SegmentDateList_T::const_iterator itSD = lSDList.begin();
+         itSD != lSDList.end(); ++itSD) {
+      const stdair::SegmentDate* lSD_ptr = *itSD;
+      assert (lSD_ptr != NULL);
+
+      //
+      const stdair::SegmentCabinList_T& lSCList =
+        stdair::BomManager::getList<stdair::SegmentCabin> (*lSD_ptr);
+      for (stdair::SegmentCabinList_T::const_iterator itSC = lSCList.begin();
+           itSC != lSCList.end(); ++itSC) {
+        stdair::SegmentCabin* lSC_ptr = *itSC;
+        assert (lSC_ptr != NULL);
+
+        // Build the pseudo bid price vector for the segment-cabin.
+        SegmentCabinHelper::buildPseudoBidPriceVector (*lSC_ptr);
+
+        // Update the booking controls using the pseudo bid price vector.
+        SegmentCabinHelper::
+          updateBookingControlsUsingPseudoBidPriceVector (*lSC_ptr);
+      }
+    }
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void FlightDateHelper::fillFromRouting(const stdair::FlightDate& iFlightDate){
     const stdair::SegmentDateList_T& lSegmentDateList =
       stdair::BomManager::getList<stdair::SegmentDate> (iFlightDate);
 

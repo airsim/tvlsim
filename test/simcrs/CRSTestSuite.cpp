@@ -127,8 +127,8 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   const stdair::AirportCode_T lOrigin ("SIN");
   const stdair::AirportCode_T lDestination ("BKK");
   const stdair::AirportCode_T lPOS ("SIN");
-  const stdair::Date_T lPreferredDepartureDate(2010, boost::gregorian::Jan, 30);
-  const stdair::Date_T lRequestDate (2010, boost::gregorian::Jan, 22);
+  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Feb, 10);
+  const stdair::Date_T lRequestDate (2011, boost::gregorian::Jan, 22);
   const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
   const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
   const stdair::CabinCode_T lPreferredCabin ("Eco");
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   lTravelSolution.setChosenFareOption (lFareOption);
 
   //  
-  const unsigned int lExpectedPrice = 200;
+  const unsigned int lExpectedPrice = 320;
   
   // DEBUG
   STDAIR_LOG_DEBUG ("The price given by the fare quoter for '"

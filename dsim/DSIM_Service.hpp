@@ -82,7 +82,7 @@ namespace DSIM {
   public:
     // /////////// Business Methods /////////////
     /** Perform a simulation. */
-    void simulate();
+    void simulate(const bool);
     
     /** Display the list of airlines. */
     void displayAirlineListFromDB() const;

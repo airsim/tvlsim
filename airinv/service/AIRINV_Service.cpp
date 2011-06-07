@@ -11,6 +11,7 @@
 #include <stdair/bom/BomKeyManager.hpp> 
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
+#include <stdair/bom/FlightDate.hpp>
 #include <stdair/bom/AirlineFeature.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/factory/FacBomManager.hpp>
@@ -30,6 +31,11 @@
 #include <airinv/AIRINV_Service.hpp>
 
 namespace AIRINV {
+
+  // ////////////////////////////////////////////////////////////////////
+  AIRINV_Service::AIRINV_Service () : _airinvServiceContext (NULL) {
+    assert (false);
+  }
 
   // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::AIRINV_Service (const AIRINV_Service& iService)
@@ -89,31 +95,33 @@ namespace AIRINV {
     // Initialise the (remaining of the) context
     initAirinvService();
   }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRINV_Service::AIRINV_Service () : _airinvServiceContext (NULL) {
+  // //////////////////////////////////////////////////////////////////////
+  AIRINV_Service::
+  AIRINV_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr)
+    : _airinvServiceContext (NULL) {
 
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = initStdAirService ();
     
     // Initialise the service context
     initServiceContext();
-
-    // Add the StdAir service context to the AIRINV service context
-    // \note AIRINV owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-
+    
+    // Store the STDAIR service object within the (AIRINV) service context
+    // \note AirInv does not own the STDAIR service resources here.
+    const bool doesNotOwnStdairService = false;
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
+    
     // Initalise the RMOL service.
     initRMOLService();
-
+    
     // Initalise the AIRRAC service.
     initAIRRACService();
-
+    
     // Initialise the (remaining of the) context
     initAirinvService();
+    
   }
-
+  
   // ////////////////////////////////////////////////////////////////////
   AIRINV_Service::~AIRINV_Service() {
     // Delete/Clean all the objects from memory
@@ -291,6 +299,9 @@ namespace AIRINV {
     AIRRAC::AIRRAC_Service& lAIRRAC_Service =
       lAIRINV_ServiceContext.getAIRRAC_Service();
     lAIRRAC_Service.parseAndLoad (iYieldInputFilename);
+
+    // Update yield values for booking classes and O&D.
+    lAIRRAC_Service.updateYields();
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -314,6 +325,30 @@ namespace AIRINV {
     lSTDAIR_Service.buildSampleBom (isForRMOL, iCapacity);
   }
 
+  // ////////////////////////////////////////////////////////////////////
+  std::string AIRINV_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the AIRINV service context
+    if (_airinvServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInv service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvServiceContext != NULL);
+
+    AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
+  
+    // Retrieve the STDAIR service object from the (AIRINV) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the JSON export to the dedicated service
+    return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+  
   // ////////////////////////////////////////////////////////////////////
   std::string AIRINV_Service::csvDisplay() const {
 
@@ -375,6 +410,7 @@ namespace AIRINV {
       lAIRINV_ServiceContext.getSTDAIR_Service();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
+    stdair::RMEventList_T oRMEventList;
     const stdair::InventoryList_T lInventoryList =
       stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
     for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
@@ -382,8 +418,11 @@ namespace AIRINV {
       const stdair::Inventory* lInv_ptr = *itInv;
       assert (lInv_ptr != NULL);
       
-      return InventoryManager::initRMEvents (*lInv_ptr, iStartDate, iEndDate); 
+      InventoryManager::initRMEvents (*lInv_ptr, oRMEventList,
+                                      iStartDate, iEndDate); 
     }
+
+    return oRMEventList;
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -406,11 +445,11 @@ namespace AIRINV {
     stdair::BasChronometer lAvlChronometer;
     lAvlChronometer.start();
     InventoryManager::calculateAvailability (lBomRoot, ioTravelSolution);
-    const double lAvlMeasure = lAvlChronometer.elapsed();
+    // const double lAvlMeasure = lAvlChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
-                      << lAIRINV_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Availability retrieval: " << lAvlMeasure << " - "
+    //                   << lAIRINV_ServiceContext.display());
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -431,9 +470,8 @@ namespace AIRINV {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
     const stdair::InventoryKey lInventoryKey =
       stdair::BomKeyManager::extractInventoryKey (iSegmentDateKey);
-    stdair::Inventory& lInventory =
-      stdair::BomManager::getObject<stdair::Inventory>(lBomRoot,
-                                                       lInventoryKey.toString());
+    stdair::Inventory& lInventory = stdair::BomManager::
+      getObject<stdair::Inventory>(lBomRoot, lInventoryKey.toString());
 
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
@@ -441,11 +479,11 @@ namespace AIRINV {
     const bool saleControl = 
       InventoryManager::sell(lInventory, iSegmentDateKey,
                              iClassCode, iPartySize);
-    const double lSellMeasure = lSellChronometer.elapsed();
+    // const double lSellMeasure = lSellChronometer.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
-                      << lAIRINV_ServiceContext.display());
+    // STDAIR_LOG_DEBUG ("Booking sell: " << lSellMeasure << " - "
+    //                   << lAIRINV_ServiceContext.display());
 
     return saleControl;
   }
@@ -488,9 +526,25 @@ namespace AIRINV {
     assert (_airinvServiceContext != NULL);
     AIRINV_ServiceContext& lAIRINV_ServiceContext = *_airinvServiceContext;
 
+    // Retrieve the corresponding inventory & flight-date
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRINV_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    stdair::Inventory& lInventory =
+      stdair::BomManager::getObject<stdair::Inventory> (lBomRoot, iAirlineCode);
+    stdair::FlightDate& lFlightDate =
+      stdair::BomManager::getObject<stdair::FlightDate> (lInventory,
+                                                         iFDDescription);
+
     // Retrieve the RMOL service.
     RMOL::RMOL_Service& lRMOL_Service =lAIRINV_ServiceContext.getRMOL_Service();
 
-    lRMOL_Service.optimise (iAirlineCode, iFDDescription, iRMEventTime);
+    // Optimise the flight-date.
+    bool isOptimised = lRMOL_Service.optimise (lFlightDate, iRMEventTime);
+
+    // Update the inventory with the new controls.
+    if (isOptimised == true) {
+      InventoryManager::updateBookingControls (lFlightDate);
+    }
   }
 }

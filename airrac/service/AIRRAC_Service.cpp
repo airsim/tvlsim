@@ -257,6 +257,12 @@ namespace AIRRAC {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void AIRRAC_Service::
+  parseAndLoad (const stdair::Filename_T& iYieldInputFilename) {
+    initAirracService (iYieldInputFilename);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void AIRRAC_Service::buildSampleBom() {
 
     // TODO: implement this within StdAir (where Yield objects should
@@ -286,8 +292,8 @@ namespace AIRRAC {
 
     // Retrieve the AIRRAC service context
     if (_airracServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The AirRAC service has not "
-                                                    "been initialised");
+      throw stdair::NonInitialisedServiceException ("The AirRAC service has not"
+                                                    " been initialised");
     }
     assert (_airracServiceContext != NULL);
 
@@ -375,5 +381,22 @@ namespace AIRRAC {
     STDAIR_LOG_DEBUG ("Yield calculation: " << lYieldMeasure << " - "
                       << lAIRRAC_ServiceContext.display());
   }
-  
+
+  // ////////////////////////////////////////////////////////////////////
+  void AIRRAC_Service::updateYields () {
+    // Retrieve the AirRAC service context
+    assert (_airracServiceContext != NULL);
+    AIRRAC_ServiceContext& lAIRRAC_ServiceContext = *_airracServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRRAC_ServiceContext.getSTDAIR_Service();
+    
+    // Get the root of the BOM tree, on which all of the other BOM objects
+    // will be attached
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Update the default yields to the booking classes.
+    YieldManager::updateYields (lBomRoot);
+  }
 }

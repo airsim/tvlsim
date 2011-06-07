@@ -291,7 +291,8 @@ namespace TRADEMGEN {
   stdair::BookingRequestPtr_T DemandManager::
   generateNextRequest (stdair::EventQueue& ioEventQueue,
                        stdair::RandomGeneration& ioGenerator,
-                       const stdair::DemandStreamKeyStr_T& iKey) {
+                       const stdair::DemandStreamKeyStr_T& iKey,
+                       const bool iGenerateRequestWithStatisticOrder) {
 
     // Retrieve the DemandStream which corresponds to the given key.
     DemandStream& lDemandStream = 
@@ -299,7 +300,8 @@ namespace TRADEMGEN {
 
     // Generate the next booking request
     stdair::BookingRequestPtr_T lBookingRequest =
-      lDemandStream.generateNextRequest (ioGenerator);
+      lDemandStream.generateNextRequest (ioGenerator,
+                                         iGenerateRequestWithStatisticOrder);
 
     // Create an event structure
     stdair::EventStruct lEventStruct (stdair::EventType::BKG_REQ,
@@ -320,7 +322,8 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   stdair::Count_T DemandManager::
   generateFirstRequests (stdair::EventQueue& ioEventQueue,
-                         stdair::RandomGeneration& ioGenerator) {
+                         stdair::RandomGeneration& ioGenerator,
+                         const bool iGenerateRequestWithStatisticOrder) {
 
     // Actual total number of events to be generated
     stdair::NbOfRequests_T lActualTotalNbOfEvents = 0.0;
@@ -334,6 +337,8 @@ namespace TRADEMGEN {
          itDemandStream != lDemandStreamList.end(); ++itDemandStream) {
       DemandStream* lDemandStream_ptr = *itDemandStream;
       assert (lDemandStream_ptr != NULL);
+
+      lDemandStream_ptr->setBoolFirstDateTimeRequest(true);
 
       // Calculate the expected total number of events for the current
       // demand stream
@@ -355,7 +360,8 @@ namespace TRADEMGEN {
       if (stillHavingRequestsToBeGenerated) {
         // Generate the next event (booking request), and insert it
         // into the event queue
-        generateNextRequest (ioEventQueue, ioGenerator, lKey.toString());
+        generateNextRequest (ioEventQueue, ioGenerator, lKey.toString(),
+                             iGenerateRequestWithStatisticOrder);
       }
     }
 

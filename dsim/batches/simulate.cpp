@@ -154,7 +154,7 @@ int readConfiguration (int argc, char* argv[],
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
      "(CVS) input file for the fares")
-    ("yield,f",
+    ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
     ("log,l",
@@ -295,10 +295,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2010, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2010, boost::gregorian::Jan, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Feb, 15);
+  stdair::Date_T lEndDate (2011, boost::gregorian::Mar, 01);
 
   // Demand input file name
   stdair::Filename_T lDemandInputFilename;
@@ -353,8 +353,11 @@ int main (int argc, char* argv[]) {
                                   lFareInputFilename, lYieldInputFilename, 
                                   lDemandInputFilename);
 
+  // Generate the date time request with the statistic order.
+  const bool lGenerateDemandWithStatisticOrder = true;
+  
   // Perform a simulation
-  dsimService.simulate();
+  dsimService.simulate(lGenerateDemandWithStatisticOrder);
 
   // DEBUG
   // Display the airlines stored in the database

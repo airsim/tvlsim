@@ -25,7 +25,7 @@ namespace AIRINV {
 
   // //////////////// Type definitions ////////////////
   typedef std::map<const stdair::Date_T,
-                   const stdair::SegmentCabin*> DepartureDateSegmentCabinMap_T;
+                   stdair::SegmentCabin*> DepartureDateSegmentCabinMap_T;
   typedef std::map<const std::string,
                    DepartureDateSegmentCabinMap_T> SimilarSegmentCabinSetMap_T;
 
@@ -41,9 +41,8 @@ namespace AIRINV {
                                     stdair::EventQueue&);
     
     /** Initialise the RM events for the inventories. */
-    static stdair::RMEventList_T initRMEvents (const stdair::Inventory&,
-                                               const stdair::Date_T&,
-                                               const stdair::Date_T&);
+    static void initRMEvents (const stdair::Inventory&, stdair::RMEventList_T&,
+                              const stdair::Date_T&, const stdair::Date_T&);
 
     /** Add the RM events to the event queue. */
     static void addRMEventsToEventQueue (stdair::EventQueue&,
@@ -67,6 +66,9 @@ namespace AIRINV {
     /** Take inventory snapshots. */
     static void takeSnapshots (const stdair::Inventory&,
                                const stdair::DateTime_T&);
+
+    /** Update booking controls after optimisation. */
+    static void updateBookingControls (stdair::FlightDate&);
 
   public:
     /** Create the direct accesses within the invetories suck as links between

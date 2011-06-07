@@ -32,14 +32,16 @@ namespace DSIM {
 
     /** Perform a simulation. */
     static void simulate (SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
-                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&);
+                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
+                          const bool);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
                                     TRADEMGEN::TRADEMGEN_Service&,
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
-                                    stdair::ProgressStatusSet&);
+                                    stdair::ProgressStatusSet&,
+                                    const bool);
 
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,

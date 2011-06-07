@@ -161,6 +161,24 @@ namespace AIRINV {
     void optimise (const stdair::AirlineCode_T&,
                    const stdair::KeyDescription_T&, const stdair::DateTime_T&);
 
+
+  public:
+    // //////////////// Export support methods /////////////////
+    /**
+     * Recursively dump, in the returned string and in JSON format,
+     * the flight-date corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to dump.
+     * @param const stdair::Date_T& Departure date of the flight to dump.
+     * @return std::string Output string in which the BOM tree is JSON-ified.
+     */
+    std::string jsonExport (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
+
+
   public:
     // //////////////// Display support methods /////////////////
     /**
@@ -191,6 +209,14 @@ namespace AIRINV {
   private:
     // /////// Construction and Destruction helper methods ///////
     /**
+<<<<<<< HEAD
+=======
+     * Default constructor. It should not be used.
+     */
+    AIRINV_Service ();
+    
+    /**
+>>>>>>> trunk
      * Default copy constructor. It should not be used.
      */
     AIRINV_Service (const AIRINV_Service&);
