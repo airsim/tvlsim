@@ -26,8 +26,9 @@ namespace SIMFQT {
                      const FareRuleStruct& iFareRuleStruct) {
 
     // Create the airport-pair primary key.
-    const stdair::AirportCode_T& lBoardPoint = iFareRuleStruct._origin;
-    const stdair::AirportCode_T& lOffPoint = iFareRuleStruct._destination;
+    const stdair::AirportCode_T& lBoardPoint = iFareRuleStruct.getOrigin ();
+    const stdair::AirportCode_T& lOffPoint =
+      iFareRuleStruct.getDestination ();
     const stdair::AirportPairKey lAirportPairKey (lBoardPoint, lOffPoint);
 
     // Check that the airport-pair object is not already existing. If an
@@ -55,8 +56,10 @@ namespace SIMFQT {
                    const FareRuleStruct& iFareRuleStruct) {
 
     // Create the fare date-period primary key.
-    const stdair::Date_T& lDateRangeStart = iFareRuleStruct._dateRangeStart;
-    const stdair::Date_T& lDateRangeEnd = iFareRuleStruct._dateRangeEnd;
+    const stdair::Date_T& lDateRangeStart =
+      iFareRuleStruct.getDateRangeStart ();
+    const stdair::Date_T& lDateRangeEnd =
+      iFareRuleStruct.getDateRangeEnd ();
     const stdair::DatePeriod_T lDatePeriod (lDateRangeStart, lDateRangeEnd); 
     const stdair::DatePeriodKey lFareDatePeriodKey (lDatePeriod);
 
@@ -87,8 +90,9 @@ namespace SIMFQT {
                     const FareRuleStruct& iFareRuleStruct) {
 
     // Create the point-of-sale-channel primary key.
-    const stdair::CityCode_T& lPosition = iFareRuleStruct._pos;
-    const stdair::ChannelLabel_T& lChannel = iFareRuleStruct._channel;
+    const stdair::CityCode_T& lPosition = iFareRuleStruct.getPOS ();
+      const stdair::ChannelLabel_T& lChannel =
+        iFareRuleStruct.getChannel ();
     const stdair::PosChannelKey lFarePosChannelKey (lPosition, lChannel);
 
     // Check that the point_of_sale-channel object is not already existing.
@@ -119,8 +123,10 @@ namespace SIMFQT {
                    const FareRuleStruct& iFareRuleStruct) {
     
     // Create the fare time-period primary key.
-    const stdair::Time_T& lTimeRangeStart = iFareRuleStruct._timeRangeStart;
-    const stdair::Time_T& lTimeRangeEnd = iFareRuleStruct._timeRangeEnd;
+    const stdair::Time_T& lTimeRangeStart =
+      iFareRuleStruct.getTimeRangeStart ();
+    const stdair::Time_T& lTimeRangeEnd =
+      iFareRuleStruct.getTimeRangeEnd ();
     const stdair::TimePeriodKey lFareTimePeriodKey (lTimeRangeStart,
                                                     lTimeRangeEnd);
 
@@ -151,16 +157,21 @@ namespace SIMFQT {
                       const FareRuleStruct& iFareRuleStruct) {
 
     // Create the fare-features primary key.
+    const stdair::TripType_T& lTripType =
+      iFareRuleStruct.getTripType ();
     const stdair::DayDuration_T& lAdvancePurchase =
-      iFareRuleStruct._advancePurchase;
-    const stdair::SaturdayStay_T& lSaturdayStay = iFareRuleStruct._saturdayStay;
-    const stdair::ChangeFees_T& lChangeFees = iFareRuleStruct._changeFees;
+      iFareRuleStruct.getAdvancePurchase ();
+    const stdair::SaturdayStay_T& lSaturdayStay =
+      iFareRuleStruct.getSaturdayStay ();
+    const stdair::ChangeFees_T& lChangeFees =
+      iFareRuleStruct.getChangeFees ();
     const stdair::NonRefundable_T& lNonRefundable =
-      iFareRuleStruct._nonRefundable;
-    const stdair::DayDuration_T& lMinimumStay = iFareRuleStruct._minimumStay;
+      iFareRuleStruct.getNonRefundable ();
+    const stdair::DayDuration_T& lMinimumStay =
+      iFareRuleStruct.getMinimumStay ();
     const stdair::FareFeaturesKey
-      lFareFeaturesKey (lAdvancePurchase, lSaturdayStay, lChangeFees,
-                        lNonRefundable, lMinimumStay);
+      lFareFeaturesKey (lTripType, lAdvancePurchase, lSaturdayStay,
+                        lChangeFees, lNonRefundable, lMinimumStay);
 
     // Check that the fare features object is not already existing.
     // If a fare features object with the same key has not already been
@@ -196,9 +207,9 @@ namespace SIMFQT {
       iFareRuleStruct.getClassCodeListSize();
     assert (lAirlineListSize == lClassCodeListSize);
     const stdair::AirlineClassListKey
-      lAirlineClassListKey (iFareRuleStruct._airlineCodeList,
-                            iFareRuleStruct._classCodeList);
-    const stdair::Fare_T& lFare = iFareRuleStruct._fare;
+      lAirlineClassListKey (iFareRuleStruct.getAirlineList(),
+                            iFareRuleStruct.getClassCodeList());
+    const stdair::Fare_T& lFare = iFareRuleStruct.getFare ();
     
     // Create the airline class list object and link it to the fare features
     // object.        

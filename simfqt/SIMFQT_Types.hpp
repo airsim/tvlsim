@@ -68,5 +68,6 @@ namespace SIMFQT {
   // //////// Type definitions specific to SimFQT /////////
   /** ID for the Fare Quote system. */
   typedef unsigned int FareQuoteID_T;
+
 }
 #endif // __SIMFQT_SIMFQT_TYPES_HPP
