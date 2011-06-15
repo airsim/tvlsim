@@ -15,6 +15,9 @@
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/VirtualClassStruct.hpp>
 #include <stdair/service/Logger.hpp>
+
+#include <stdair/basic/RandomGeneration.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 // RMOL
 #include <rmol/bom/MCOptimiser.hpp>
 
@@ -144,4 +147,123 @@ namespace RMOL {
       lBPV.push_back (lBP);
     }
   }
+
+  // /////////////////////////////////////////////////////////////////////////
+  void MCOptimiser::
+  optimisationByMCIntegration (stdair::BidPriceVector_T& ioBidPriceVector,
+                               const stdair::Availability_T& iAvailabilityPool,
+                               const stdair::YieldList_T& iYieldList,
+                               const stdair::MeanValueList_T& iMeanList,
+                               const stdair::StdDevValueList_T& iStdDevList) {
+    // Number of MC samples
+    unsigned int K = 100000;
+    
+    assert(ioBidPriceVector.empty());
+
+    stdair::YieldList_T::const_iterator itCurrentYield = iYieldList.begin();
+    stdair::YieldList_T::const_iterator itNextYield = itCurrentYield; ++itNextYield;
+    stdair::MeanValueList_T::const_iterator itMean = iMeanList.begin();
+    stdair::StdDevValueList_T::const_iterator itStdDev = iStdDevList.begin();
+    
+    // Initialise the first element of the bid price vector with the highest yield
+    ioBidPriceVector.push_back(*itCurrentYield);
+    // Initialise the partial sum holder
+    stdair::GeneratedDemandVector_T lPartialSumHolder = generateDemandVector(*itMean, *itStdDev, K);
+    stdair::UnsignedIndex_T idx = 1;
+    for (; itNextYield!=iYieldList.end(); ++itCurrentYield, ++itNextYield) {
+      const stdair::Yield_T& yj = *itCurrentYield;
+      const stdair::Yield_T& yj1 = *itNextYield;      
+      // Consistency check: the yield/price of a higher class/bucket 
+      // (with the j index lower) must be higher.
+      assert (yj > yj1);
+      // Sort the partial sum holder.
+      std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
+      STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+                        << " min = " << lPartialSumHolder.front());
+      K = lPartialSumHolder.size ();
+      // Compute the optimal index lj = floor {[y(j)-y(j+1)]/y(j) . K}
+      const double ljdouble = std::floor (K * (yj - yj1) / yj);
+      stdair::UnsignedIndex_T lj =
+        static_cast<stdair::UnsignedIndex_T> (ljdouble);
+      // Consistency check. 
+      assert (lj >= 1 && lj < K);
+      //  The optimal protection: p(j) = 1/2 [S(j,lj) + S(j, lj+1)]
+      const double sjl = lPartialSumHolder.at (lj - 1);
+      const double sjlp1 = lPartialSumHolder.at (lj + 1 - 1);
+      const double pj = (sjl + sjlp1) / 2;
+      /** Compute the Bid-Price (Opportunity Cost) at index x
+          (capacity) for x between p(j-1) et p(j). This OC can be
+          proven to be equal to y(j) * Proba (D1 +...+ Dj >= x | D1 > p1,
+          D1 + D2 > p2, ..., D1 +... + D(j-1) > p(j-1)). */
+      const stdair::UnsignedIndex_T pjint = static_cast<const int> (pj);
+      stdair::GeneratedDemandVector_T::iterator itLowerBound =
+        lPartialSumHolder.begin();
+      for (; idx <= pjint && idx <= iAvailabilityPool; ++idx) {
+        itLowerBound =
+          std::lower_bound (itLowerBound, lPartialSumHolder.end(), idx);
+        const stdair::UnsignedIndex_T pos =
+          itLowerBound - lPartialSumHolder.begin();        
+
+        const stdair::BidPrice_T lBP = yj * (K - pos) / K;
+        ioBidPriceVector.push_back (lBP);
+      }
+      // Update the partial sum holder.
+      ++itMean; ++itStdDev;
+      const stdair::GeneratedDemandVector_T& lNextDV = generateDemandVector(*itMean, *itStdDev, K - lj);
+      for (stdair::UnsignedIndex_T i = 0; i < K - lj; ++i) {
+        lPartialSumHolder.at(i) = lPartialSumHolder.at(i + lj) + lNextDV.at(i);
+      }
+      lPartialSumHolder.resize (K - lj);      
+    }
+    /** Compute the Bid-Price (Opportunity Cost) at index x
+          (capacity) for x between p(j-1) et cabin capacity. This OC can be
+          proven to be equal to y(n) * Proba (D1 +...+ Dn >= x | D1 > p1,
+          D1 + D2 > p2, ..., D1 +... + D(n-1) > p(n-1)). */
+    /** But if this value is too low it will be replaced by a fixed minimal value.
+        This is a form of protection between partners.
+     */
+    STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+                      << " min = " << lPartialSumHolder.front());
+    std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
+    const stdair::Yield_T& yn = *itCurrentYield;
+    stdair::GeneratedDemandVector_T::iterator itLowerBound =
+      lPartialSumHolder.begin();
+    K = lPartialSumHolder.size();
+    const stdair::BidPrice_T lMinBP = 0.8 * yn;
+    bool lMinBPReached = false;
+    for (; idx <= iAvailabilityPool; ++idx) {
+      itLowerBound =
+        std::lower_bound (itLowerBound, lPartialSumHolder.end(), idx);
+      if (!lMinBPReached) {
+        const stdair::UnsignedIndex_T pos =
+          itLowerBound - lPartialSumHolder.begin();      
+        stdair::BidPrice_T lBP = yn * (K - pos) / K;
+        if (lBP < lMinBP) {lBP = lMinBP; lMinBPReached = true;}
+        ioBidPriceVector.push_back (lBP);
+      } else {
+        ioBidPriceVector.push_back (lMinBP);
+      }
+    }
+  }
+
+    // ///////////////////////////////////////////////////////////////////
+  stdair::GeneratedDemandVector_T MCOptimiser::
+  generateDemandVector (const stdair::MeanValue_T& iMean,
+                        const stdair::StdDevValue_T& iStdDev,
+                        const unsigned int& K) {
+    stdair::GeneratedDemandVector_T oDemandVector;
+    if (iStdDev > 0) {
+      stdair::RandomGeneration lGenerator (stdair::DEFAULT_RANDOM_SEED);
+      for (int i = 0; i < K; ++i) {
+        stdair::RealNumber_T lDemandSample = lGenerator.generateNormal (iMean, iStdDev);
+        oDemandVector.push_back (lDemandSample);        
+      }
+    } else {
+      for (int i = 0; i < K; ++i) {
+        oDemandVector.push_back (iMean);
+      }
+    }
+    return oDemandVector;
+  }
+  
 }

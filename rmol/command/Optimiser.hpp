@@ -62,6 +62,10 @@ namespace RMOL {
      */
     static void buildVirtualClassListForLegBasedOptimisation(stdair::LegCabin&);
 
+    /** Optimiser */
+    static void optimiseBPWithDemandAggregation (stdair::SegmentCabin&);
+    static void optimiseBPWithDemandAggregation (stdair::FlightDate&);
+
   };
 }
 #endif // __RMOL_COMMAND_OPTIMISER_HPP

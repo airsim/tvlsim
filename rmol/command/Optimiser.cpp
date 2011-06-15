@@ -150,4 +150,89 @@ namespace RMOL {
       ioLegCabin.addVirtualClass (lVC);
     }
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::
+  optimiseBPWithDemandAggregation (stdair::SegmentCabin& ioSegmentCabin) {
+    // Retrieve the class list.
+    const stdair::BookingClassList_T lBookingClassList =
+      stdair::BomManager::getList<stdair::BookingClass> (ioSegmentCabin);
+
+    stdair::YieldList_T lCabinYieldList;
+    stdair::MeanValueList_T lCabinMeanList;
+    stdair::StdDevValueList_T lCabinStdDevList;
+      
+    for (stdair::BookingClassList_T::const_iterator itBC = lBookingClassList.begin();
+         itBC != lBookingClassList.end(); ++itBC) {
+      stdair::BookingClass* lBookingClass_ptr = *itBC;
+      assert(lBookingClass_ptr != NULL);
+      stdair::Yield_T lYield = lBookingClass_ptr->getYield();
+      stdair::MeanValue_T lMean = lBookingClass_ptr->getMean();
+      stdair::StdDevValue_T lStdDev = pow(lBookingClass_ptr->getStdDev(),2);
+      const stdair::MeanValueList_T& lMeanList = lBookingClass_ptr->getMeanValueList();
+      const stdair::StdDevValueList_T& lStdDevList = lBookingClass_ptr->getStdDevValueList();
+      stdair::MeanValueList_T::const_iterator itM = lMeanList.begin();
+      stdair::StdDevValueList_T::const_iterator itSD = lStdDevList.begin();
+      // Sanity check
+      assert(lMeanList.size() == lStdDevList.size());
+      for (; itM != lMeanList.end(); ++itM, ++itSD) {
+        lMean += *itM;
+        lStdDev += pow(*itSD, 2);
+      }
+      lStdDev = sqrt(lStdDev);
+      
+      stdair::YieldList_T::iterator itYieldInsertion =
+        std::lower_bound(lCabinYieldList.begin(), lCabinYieldList.end(), lYield);
+      --itYieldInsertion;
+      const stdair::UnsignedIndex_T pos = std::distance (lCabinYieldList.begin(), itYieldInsertion);
+      stdair::MeanValueList_T::iterator itMeanInsertion = lCabinMeanList.begin();
+      stdair::StdDevValueList_T::iterator itStdDevInsertion = lCabinStdDevList.begin();
+      std::advance (itMeanInsertion, pos);
+      std::advance (itStdDevInsertion, pos);
+
+      lCabinYieldList.insert (itYieldInsertion, lYield);
+      lCabinMeanList.insert (itMeanInsertion, lMean);
+      lCabinStdDevList.insert (itStdDevInsertion, lStdDev);
+    }
+
+    assert (!lCabinMeanList.empty());
+    if (lCabinMeanList.back() != 0) {
+      const stdair::Availability_T& lCabinCapacity = ioSegmentCabin.getAvailabilityPool();
+      stdair::BidPriceVector_T lBidPriceVector;
+      MCOptimiser::optimisationByMCIntegration (lBidPriceVector, lCabinCapacity, lCabinYieldList,
+                                                lCabinMeanList, lCabinStdDevList);
+      
+      assert (!lBidPriceVector.empty());
+
+      STDAIR_LOG_DEBUG ("Cabin " << ioSegmentCabin.getCabinCode() << " Bid price " << lBidPriceVector.back());
+      
+      ioSegmentCabin.setBidPriceVector (lBidPriceVector);
+    }
+  }
+
+ // ////////////////////////////////////////////////////////////////////
+  void Optimiser::
+  optimiseBPWithDemandAggregation (stdair::FlightDate& ioFlightDate) {
+    const stdair::SegmentDateList_T& lSegmentDateList =
+      stdair::BomManager::getList<stdair::SegmentDate> (ioFlightDate);
+    for (stdair::SegmentDateList_T::const_iterator itSegmentDate =
+           lSegmentDateList.begin();
+         itSegmentDate != lSegmentDateList.end(); ++itSegmentDate) {
+      stdair::SegmentDate* lCurrentSegmentDate_ptr = *itSegmentDate;
+      assert (lCurrentSegmentDate_ptr != NULL);
+      
+      const stdair::SegmentCabinList_T& lSegmentCabinList =
+        stdair::BomManager::getList<stdair::SegmentCabin> (*lCurrentSegmentDate_ptr);
+      for (stdair::SegmentCabinList_T::const_iterator itSegmentCabin =
+             lSegmentCabinList.begin();
+           itSegmentCabin != lSegmentCabinList.end(); ++itSegmentCabin) {
+        stdair::SegmentCabin* lCurrentSegmentCabin_ptr = *itSegmentCabin;
+        assert (lCurrentSegmentCabin_ptr != NULL);
+        STDAIR_LOG_DEBUG ("O&D " << lCurrentSegmentDate_ptr->getBoardingPoint()
+                          << "-" << lCurrentSegmentDate_ptr->getOffPoint());
+        optimiseBPWithDemandAggregation (*lCurrentSegmentCabin_ptr);
+      }
+    }
+  }
+  
 }

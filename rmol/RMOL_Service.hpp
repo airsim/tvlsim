@@ -216,6 +216,10 @@ namespace RMOL {
                       const stdair::ClassCodeList_T&, const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&,
                       const stdair::Yield_T&, stdair::AirportCodeList_T&, stdair::BomRoot&);
 
+    /** Optimiser */
+    void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
+
+    
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.
      *
