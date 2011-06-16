@@ -9,7 +9,7 @@ MAINTAINERCLEANFILES = Makefile.in
 # it is useless to retest them here. Uncomment the following line only
 # when you have cannot test those components by another way.
 #SUBDIRS = boost trademgen simcrs travelccm dsim
-SUBDIRS = boost dsim
+SUBDIRS = dsim
 
 EXTRA_DIST =
 
