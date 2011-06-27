@@ -417,7 +417,6 @@ int main (int argc, char* argv[]) {
     // Send back the flight-date details to the client
     s_send (socket, lFlightDateJSONDump);
   }
-
   return 0;
 }
 

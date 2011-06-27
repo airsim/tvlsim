@@ -65,6 +65,7 @@ namespace AIRINV {
       stdair::SegmentCabin* lSegmentCabin_ptr = *itCabin;
       assert (lSegmentCabin_ptr != NULL);
 
+
       // Compute the availability using the AU and the cumulative
       // booking counter.
       SegmentCabinHelper::updateAvailabilities (*lSegmentCabin_ptr);

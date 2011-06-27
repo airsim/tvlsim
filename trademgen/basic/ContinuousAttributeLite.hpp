@@ -76,10 +76,12 @@ namespace TRADEMGEN {
       return oValue;
     }
 
+  public:
+    // ////////////////////// Business Methods ////////////////////
     /**
-     * Get the value of the derivative function in a key point.
+     * Get remaining proportion from cumulative distribution.
      */
-    const double getDerivativeValue(const T iKey) const{
+    const stdair::Probability_T getRemainingProportion(const T& iValue) const {     
 
       // Find the first value greater than iValue.
       unsigned int idx = 0;
@@ -98,9 +100,8 @@ namespace TRADEMGEN {
           DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
         return 1 - oCumulativeProbability;        
       }
->>>>>>> 48fb35233315d0392145f16c70537f57dbca0cef
 
-      // 
+      //
       const stdair::Probability_T& lCumulativeCurrentPoint =
         DictionaryManager::keyToValue (_cumulativeDistribution.at(idx));
       const T& lValueCurrentPoint = _valueArray.at(idx);
@@ -110,12 +111,16 @@ namespace TRADEMGEN {
         DictionaryManager::keyToValue (_cumulativeDistribution.at(idx-1));
       const T& lValuePreviousPoint = _valueArray.at(idx-1);
 
-      assert (lValueCurrentPoint != lValuePreviousPoint);
-      
-      const double oValue= (lCumulativeCurrentPoint - lCumulativePreviousPoint)
+      if (lValuePreviousPoint == lValueCurrentPoint) {
+        return 1 - lCumulativePreviousPoint;
+      }
+
+      const stdair::Probability_T& oCumulativeProbability =
+        lCumulativePreviousPoint + (lCumulativeCurrentPoint - lCumulativePreviousPoint)
+        * (iValue - lValuePreviousPoint)
         / (lValueCurrentPoint - lValuePreviousPoint);
 
-      return oValue;
+      return 1 - oCumulativeProbability;
     }
 
   public:
