@@ -1,5 +1,4 @@
 # ZeroMQ Server
-
 airinv_svr_zmq_h_sources = \
 	$(top_srcdir)/airinv/server/BomPropertyTree.hpp
 airinv_svr_zmq_cc_sources = \

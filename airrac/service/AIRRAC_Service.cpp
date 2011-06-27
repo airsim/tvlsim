@@ -257,6 +257,12 @@ namespace AIRRAC {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  void AIRRAC_Service::
+  parseAndLoad (const stdair::Filename_T& iYieldInputFilename) {
+    initAirracService (iYieldInputFilename);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void AIRRAC_Service::buildSampleBom() {
 
     // TODO: implement this within StdAir (where Yield objects should
