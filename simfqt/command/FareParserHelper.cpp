@@ -36,16 +36,15 @@ namespace SIMFQT {
     void storeFareId::operator() (unsigned int iFareId,
                                   boost::spirit::qi::unused_type,
                                   boost::spirit::qi::unused_type) const {
-      _fareRule.setFareID (iFareId);
+      _fareRule._fareId = iFareId;
       
       // DEBUG
-      //STDAIR_LOG_DEBUG ( "Fare Id: " << _fareRule.getFareID ());
-      stdair::AirlineCode_T lEmptyAirlineCode ("");
-      _fareRule.setAirlineCode(lEmptyAirlineCode);
-      _fareRule.clearAirlineCodeList();
-      stdair::ClassCode_T lEmptyClassCode ("");
-      _fareRule.setClassCode(lEmptyClassCode);
-      _fareRule.clearClassCodeList();
+      //STDAIR_LOG_DEBUG ( "Fare Id: " << _fareRule._fareId);
+
+      _fareRule._airlineCode = "";
+      _fareRule._classCode = "";
+      _fareRule._airlineCodeList.clear();
+      _fareRule._classCodeList.clear();
       _fareRule._itSeconds = 0; 
     }
     
@@ -60,9 +59,9 @@ namespace SIMFQT {
                                   boost::spirit::qi::unused_type,
                                   boost::spirit::qi::unused_type) const {
        stdair::AirportCode_T lOrigin (iChar.begin(), iChar.end());
-       _fareRule.setOrigin (lOrigin);
        // DEBUG
-       //STDAIR_LOG_DEBUG ( "Origin: " << _fareRule.getOrigin ());
+       //STDAIR_LOG_DEBUG ( "Origin: " << lOrigin);
+       _fareRule._origin = lOrigin;
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -76,32 +75,10 @@ namespace SIMFQT {
                                        boost::spirit::qi::unused_type,
                                        boost::spirit::qi::unused_type) const {
        stdair::AirportCode_T lDestination (iChar.begin(), iChar.end());
-       _fareRule.setDestination (lDestination);
        // DEBUG
-       //STDAIR_LOG_DEBUG ( "Destination: " << _fareRule.getDestination ());
+       //STDAIR_LOG_DEBUG ( "Destination: " << lDestination);
+       _fareRule._destination = lDestination;
     }
-
-    // //////////////////////////////////////////////////////////////////
-    storeTripType ::
-    storeTripType (FareRuleStruct& ioFareRule)
-      : ParserSemanticAction (ioFareRule) {
-    }
-    
-    // //////////////////////////////////////////////////////////////////
-    void storeTripType::operator() (std::vector<char> iChar,
-                                       boost::spirit::qi::unused_type,
-                                       boost::spirit::qi::unused_type) const {
-      stdair::TripType_T lTripType (iChar.begin(), iChar.end());
-      if (lTripType == "OW" || lTripType == "RT") {
-        _fareRule.setTripType (lTripType);
-      } else {
-        // ERROR
-        STDAIR_LOG_ERROR ("Invalid trip type  " << lTripType);
-      }                       
-      // DEBUG
-      //STDAIR_LOG_DEBUG ("TripType: " << _fareRule.getTripType ());
-    }
-
     
     // //////////////////////////////////////////////////////////////////
     storeDateRangeStart::
@@ -113,10 +90,9 @@ namespace SIMFQT {
     void storeDateRangeStart::operator() (boost::spirit::qi::unused_type,
                                           boost::spirit::qi::unused_type,
                                           boost::spirit::qi::unused_type) const {
-      stdair::Date_T lDateStart = _fareRule.getDate ();
-      _fareRule.setDateRangeStart (lDateStart);
+      _fareRule._dateRangeStart = _fareRule.getDate();
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Date Range Start: " << _fareRule.getDateRangeStart ());
+      //STDAIR_LOG_DEBUG ("Date Range Start: "<< _fareRule._dateRangeStart);
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -129,10 +105,9 @@ namespace SIMFQT {
     void storeDateRangeEnd::operator() (boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type) const {
-      stdair::Date_T lDateEnd = _fareRule.getDate ();
-      _fareRule.setDateRangeEnd (lDateEnd);
+       _fareRule._dateRangeEnd = _fareRule.getDate();
        // DEBUG
-      //STDAIR_LOG_DEBUG ("Date Range End: " << _fareRule.getDateRangeEnd ());
+       //STDAIR_LOG_DEBUG ("Date Range End: " << _fareRule._dateRangeEnd);
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -145,10 +120,9 @@ namespace SIMFQT {
     void storeStartRangeTime::operator() (boost::spirit::qi::unused_type,
                                           boost::spirit::qi::unused_type,
                                           boost::spirit::qi::unused_type) const {
-      stdair::Duration_T lTimeStart = _fareRule.getTime ();
-      _fareRule.setTimeRangeStart (lTimeStart);
+      _fareRule._timeRangeStart = _fareRule.getTime();
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Time Range Start: " << _fareRule.getTimeRangeStart ());
+      //STDAIR_LOG_DEBUG ("Time Range Start: " << _fareRule._timeRangeStart);
       // Reset the number of seconds
       _fareRule._itSeconds = 0;
     }
@@ -163,10 +137,9 @@ namespace SIMFQT {
     void storeEndRangeTime::operator() (boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type) const {
-      stdair::Duration_T lTimeEnd = _fareRule.getTime ();
-      _fareRule.setTimeRangeEnd (lTimeEnd);
+      _fareRule._timeRangeEnd = _fareRule.getTime();
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Time Range End: " << _fareRule.getTimeRangeEnd ());
+      //STDAIR_LOG_DEBUG ("Time Range End: " << _fareRule._timeRangeEnd);
       // Reset the number of seconds
       _fareRule._itSeconds = 0;
     }
@@ -182,17 +155,16 @@ namespace SIMFQT {
                                boost::spirit::qi::unused_type,
                                boost::spirit::qi::unused_type) const {
       stdair::CityCode_T lPOS (iChar.begin(), iChar.end());
-      if (lPOS == _fareRule.getOrigin() || lPOS == _fareRule.getDestination()) {
-        _fareRule.setPOS (lPOS);
+      if (lPOS == _fareRule._origin || lPOS == _fareRule._destination) {
+        _fareRule._pos = lPOS;
       } else if (lPOS == "ROW") {
-        stdair::CityCode_T lPOSROW ("ROW");
-        _fareRule.setPOS (lPOSROW);
+        _fareRule._pos = "ROW";
       } else {
         // ERROR
         STDAIR_LOG_ERROR ("Invalid point of sale " << lPOS);
       }
       // DEBUG
-      //STDAIR_LOG_DEBUG ("POS: " << _fareRule.getPOS ());
+      //STDAIR_LOG_DEBUG ("POS: " << _fareRule._pos);
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -208,11 +180,11 @@ namespace SIMFQT {
       std::ostringstream ostr;
       ostr << iChar;
       std::string cabinCodeStr = ostr.str();
-      const stdair::CabinCode_T& lCabinCode (cabinCodeStr);
-      _fareRule.setCabinCode (lCabinCode);
+      const stdair::CabinCode_T lCabinCode (cabinCodeStr);
+      _fareRule._cabinCode = lCabinCode;
      
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Cabin Code: " << _fareRule.getCabinCode ());                 
+      //STDAIR_LOG_DEBUG ("Cabin Code: " << lCabinCode);                 
     
     }
 
@@ -232,9 +204,9 @@ namespace SIMFQT {
         // ERROR
         STDAIR_LOG_ERROR ("Invalid channel " << lChannel);
       }
-      _fareRule.setChannel (lChannel);
+      _fareRule._channel = lChannel;
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Channel: " << _fareRule.getChannel ());
+      //STDAIR_LOG_DEBUG ("Channel: " << _fareRule._channel);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -247,10 +219,9 @@ namespace SIMFQT {
     void storeAdvancePurchase::operator() (unsigned int iAdancePurchase,
                                            boost::spirit::qi::unused_type,
                                            boost::spirit::qi::unused_type) const {
-      stdair::DayDuration_T& lAdancePurchase = iAdancePurchase;
-      _fareRule.setAdvancePurchase (lAdancePurchase);
+      _fareRule._advancePurchase = iAdancePurchase;
       // DEBUG
-      //STDAIR_LOG_DEBUG ( "Advance Purchase: " << _fareRule.getAdvancePurchase ());
+      //STDAIR_LOG_DEBUG ( "Advance Purchase: " << _fareRule._advancePurchase);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -273,9 +244,9 @@ namespace SIMFQT {
         }
       }
       stdair::SaturdayStay_T lSaturdayStay (lBool);
-      _fareRule.setSaturdayStay (lSaturdayStay);
+      _fareRule._saturdayStay = lSaturdayStay;
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Saturday Stay: " << _fareRule.getSaturdayStay ());
+      //STDAIR_LOG_DEBUG ("Saturday Stay: " << _fareRule._saturdayStay);
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -299,9 +270,9 @@ namespace SIMFQT {
         }
       }
       stdair::ChangeFees_T lChangefees (lBool);
-      _fareRule.setChangeFees (lChangefees);
+      _fareRule._changeFees = lChangefees;
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Change fees: " << _fareRule.getChangeFees ());
+      //STDAIR_LOG_DEBUG ("Change fees: " << _fareRule._changeFees);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -324,9 +295,9 @@ namespace SIMFQT {
          }
        }
        stdair::NonRefundable_T lNonRefundable (lBool);
-       _fareRule.setNonRefundable (lNonRefundable);
+       _fareRule._nonRefundable = lNonRefundable;
        // DEBUG
-       //STDAIR_LOG_DEBUG ("Non refundable: " << _fareRule.getNonRefundable ());
+       //STDAIR_LOG_DEBUG ("Non refundable: " << _fareRule._nonRefundable);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -339,10 +310,9 @@ namespace SIMFQT {
     void storeMinimumStay::operator() (unsigned int iMinStay,
                                        boost::spirit::qi::unused_type,
                                        boost::spirit::qi::unused_type) const {
-      stdair::DayDuration_T& lMinStay = iMinStay;
-      _fareRule.setMinimumStay (lMinStay);
+      _fareRule._minimumStay = iMinStay;
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Minimum Stay: " << _fareRule.getMinimumStay ());
+      //STDAIR_LOG_DEBUG ("Minimum Stay: " << _fareRule._minimumStay );
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -355,10 +325,9 @@ namespace SIMFQT {
     void storeFare::operator() (double iFare,
                                 boost::spirit::qi::unused_type,
                                 boost::spirit::qi::unused_type) const {
-      stdair::PriceValue_T& lFare = iFare;
-      _fareRule.setFare (lFare);
+      _fareRule._fare = iFare;
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Fare: " << _fareRule.getFare ());
+      //STDAIR_LOG_DEBUG ("Fare: " << _fareRule._fare);
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -373,8 +342,10 @@ namespace SIMFQT {
                                        boost::spirit::qi::unused_type) const {
 
       stdair::AirlineCode_T lAirlineCode (iChar.begin(), iChar.end());
+      // Update the airline code
+      _fareRule._airlineCode = lAirlineCode;
       // Insertion of this airline Code list in the whole AirlineCode name
-      _fareRule.addAirlineCode (lAirlineCode);
+      _fareRule._airlineCodeList.push_back (lAirlineCode);
       // DEBUG
       //STDAIR_LOG_DEBUG ( "Airline code: " << lAirlineCode);
     }
@@ -396,11 +367,10 @@ namespace SIMFQT {
         ostr << *lItVector;
       }
       std::string classCodeStr = ostr.str();
-      stdair::ClassCode_T lClassCode (classCodeStr);
       // Insertion of this class Code list in the whole classCode name
-      _fareRule.addClassCode (lClassCode);
+      _fareRule._classCodeList.push_back(classCodeStr);
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Class Code: " << lClassCode);
+      //STDAIR_LOG_DEBUG ("Class Code: " << classCodeStr);
     }
     
     // //////////////////////////////////////////////////////////////////
@@ -416,7 +386,7 @@ namespace SIMFQT {
                                 boost::spirit::qi::unused_type,
                                 boost::spirit::qi::unused_type) const {
       // DEBUG
-      //STDAIR_LOG_DEBUG ("Do End");
+      // STDAIR_LOG_DEBUG ("Do End");
       // Generation of the fare rule object.
       FareRuleGenerator::createAirportPair (_bomRoot, _fareRule);
       STDAIR_LOG_DEBUG(_fareRule.describe());
@@ -480,7 +450,6 @@ namespace SIMFQT {
 
       fare_key = fare_id
         >> ';' >> origin >> ';' >> destination
-        >> ';' >> tripType
         >> ';' >> dateRangeStart >> ';' >> dateRangeEnd
         >> ';' >> timeRangeStart >> ';' >> timeRangeEnd
         >> ';' >> point_of_sale >>  ';' >> cabinCode >> ';' >> channel
@@ -494,9 +463,6 @@ namespace SIMFQT {
       
       destination =  
         bsq::repeat(3)[bsa::char_("A-Z")][storeDestination(_fareRule)];
-
-      tripType =
-        bsq::repeat(2)[bsa::char_("A-Z")][storeTripType(_fareRule)];
       
       dateRangeStart = date[storeDateRangeStart(_fareRule)];
 
@@ -550,7 +516,6 @@ namespace SIMFQT {
       BOOST_SPIRIT_DEBUG_NODE (fare_id);
       BOOST_SPIRIT_DEBUG_NODE (origin);
       BOOST_SPIRIT_DEBUG_NODE (destination);
-      BOOST_SPIRIT_DEBUG_NODE (tripType);
       BOOST_SPIRIT_DEBUG_NODE (dateRangeStart);
       BOOST_SPIRIT_DEBUG_NODE (dateRangeEnd);
       BOOST_SPIRIT_DEBUG_NODE (date);

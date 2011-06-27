@@ -64,17 +64,6 @@ namespace SIMFQT {
                        boost::spirit::qi::unused_type,
                        boost::spirit::qi::unused_type) const;
     };
-    
-    /** Store the parsed customer trip type. */
-    struct storeTripType : public ParserSemanticAction {
-      /** Actor Constructor. */
-      storeTripType (FareRuleStruct&);
-      /** Actor Function (functor). */
-      void operator() (std::vector<char>,
-                       boost::spirit::qi::unused_type,
-                       boost::spirit::qi::unused_type) const;
-    };
-
 
      /** Store the parsed start of the date range. */
     struct storeDateRangeStart : public ParserSemanticAction {
@@ -283,10 +272,10 @@ namespace SIMFQT {
       boost::spirit::qi::rule<stdair::iterator_t,
                               boost::spirit::ascii::space_type>
       start, comments, fare_rule, fare_rule_end, fare_key, fare_id, origin,
-        destination, tripType, dateRangeStart, dateRangeEnd, date,
-        timeRangeStart, timeRangeEnd, time, point_of_sale, cabinCode, channel,
-        advancePurchase, saturdayStay, changeFees, nonRefundable, minimumStay,
-        fare, segment;
+        destination, dateRangeStart, dateRangeEnd, date, timeRangeStart,
+        timeRangeEnd, time, point_of_sale, cabinCode, channel, advancePurchase,
+        saturdayStay, changeFees, nonRefundable, minimumStay, fare,
+        segment;
       
       // Parser Context
       stdair::BomRoot& _bomRoot;

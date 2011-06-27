@@ -264,17 +264,12 @@ namespace SIMFQT {
               const stdair::ParsedKey& iParsedKey) {
 
     // Get the stay duration of the booking request.
-    const stdair::DayDuration_T& lStayDuration=
-      iBookingRequest.getStayDuration();
-
-    // Get the booking request trip type.
-    const stdair::TripType_T& lTripType =
-      iBookingRequest.getTripType();
+    const stdair::DayDuration_T& lStayDuration= iBookingRequest.getStayDuration();
 
     // Get the booking request date time.
     const stdair::DateTime_T& lRequestDateTime =
       iBookingRequest.getRequestDateTime();
-    
+
     // Get the referenced departure date of the segment path.
     const stdair::Date_T& lSPDate =
       iParsedKey.getFlightDateKey().getDepartureDate();
@@ -286,7 +281,6 @@ namespace SIMFQT {
     const stdair::DateTime_T lSPDateTime (lSPDate, lSPTime);
 
     bool AtLeastOneAvailableFeaturesRule = false;
-    bool IsTripTypeValid = false;
     bool IsStayDurationValid = false;
     bool IsAdvancePurchaseValid = false;
 
@@ -302,22 +296,14 @@ namespace SIMFQT {
         *itFareFeatures;
       assert (lCurrentFareFeatures_ptr != NULL);
 
-      // Does the current fare features correspond to a correct trip
-      // type?
-      IsTripTypeValid =
-        lCurrentFareFeatures_ptr->IsTripTypeValid (lTripType);
-      // Does the current fare features correspond to a correct stay
-      // duration?
       IsStayDurationValid =
         lCurrentFareFeatures_ptr->IsStayDurationValid (lStayDuration);
-      // Does the current fare features correspond to a correct advanced
-      // purchase?
       IsAdvancePurchaseValid = lCurrentFareFeatures_ptr->
         IsAdvancePurchaseValid (lRequestDateTime,
                                 lSPDateTime);
         
       // Search for the fare rules having corresponding features.
-      if (IsStayDurationValid && IsAdvancePurchaseValid && IsTripTypeValid){
+      if (IsStayDurationValid && IsAdvancePurchaseValid){
         AtLeastOneAvailableFeaturesRule = true;
         // Set the travel fare options.
         stdair::FareOptionStruct lFareOption;
@@ -344,15 +330,13 @@ namespace SIMFQT {
       const std::string lStayDurationString (lStayDurationStream.str());
 
       STDAIR_LOG_ERROR ("No available fare rule corresponding to a "
-                        "trip type " << lTripType
-                        << ", to a stay duration of " <<  lStayDurationString
+                        "stay duration of " <<  lStayDurationString
                         << ", to a request date time of " << lRequestDateTime
                         << ", to '" << iParsedKey.toString()
                         << "' (parsed key) and to '"
                         << iFarePosChannel.toString() << "' (POS and channel)");
-      throw FeaturesNotFoundException ("No available fare rule corresponding to a "
-                                       "trip type " + lTripType
-                                       + ", to a stay duration of "
+      throw FeaturesNotFoundException ("No available fare rule corresponding to "
+                                       "a stay duration of "
                                        + lStayDurationString
                                        + ", to a request date time of "
                                        + boost::posix_time::to_simple_string(lRequestDateTime)
@@ -434,16 +418,10 @@ namespace SIMFQT {
           
       if (lCorrectAirlineRule == true) {
         lAtLeastOneAvailableAirlineRule = true;
-        // Get the booking request trip type.
-        const stdair::TripType_T& lTripType =
-          iBookingRequest.getTripType();
 
         // Set the travel fare option.
-        stdair::Fare_T lFare =
+        const stdair::Fare_T& lFare =
           lCurrentAirlineClassList_ptr->getFare();
-        if (lTripType == "RI" || lTripType == "RO") {
-          lFare /= 2;
-        }
         iFareOption.setFare (lFare);
         const stdair::ClassList_StringList_T& lClassCodeList =
           lCurrentAirlineClassList_ptr->getClassCodeList();
