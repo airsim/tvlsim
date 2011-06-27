@@ -199,6 +199,8 @@ namespace AIRINV {
       stdair::YieldValue_T lTotalYield = lFO.getFare();
       // Bid price initialisation
       stdair::BidPrice_T lTotalBidPrice = 0;
+      // Maximal bid price initialisation
+      stdair::BidPrice_T lMaxBidPrice = 0;
 
       //Browse class path, class-yield maps, class-(bid price vector) maps.
       //Each iteration corresponds to one segment.
@@ -248,9 +250,11 @@ namespace AIRINV {
 	// Total bid price calculation
 	if (lBidPriceVector.size() > 0) {
 	  lTotalBidPrice += lBidPriceVector.back();
+          if (lMaxBidPrice < lBidPriceVector.back()) {lMaxBidPrice = lBidPriceVector.back();}
 	}
 	else {
 	  lTotalBidPrice = std::numeric_limits<double>::max();
+          lMaxBidPrice = 0.5 * std::numeric_limits<double>::max();
 	}
 
 	// Total yield calculation
@@ -258,13 +262,17 @@ namespace AIRINV {
       }
       // Multi-segment bid price control
 
+      // Protective IBP (maximin): guarantees the minimal yield for each airline
+
+      lTotalBidPrice = lMaxBidPrice * lClassPath.size();
+
       if (lClassPath.size() > 1) {
       	if (lFO.getAvailability() > 0) {
-      	  stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      	  stdair::Availability_T lAvl = short (alpha*lTotalYield >= lTotalBidPrice);
       	  lFO.setAvailability (lAvl * lFO.getAvailability());
       	}
       	else {
-      	  stdair::Availability_T lAvl = short (alpha*lTotalYield > lTotalBidPrice);
+      	  stdair::Availability_T lAvl = short (alpha*lTotalYield >= lTotalBidPrice);
       	  lFO.setAvailability (lAvl);
       	}
       

@@ -38,7 +38,8 @@ namespace RMOL {
                                              const stdair::Availability_T&,
                                              const stdair::YieldList_T&,
                                              const stdair::MeanValueList_T&,
-                                             const stdair::StdDevValueList_T&);
+                                             const stdair::StdDevValueList_T&,
+                                             const stdair::BidPrice_T&);
     static stdair::GeneratedDemandVector_T generateDemandVector (const stdair::MeanValue_T&,
                                                                  const stdair::StdDevValue_T&,
                                                                  const unsigned int&);

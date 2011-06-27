@@ -154,7 +154,8 @@ namespace RMOL {
                                const stdair::Availability_T& iAvailabilityPool,
                                const stdair::YieldList_T& iYieldList,
                                const stdair::MeanValueList_T& iMeanList,
-                               const stdair::StdDevValueList_T& iStdDevList) {
+                               const stdair::StdDevValueList_T& iStdDevList,
+                               const stdair::BidPrice_T& iMinBP) {
     // Number of MC samples
     unsigned int K = 100000;
     
@@ -229,7 +230,6 @@ namespace RMOL {
     stdair::GeneratedDemandVector_T::iterator itLowerBound =
       lPartialSumHolder.begin();
     K = lPartialSumHolder.size();
-    const stdair::BidPrice_T lMinBP = 0.8 * yn;
     bool lMinBPReached = false;
     for (; idx <= iAvailabilityPool; ++idx) {
       itLowerBound =
@@ -238,10 +238,10 @@ namespace RMOL {
         const stdair::UnsignedIndex_T pos =
           itLowerBound - lPartialSumHolder.begin();      
         stdair::BidPrice_T lBP = yn * (K - pos) / K;
-        if (lBP < lMinBP) {lBP = lMinBP; lMinBPReached = true;}
+        if (lBP < iMinBP) {lBP = iMinBP; lMinBPReached = true;}
         ioBidPriceVector.push_back (lBP);
       } else {
-        ioBidPriceVector.push_back (lMinBP);
+        ioBidPriceVector.push_back (iMinBP);
       }
     }
   }
@@ -254,12 +254,12 @@ namespace RMOL {
     stdair::GeneratedDemandVector_T oDemandVector;
     if (iStdDev > 0) {
       stdair::RandomGeneration lGenerator (stdair::DEFAULT_RANDOM_SEED);
-      for (int i = 0; i < K; ++i) {
+      for (unsigned int i = 0; i < K; ++i) {
         stdair::RealNumber_T lDemandSample = lGenerator.generateNormal (iMean, iStdDev);
         oDemandVector.push_back (lDemandSample);        
       }
     } else {
-      for (int i = 0; i < K; ++i) {
+      for (unsigned int i = 0; i < K; ++i) {
         oDemandVector.push_back (iMean);
       }
     }

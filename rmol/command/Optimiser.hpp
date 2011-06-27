@@ -66,6 +66,9 @@ namespace RMOL {
     static void optimiseBPWithDemandAggregation (stdair::SegmentCabin&);
     static void optimiseBPWithDemandAggregation (stdair::FlightDate&);
 
+    static void optimiseBPWithYieldProration (stdair::SegmentCabin&);
+    static void optimiseBPWithYieldProration (stdair::FlightDate&);
+
   };
 }
 #endif // __RMOL_COMMAND_OPTIMISER_HPP

@@ -432,9 +432,10 @@ namespace RMOL {
 
     if (_previousForecastDate < iRMEventTime.date()) {
       forecast (iRMEventTime);
-      optimiseBPWithDemandAggregation (iRMEventTime);
-    }
-    
+      // optimiseBPWithDemandAggregation (iRMEventTime);
+      optimiseBPWithYieldProration (iRMEventTime);
+    }    
+    return false;    
     //Call the functions in the forecaster and the optimiser.
     //DEBUG
     // STDAIR_LOG_DEBUG ("Forecast");
@@ -650,6 +651,9 @@ namespace RMOL {
       const stdair::Yield_T& lYield = lAirlineClassList->getYield();
       stdair::ProportionFactor_T lProportionFactor =
         exp ((lYield - lMinWTP)*log(0.5)/(lMinWTP*(lFrat5Coef-1.0)));
+      // If the yield is smaller than minimal WTP, the factor is greater than 1.
+      // In that case it should be modified and put to 1.
+      lProportionFactor = std::min (lProportionFactor, 1.0);
       lProportionFactorList.push_back(lProportionFactor - lPreviousProportionFactor);      
       lPreviousProportionFactor = lProportionFactor;
       oStr << lPreviousProportionFactor << " ";
@@ -960,6 +964,55 @@ namespace RMOL {
           STDAIR_LOG_DEBUG ("Optimisation with demand aggregation: " << lCurrentInv_ptr->getAirlineCode()
                             << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
           Optimiser::optimiseBPWithDemandAggregation (*lCurrentFlightDate_ptr);
+        }
+      }
+    }
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::
+  optimiseBPWithYieldProration (const stdair::DateTime_T& iRMEventTime) {
+
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Retrieve the date from the RM event
+    const stdair::Date_T lDate = iRMEventTime.date();
+
+    const stdair::InventoryList_T& lInvList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
+         itInv != lInvList.end(); ++itInv) {
+      stdair::Inventory* lCurrentInv_ptr = *itInv;
+      assert (lCurrentInv_ptr != NULL);
+
+      const stdair::FlightDateList_T& lFlightDateList =
+	stdair::BomManager::getList<stdair::FlightDate> (*lCurrentInv_ptr);
+      for (stdair::FlightDateList_T::const_iterator itFlightDate =
+	     lFlightDateList.begin();
+	   itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+	stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+	assert (lCurrentFlightDate_ptr != NULL);
+
+        const stdair::Date_T& lCurrentDepartureDate = lCurrentFlightDate_ptr->getDepartureDate();
+        stdair::DateOffset_T lDateOffset = lCurrentDepartureDate - lDate;
+        stdair::DTD_T lDTD = short (lDateOffset.days());
+      
+        stdair::DCPList_T::const_iterator itDCP =
+          std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
+          STDAIR_LOG_DEBUG ("Optimisation with demand aggregation: " << lCurrentInv_ptr->getAirlineCode()
+                            << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
+          Optimiser::optimiseBPWithYieldProration (*lCurrentFlightDate_ptr);
         }
       }
     }
