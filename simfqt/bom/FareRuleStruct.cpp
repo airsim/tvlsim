@@ -64,9 +64,9 @@ namespace SIMFQT {
          << boost::posix_time::to_simple_string (_timeRangeEnd) << "], ";
 
     oStr << _cabinCode << ", " << _fare  << " EUR, ";
-    oStr << _saturdayStay << ", " <<  _changeFees << ", "
-         << _nonRefundable << ", " << _advancePurchase << ", "
-	 << _minimumStay << ", ";
+    oStr << _tripType << ", " << _saturdayStay << ", "
+         <<  _changeFees << ", " << _nonRefundable << ", "
+         << _advancePurchase << ", " << _minimumStay << ", ";
 
     // Sanity check
     assert (_airlineCodeList.size() == _classCodeList.size());
