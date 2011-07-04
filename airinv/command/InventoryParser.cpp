@@ -38,7 +38,7 @@ namespace AIRINV {
       
     // Complete the BomRoot BOM building: create the routings for all
     // the inventories.
-    InventoryManager::createDirectAccesses (ioBomRoot);
+    InventoryManager::createDirectAccesses (ioBomRoot);;
   }
 
 }
