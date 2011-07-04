@@ -362,7 +362,7 @@ namespace TRADEMGEN {
     // Get the date-time for the present time
     boost::posix_time::ptime lNowDateTime =
       boost::posix_time::second_clock::local_time();
-    boost::gregorian::date lNowDate = lNowDateTime.date();
+    //boost::gregorian::date lNowDate = lNowDateTime.date();
 
     // DEBUG
     STDAIR_LOG_DEBUG (std::endl
