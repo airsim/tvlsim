@@ -312,7 +312,21 @@ namespace SIMFQT {
     FareRuleFileParser (stdair::BomRoot& ioBomRoot,
                         const stdair::Filename_T& iFilename);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     /** Parse the input file and generate the fare rules. */
+=======
+=======
+>>>>>>> trunk
+    /** Parse the input file and generate the fare rules.
+     *
+     * @return bool Boolean equal to false if the parsing of the
+     * CSV-formatted fare input file has failed.
+     */
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
     bool generateFareRules ();
       
   private:

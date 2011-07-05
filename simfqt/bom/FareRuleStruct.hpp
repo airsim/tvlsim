@@ -17,7 +17,7 @@
 
 namespace SIMFQT {
 
-  /** Utility Structure for the parsing of Flight-Period structures. */
+  /** Utility Structure for the parsing of fare-rule structures. */
   struct FareRuleStruct : public stdair::StructAbstract {
   public:
  
@@ -239,12 +239,28 @@ namespace SIMFQT {
       _fare = iFare;
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     /** Set airline code. */
+=======
+    /** Set the airline code. */
+>>>>>>> trunk
+=======
+    /** Set the airline code. */
+>>>>>>> trunk
     void setAirlineCode (const stdair::AirlineCode_T&  iAirlineCode) {
       _airlineCode = iAirlineCode;
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     /** Set class code. */
+=======
+    /** Set the class code. */
+>>>>>>> trunk
+=======
+    /** Set the class code. */
+>>>>>>> trunk
     void setClassCode (const stdair::ClassCode_T& iClassCode) {
       _classCode = iClassCode;
     }
@@ -295,10 +311,18 @@ namespace SIMFQT {
     /** Type of trip (RT=round-trip, OW=one way). */
     stdair::TripType_T _tripType;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     /** Start Range date available for this fare rule.*/
+=======
+    /** Start date from the date range available for this fare rule.*/
+>>>>>>> trunk
+=======
+    /** Start date from the date range available for this fare rule.*/
+>>>>>>> trunk
     stdair::Date_T _dateRangeStart;
 
-    /** Start Range date available for this fare rule.*/
+    /** End date from the date range available for this fare rule.*/
     stdair::Date_T _dateRangeEnd;
     
     /** Start time from the time range available for this fare rule.*/
@@ -316,7 +340,7 @@ namespace SIMFQT {
     /** Channel distribution. */
     stdair::ChannelLabel_T _channel;
     
-    /** Number of days that the ticket is sold before the  flightDate.*/
+    /** Minimum number of days that the ticket is sold before the flightDate.*/
     stdair::DayDuration_T _advancePurchase;
     
     /** Boolean saying whether a saturday is considered during the stay .*/
@@ -337,13 +361,24 @@ namespace SIMFQT {
     /** Airline code */
     stdair::AirlineCode_T _airlineCode;
 
-    /** Code */
+    /** Class code */
     stdair::ClassCode_T _classCode;
 
-    /** Airline Code List*/
+    /** Airline Code List: first airline code is the code of the airline flying the first segment,
+        second airline code is the code of the airline flying the second segment, ...*/
     stdair::AirlineCodeList_T _airlineCodeList;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     /** Class Code List*/
+=======
+    /** Class Code List: first class code corresponds to the class of the first segment,
+        second class code corresponds to the class of the second segment, ...*/
+>>>>>>> trunk
+=======
+    /** Class Code List: first class code corresponds to the class of the first segment,
+        second class code corresponds to the class of the second segment, ...*/
+>>>>>>> trunk
     stdair::ClassList_StringList_T _classCodeList;
 
   };

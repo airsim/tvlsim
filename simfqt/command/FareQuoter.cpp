@@ -50,11 +50,28 @@ namespace SIMFQT {
               stdair::TravelSolutionList_T& ioTravelSolutionList,
               const stdair::BomRoot& iBomRoot) {
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     // Do an independent price quote for each travel solution
     for (stdair::TravelSolutionList_T::iterator itTravelSolution =
            ioTravelSolutionList.begin();
          itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
       stdair::TravelSolutionStruct& lTravelSolutionStruct = *itTravelSolution;
+=======
+=======
+>>>>>>> trunk
+    // Do an independent price quote for each travel solution related to the
+    // booking request.
+    for (stdair::TravelSolutionList_T::iterator itTravelSolution =
+           ioTravelSolutionList.begin();
+         itTravelSolution != ioTravelSolutionList.end(); ++itTravelSolution) {
+      // Select a travel solution.
+      stdair::TravelSolutionStruct& lTravelSolutionStruct = *itTravelSolution;
+      // Price quote the travel solution into question.
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
       FareQuoter::priceQuote (iBookingRequest, lTravelSolutionStruct, iBomRoot);
     }
   }
@@ -65,6 +82,8 @@ namespace SIMFQT {
               stdair::TravelSolutionStruct& ioTravelSolution,
               const stdair::BomRoot& iBomRoot) {
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     // Get the segment-path of the travel solution.
     const stdair::SegmentPath_T& lSegmentPath =
       ioTravelSolution.getSegmentPath();  
@@ -95,6 +114,35 @@ namespace SIMFQT {
     const stdair::AirportPair* lAirportPair_ptr = stdair::BomManager::
       getObjectPtr<stdair::AirportPair> (iBomRoot, lAirportPairKey.toString());  
 
+=======
+=======
+>>>>>>> trunk
+    // Get the origin of the first segment in order to get the origin of
+    // the solution.
+    const stdair::ParsedKey& lFirstSegmentKey =
+      getFirstSPParsedKey(ioTravelSolution);
+    const stdair::AirportCode_T& lOrigin = lFirstSegmentKey._boardingPoint;
+
+    // Get the destination of the last segment in order to get the
+    // destination of the solution.
+    const stdair::ParsedKey& lLastSegmentKey =
+      getLastSPParsedKey(ioTravelSolution);
+    const stdair::AirportCode_T& lDestination = lLastSegmentKey._offPoint;
+
+    // Construct the Airport pair stream of the segment path.
+    const stdair::AirportPairKey lAirportPairKey (lOrigin, lDestination);
+    
+    // Search for the fare rules having the same origin and destination airports
+    // as the travel solution
+    const stdair::AirportPair* lAirportPair_ptr = stdair::BomManager::
+      getObjectPtr<stdair::AirportPair> (iBomRoot, lAirportPairKey.toString());  
+
+    // If no fare rule has the same origin and destination airports, the pricing
+    // is not possible, throw an exception.
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
     if (lAirportPair_ptr == NULL) { 
       STDAIR_LOG_ERROR ("No available fare rule for the "
                         << "Origin-Destination pair: "
@@ -103,23 +151,57 @@ namespace SIMFQT {
                                           "the Origin-Destination pair: "
                                           + lAirportPairKey.toString());
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
     assert(lAirportPair_ptr != NULL);
 
     const stdair::ParsedKey& lParsedKey =
       stdair::BomKeyManager::extractKeys (lFirstSegmentDateKey);
     const stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
     priceQuote(iBookingRequest, ioTravelSolution, lAirportPair, lParsedKey);
+=======
+=======
+>>>>>>> trunk
+    // Sanity check.
+    assert(lAirportPair_ptr != NULL);
+
+    // Fare rule(s) with the same origin and destination airports exist(s), now
+    // the date range need to be checked.
+    const stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
+    priceQuote(iBookingRequest, ioTravelSolution, lAirportPair);
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
   }
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
   priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
+<<<<<<< HEAD
+<<<<<<< HEAD
               const stdair::AirportPair& iAirportPair,
               const stdair::ParsedKey& iParsedKey) {
 
     // Get the date of the segment date key.
     const stdair::FlightDateKey& lFlightDateKey = iParsedKey.getFlightDateKey();
+=======
+=======
+>>>>>>> trunk
+              const stdair::AirportPair& iAirportPair) {
+
+    // Get the first segment path parsed key.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+
+    // Get the date of the first segment date key.
+    const stdair::FlightDateKey& lFlightDateKey =
+      lFirstSPParsedKey.getFlightDateKey();
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
     const stdair::Date_T& lSPDate = lFlightDateKey.getDepartureDate();
 
     bool isThereAtLeastOneAvailableDateRule = false;
@@ -128,6 +210,14 @@ namespace SIMFQT {
     const stdair::DatePeriodList_T& lFareDatePeriodList =
       stdair::BomManager::getList<stdair::DatePeriod> (iAirportPair);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    // Browse the list of the fare rules date range.
+>>>>>>> trunk
+=======
+    // Browse the list of the fare rules date range.
+>>>>>>> trunk
     for (stdair::DatePeriodList_T::const_iterator itDateRange =
            lFareDatePeriodList.begin();
          itDateRange != lFareDatePeriodList.end(); ++itDateRange) {
@@ -135,21 +225,54 @@ namespace SIMFQT {
       const stdair::DatePeriod* lCurrentFareDatePeriod_ptr = *itDateRange ;
       assert (lCurrentFareDatePeriod_ptr != NULL);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
       // Select the fare rules having a corresponding date range
       const bool isDepartureDateValid =
         lCurrentFareDatePeriod_ptr->isDepartureDateValid (lSPDate);
 
+=======
+=======
+>>>>>>> trunk
+      // Select the fare rules having a corresponding date range.
+      const bool isDepartureDateValid =
+        lCurrentFareDatePeriod_ptr->isDepartureDateValid (lSPDate);
+
+      // If a fare rule has a corresponding date range, its channel and position
+      // need to be checked.
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
       if (isDepartureDateValid == true) {
         isThereAtLeastOneAvailableDateRule = true;
         const stdair::DatePeriod& lCurrentFareDatePeriod =
           *lCurrentFareDatePeriod_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
+<<<<<<< HEAD
+<<<<<<< HEAD
                     lCurrentFareDatePeriod, iAirportPair, iParsedKey);
       }
     }
       
     if (isThereAtLeastOneAvailableDateRule == false) {
       const stdair::SegmentDateKey lSegmentDateKey = iParsedKey.getSegmentKey();
+=======
+=======
+>>>>>>> trunk
+                    lCurrentFareDatePeriod, iAirportPair);
+      }
+    }
+    
+    // If no fare rule has a corresponding date range, the pricing is not possible,
+    // throw an exception.
+    if (isThereAtLeastOneAvailableDateRule == false) {
+      const stdair::SegmentDateKey lSegmentDateKey =
+        lFirstSPParsedKey.getSegmentKey();
+<<<<<<< HEAD
+>>>>>>> trunk
+=======
+>>>>>>> trunk
       STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
                         "flight date " << lFlightDateKey.toString()
                         << " and to the Origin-Destination pair: "
@@ -158,7 +281,15 @@ namespace SIMFQT {
                                          "flight date "
                                          + lFlightDateKey.toString());
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+    // Sanity check.
+>>>>>>> trunk
+=======
+    // Sanity check.
+>>>>>>> trunk
     assert (isThereAtLeastOneAvailableDateRule == true);
     
   }
@@ -168,28 +299,61 @@ namespace SIMFQT {
   priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
               const stdair::DatePeriod& iFareDatePeriod,
+<<<<<<< HEAD
+<<<<<<< HEAD
               const stdair::AirportPair& iAirportPair,
               const stdair::ParsedKey& iParsedKey) {
 
     // Get the point_of_sale of the booking request.
+=======
+              const stdair::AirportPair& iAirportPair) {
+
+    // Get the point-of-sale of the booking request.
+>>>>>>> trunk
+=======
+              const stdair::AirportPair& iAirportPair) {
+
+    // Get the point-of-sale of the booking request.
+>>>>>>> trunk
     const stdair::CityCode_T& lPointOfSale = iBookingRequest.getPOS();
 
     // Get the booking request channel.
     const stdair::ChannelLabel_T& lChannel =
       iBookingRequest.getBookingChannel();
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     // Construct the corresponding point_of_sale-channel primary key.
     const stdair::PosChannelKey lFarePosChannelKey (lPointOfSale, lChannel);
 
     // Search for the fare rules having the same point_of_sale as the travel
     // solution
+=======
+    // Construct the corresponding POS-channel primary key.
+    const stdair::PosChannelKey lFarePosChannelKey (lPointOfSale, lChannel);
+
+    // Search for the fare rules having the same point-of-sale and channel as
+    // the travel solution.
+>>>>>>> trunk
     const stdair::PosChannel* lFarePosChannel_ptr = stdair::BomManager::
       getObjectPtr<stdair::PosChannel> (iFareDatePeriod,
                                         lFarePosChannelKey.toString());
 
+<<<<<<< HEAD
     if (lFarePosChannel_ptr == NULL) {
       // Get the date of the segment date key.
       const stdair::FlightDateKey& lFlightDateKey = iParsedKey.getFlightDateKey();
+=======
+    // If no fare rule has the same point-of-sale and channel, the pricing
+    // is not possible, throw an exception.
+    if (lFarePosChannel_ptr == NULL) {
+      // Get the first segment path parsed key.
+      const stdair::ParsedKey lFirstSPParsedKey =
+        getFirstSPParsedKey(ioTravelSolution);
+      // Get the date of the segment date key.
+      const stdair::FlightDateKey& lFlightDateKey =
+        lFirstSPParsedKey.getFlightDateKey();
+>>>>>>> trunk
       STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
                         "point of sale " << lPointOfSale
                         << ", to the channel " << lChannel
@@ -201,28 +365,53 @@ namespace SIMFQT {
                                            "point of sale " + lPointOfSale
                                            + " and the channel " + lChannel);
     }
+<<<<<<< HEAD
     assert(lFarePosChannel_ptr != NULL);
 
     const stdair::PosChannel& lFarePosChannel= *lFarePosChannel_ptr;
     priceQuote (iBookingRequest, ioTravelSolution, lFarePosChannel,
                 iParsedKey);
+=======
+    // Sanity check.
+    assert(lFarePosChannel_ptr != NULL);
+    
+    // Fare rule(s) with the same point-of-sale and channel exist(s), now
+    // the time range need to be checked.
+    const stdair::PosChannel& lFarePosChannel= *lFarePosChannel_ptr;
+    priceQuote (iBookingRequest, ioTravelSolution, lFarePosChannel);
+>>>>>>> trunk
   }
 
   // //////////////////////////////////////////////////////////////////////
   void FareQuoter::
   priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
+<<<<<<< HEAD
               const stdair::PosChannel& iFarePosChannel,
               const stdair::ParsedKey& iParsedKey) {
       
     // Get the segment boarding time of the segment path.
     const stdair::Duration_T& lSPTime = iParsedKey.getBoardingTime();
+=======
+              const stdair::PosChannel& iFarePosChannel) {
+
+    // Get the first segment path parsed key.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+      
+    // Get the segment boarding time of the segment path.
+    const stdair::Duration_T& lSPTime = lFirstSPParsedKey.getBoardingTime();
+>>>>>>> trunk
     bool lAtLeastOneAvailableTimeRule = false;
 
     // Get the list of the fare rules time period.
     const stdair::TimePeriodList_T& lFareTimePeriodList =
       stdair::BomManager::getList<stdair::TimePeriod> (iFarePosChannel);
 
+<<<<<<< HEAD
+=======
+    // Browse the list of the fare rules time range.
+>>>>>>> trunk
     for (stdair::TimePeriodList_T::const_iterator itTimeRange =
            lFareTimePeriodList.begin();
          itTimeRange != lFareTimePeriodList.end();
@@ -231,12 +420,22 @@ namespace SIMFQT {
       assert (lCurrentFareTimePeriod_ptr != NULL);
 
       // Select the fare rules having a corresponding time range.
+<<<<<<< HEAD
       if (lCurrentFareTimePeriod_ptr->isDepartureTimeValid (lSPTime) == true) {
 
+=======
+      const bool isDepartureTimeValid =
+        lCurrentFareTimePeriod_ptr->isDepartureTimeValid (lSPTime);
+
+      // If a fare rule has a corresponding time range, its advanced purchase,
+      // trip type and minimum stay duration need to be checked.
+      if (isDepartureTimeValid) {
+>>>>>>> trunk
         lAtLeastOneAvailableTimeRule = true;
         const stdair::TimePeriod& lCurrentFareTimePeriod =
           *lCurrentFareTimePeriod_ptr;
         priceQuote (iBookingRequest, ioTravelSolution,
+<<<<<<< HEAD
                     lCurrentFareTimePeriod, iFarePosChannel, iParsedKey);
       }
     }
@@ -247,11 +446,29 @@ namespace SIMFQT {
                         << iFarePosChannel.toString() << "' (POS and channel)");
       throw FlightTimeNotFoundException ("No available fare rule corresponding "
                                          "to '" + iParsedKey.toString()
+=======
+                    lCurrentFareTimePeriod, iFarePosChannel);
+      }
+    }
+
+    // If no fare rule has a corresponding time range, the pricing is not possible,
+    // throw an exception.
+    if (lAtLeastOneAvailableTimeRule == false) {
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to '"
+                        << lFirstSPParsedKey.toString() << "' (parsed key) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw FlightTimeNotFoundException ("No available fare rule corresponding "
+                                         "to '" + lFirstSPParsedKey.toString()
+>>>>>>> trunk
                                          + "' (parsed key) and to '"
                                          + iFarePosChannel.toString()
                                          + "' (POS and channel)");
     }
+<<<<<<< HEAD
       
+=======
+    // Sanity check.
+>>>>>>> trunk
     assert (lAtLeastOneAvailableTimeRule == true);
   }
 
@@ -260,12 +477,17 @@ namespace SIMFQT {
   priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
               stdair::TravelSolutionStruct& ioTravelSolution,
               const stdair::TimePeriod& iFareTimePeriod,
+<<<<<<< HEAD
               const stdair::PosChannel& iFarePosChannel,
               const stdair::ParsedKey& iParsedKey) {
+=======
+              const stdair::PosChannel& iFarePosChannel) {
+>>>>>>> trunk
 
     // Get the stay duration of the booking request.
     const stdair::DayDuration_T& lStayDuration=
       iBookingRequest.getStayDuration();
+<<<<<<< HEAD
 
     // Get the booking request trip type.
     const stdair::TripType_T& lTripType =
@@ -483,6 +705,724 @@ namespace SIMFQT {
                                       + "' (POS and channel)");
     }
     assert (lAtLeastOneAvailableAirlineRule == true);
+=======
+    // Construct the corresponding POS-channel primary key.
+    const stdair::PosChannelKey lFarePosChannelKey (lPointOfSale, lChannel);
+
+    // Search for the fare rules having the same point-of-sale and channel as
+    // the travel solution.
+    const stdair::PosChannel* lFarePosChannel_ptr = stdair::BomManager::
+      getObjectPtr<stdair::PosChannel> (iFareDatePeriod,
+                                        lFarePosChannelKey.toString());
+
+    // If no fare rule has the same point-of-sale and channel, the pricing
+    // is not possible, throw an exception.
+    if (lFarePosChannel_ptr == NULL) {
+      // Get the first segment path parsed key.
+      const stdair::ParsedKey lFirstSPParsedKey =
+        getFirstSPParsedKey(ioTravelSolution);
+      // Get the date of the segment date key.
+      const stdair::FlightDateKey& lFlightDateKey =
+        lFirstSPParsedKey.getFlightDateKey();
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
+                        "point of sale " << lPointOfSale
+                        << ", to the channel " << lChannel
+                        << ", to the flight date "
+                        << lFlightDateKey.toString()
+                        << " and to the Origin-Destination pair: "
+                        << iAirportPair.toString());
+      throw PosOrChannelNotFoundException ("No available fare rule for the "
+                                           "point of sale " + lPointOfSale
+                                           + " and the channel " + lChannel);
+    }
+    // Sanity check.
+    assert(lFarePosChannel_ptr != NULL);
+    
+    // Fare rule(s) with the same point-of-sale and channel exist(s), now
+    // the time range need to be checked.
+    const stdair::PosChannel& lFarePosChannel= *lFarePosChannel_ptr;
+    priceQuote (iBookingRequest, ioTravelSolution, lFarePosChannel);
   }
+
+  // //////////////////////////////////////////////////////////////////////
+  void FareQuoter::
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
+              const stdair::PosChannel& iFarePosChannel) {
+
+    // Get the first segment path parsed key.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+      
+    // Get the segment boarding time of the segment path.
+    const stdair::Duration_T& lSPTime = lFirstSPParsedKey.getBoardingTime();
+    bool lAtLeastOneAvailableTimeRule = false;
+
+    // Get the list of the fare rules time period.
+    const stdair::TimePeriodList_T& lFareTimePeriodList =
+      stdair::BomManager::getList<stdair::TimePeriod> (iFarePosChannel);
+
+    // Browse the list of the fare rules time range.
+    for (stdair::TimePeriodList_T::const_iterator itTimeRange =
+           lFareTimePeriodList.begin();
+         itTimeRange != lFareTimePeriodList.end();
+         ++itTimeRange) {
+      const stdair::TimePeriod* lCurrentFareTimePeriod_ptr = *itTimeRange ;
+      assert (lCurrentFareTimePeriod_ptr != NULL);
+
+      // Select the fare rules having a corresponding time range.
+      const bool isDepartureTimeValid =
+        lCurrentFareTimePeriod_ptr->isDepartureTimeValid (lSPTime);
+
+      // If a fare rule has a corresponding time range, its advanced purchase,
+      // trip type and minimum stay duration need to be checked.
+      if (isDepartureTimeValid) {
+        lAtLeastOneAvailableTimeRule = true;
+        const stdair::TimePeriod& lCurrentFareTimePeriod =
+          *lCurrentFareTimePeriod_ptr;
+        priceQuote (iBookingRequest, ioTravelSolution,
+                    lCurrentFareTimePeriod, iFarePosChannel);
+      }
+    }
+
+    // If no fare rule has a corresponding time range, the pricing is not possible,
+    // throw an exception.
+    if (lAtLeastOneAvailableTimeRule == false) {
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to '"
+                        << lFirstSPParsedKey.toString() << "' (parsed key) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw FlightTimeNotFoundException ("No available fare rule corresponding "
+                                         "to '" + lFirstSPParsedKey.toString()
+                                         + "' (parsed key) and to '"
+                                         + iFarePosChannel.toString()
+                                         + "' (POS and channel)");
+    }
+    // Sanity check.
+    assert (lAtLeastOneAvailableTimeRule == true);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void FareQuoter::
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
+              const stdair::TimePeriod& iFareTimePeriod,
+              const stdair::PosChannel& iFarePosChannel) {
+
+    // Get the stay duration of the booking request.
+    const stdair::DayDuration_T& lStayDuration=
+      iBookingRequest.getStayDuration();
+
+    // Get the booking request trip type.
+    const stdair::TripType_T& lTripType =
+      iBookingRequest.getTripType();
+
+    // Get the booking request date time.
+    const stdair::DateTime_T& lRequestDateTime =
+      iBookingRequest.getRequestDateTime();
+    
+    // Get the referenced departure date of the segment path.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+    const stdair::Date_T& lSPDate =
+      lFirstSPParsedKey.getFlightDateKey().getDepartureDate();
+
+    // Get the segment boarding time of the segment path.
+    const stdair::Duration_T& lSPTime = lFirstSPParsedKey.getBoardingTime();
+
+    // Construct the date-time type correponding to the flight date
+    const stdair::DateTime_T lSPDateTime (lSPDate, lSPTime);
+
+    bool AtLeastOneAvailableFeaturesRule = false;
+    bool IsTripTypeValid = false;
+    bool IsStayDurationValid = false;
+    bool IsAdvancePurchaseValid = false;
+
+    // Get the list of the fare features.
+    const stdair::FareFeaturesList_T& lFareFeaturesList =
+      stdair::BomManager::getList<stdair::FareFeatures> (iFareTimePeriod);
+
+    // Browse the list of the fare rules features.
+    for (stdair::FareFeaturesList_T::const_iterator itFareFeatures =
+           lFareFeaturesList.begin();
+         itFareFeatures != lFareFeaturesList.end();
+         ++itFareFeatures) {
+      const stdair::FareFeatures* lCurrentFareFeatures_ptr =
+        *itFareFeatures;
+      assert (lCurrentFareFeatures_ptr != NULL);
+
+      // Does the current fare features correspond to a correct trip
+      // type?
+      IsTripTypeValid =
+        lCurrentFareFeatures_ptr->IsTripTypeValid (lTripType);
+      // Does the current fare features correspond to a correct stay
+      // duration?
+      IsStayDurationValid =
+        lCurrentFareFeatures_ptr->IsStayDurationValid (lStayDuration);
+      // Does the current fare features correspond to a correct advanced
+      // purchase?
+      IsAdvancePurchaseValid = lCurrentFareFeatures_ptr->
+        IsAdvancePurchaseValid (lRequestDateTime,
+                                lSPDateTime);
+        
+      // Search for the fare rules having corresponding features.
+      if (IsStayDurationValid && IsAdvancePurchaseValid && IsTripTypeValid){
+        AtLeastOneAvailableFeaturesRule = true;
+        // Create a fare structure for the travel solution.
+        stdair::FareOptionStruct lFareOption;
+        const stdair::ChangeFees_T& lChangeFees =
+          lCurrentFareFeatures_ptr->getChangeFees();
+        // Set the fare change fees.
+        lFareOption.setChangeFees (lChangeFees);
+        const stdair::NonRefundable_T& lNonRefundable =
+          lCurrentFareFeatures_ptr->getRefundableOption();
+        // Set the fare refundable option.
+        lFareOption.setNonRefundable (lNonRefundable);
+        const stdair::SaturdayStay_T& lSaturdayStay =
+          lCurrentFareFeatures_ptr->getSaturdayStay();
+        // Set the fare saturday night stay option.
+        lFareOption.setSaturdayStay (lSaturdayStay);
+        const stdair::FareFeatures& lCurrentFareFeatures =
+          *lCurrentFareFeatures_ptr;
+        priceQuote (iBookingRequest, ioTravelSolution,
+                    lCurrentFareFeatures, iFarePosChannel,
+                    lFareOption);
+      }
+    }
+    
+    // If no fare rule matches the advance purchase, trip type and stay
+    // duration criterion, the pricing is not possible, throw an exception.
+    if (AtLeastOneAvailableFeaturesRule == false) {
+      std::ostringstream lStayDurationStream;
+      lStayDurationStream << lStayDuration;
+      const std::string lStayDurationString (lStayDurationStream.str());
+
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to a "
+                        "trip type " << lTripType
+                        << ", to a stay duration of " <<  lStayDurationString
+                        << ", to a request date time of " << lRequestDateTime
+                        << ", to '" << lFirstSPParsedKey.toString()
+                        << "' (parsed key) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw FeaturesNotFoundException ("No available fare rule corresponding to a "
+                                       "trip type " + lTripType
+                                       + ", to a stay duration of "
+                                       + lStayDurationString
+                                       + ", to a request date time of "
+                                       + boost::posix_time::to_simple_string(lRequestDateTime)
+                                       + ", to '" + lFirstSPParsedKey.toString()
+                                       + "' (parsed key) and to '"
+                                       + iFarePosChannel.toString()
+                                       + "' (POS and channel)");
+    }
+    // Sanity check.
+    assert (AtLeastOneAvailableFeaturesRule == true);
+  }
+
+  
+  // //////////////////////////////////////////////////////////////////////
+  void FareQuoter::
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
+              const stdair::FareFeatures& iFareFeatures,
+              const stdair::PosChannel& iFarePosChannel,
+              stdair::FareOptionStruct& iFareOption) {
+
+    // Get the first segment path parsed key.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+    
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();
+
+    // Get the list of the fare rules.
+    const stdair::AirlineClassListList_T& lAirlineClassListList =
+      stdair::BomManager::getList<stdair::AirlineClassList> (iFareFeatures);
+
+    bool lAtLeastOneAvailableAirlineRule = false;
+    bool lCorrectAirlineRule = false;
+    bool lAtLeastOneDifferentAirline = false; 
+
+    // Browse the list of airline code list and search for the fare rules
+    // having a corresponding airline list.
+    for (stdair::AirlineClassListList_T::const_iterator itAirlineClassList =
+           lAirlineClassListList.begin();
+         itAirlineClassList != lAirlineClassListList.end();
+         ++itAirlineClassList) {
+      const stdair::AirlineClassList* lCurrentAirlineClassList_ptr =
+        *itAirlineClassList;
+      assert (lCurrentAirlineClassList_ptr != NULL);
+
+      lCorrectAirlineRule = true;
+      lAtLeastOneDifferentAirline = false;
+        
+      const stdair::ClassList_StringList_T lClassList_StringList =
+        lCurrentAirlineClassList_ptr->getAirlineCodeList();
+
+      // Compare the segment path airline list with the fare rule airline list.
+      if (lClassList_StringList.size() == lSegmentPath.size()) {
+        // If the two sizes are equal, we need to compare the airline codes.
+        stdair::SegmentPath_T::const_iterator itSegmentPath =
+          lSegmentPath.begin();
+
+        stdair::ClassList_StringList_T::const_iterator itClassList_String =
+          lClassList_StringList.begin();
+        // Browse the segment path airline code list (while the segment path
+        // airline list is equal to the fare rule airline list).
+        while (itSegmentPath != lSegmentPath.end()
+               && lAtLeastOneDifferentAirline == false) {
+
+          // Get the segment airline code.
+          const std::string lSegmentDateKey = *itSegmentPath;
+          const stdair::ParsedKey& lParsedKey =
+            stdair::BomKeyManager::extractKeys (lSegmentDateKey);
+          const stdair::InventoryKey& lInventoryKey =
+            lParsedKey.getInventoryKey();
+          const stdair::AirlineCode_T& lSegmentAirlineCode =
+            lInventoryKey.getAirlineCode();
+
+          // Get the fare rule airline code.
+          const stdair::AirlineCode_T& lFareRuleAirlineCode =
+            *itClassList_String;
+
+          if (lSegmentAirlineCode != lFareRuleAirlineCode) {
+            lAtLeastOneDifferentAirline = true;
+          }
+          itSegmentPath++;
+          itClassList_String++;
+        }      
+
+      } else {
+        // If the two sizes are different, the fare rule does not match the
+        // travel solution into question.
+        lCorrectAirlineRule = false;
+      }
+      
+      // If one segment airline code and one fare rule airline code are
+      // different then the fare rule does not match the travel solution.
+      if (lAtLeastOneDifferentAirline == true) {
+        lCorrectAirlineRule = false;
+      }
+
+      // If the current fare rule is a match, add the fare option structure
+      // to the travel solution into question.
+      if (lCorrectAirlineRule == true) {
+        lAtLeastOneAvailableAirlineRule = true;
+        // Get the booking request trip type.
+        const stdair::TripType_T& lTripType =
+          iBookingRequest.getTripType();
+
+        // Get the travel fare.
+        stdair::Fare_T lFare =
+          lCurrentAirlineClassList_ptr->getFare();
+        // If the trip into question is the inbound or outbound part of a round trip,
+        // the applicable fare is a half RT fare.
+        if (lTripType == "RI" || lTripType == "RO") {
+          lFare /= 2;
+        }
+        // Set the travel fare option.
+        iFareOption.setFare (lFare);
+        // Copy the class path list into the fare option.
+        const stdair::ClassList_StringList_T& lClassCodeList =
+          lCurrentAirlineClassList_ptr->getClassCodeList();
+        for (stdair::ClassList_StringList_T::const_iterator itClassCodeList =
+               lClassCodeList.begin();
+             itClassCodeList != lClassCodeList.end(); ++itClassCodeList ) {
+          const stdair::ClassList_String_T& lClassCodeList = *itClassCodeList;
+          iFareOption.addClassList (lClassCodeList);
+        }
+
+        // Add the fare option to the travel solution into question.
+        ioTravelSolution.addFareOption (iFareOption);
+          
+        // DEBUG
+        STDAIR_LOG_DEBUG ("Segment path: " << lFirstSPParsedKey.toString()
+                          << ". A corresponding fare option for the '"
+                          << lCurrentAirlineClassList_ptr->describeKey()
+                          << "' class is: " << iFareOption);
+
+        iFareOption.emptyClassList();
+      }
+    }
+    
+    // If no fare rule matches the airline class path, the pricing is not
+    // possible, throw an exception.
+    if (lAtLeastOneAvailableAirlineRule == false) {
+
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to '"
+                        << lFirstSPParsedKey .toString() << "' (parsed key), to '"
+                        << iBookingRequest.describe()
+                        << "' (booking request) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw AirlineNotFoundException ("No available fare rule corresponding to '"
+                                      + lFirstSPParsedKey .toString()
+                                      + "' (parsed key), to '"
+                                      + iBookingRequest.describe()
+                                      + "' (booking request) and to '"
+                                      + iFarePosChannel.toString()
+                                      + "' (POS and channel)");
+    }
+    // Sanity check.
+    assert (lAtLeastOneAvailableAirlineRule == true);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::ParsedKey FareQuoter::
+  getFirstSPParsedKey (stdair::TravelSolutionStruct& ioTravelSolution) {
+
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();  
+
+    // Get the number of segments of the travel solution.
+    const stdair::NbOfSegments_T& lNbSegments = lSegmentPath.size();
+
+    // Sanity check: there is at least one segment in the travel solution.
+    assert (lNbSegments >= 1);
+    
+    // Get the first segment of the travel solution.
+    const std::string& lFirstSegmentDateKey = lSegmentPath.front();
+
+    // Get the parsed key of the first segment of the travel solution.
+    const stdair::ParsedKey& lFirstSegmentParsedKey =
+      stdair::BomKeyManager::extractKeys (lFirstSegmentDateKey);
+
+    return lFirstSegmentParsedKey;
+    
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::ParsedKey FareQuoter::
+  getLastSPParsedKey (stdair::TravelSolutionStruct& ioTravelSolution) {
+
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();  
+
+    // Get the number of segments of the travel solution.
+    const stdair::NbOfSegments_T& lNbSegments = lSegmentPath.size();
+
+    // Sanity check: there is at least one segment in the travel solution.
+    assert (lNbSegments >= 1);
+    
+    // Get the last segment of the travel solution.
+    const std::string& lLastSegmentDateKey = lSegmentPath.back();
+
+    // Get the parsed key of the last segment of the travel solution.
+    const stdair::ParsedKey& lLastSegmentParsedKey =
+      stdair::BomKeyManager::extractKeys (lLastSegmentDateKey);
+
+    return lLastSegmentParsedKey;
+    
+>>>>>>> trunk
+  }
+
+=======
+
+    // Get the booking request trip type.
+    const stdair::TripType_T& lTripType =
+      iBookingRequest.getTripType();
+
+    // Get the booking request date time.
+    const stdair::DateTime_T& lRequestDateTime =
+      iBookingRequest.getRequestDateTime();
+    
+    // Get the referenced departure date of the segment path.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+    const stdair::Date_T& lSPDate =
+      lFirstSPParsedKey.getFlightDateKey().getDepartureDate();
+
+    // Get the segment boarding time of the segment path.
+    const stdair::Duration_T& lSPTime = lFirstSPParsedKey.getBoardingTime();
+
+    // Construct the date-time type correponding to the flight date
+    const stdair::DateTime_T lSPDateTime (lSPDate, lSPTime);
+
+    bool AtLeastOneAvailableFeaturesRule = false;
+    bool IsTripTypeValid = false;
+    bool IsStayDurationValid = false;
+    bool IsAdvancePurchaseValid = false;
+
+    // Get the list of the fare features.
+    const stdair::FareFeaturesList_T& lFareFeaturesList =
+      stdair::BomManager::getList<stdair::FareFeatures> (iFareTimePeriod);
+
+    // Browse the list of the fare rules features.
+    for (stdair::FareFeaturesList_T::const_iterator itFareFeatures =
+           lFareFeaturesList.begin();
+         itFareFeatures != lFareFeaturesList.end();
+         ++itFareFeatures) {
+      const stdair::FareFeatures* lCurrentFareFeatures_ptr =
+        *itFareFeatures;
+      assert (lCurrentFareFeatures_ptr != NULL);
+
+      // Does the current fare features correspond to a correct trip
+      // type?
+      IsTripTypeValid =
+        lCurrentFareFeatures_ptr->IsTripTypeValid (lTripType);
+      // Does the current fare features correspond to a correct stay
+      // duration?
+      IsStayDurationValid =
+        lCurrentFareFeatures_ptr->IsStayDurationValid (lStayDuration);
+      // Does the current fare features correspond to a correct advanced
+      // purchase?
+      IsAdvancePurchaseValid = lCurrentFareFeatures_ptr->
+        IsAdvancePurchaseValid (lRequestDateTime,
+                                lSPDateTime);
+        
+      // Search for the fare rules having corresponding features.
+      if (IsStayDurationValid && IsAdvancePurchaseValid && IsTripTypeValid){
+        AtLeastOneAvailableFeaturesRule = true;
+        // Create a fare structure for the travel solution.
+        stdair::FareOptionStruct lFareOption;
+        const stdair::ChangeFees_T& lChangeFees =
+          lCurrentFareFeatures_ptr->getChangeFees();
+        // Set the fare change fees.
+        lFareOption.setChangeFees (lChangeFees);
+        const stdair::NonRefundable_T& lNonRefundable =
+          lCurrentFareFeatures_ptr->getRefundableOption();
+        // Set the fare refundable option.
+        lFareOption.setNonRefundable (lNonRefundable);
+        const stdair::SaturdayStay_T& lSaturdayStay =
+          lCurrentFareFeatures_ptr->getSaturdayStay();
+        // Set the fare saturday night stay option.
+        lFareOption.setSaturdayStay (lSaturdayStay);
+        const stdair::FareFeatures& lCurrentFareFeatures =
+          *lCurrentFareFeatures_ptr;
+        priceQuote (iBookingRequest, ioTravelSolution,
+                    lCurrentFareFeatures, iFarePosChannel,
+                    lFareOption);
+      }
+    }
+    
+    // If no fare rule matches the advance purchase, trip type and stay
+    // duration criterion, the pricing is not possible, throw an exception.
+    if (AtLeastOneAvailableFeaturesRule == false) {
+      std::ostringstream lStayDurationStream;
+      lStayDurationStream << lStayDuration;
+      const std::string lStayDurationString (lStayDurationStream.str());
+
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to a "
+                        "trip type " << lTripType
+                        << ", to a stay duration of " <<  lStayDurationString
+                        << ", to a request date time of " << lRequestDateTime
+                        << ", to '" << lFirstSPParsedKey.toString()
+                        << "' (parsed key) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw FeaturesNotFoundException ("No available fare rule corresponding to a "
+                                       "trip type " + lTripType
+                                       + ", to a stay duration of "
+                                       + lStayDurationString
+                                       + ", to a request date time of "
+                                       + boost::posix_time::to_simple_string(lRequestDateTime)
+                                       + ", to '" + lFirstSPParsedKey.toString()
+                                       + "' (parsed key) and to '"
+                                       + iFarePosChannel.toString()
+                                       + "' (POS and channel)");
+    }
+    // Sanity check.
+    assert (AtLeastOneAvailableFeaturesRule == true);
+  }
+
+  
+  // //////////////////////////////////////////////////////////////////////
+  void FareQuoter::
+  priceQuote (const stdair::BookingRequestStruct& iBookingRequest,
+              stdair::TravelSolutionStruct& ioTravelSolution,
+              const stdair::FareFeatures& iFareFeatures,
+              const stdair::PosChannel& iFarePosChannel,
+              stdair::FareOptionStruct& iFareOption) {
+
+    // Get the first segment path parsed key.
+    const stdair::ParsedKey lFirstSPParsedKey =
+      getFirstSPParsedKey(ioTravelSolution);
+    
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();
+
+    // Get the list of the fare rules.
+    const stdair::AirlineClassListList_T& lAirlineClassListList =
+      stdair::BomManager::getList<stdair::AirlineClassList> (iFareFeatures);
+
+    bool lAtLeastOneAvailableAirlineRule = false;
+    bool lCorrectAirlineRule = false;
+    bool lAtLeastOneDifferentAirline = false; 
+
+    // Browse the list of airline code list and search for the fare rules
+    // having a corresponding airline list.
+    for (stdair::AirlineClassListList_T::const_iterator itAirlineClassList =
+           lAirlineClassListList.begin();
+         itAirlineClassList != lAirlineClassListList.end();
+         ++itAirlineClassList) {
+      const stdair::AirlineClassList* lCurrentAirlineClassList_ptr =
+        *itAirlineClassList;
+      assert (lCurrentAirlineClassList_ptr != NULL);
+
+      lCorrectAirlineRule = true;
+      lAtLeastOneDifferentAirline = false;
+        
+      const stdair::ClassList_StringList_T lClassList_StringList =
+        lCurrentAirlineClassList_ptr->getAirlineCodeList();
+
+      // Compare the segment path airline list with the fare rule airline list.
+      if (lClassList_StringList.size() == lSegmentPath.size()) {
+        // If the two sizes are equal, we need to compare the airline codes.
+        stdair::SegmentPath_T::const_iterator itSegmentPath =
+          lSegmentPath.begin();
+
+        stdair::ClassList_StringList_T::const_iterator itClassList_String =
+          lClassList_StringList.begin();
+        // Browse the segment path airline code list (while the segment path
+        // airline list is equal to the fare rule airline list).
+        while (itSegmentPath != lSegmentPath.end()
+               && lAtLeastOneDifferentAirline == false) {
+
+          // Get the segment airline code.
+          const std::string lSegmentDateKey = *itSegmentPath;
+          const stdair::ParsedKey& lParsedKey =
+            stdair::BomKeyManager::extractKeys (lSegmentDateKey);
+          const stdair::InventoryKey& lInventoryKey =
+            lParsedKey.getInventoryKey();
+          const stdair::AirlineCode_T& lSegmentAirlineCode =
+            lInventoryKey.getAirlineCode();
+
+          // Get the fare rule airline code.
+          const stdair::AirlineCode_T& lFareRuleAirlineCode =
+            *itClassList_String;
+
+          if (lSegmentAirlineCode != lFareRuleAirlineCode) {
+            lAtLeastOneDifferentAirline = true;
+          }
+          itSegmentPath++;
+          itClassList_String++;
+        }      
+
+      } else {
+        // If the two sizes are different, the fare rule does not match the
+        // travel solution into question.
+        lCorrectAirlineRule = false;
+      }
+      
+      // If one segment airline code and one fare rule airline code are
+      // different then the fare rule does not match the travel solution.
+      if (lAtLeastOneDifferentAirline == true) {
+        lCorrectAirlineRule = false;
+      }
+
+      // If the current fare rule is a match, add the fare option structure
+      // to the travel solution into question.
+      if (lCorrectAirlineRule == true) {
+        lAtLeastOneAvailableAirlineRule = true;
+        // Get the booking request trip type.
+        const stdair::TripType_T& lTripType =
+          iBookingRequest.getTripType();
+
+        // Get the travel fare.
+        stdair::Fare_T lFare =
+          lCurrentAirlineClassList_ptr->getFare();
+        // If the trip into question is the inbound or outbound part of a round trip,
+        // the applicable fare is a half RT fare.
+        if (lTripType == "RI" || lTripType == "RO") {
+          lFare /= 2;
+        }
+        // Set the travel fare option.
+        iFareOption.setFare (lFare);
+        // Copy the class path list into the fare option.
+        const stdair::ClassList_StringList_T& lClassCodeList =
+          lCurrentAirlineClassList_ptr->getClassCodeList();
+        for (stdair::ClassList_StringList_T::const_iterator itClassCodeList =
+               lClassCodeList.begin();
+             itClassCodeList != lClassCodeList.end(); ++itClassCodeList ) {
+          const stdair::ClassList_String_T& lClassCodeList = *itClassCodeList;
+          iFareOption.addClassList (lClassCodeList);
+        }
+
+        // Add the fare option to the travel solution into question.
+        ioTravelSolution.addFareOption (iFareOption);
+          
+        // DEBUG
+        STDAIR_LOG_DEBUG ("Segment path: " << lFirstSPParsedKey.toString()
+                          << ". A corresponding fare option for the '"
+                          << lCurrentAirlineClassList_ptr->describeKey()
+                          << "' class is: " << iFareOption);
+
+        iFareOption.emptyClassList();
+      }
+    }
+    
+    // If no fare rule matches the airline class path, the pricing is not
+    // possible, throw an exception.
+    if (lAtLeastOneAvailableAirlineRule == false) {
+
+      STDAIR_LOG_ERROR ("No available fare rule corresponding to '"
+                        << lFirstSPParsedKey .toString() << "' (parsed key), to '"
+                        << iBookingRequest.describe()
+                        << "' (booking request) and to '"
+                        << iFarePosChannel.toString() << "' (POS and channel)");
+      throw AirlineNotFoundException ("No available fare rule corresponding to '"
+                                      + lFirstSPParsedKey .toString()
+                                      + "' (parsed key), to '"
+                                      + iBookingRequest.describe()
+                                      + "' (booking request) and to '"
+                                      + iFarePosChannel.toString()
+                                      + "' (POS and channel)");
+    }
+    // Sanity check.
+    assert (lAtLeastOneAvailableAirlineRule == true);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::ParsedKey FareQuoter::
+  getFirstSPParsedKey (stdair::TravelSolutionStruct& ioTravelSolution) {
+
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();  
+
+    // Get the number of segments of the travel solution.
+    const stdair::NbOfSegments_T& lNbSegments = lSegmentPath.size();
+
+    // Sanity check: there is at least one segment in the travel solution.
+    assert (lNbSegments >= 1);
+    
+    // Get the first segment of the travel solution.
+    const std::string& lFirstSegmentDateKey = lSegmentPath.front();
+
+    // Get the parsed key of the first segment of the travel solution.
+    const stdair::ParsedKey& lFirstSegmentParsedKey =
+      stdair::BomKeyManager::extractKeys (lFirstSegmentDateKey);
+
+    return lFirstSegmentParsedKey;
+    
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::ParsedKey FareQuoter::
+  getLastSPParsedKey (stdair::TravelSolutionStruct& ioTravelSolution) {
+
+    // Get the segment-path of the travel solution.
+    const stdair::SegmentPath_T& lSegmentPath =
+      ioTravelSolution.getSegmentPath();  
+
+    // Get the number of segments of the travel solution.
+    const stdair::NbOfSegments_T& lNbSegments = lSegmentPath.size();
+
+    // Sanity check: there is at least one segment in the travel solution.
+    assert (lNbSegments >= 1);
+    
+    // Get the last segment of the travel solution.
+    const std::string& lLastSegmentDateKey = lSegmentPath.back();
+
+    // Get the parsed key of the last segment of the travel solution.
+    const stdair::ParsedKey& lLastSegmentParsedKey =
+      stdair::BomKeyManager::extractKeys (lLastSegmentDateKey);
+
+    return lLastSegmentParsedKey;
+    
+  }
+
+>>>>>>> trunk
 
 }
