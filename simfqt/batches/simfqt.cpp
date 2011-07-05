@@ -185,38 +185,18 @@ int main (int argc, char* argv[]) {
   // DEBUG
   STDAIR_LOG_DEBUG ("Welcome to Simfqt");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  // Build a sample list of travel solutions and a booking request.
-  stdair::TravelSolutionList_T lTravelSolutionList;
-  simfqtService.buildSampleTravelSolutions (lTravelSolutionList);
-=======
-=======
->>>>>>> trunk
   // Build a default sample list of travel solutions
   stdair::TravelSolutionList_T lTravelSolutionList;
   simfqtService.buildSampleTravelSolutions (lTravelSolutionList);
 
   // Build a default booking request
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
   stdair::BookingRequestStruct lBookingRequest =
     simfqtService.buildBookingRequest();
 
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    // Build the sample BOM tree (filled with fares) for Simfqt
-=======
     // Build the default sample BOM tree (filled with fares) for Simfqt
->>>>>>> trunk
-=======
-    // Build the default sample BOM tree (filled with fares) for Simfqt
->>>>>>> trunk
     simfqtService.buildSampleBom();
 
   } else {
@@ -225,20 +205,11 @@ int main (int argc, char* argv[]) {
     simfqtService.parseAndLoad (lFareInputFilename);
 
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> trunk
 
   // DEBUG: Display the travel solutions
   const std::string& lTSCSVDump =
     simfqtService.csvDisplay (lTravelSolutionList);
   STDAIR_LOG_DEBUG (lTSCSVDump);
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
   
   // FareQuote the sample list of travel solutions
   simfqtService.quotePrices (lBookingRequest, lTravelSolutionList);
@@ -248,23 +219,10 @@ int main (int argc, char* argv[]) {
   STDAIR_LOG_DEBUG ("BOM tree: " << lBOMCSVDump);
   
   // DEBUG: Display the travel solutions
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const std::string& lTSCSVDump =
-    simfqtService.csvDisplay (lTravelSolutionList);
-  STDAIR_LOG_DEBUG (lTSCSVDump);
-
-=======
-=======
->>>>>>> trunk
   const std::string& lTSCSVDumpEnd
     = simfqtService.csvDisplay (lTravelSolutionList);
   STDAIR_LOG_DEBUG (lTSCSVDumpEnd);
   
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
   // Close the Log outputFile
   logOutputFile.close();
 

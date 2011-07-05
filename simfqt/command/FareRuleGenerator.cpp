@@ -43,24 +43,12 @@ namespace SIMFQT {
       stdair::FacBomManager::addToListAndMap (ioBomRoot, *lAirportPair_ptr);
       stdair::FacBomManager::linkWithParent (ioBomRoot, *lAirportPair_ptr);
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-    assert (lAirportPair_ptr != NULL);
-
-    stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
-=======
-=======
->>>>>>> trunk
     // Sanity check.
     assert (lAirportPair_ptr != NULL);
 
     stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
     // Generate the date-period object corresponding to the given
     // fareRule.  
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
     createDateRange (lAirportPair, iFareRuleStruct);
 
   }
@@ -92,24 +80,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iAirportPair,
                                              *lFareDatePeriod_ptr);
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-    assert (lFareDatePeriod_ptr != NULL);
-
-    stdair::DatePeriod& lDateRange = *lFareDatePeriod_ptr;
-=======
-=======
->>>>>>> trunk
     // Sanity check.
     assert (lFareDatePeriod_ptr != NULL);
 
     stdair::DatePeriod& lDateRange = *lFareDatePeriod_ptr;
     // Generate the point_of_sale-channel object corresponding to
     // the given fareRule.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
     createPOSChannel (lDateRange, iFareRuleStruct);
 
   }
@@ -139,24 +115,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iDatePeriod,
                                              *lFarePosChannel_ptr);
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-    assert (lFarePosChannel_ptr != NULL);
-
-    stdair::PosChannel& lPosChannel = *lFarePosChannel_ptr;
-=======
-=======
->>>>>>> trunk
     // Sanity check.
     assert (lFarePosChannel_ptr != NULL);
 
     stdair::PosChannel& lPosChannel = *lFarePosChannel_ptr;
     // Generate the time-period object corresponding to the given
     // fareRule.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
     createTimeRange (lPosChannel, iFareRuleStruct);
 
   }
@@ -166,96 +130,6 @@ namespace SIMFQT {
   void FareRuleGenerator::
   createTimeRange (stdair::PosChannel& iPosChannel,
                    const FareRuleStruct& iFareRuleStruct) {
-<<<<<<< HEAD
-    
-    // Create the fare time-period primary key.
-    const stdair::Time_T& lTimeRangeStart =
-      iFareRuleStruct.getTimeRangeStart ();
-    const stdair::Time_T& lTimeRangeEnd =
-      iFareRuleStruct.getTimeRangeEnd ();
-    const stdair::TimePeriodKey lFareTimePeriodKey (lTimeRangeStart,
-                                                    lTimeRangeEnd);
-
-    // Check that the time-period object is not already existing.
-    // If a time-period object with the same key has not already been
-    // created, create it and link it to the point_of_sale-channel object.       
-    stdair::TimePeriod* lFareTimePeriod_ptr = stdair::BomManager::
-      getObjectPtr<stdair::TimePeriod> (iPosChannel,
-                                        lFareTimePeriodKey.toString());
-    if (lFareTimePeriod_ptr == NULL) {
-      lFareTimePeriod_ptr = &stdair::FacBom<stdair::TimePeriod>::instance().
-        create (lFareTimePeriodKey);
-      stdair::FacBomManager::addToListAndMap (iPosChannel,
-                                              *lFareTimePeriod_ptr);
-      stdair::FacBomManager::linkWithParent (iPosChannel,
-                                             *lFareTimePeriod_ptr);
-    }
-<<<<<<< HEAD
-    assert (lFareTimePeriod_ptr != NULL);
-
-    stdair::TimePeriod& lTimeRange = *lFareTimePeriod_ptr;
-=======
-    // Sanity check.
-    assert (lFareTimePeriod_ptr != NULL);
-
-    stdair::TimePeriod& lTimeRange = *lFareTimePeriod_ptr;
-    // Generate the fare-features object corresponding to the given
-    // fareRule.
->>>>>>> trunk
-    createFareFeatures (lTimeRange, iFareRuleStruct);
-
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  void FareRuleGenerator::
-  createFareFeatures (stdair::TimePeriod& iTimePeriod,
-                      const FareRuleStruct& iFareRuleStruct) {
-
-    // Create the fare-features primary key.
-    const stdair::TripType_T& lTripType =
-      iFareRuleStruct.getTripType ();
-    const stdair::DayDuration_T& lAdvancePurchase =
-      iFareRuleStruct.getAdvancePurchase ();
-    const stdair::SaturdayStay_T& lSaturdayStay =
-      iFareRuleStruct.getSaturdayStay ();
-    const stdair::ChangeFees_T& lChangeFees =
-      iFareRuleStruct.getChangeFees ();
-    const stdair::NonRefundable_T& lNonRefundable =
-      iFareRuleStruct.getNonRefundable ();
-    const stdair::DayDuration_T& lMinimumStay =
-      iFareRuleStruct.getMinimumStay ();
-    const stdair::FareFeaturesKey
-      lFareFeaturesKey (lTripType, lAdvancePurchase, lSaturdayStay,
-                        lChangeFees, lNonRefundable, lMinimumStay);
-
-    // Check that the fare features object is not already existing.
-    // If a fare features object with the same key has not already been
-    // created, create it and link it to the time-period object.        
-    stdair::FareFeatures* lFareFeatures_ptr = stdair::BomManager::
-      getObjectPtr<stdair::FareFeatures> (iTimePeriod,
-                                          lFareFeaturesKey.toString());
-    if (lFareFeatures_ptr == NULL) {
-      lFareFeatures_ptr = &stdair::FacBom<stdair::FareFeatures>::instance().
-        create (lFareFeaturesKey);
-      assert(lFareFeatures_ptr != NULL); 
-      stdair::FacBomManager::addToListAndMap (iTimePeriod,
-                                              *lFareFeatures_ptr);
-      stdair::FacBomManager::linkWithParent (iTimePeriod,
-                                             *lFareFeatures_ptr);  
-    }
-<<<<<<< HEAD
-    assert(lFareFeatures_ptr != NULL);
-    
-    stdair::FareFeatures& lFareFeatures = *lFareFeatures_ptr;
-=======
-    // Sanity check.
-    assert(lFareFeatures_ptr != NULL);
-    
-    stdair::FareFeatures& lFareFeatures = *lFareFeatures_ptr;
-    // Generate the airline-class list object corresponding to the
-    // given fareRule
->>>>>>> trunk
-=======
     
     // Create the fare time-period primary key.
     const stdair::Time_T& lTimeRangeStart =
@@ -332,7 +206,6 @@ namespace SIMFQT {
     stdair::FareFeatures& lFareFeatures = *lFareFeatures_ptr;
     // Generate the airline-class list object corresponding to the
     // given fareRule
->>>>>>> trunk
     createAirlineClassList (lFareFeatures, iFareRuleStruct);
 
   }

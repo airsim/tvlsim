@@ -239,28 +239,12 @@ namespace SIMFQT {
       _fare = iFare;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /** Set airline code. */
-=======
     /** Set the airline code. */
->>>>>>> trunk
-=======
-    /** Set the airline code. */
->>>>>>> trunk
     void setAirlineCode (const stdair::AirlineCode_T&  iAirlineCode) {
       _airlineCode = iAirlineCode;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /** Set class code. */
-=======
     /** Set the class code. */
->>>>>>> trunk
-=======
-    /** Set the class code. */
->>>>>>> trunk
     void setClassCode (const stdair::ClassCode_T& iClassCode) {
       _classCode = iClassCode;
     }
@@ -311,15 +295,7 @@ namespace SIMFQT {
     /** Type of trip (RT=round-trip, OW=one way). */
     stdair::TripType_T _tripType;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /** Start Range date available for this fare rule.*/
-=======
     /** Start date from the date range available for this fare rule.*/
->>>>>>> trunk
-=======
-    /** Start date from the date range available for this fare rule.*/
->>>>>>> trunk
     stdair::Date_T _dateRangeStart;
 
     /** End date from the date range available for this fare rule.*/
@@ -368,17 +344,8 @@ namespace SIMFQT {
         second airline code is the code of the airline flying the second segment, ...*/
     stdair::AirlineCodeList_T _airlineCodeList;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /** Class Code List*/
-=======
     /** Class Code List: first class code corresponds to the class of the first segment,
         second class code corresponds to the class of the second segment, ...*/
->>>>>>> trunk
-=======
-    /** Class Code List: first class code corresponds to the class of the first segment,
-        second class code corresponds to the class of the second segment, ...*/
->>>>>>> trunk
     stdair::ClassList_StringList_T _classCodeList;
 
   };

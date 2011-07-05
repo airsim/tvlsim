@@ -71,15 +71,7 @@ namespace SIMFQT {
     // Sanity check
     assert (_airlineCodeList.size() == _classCodeList.size());
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    // Browse the class-pathes
-=======
     // Browse the airline and class pathes
->>>>>>> trunk
-=======
-    // Browse the airline and class pathes
->>>>>>> trunk
     unsigned short idx = 0;
     stdair::ClassList_StringList_T::const_iterator itClass =
       _classCodeList.begin();

@@ -34,16 +34,6 @@ namespace SIMFQT {
   private:
     // /////////////////// Business support methods //////////////
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * Quote a list of travel solutions (with a price for each travel solution).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionList_T&
-     * @param const stdair::BomRoot&
-=======
-=======
->>>>>>> trunk
      * Quote a list of travel solutions (with a list of fare-options for each
      * travel solution).
      *
@@ -51,26 +41,12 @@ namespace SIMFQT {
      * to the travel solution list.
      * @param stdair::TravelSolutionList_T&        List of travel solutions.
      * @param const stdair::BomRoot&               Root of the BOM tree.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionList_T&,
                             const stdair::BomRoot&);
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const stdair::BomRoot&
-=======
-=======
->>>>>>> trunk
      * First step of fare quoting a single travel solution (with a list of
      * fare-options):
      * selecting the fare rules with the correct origin/destination.
@@ -80,41 +56,12 @@ namespace SIMFQT {
      * @param stdair::TravelSolutionStruct&        Travel solution to fare
      * quote.
      * @param const stdair::BomRoot&               Root of the BOM tree.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::BomRoot&);
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const stdair::AirportPair&
-     * @param const stdair::ParsedKey&
-     */
-    static void priceQuote (const stdair::BookingRequestStruct&,
-                            stdair::TravelSolutionStruct&,
-                            const stdair::AirportPair&,
-                            const stdair::ParsedKey&);
-
-    /**
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const stdair::DatePeriod&
-     * @param const stdair::AirportPair&
-     * @param const stdair::ParsedKey&
-=======
-=======
->>>>>>> trunk
      * Second step of fare quoting a single travel solution (with a list of
      * fare-options):
      * selecting the fare rules with the correct date range.
@@ -141,41 +88,10 @@ namespace SIMFQT {
      * @param const stdair::DatePeriod&            Root of the BOM tree.
      * @param const stdair::AirportPair&           Information needed in case
      * of error message to display.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::DatePeriod&,
-<<<<<<< HEAD
-<<<<<<< HEAD
-                            const stdair::AirportPair&, const stdair::ParsedKey&);
-
-    /**
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const stdair::PosChannel&
-     * @param const stdair::ParsedKey&
-     */
-    static void priceQuote (const stdair::BookingRequestStruct&,
-                            stdair::TravelSolutionStruct&,
-                            const stdair::PosChannel&, const stdair::ParsedKey&);
-
-    /**
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const stdair::TimePeriod&
-     * @param const stdair::PosChannel&
-     * @param const stdair::ParsedKey&
-=======
-=======
->>>>>>> trunk
                             const stdair::AirportPair&);
 
     /**
@@ -206,35 +122,10 @@ namespace SIMFQT {
      * @param const stdair::TimePeriod&            Root of the BOM tree.
      * @param const stdair::PosChannel&            Information needed in case
      * of error message to display.
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
      */
     static void priceQuote (const stdair::BookingRequestStruct&,
                             stdair::TravelSolutionStruct&,
                             const stdair::TimePeriod&,
-<<<<<<< HEAD
-<<<<<<< HEAD
-                            const stdair::PosChannel&, const stdair::ParsedKey&);
-
-    /**
-     * Quote a single travel solution (with a price).
-     *
-     * @param const stdair::BookingRequestStruct&
-     * @param stdair::TravelSolutionStruct&
-     * @param const FareRuleFeatures&
-     * @param const stdair::PosChannel&
-     * @param stdair::FareOptionStruct&
-     * @param const stdair::ParsedKey&
-     */
-    static void priceQuote (const stdair::BookingRequestStruct&,
-                            stdair::TravelSolutionStruct&,
-                            const stdair::FareFeatures&, const stdair::PosChannel&,
-                            stdair::FareOptionStruct&, const stdair::ParsedKey&);
-=======
-=======
->>>>>>> trunk
                             const stdair::PosChannel&);
 
     /**
@@ -278,10 +169,6 @@ namespace SIMFQT {
      */
     static stdair::ParsedKey getLastSPParsedKey (stdair::TravelSolutionStruct&);
 
-<<<<<<< HEAD
->>>>>>> trunk
-=======
->>>>>>> trunk
 
 
   private:
