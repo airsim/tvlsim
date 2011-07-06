@@ -57,11 +57,19 @@ namespace AIRINV {
       stdair::BomRetriever::retrieveSegmentDateFromLongKey (iBomRoot, lFullKeyStr);
     assert (lSegmentDate_ptr != NULL);
 
-    OnDDate lOndDate (lOrigin, lDestination, lDate);
-    lOndDate.addSegmentDatePtr (lSegmentDate_ptr);
-    lOndDate.addClassPathDemand (lStr, lDemandStruct);
+    //OnDDate lOnDDate (lOrigin, lDestination, lDate);
 
-    lOndDate.display();
+    //OnDDateKey lOnDDateKey (lOrigin, lDestination, lDate);
+    
+    std::vector<std::string> lFullKeyStrList;
+    lFullKeyStrList.push_back (lFullKeyStr);
+    OnDDateKey lOnDDateKey (lFullKeyStrList);
+    OnDDate lOnDDate (lOnDDateKey);
+    
+    lOnDDate.addSegmentDatePtr (lSegmentDate_ptr);
+    lOnDDate.addClassPathDemand (lStr, lDemandStruct);
+
+    lOnDDate.display();
   }
   
 }

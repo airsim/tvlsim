@@ -16,6 +16,9 @@
 
 #include <stdair/bom/SegmentDate.hpp>
 #include <stdair/service/Logger.hpp>
+#include <stdair/bom/BomKeyManager.hpp>
+#include <stdair/bom/FlightDateKey.hpp>
+#include <stdair/bom/SegmentDateKey.hpp>
 // AirInv
 #include <airinv/AIRINV_Types.hpp>
 
@@ -48,12 +51,39 @@ namespace AIRINV {
     ~DemandStruct() {}
   };
 
+  struct OnDDateKey {
+  public:
+    /** Constructors and destructors */
+    // OnDDateKey(const stdair::AirportCode_T& iO, const stdair::AirportCode_T& iD,
+    //          const stdair::Date_T& iDate)
+    //   : _origin(iO), _destination(iD), _date(iDate) {}
+    OnDDateKey(std::vector<std::string> iKL) : _strList(iKL) {
+      assert (!iKL.empty());
+      std::string lFK = iKL.front();
+      std::string lLK = iKL.back();
+      _date = stdair::BomKeyManager::extractFlightDateKey (lFK).getDepartureDate();
+      _origin = stdair::BomKeyManager::extractSegmentDateKey (lFK).getBoardingPoint();
+      _destination = stdair::BomKeyManager::extractSegmentDateKey (lLK).getOffPoint();      
+    }
+    OnDDateKey();
+  public:
+    /**
+     * Attributes
+     */
+    stdair::AirportCode_T _origin;
+    stdair::AirportCode_T _destination;
+    stdair::Date_T _date;
+    std::vector<std::string> _strList;
+  };
+
   class OnDDate {
   public:
     /** Constructors and destructors */
-    OnDDate (const stdair::AirportCode_T& iO, const stdair::AirportCode_T& iD,
-             const stdair::Date_T& iDate)
-      : _origin(iO), _destination(iD), _date(iDate) {}
+    // OnDDate (const stdair::AirportCode_T& iO, const stdair::AirportCode_T& iD,
+    //          const stdair::Date_T& iDate)
+    //   : _origin(iO), _destination(iD), _date(iDate) {}
+    OnDDate (OnDDateKey iKey)
+      : _key(iKey) {}
     ~OnDDate () {}
   public:
     /** Getters */
@@ -71,8 +101,8 @@ namespace AIRINV {
       std::pair<std::string,DemandStruct> lStrDmdPair = *(_classPathDemandMap.begin());
       stdair::SegmentDate* lSegmentDate_ptr = _segmentDateList.front();
       stdair::SegmentDateKey lSegmentDateKey = lSegmentDate_ptr->getKey();
-      STDAIR_LOG_DEBUG ("Created O&D date " << _origin <<","<<_destination
-                        <<";" <<_date <<" Cabin:Class "<< lStrDmdPair.first
+      STDAIR_LOG_DEBUG ("Created O&D date " << _key._origin <<","<<_key._destination
+                        <<";" <<_key._date <<" Cabin:Class "<< lStrDmdPair.first
                         << " Yield "<< lStrDmdPair.second._yield
                         << " Demand mean "<< lStrDmdPair.second._mean
                         << " Std deviation "<< lStrDmdPair.second._stdDev);
@@ -81,9 +111,10 @@ namespace AIRINV {
     /**
      * Attributes
      */
-    stdair::AirportCode_T _origin;
-    stdair::AirportCode_T _destination;
-    stdair::Date_T _date;
+    // stdair::AirportCode_T _origin;
+    // stdair::AirportCode_T _destination;
+    // stdair::Date_T _date;
+    OnDDateKey _key;
     std::vector<stdair::SegmentDate*> _segmentDateList;
     std::map<std::string, DemandStruct> _classPathDemandMap;
   };

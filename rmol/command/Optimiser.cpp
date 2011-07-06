@@ -243,6 +243,9 @@ namespace RMOL {
     // ////////////////////////////////////////////////////////////////////
   void Optimiser::
   optimiseBPWithYieldProration (stdair::SegmentCabin& ioSegmentCabin) {
+
+    // TODO: aggregate demand for equal yields
+    
     // Retrieve the class list.
     const stdair::BookingClassList_T lBookingClassList =
       stdair::BomManager::getList<stdair::BookingClass> (ioSegmentCabin);

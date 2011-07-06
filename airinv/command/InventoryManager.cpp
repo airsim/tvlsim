@@ -196,6 +196,7 @@ namespace AIRINV {
 	      lClassBpvMapHolder.size());
 
       // Yield is taken to be equal to fare (connecting flights)
+      // TODO : take yield instead
       stdair::YieldValue_T lTotalYield = lFO.getFare();
       // Bid price initialisation
       stdair::BidPrice_T lTotalBidPrice = 0;
@@ -254,7 +255,6 @@ namespace AIRINV {
 	}
 	else {
 	  lTotalBidPrice = std::numeric_limits<double>::max();
-          lMaxBidPrice = 0.5 * std::numeric_limits<double>::max();
 	}
 
 	// Total yield calculation
@@ -264,7 +264,7 @@ namespace AIRINV {
 
       // Protective IBP (maximin): guarantees the minimal yield for each airline
 
-      lTotalBidPrice = lMaxBidPrice * lClassPath.size();
+      lTotalBidPrice = std::max(lMaxBidPrice * lClassPath.size(), lTotalBidPrice);
 
       if (lClassPath.size() > 1) {
       	if (lFO.getAvailability() > 0) {
