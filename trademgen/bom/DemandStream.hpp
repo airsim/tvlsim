@@ -104,21 +104,6 @@ namespace TRADEMGEN {
     const stdair::Count_T& getNumberOfRequestsGeneratedSoFar() const {
       return _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
     }
-    
-    /** Get the seed of the random generator for the number of requests. */
-    const stdair:: RandomSeed_T& getNumberOfRequestsRandomGeneratorSeed() const{
-      return _numberOfRequestsRandomGenerator._seed;
-    }
-
-    /** Get the seed of the random generator for the request datetime. */
-    const stdair:: RandomSeed_T& getRequestDateTimeRandomGeneratorSeed() const {
-      return _requestDateTimeRandomGenerator._seed;
-    }
-
-    /** Get the seed of the random generator for the demand characteristics. */
-    const stdair:: RandomSeed_T& getDemandCharacteristicsRandomGeneratorSeed() const {
-      return _demandCharacteristicsRandomGenerator._seed;
-    }
 
     /**
      * Get the default POS probablity mass, used when "row" (rest of
@@ -165,19 +150,14 @@ namespace TRADEMGEN {
       _totalNumberOfRequestsToBeGenerated = iNbOfRequests;
     }
 
-    /** Set the seed of the random generator for the number of requests. */
-    void setNumberOfRequestsRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
-      _numberOfRequestsRandomGenerator._seed = iSeed;
-    }
-
     /** Set the seed of the random generator for the request datetime. */
     void setRequestDateTimeRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
-      _requestDateTimeRandomGenerator._seed = iSeed;
+      _requestDateTimeRandomGenerator.init (iSeed);
     }
 
     /** Set the seed of the random generator for the demand characteristics. */
     void setDemandCharacteristicsRandomGeneratorSeed (const stdair::RandomSeed_T& iSeed) {
-      _demandCharacteristicsRandomGenerator._seed = iSeed;
+      _demandCharacteristicsRandomGenerator.init (iSeed);
     }
 
     /**
@@ -201,7 +181,7 @@ namespace TRADEMGEN {
                  const stdair::WTP_T&,
                  const ValueOfTimeContinuousDistribution_T&,
                  const DemandDistribution&,
-                 const stdair::RandomSeed_T& iNumberOfRequestsSeed,
+                 stdair::BaseGenerator_T& ioSharedGenerator,
                  const stdair::RandomSeed_T& iRequestDateTimeSeed,
                  const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
                  const POSProbabilityMass_T&);
@@ -265,7 +245,7 @@ namespace TRADEMGEN {
                                                      const bool);
 
     /** Reset all the contexts of the demand stream. */
-    void reset();
+    void reset (stdair::BaseGenerator_T& ioSharedGenerator);
        
 
   public:
@@ -323,7 +303,7 @@ namespace TRADEMGEN {
     /** Copy constructor. */
     DemandStream (const DemandStream&);
     /** Initialisation. */
-    void init();
+    void init (stdair::BaseGenerator_T& ioSharedGenerator);
 
     
   protected:
@@ -362,11 +342,6 @@ namespace TRADEMGEN {
      * Random generation context.
      */
     RandomGenerationContext _randomGenerationContext;
-
-    /**
-     * Random generator for number of requests.
-     */
-    stdair::RandomGeneration _numberOfRequestsRandomGenerator;
     
     /**
      * Random generator for request date-time.

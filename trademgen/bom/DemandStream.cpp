@@ -87,7 +87,7 @@ namespace TRADEMGEN {
           const stdair::WTP_T& iMinWTP,
           const ValueOfTimeContinuousDistribution_T& iValueOfTimeContinuousDistribution,
           const DemandDistribution& iDemandDistribution,
-          const stdair::RandomSeed_T& iNumberOfRequestsSeed,
+          stdair::BaseGenerator_T& ioSharedGenerator,
           const stdair::RandomSeed_T& iRequestDateTimeSeed,
           const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
           const POSProbabilityMass_T& iDefaultPOSProbablityMass) {
@@ -100,13 +100,12 @@ namespace TRADEMGEN {
 
     setDemandDistribution (iDemandDistribution);
     setTotalNumberOfRequestsToBeGenerated (0);
-    setNumberOfRequestsRandomGeneratorSeed (iNumberOfRequestsSeed);
     setRequestDateTimeRandomGeneratorSeed (iRequestDateTimeSeed);
     setDemandCharacteristicsRandomGeneratorSeed (iDemandCharacteristicsSeed);
     setPOSProbabilityMass (iDefaultPOSProbablityMass);
 
     //
-    init();
+    init (ioSharedGenerator);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -128,8 +127,6 @@ namespace TRADEMGEN {
          << std::endl;
 
     //
-    oStr << "Random generator for number of requests: "
-         << _numberOfRequestsRandomGenerator << std::endl;
     oStr << "Random generator for date-time: "
          << _requestDateTimeRandomGenerator << std::endl;
     oStr << "Random generator for demand characteristics: "
@@ -142,15 +139,17 @@ namespace TRADEMGEN {
   }    
 
   // ////////////////////////////////////////////////////////////////////
-  void DemandStream::init() {
+  void DemandStream::init (stdair::BaseGenerator_T& ioSharedGenerator) {
     
     // Generate the number of requests
     const stdair::RealNumber_T lMu = _demandDistribution._meanNumberOfRequests;
     const stdair::RealNumber_T lSigma =
       _demandDistribution._stdDevNumberOfRequests;
+
+    stdair::NormalDistribution_T lDistrib (lMu, lSigma);
+    stdair::NormalGenerator_T lNormalGen (ioSharedGenerator, lDistrib);
     
-    const stdair::RealNumber_T lRealNumberOfRequestsToBeGenerated =
-      _numberOfRequestsRandomGenerator.generateNormal (lMu, lSigma);
+    const stdair::RealNumber_T lRealNumberOfRequestsToBeGenerated =lNormalGen();
 
     const stdair::NbOfRequests_T lIntegerNumberOfRequestsToBeGenerated = 
       std::floor (lRealNumberOfRequestsToBeGenerated + 0.5);
@@ -540,9 +539,9 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DemandStream::reset() {
+  void DemandStream::reset (stdair::BaseGenerator_T& ioSharedGenerator) {
     _randomGenerationContext.reset();
-    init();
+    init (ioSharedGenerator);
   }
 
   // ////////////////////////////////////////////////////////////////////

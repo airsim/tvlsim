@@ -46,8 +46,6 @@ namespace TRADEMGEN {
     const DemandDistribution lDemandDistribution (lDemandMean, lDemandStdDev);
     
     // Seed
-    const stdair::RandomSeed_T& lNumberOfRequestsSeed =
-      generateSeed (ioSharedGenerator);
     const stdair::RandomSeed_T& lRequestDateTimeSeed =
       generateSeed (ioSharedGenerator);
     const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
@@ -150,7 +148,8 @@ namespace TRADEMGEN {
                           lPOSProbDist, lChannelProbDist, lTripProbDist,
                           lStayProbDist, lFFProbDist, lPrefDepTimeProbDist,
                           lWTP, lTimeValueProbDist, lDemandDistribution,
-                          lNumberOfRequestsSeed, lRequestDateTimeSeed,
+                          ioSharedGenerator.getBaseGenerator(),
+                          lRequestDateTimeSeed,
                           lDemandCharacteristicsSeed, iPOSProbMass);
 
     // Calculate the expected total number of events for the current
@@ -179,7 +178,7 @@ namespace TRADEMGEN {
    const stdair::WTP_T& iMinWTP,
    const ValueOfTimeContinuousDistribution_T& iValueOfTimeContinuousDistribution,
    const DemandDistribution& iDemandDistribution,
-   const stdair::RandomSeed_T& iNumberOfRequestsSeed,
+   stdair::BaseGenerator_T&  ioSharedGenerator,
    const stdair::RandomSeed_T& iRequestDateTimeSeed,
    const stdair::RandomSeed_T& iDemandCharacteristicsSeed,
    const POSProbabilityMass_T& iDefaultPOSProbablityMass) {
@@ -192,7 +191,7 @@ namespace TRADEMGEN {
                           iStayDurationProbMass, iFrequentFlyerProbMass,
                           iPreferredDepartureTimeContinuousDistribution,
                           iMinWTP, iValueOfTimeContinuousDistribution,
-                          iDemandDistribution, iNumberOfRequestsSeed,
+                          iDemandDistribution, ioSharedGenerator,
                           iRequestDateTimeSeed, iDemandCharacteristicsSeed,
                           iDefaultPOSProbablityMass);
 
@@ -225,8 +224,6 @@ namespace TRADEMGEN {
                                                   iDemand._demandStdDev);
     
     // Seed
-    const stdair::RandomSeed_T& lNumberOfRequestsSeed =
-      generateSeed (ioSharedGenerator);
     const stdair::RandomSeed_T& lRequestDateTimeSeed =
       generateSeed (ioSharedGenerator);
     const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
@@ -243,7 +240,8 @@ namespace TRADEMGEN {
                           iDemand._minWTP,
                           iDemand._timeValueProbDist,
                           lDemandDistribution,
-                          lNumberOfRequestsSeed, lRequestDateTimeSeed,
+                          ioSharedGenerator.getBaseGenerator(),
+                          lRequestDateTimeSeed,
                           lDemandCharacteristicsSeed,
                           iPOSProbMass);
 
@@ -376,7 +374,8 @@ namespace TRADEMGEN {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void DemandManager::reset (stdair::EventQueue& ioEventQueue) {
+  void DemandManager::reset (stdair::EventQueue& ioEventQueue,
+                             stdair::BaseGenerator_T& ioShareGenerator) {
 
     // TODO: check whether it is really necessary to destroy the
     // objects manually. Indeed, FacSupervisor::cleanAll() should
@@ -390,7 +389,7 @@ namespace TRADEMGEN {
       DemandStream* lCurrentDS_ptr = *itDS;
       assert (lCurrentDS_ptr != NULL);
       
-      lCurrentDS_ptr->reset();
+      lCurrentDS_ptr->reset (ioShareGenerator);
     }
     
     /**
