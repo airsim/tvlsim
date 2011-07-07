@@ -43,9 +43,12 @@ namespace SIMFQT {
       stdair::FacBomManager::addToListAndMap (ioBomRoot, *lAirportPair_ptr);
       stdair::FacBomManager::linkWithParent (ioBomRoot, *lAirportPair_ptr);
     }
+    // Sanity check.
     assert (lAirportPair_ptr != NULL);
 
     stdair::AirportPair& lAirportPair = *lAirportPair_ptr;
+    // Generate the date-period object corresponding to the given
+    // fareRule.  
     createDateRange (lAirportPair, iFareRuleStruct);
 
   }
@@ -77,9 +80,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iAirportPair,
                                              *lFareDatePeriod_ptr);
     }
+    // Sanity check.
     assert (lFareDatePeriod_ptr != NULL);
 
     stdair::DatePeriod& lDateRange = *lFareDatePeriod_ptr;
+    // Generate the point_of_sale-channel object corresponding to
+    // the given fareRule.
     createPOSChannel (lDateRange, iFareRuleStruct);
 
   }
@@ -109,9 +115,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iDatePeriod,
                                              *lFarePosChannel_ptr);
     }
+    // Sanity check.
     assert (lFarePosChannel_ptr != NULL);
 
     stdair::PosChannel& lPosChannel = *lFarePosChannel_ptr;
+    // Generate the time-period object corresponding to the given
+    // fareRule.
     createTimeRange (lPosChannel, iFareRuleStruct);
 
   }
@@ -144,9 +153,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iPosChannel,
                                              *lFareTimePeriod_ptr);
     }
+    // Sanity check.
     assert (lFareTimePeriod_ptr != NULL);
 
     stdair::TimePeriod& lTimeRange = *lFareTimePeriod_ptr;
+    // Generate the fare-features object corresponding to the given
+    // fareRule.
     createFareFeatures (lTimeRange, iFareRuleStruct);
 
   }
@@ -188,9 +200,12 @@ namespace SIMFQT {
       stdair::FacBomManager::linkWithParent (iTimePeriod,
                                              *lFareFeatures_ptr);  
     }
+    // Sanity check.
     assert(lFareFeatures_ptr != NULL);
     
     stdair::FareFeatures& lFareFeatures = *lFareFeatures_ptr;
+    // Generate the airline-class list object corresponding to the
+    // given fareRule
     createAirlineClassList (lFareFeatures, iFareRuleStruct);
 
   }

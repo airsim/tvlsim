@@ -313,7 +313,7 @@ namespace SIMFQT {
                         const stdair::Filename_T& iFilename);
 
     /** Parse the input file and generate the fare rules. */
-    bool generateFareRules ();
+    void generateFareRules ();
       
   private:
     /** Initialise. */
