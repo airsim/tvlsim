@@ -11,6 +11,7 @@
 #include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
+#include <stdair/bom/DoWStruct.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 
@@ -47,8 +48,8 @@ namespace TRADEMGEN {
 
   public:
     // ////////////// Attributes ///////////////////
-    stdair::Date_T _prefDepDate;
-    stdair::Date_T _prefArrDate;
+    stdair::DatePeriod_T _dateRange;
+    stdair::DoWStruct _dow;
     stdair::AirportCode_T _origin;
     stdair::AirportCode_T _destination;
     stdair::CabinCode_T _prefCabin;
@@ -67,6 +68,8 @@ namespace TRADEMGEN {
   public:
     // ////////////// Staging ///////////////////
     /** Staging Date. */
+    stdair::Date_T _prefDepDateStart;
+    stdair::Date_T _prefDepDateEnd;
     unsigned int _itYear;
     unsigned int _itMonth;
     unsigned int _itDay;

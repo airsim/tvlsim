@@ -210,52 +210,70 @@ namespace TRADEMGEN {
                                stdair::RandomGeneration& ioSharedGenerator,
                                const POSProbabilityMass_T& iPOSProbMass,
                                const DemandStruct& iDemand) {
+    stdair::BaseGenerator_T& lSharedGenerator =
+      ioSharedGenerator.getBaseGenerator();
     
-    //
-    const DemandStreamKey lDemandStreamKey (iDemand._origin,
-                                            iDemand._destination,
-                                            iDemand._prefDepDate,
-                                            iDemand._prefCabin);
-    // DEBUG
-    // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
-    
-    //
-    const DemandDistribution lDemandDistribution (iDemand._demandMean,
-                                                  iDemand._demandStdDev);
-    
-    // Seed
-    const stdair::RandomSeed_T& lRequestDateTimeSeed =
-      generateSeed (ioSharedGenerator);
-    const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
-      generateSeed (ioSharedGenerator);
-  
-    // Delegate the call to the dedicated command
-    DemandStream& lDemandStream = 
-      createDemandStream (ioEventQueue, lDemandStreamKey,
-                          iDemand._dtdProbDist, iDemand._posProbDist,
-                          iDemand._channelProbDist,
-                          iDemand._tripProbDist,
-                          iDemand._stayProbDist, iDemand._ffProbDist,
-                          iDemand._prefDepTimeProbDist,
-                          iDemand._minWTP,
-                          iDemand._timeValueProbDist,
-                          lDemandDistribution,
-                          ioSharedGenerator.getBaseGenerator(),
-                          lRequestDateTimeSeed,
-                          lDemandCharacteristicsSeed,
-                          iPOSProbMass);
+    // Parse the date period and DoW and generate demand characteristics.
+    const stdair::DatePeriod_T lDateRange = iDemand._dateRange;
+    for (boost::gregorian::day_iterator itDate = lDateRange.begin();
+         itDate != lDateRange.end(); ++itDate) {
+      const stdair::Date_T& currentDate = *itDate;
 
-    // Calculate the expected total number of events for the current
-    // demand stream
-    const stdair::NbOfRequests_T& lExpectedTotalNbOfEvents =
-      lDemandStream.getMeanNumberOfRequests();
+      // Retrieve, for the current day, the Day-Of-the-Week (thanks to Boost)
+      const unsigned short currentDoW = currentDate.day_of_week().as_number();
+        
+      // The demand structure stores which Days (-Of-the-Week) are
+      // active within the week. For each day (Mon., Tue., etc.), a boolean
+      // states whether the Flight is active for that day.
+      const stdair::DoWStruct& lDoWList = iDemand._dow;
+      const bool isDoWActive = lDoWList.getStandardDayOfWeek (currentDoW);
 
-    /**
-     * Initialise the progress statuses, one specific to the
-     * booking request type.
-     */
-    ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
-                            lExpectedTotalNbOfEvents);
+      if (isDoWActive == true) {
+        const DemandStreamKey lDemandStreamKey (iDemand._origin,
+                                                iDemand._destination,
+                                                currentDate,
+                                                iDemand._prefCabin);
+        // DEBUG
+        // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
+        
+        //
+        const DemandDistribution lDemandDistribution (iDemand._demandMean,
+                                                      iDemand._demandStdDev);
+        
+        // Seed
+        const stdair::RandomSeed_T& lRequestDateTimeSeed =
+          generateSeed (ioSharedGenerator);
+        const stdair::RandomSeed_T& lDemandCharacteristicsSeed =
+          generateSeed (ioSharedGenerator);
+        
+        // Delegate the call to the dedicated command
+        DemandStream& lDemandStream = 
+          createDemandStream (ioEventQueue, lDemandStreamKey,
+                              iDemand._dtdProbDist, iDemand._posProbDist,
+                              iDemand._channelProbDist,
+                              iDemand._tripProbDist,
+                              iDemand._stayProbDist, iDemand._ffProbDist,
+                              iDemand._prefDepTimeProbDist,
+                              iDemand._minWTP,
+                              iDemand._timeValueProbDist,
+                              lDemandDistribution, lSharedGenerator,
+                              lRequestDateTimeSeed,
+                              lDemandCharacteristicsSeed,
+                              iPOSProbMass);
+        
+        // Calculate the expected total number of events for the current
+        // demand stream
+        const stdair::NbOfRequests_T& lExpectedTotalNbOfEvents =
+          lDemandStream.getMeanNumberOfRequests();
+        
+        /**
+         * Initialise the progress statuses, one specific to the
+         * booking request type.
+         */
+        ioEventQueue.addStatus (stdair::EventType::BKG_REQ,
+                                lExpectedTotalNbOfEvents);
+      }
+    }
   }
 
   // ////////////////////////////////////////////////////////////////////

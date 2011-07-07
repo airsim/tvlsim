@@ -6,6 +6,7 @@
 #include <sstream>
 // StdAir
 #include <stdair/basic/BasConst_Inventory.hpp>
+#include <stdair/basic/BasConst_Period_BOM.hpp>
 #include <stdair/service/Logger.hpp>
 // TRADEMGEN
 #include <trademgen/TRADEMGEN_Types.hpp>
@@ -15,21 +16,10 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   DemandStruct::DemandStruct()
-    : _prefDepDate (stdair::DEFAULT_DEPARTURE_DATE),
-      _prefArrDate (stdair::DEFAULT_DEPARTURE_DATE),
+    : _dateRange (stdair::BOOST_DEFAULT_DATE_PERIOD),
+      _dow (stdair::DEFAULT_DOW_STRING),
       _prefCabin (stdair::DEFAULT_CABIN_CODE),
       _itHours (0), _itMinutes (0), _itSeconds (0), _itFFCode ("") {
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  DemandStruct::DemandStruct (const DemandStruct& iDemandStruct)
-    : _prefDepDate (iDemandStruct._prefDepDate),
-      _prefArrDate (iDemandStruct._prefArrDate),
-      _prefCabin (iDemandStruct._prefCabin),
-      _itHours (iDemandStruct._itHours),
-      _itMinutes (iDemandStruct._itMinutes),
-      _itSeconds (iDemandStruct._itSeconds),
-      _itFFCode (iDemandStruct._itFFCode) {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -51,7 +41,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   const std::string DemandStruct::describe() const {
     std::ostringstream ostr;
-    ostr << _prefDepDate << " -> " << _prefArrDate
+    ostr << _dateRange << " - " << _dow
          << " " << _origin << "-" << _destination
          << " " << _prefCabin
          << ", N(" << _demandMean << ", " << _demandStdDev << "); ";
