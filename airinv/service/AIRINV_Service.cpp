@@ -30,6 +30,8 @@
 #include <airinv/service/AIRINV_ServiceContext.hpp>
 #include <airinv/AIRINV_Service.hpp>
 
+#include <airinv/command/OnDGenerator.hpp> // to test O&D object
+
 namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
@@ -304,6 +306,10 @@ namespace AIRINV {
 
     // Delegate the BOM building to the dedicated service
     lSTDAIR_Service.buildSampleBom (isForRMOL, iCapacity);
+
+    // Build O&D object (for testing only, to be removes afterwards)
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    OnDGenerator::createOnD (lBomRoot);
   }
 
   // ////////////////////////////////////////////////////////////////////

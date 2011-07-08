@@ -37,18 +37,23 @@ namespace AIRINV {
   };
 
   
-  struct DemandStruct{
+  struct DemandStruct{  
+  public:
+    /** Constructors and destructors */
+    DemandStruct(const stdair::Yield_T& iY, const stdair::NbOfRequests_T& iM,
+                 const stdair::StdDevValue_T& iSD)
+      : _yield(iY), _mean(iM), _stdDev(iSD) {}
+    ~DemandStruct() {}
+  public:
+    /** Getters */
+    const stdair::Yield_T& getYield() {return _yield;}
+    const stdair::NbOfRequests_T& getDemandMean() {return _mean;}
+    const stdair::StdDevValue_T& getDemandStdDev() {return _stdDev;}
   public:
     /** Attributes */
     stdair::Yield_T _yield;
     stdair::NbOfRequests_T _mean;
     stdair::StdDevValue_T _stdDev;
-  public:
-    /** Constructors and destructors */
-    DemandStruct(const stdair::Yield_T& iY, const stdair::NbOfRequests_T& iM,
-                 const stdair::StdDevValue_T iSD)
-      : _yield(iY), _mean(iM), _stdDev(iSD) {}
-    ~DemandStruct() {}
   };
 
   struct OnDDateKey {
@@ -65,7 +70,13 @@ namespace AIRINV {
       _origin = stdair::BomKeyManager::extractSegmentDateKey (lFK).getBoardingPoint();
       _destination = stdair::BomKeyManager::extractSegmentDateKey (lLK).getOffPoint();      
     }
-    OnDDateKey();
+    ~OnDDateKey() {}
+  public:
+    /** Getters */
+    const stdair::AirportCode_T& getOrigin() { return _origin;}
+    const stdair::AirportCode_T& getDestination() { return _destination;}
+    const stdair::Date_T& getDate() { return _date;}
+    const std::vector<std::string>& getStrList() {return _strList;}
   public:
     /**
      * Attributes
@@ -87,6 +98,10 @@ namespace AIRINV {
     ~OnDDate () {}
   public:
     /** Getters */
+    const stdair::AirportCode_T& getOrigin() { return _key.getOrigin();}
+    const stdair::AirportCode_T& getDestination() { return _key.getDestination();}
+    const stdair::Date_T& getDate() { return _key.getDate();}
+    const std::vector<std::string>& getStrList() {return _key.getStrList();}
   public:
     /** Setters */
     void addSegmentDatePtr (stdair::SegmentDate* iSD_ptr) {_segmentDateList.push_back(iSD_ptr);}
@@ -101,11 +116,20 @@ namespace AIRINV {
       std::pair<std::string,DemandStruct> lStrDmdPair = *(_classPathDemandMap.begin());
       stdair::SegmentDate* lSegmentDate_ptr = _segmentDateList.front();
       stdair::SegmentDateKey lSegmentDateKey = lSegmentDate_ptr->getKey();
-      STDAIR_LOG_DEBUG ("Created O&D date " << _key._origin <<","<<_key._destination
-                        <<";" <<_key._date <<" Cabin:Class "<< lStrDmdPair.first
-                        << " Yield "<< lStrDmdPair.second._yield
-                        << " Demand mean "<< lStrDmdPair.second._mean
-                        << " Std deviation "<< lStrDmdPair.second._stdDev);
+      std::ostringstream oSegmentsStr;
+      std::vector<std::string> lStrList = getStrList();
+      for (std::vector<std::string>::const_iterator itS = lStrList.begin();
+           itS != lStrList.end(); ++itS) {
+        oSegmentsStr << *itS << " ";
+      }
+      STDAIR_LOG_DEBUG (std::endl << "====================================================="
+                        << std::endl << "Created O&D date " << getOrigin() <<"-"
+                        << getDestination() <<" " << getDate() << " Segments "
+                        << oSegmentsStr.str() << "Cabin:Class "<< lStrDmdPair.first
+                        << " Yield "<< lStrDmdPair.second.getYield()
+                        << " Demand mean "<< lStrDmdPair.second.getDemandMean()
+                        << " Std deviation "<< lStrDmdPair.second.getDemandStdDev()
+                        << std::endl << "=====================================================");
     }
   public:
     /**
