@@ -33,6 +33,7 @@ namespace AIRINV {
      * Generate the O&D objects.
      */
 
+    static void createSampleOnD (const stdair::BomRoot&);
     static void createOnD (const stdair::BomRoot&);
   };
 

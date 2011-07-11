@@ -12,9 +12,9 @@
 #include <stdair/bom/BomRoot.hpp>
 
 #include <stdair/bom/BomKeyManager.hpp>
-#include <stdair/bom/InventoryKey.hpp>
-#include <stdair/bom/FlightDateKey.hpp>
-#include <stdair/bom/SegmentDateKey.hpp>
+#include <stdair/bom/Inventory.hpp>
+#include <stdair/bom/FlightDate.hpp>
+#include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/BomDisplay.hpp>
 
 // AirInv
@@ -28,7 +28,7 @@ namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
   void OnDGenerator::
-  createOnD (const stdair::BomRoot& iBomRoot) {
+  createSampleOnD (const stdair::BomRoot& iBomRoot) {
 
     // std::cout << "OnD creation" << std::endl;
 
@@ -85,6 +85,12 @@ namespace AIRINV {
     lOnDDate.addClassPathDemand (lStr, lDemandStruct);
 
     lOnDDate.display();
+  }
+
+
+  // ////////////////////////////////////////////////////////////////////
+  void OnDGenerator::
+  createOnD (const stdair::BomRoot& iBomRoot) {
   }
   
 }

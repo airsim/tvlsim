@@ -309,7 +309,7 @@ namespace AIRINV {
 
     // Build O&D object (for testing only, to be removes afterwards)
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
-    OnDGenerator::createOnD (lBomRoot);
+    OnDGenerator::createSampleOnD (lBomRoot);
   }
 
   // ////////////////////////////////////////////////////////////////////
