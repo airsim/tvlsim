@@ -56,7 +56,7 @@ const stdair::Filename_T K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 const stdair::Filename_T K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME ("request.csv");
 
 /** Default number of random draws to be generated (best if over 100). */
-const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 100;
+const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
 
 /** Default for the input type. It can be either built-in or provided by an
     input file. That latter must then be given with the -i option. */
@@ -288,9 +288,10 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
         lPoppedRequest.getDemandGeneratorKey();
       
       // Assess whether more events should be generated for that demand stream
-      const bool stillHavingRequestsToBeGenerated = 
-        ioTrademgenService.stillHavingRequestsToBeGenerated(lDemandStreamKey,
-                                                            lProgressStatusSet);
+      const bool stillHavingRequestsToBeGenerated = ioTrademgenService.
+        stillHavingRequestsToBeGenerated (lDemandStreamKey,
+                                          lProgressStatusSet,
+                                          lGenerateDemandWithStatisticOrder);
 
       // DEBUG
       STDAIR_LOG_DEBUG (lProgressStatusSet.describe());

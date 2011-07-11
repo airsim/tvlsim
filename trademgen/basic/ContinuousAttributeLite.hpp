@@ -109,6 +109,23 @@ namespace TRADEMGEN {
 
       return oValue;
     }
+
+    /**
+     * Get the upper bound.
+     */
+    const T getUpperBound (const T iKey) const {
+      // Find the first key value greater or equal to iKey.
+      unsigned int idx = 0;
+      for (; idx < _size; ++idx) {
+        if (_valueArray.at(idx) > iKey) {
+          break;
+        }
+      }
+      assert (idx != 0);
+      assert (idx != _size);
+
+      return _valueArray.at (idx);
+    }
     
   public:
     // ////////////// Display Support Methods ////////////////

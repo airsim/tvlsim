@@ -60,8 +60,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   DemandStream::DemandStream (const Key_T& iKey) :
-    _key (iKey),
-    _firstDateTimeRequest (true) {
+    _key (iKey) {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -155,24 +154,33 @@ namespace TRADEMGEN {
       std::floor (lRealNumberOfRequestsToBeGenerated + 0.5);
     
     _totalNumberOfRequestsToBeGenerated = lIntegerNumberOfRequestsToBeGenerated;
+
+    _stillHavingRequestsToBeGenerated = true;
+    _firstDateTimeRequest = true;
   }  
 
   // ////////////////////////////////////////////////////////////////////
-  const bool DemandStream::stillHavingRequestsToBeGenerated() const {
-    bool hasStillHavingRequestsToBeGenerated = true;
-    
-    // Check whether enough requests have already been generated
-    const stdair::Count_T lNbOfRequestsGeneratedSoFar =
-      _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
+  const bool DemandStream::
+  stillHavingRequestsToBeGenerated (const bool iGenerateRequestWithStatisticOrder) const {
 
-    const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
-      _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
-
-    if (lRemainingNumberOfRequestsToBeGenerated <= 0) {
-      hasStillHavingRequestsToBeGenerated = false;
+    if (iGenerateRequestWithStatisticOrder == true) {
+      bool hasStillHavingRequestsToBeGenerated = true;
+      
+      // Check whether enough requests have already been generated
+      const stdair::Count_T lNbOfRequestsGeneratedSoFar =
+        _randomGenerationContext.getNumberOfRequestsGeneratedSoFar();
+      
+      const stdair::Count_T lRemainingNumberOfRequestsToBeGenerated =
+        _totalNumberOfRequestsToBeGenerated - lNbOfRequestsGeneratedSoFar;
+      
+      if (lRemainingNumberOfRequestsToBeGenerated <= 0) {
+        hasStillHavingRequestsToBeGenerated = false;
+      }
+      
+      return hasStillHavingRequestsToBeGenerated;
+    } else {
+      return _stillHavingRequestsToBeGenerated;
     }
-    
-    return hasStillHavingRequestsToBeGenerated;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -180,7 +188,7 @@ namespace TRADEMGEN {
 
     const ContinuousFloatDuration_T& lArrivalPattern =
       _demandCharacteristics._arrivalPattern;
-
+      
     const stdair::Time_T lHardcodedReferenceDepartureTime =
       boost::posix_time::hours (8);
     
@@ -189,91 +197,62 @@ namespace TRADEMGEN {
                                 lHardcodedReferenceDepartureTime);
 
     if (_firstDateTimeRequest) {
-
       const stdair::Probability_T lProbabilityFirstRequest = 0;
       
-      const stdair::FloatDuration_T lNumberOfDays =
+      _dateTimeLastRequest =
         lArrivalPattern.getValue (lProbabilityFirstRequest);
 
+      _firstDateTimeRequest = false;
+    }
+    
+    assert (_firstDateTimeRequest == false);
+    
+    if (_dateTimeLastRequest == -1.0) {
+      _stillHavingRequestsToBeGenerated = false;
+      
       const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
-        convertFloatIntoDuration (lNumberOfDays);
+        convertFloatIntoDuration (1.0);
 
-      // The request date-time is derived from departure date and arrival pattern.
+      // The request date-time is derived from departure date and arrival pattern
       const stdair::DateTime_T oDateTimeThisRequest =
         lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
 
-      _dateTimeLastRequest = oDateTimeThisRequest;
-      _firstDateTimeRequest = false;
-
-      // Update the counter of requests generated so far.
-      incrementGeneratedRequestsCounter();
-
       return oDateTimeThisRequest;
-      
     }
-    std::cout << "\n Generate new request: \n";
-
-    std::cout << "Last Request: " <<  _dateTimeLastRequest << "\n";
     
-    assert(_firstDateTimeRequest == false);
-
-    const stdair::Duration_T lDaysBeforeDepartureLastRequest =
-      lDepartureDateTime - _dateTimeLastRequest;
-
-    double lDailyRate =
-      lArrivalPattern.getDerivativeValue (-lDaysBeforeDepartureLastRequest.hours()/24);
-
+    // Compute the daily rate demand.
+    stdair::FloatDuration_T lUpperBound =
+      lArrivalPattern.getUpperBound (_dateTimeLastRequest);
+    double lDailyRate = lArrivalPattern.getDerivativeValue(_dateTimeLastRequest);
     const double lDemandMean = _demandDistribution._meanNumberOfRequests;
-
     lDailyRate *= lDemandMean;
 
-    std::cout << "Daily Rate: " <<  lDailyRate << "\n";
 
-    const stdair::Duration_T lExponentialVariable = drawInterArrivalTime (lDailyRate);
+    const stdair::FloatDuration_T lExponentialVariable =
+      _requestDateTimeRandomGenerator.generateExponential (lDailyRate);
 
-    std::cout << "Exponential Variable: " << lExponentialVariable  << "\n";
-    
-    const stdair::DateTime_T oDateTimeThisRequest =
+    const stdair::FloatDuration_T lDateTimeThisRequest =
       _dateTimeLastRequest + lExponentialVariable;
 
-    std::cout << "Date Time Request: " << oDateTimeThisRequest << "\n";
-
-    _dateTimeLastRequest = oDateTimeThisRequest;
-
-    // Update the counter of requests generated so far.
-    incrementGeneratedRequestsCounter();
-
-    return oDateTimeThisRequest;
-
-  }
-
-  // //////////////////////////////////////////////////////////////////////
-  const stdair::Duration_T DemandStream::
-    drawInterArrivalTime (double iDailyRate) {
+    // Verify if this request is in the given daily rate interval.
+    if (lDateTimeThisRequest < lUpperBound) {
     
-    // Generate a random variate, expressed in (fractional) day
-    const double lExponentialVariateInDays =
-      _requestDateTimeRandomGenerator.generateExponential (iDailyRate);
+      const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
+        convertFloatIntoDuration (lDateTimeThisRequest);
 
-    std::cout << "!!!!!!!! Exponential law: " << lExponentialVariateInDays << "\n";
-    
-    // Convert the variate in a number of seconds
-    const double lExponentialVariateInSeconds =
-      (lExponentialVariateInDays * stdair::SECONDS_IN_ONE_DAY);
-    assert (lExponentialVariateInSeconds > 0);
-
-    // At least the returned inter-arrival time is equal to 1 sec
-    int lExponentialVariateInSecondsInt = 1;
-    if (lExponentialVariateInSeconds > 1) {
-      lExponentialVariateInSecondsInt =
-        static_cast<int>(lExponentialVariateInSeconds);
-    }
-
-    // Convert the variate in a (Boost typedef) time duration
-    stdair::Duration_T lExponentialVariate =
-      boost::posix_time::seconds (lExponentialVariateInSecondsInt);
+      // The request date-time is derived from departure date and arrival pattern
+      const stdair::DateTime_T oDateTimeThisRequest =
+        lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
       
-    return lExponentialVariate;
+      // Update the counter of requests generated so far.
+      incrementGeneratedRequestsCounter();
+      _dateTimeLastRequest = lDateTimeThisRequest;
+      
+      return oDateTimeThisRequest;
+    } else {
+      _dateTimeLastRequest = lUpperBound;
+      return generateTimeOfRequestExponentialLaw ();
+    }
   }
 
   // ////////////////////////////////////////////////////////////////////

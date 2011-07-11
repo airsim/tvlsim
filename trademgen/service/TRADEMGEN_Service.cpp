@@ -458,7 +458,8 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   const bool TRADEMGEN_Service::
   stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T& iKey,
-                                    stdair::ProgressStatusSet& ioPSS) const {
+                                    stdair::ProgressStatusSet& ioPSS,
+                                    const bool iGenerateRequestWithStatisticOrder) const {
     
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -474,7 +475,8 @@ namespace TRADEMGEN {
     
     // Delegate the call to the dedicated command
     const bool oStillHavingRequestsToBeGenerated =
-      DemandManager::stillHavingRequestsToBeGenerated (lQueue, iKey, ioPSS);
+      DemandManager::stillHavingRequestsToBeGenerated (lQueue, iKey, ioPSS,
+                                                       iGenerateRequestWithStatisticOrder);
 
     //
     return oStillHavingRequestsToBeGenerated;

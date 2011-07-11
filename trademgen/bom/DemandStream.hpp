@@ -203,12 +203,10 @@ namespace TRADEMGEN {
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated() const;
+    const bool stillHavingRequestsToBeGenerated (const bool) const;
 
     /** Generate the time of the next request with exponential law. */
     const stdair::DateTime_T generateTimeOfRequestExponentialLaw();
-
-    const stdair::Duration_T drawInterArrivalTime (double);
 
     /** Generate the time of the next request with statistic order */
     const stdair::DateTime_T generateTimeOfRequestStatisticOrder();
@@ -360,10 +358,11 @@ namespace TRADEMGEN {
     POSProbabilityMass_T _posProMass;
 
   private:
+    bool _stillHavingRequestsToBeGenerated;
 
     bool _firstDateTimeRequest;
 
-    stdair::DateTime_T _dateTimeLastRequest;
+    stdair::FloatDuration_T _dateTimeLastRequest;
   };
 
 }

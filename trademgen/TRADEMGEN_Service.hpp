@@ -303,7 +303,8 @@ namespace TRADEMGEN {
      */
     const bool
     stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T&,
-                                      stdair::ProgressStatusSet&) const;
+                                      stdair::ProgressStatusSet&,
+                                      const bool) const;
 
     /**
      * Browse the list of demand streams and generate the first

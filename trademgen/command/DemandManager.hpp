@@ -194,7 +194,7 @@ namespace TRADEMGEN {
     static const bool
     stillHavingRequestsToBeGenerated (const stdair::EventQueue&,
                                       const stdair::DemandStreamKeyStr_T&,
-                                      stdair::ProgressStatusSet&);
+                                      stdair::ProgressStatusSet&, const bool);
 
     /**
      * Generate the first event/booking request for every demand
