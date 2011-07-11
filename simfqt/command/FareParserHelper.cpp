@@ -594,12 +594,13 @@ namespace SIMFQT {
       STDAIR_LOG_ERROR ("The fare schedule file " << _filename
                         << " does not exist or can not be  read.");
       
-      throw FareInputFileNotFoundException ("The fare file " + _filename + " does not exist or can not be read");
+      throw FareInputFileNotFoundException ("The fare file " + _filename
+                                            + " does not exist or can not be read");
     }
   }
     
   // //////////////////////////////////////////////////////////////////////
-  bool FareRuleFileParser::generateFareRules () {
+  void FareRuleFileParser::generateFareRules () {
       
     STDAIR_LOG_DEBUG ("Parsing fare input file: " << _filename);
 
@@ -613,7 +614,8 @@ namespace SIMFQT {
       STDAIR_LOG_ERROR ("The fare file " << _filename << " can not be open."
                           << std::endl);
 
-      throw FareInputFileNotFoundException ("The file " + _filename + " does not exist or can not be read");
+      throw FareInputFileNotFoundException ("The file " + _filename
+                                            + " does not exist or can not be read");
     }
     
     // Create an input iterator
@@ -637,17 +639,23 @@ namespace SIMFQT {
       // TODO: decide whether to throw an exceqption
       STDAIR_LOG_ERROR ("Parsing of fare input file: " << _filename
                         << " failed");
+      throw FareFileParsingFailedException ("Parsing of fare input file: "
+                                            + _filename + " failed");
     }
+    
     if  (start != end) {
       // TODO: decide whether to throw an exception
       STDAIR_LOG_ERROR ("Parsing of fare input file: " << _filename
                         << " failed");
+      throw FareFileParsingFailedException ("Parsing of fare input file: "
+                                            + _filename + " failed");
     }
+    
     if (hasParsingBeenSuccesful == true && start == end) {
       STDAIR_LOG_DEBUG ("Parsing of fare input file: " << _filename
       << " succeeded");
     }
-    return hasParsingBeenSuccesful;
+ 
   }
     
 }

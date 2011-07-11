@@ -33,11 +33,27 @@ namespace TRADEMGEN {
       /** Actor Context. */
       DemandStruct& _demand;
     };
-      
-    /** Store the preferred departure date. */
-    struct storePreferredDepartureDate : public ParserSemanticAction {
+  
+    /** Store the start of the date range. */
+    struct storePrefDepDateRangeStart : public ParserSemanticAction {
       /** Actor Constructor. */
-      storePreferredDepartureDate (DemandStruct&);
+      storePrefDepDateRangeStart (DemandStruct&);
+      /** Actor Function (functor). */
+      void operator() (iterator_t iStr, iterator_t iStrEnd) const;
+    };
+
+    /** Store the end of the date range. */
+    struct storePrefDepDateRangeEnd : public ParserSemanticAction {
+      /** Actor Constructor. */
+      storePrefDepDateRangeEnd (DemandStruct&);
+      /** Actor Function (functor). */
+      void operator() (iterator_t iStr, iterator_t iStrEnd) const;
+    };
+
+    /** Store the DOW (day of the Week). */
+    struct storeDow : public ParserSemanticAction {
+      /** Actor Constructor. */
+      storeDow (DemandStruct&);
       /** Actor Function (functor). */
       void operator() (iterator_t iStr, iterator_t iStrEnd) const;
     };
@@ -338,7 +354,7 @@ namespace TRADEMGEN {
         
         // Instantiation of rules
         boost::spirit::classic::rule<ScannerT> demand_list, demand, demand_end,
-          pref_dep_date, date, origin, destination, pref_cabin,
+          pref_dep_date_range, date, dow, origin, destination, pref_cabin,
           demand_params,
           pos_dist, pos_pair, pos_code, pos_share,
           channel_dist, channel_pair, channel_code, channel_share,

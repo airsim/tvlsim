@@ -23,22 +23,57 @@ namespace TRADEMGEN {
 
     ParserSemanticAction::ParserSemanticAction (DemandStruct& ioDemand)
       : _demand (ioDemand) {
-    }      
+    } 
 
     // //////////////////////////////////////////////////////////////////
-    storePreferredDepartureDate::
-    storePreferredDepartureDate (DemandStruct& ioDemand)
+    storePrefDepDateRangeStart::
+    storePrefDepDateRangeStart (DemandStruct& ioDemand)
       : ParserSemanticAction (ioDemand) {
     }
     
     // //////////////////////////////////////////////////////////////////
-    void storePreferredDepartureDate::operator() (iterator_t iStr,
-                                                  iterator_t iStrEnd) const {
-      _demand._prefDepDate = _demand.getDate();
-
-      // TODO: do not harcode the preferred arrival date
-      _demand._prefArrDate = _demand._prefDepDate;
+    void storePrefDepDateRangeStart::operator() (iterator_t iStr,
+                                          iterator_t iStrEnd) const {
+      _demand._prefDepDateStart = _demand.getDate();
+        
+      // Reset the number of seconds
+      _demand._itSeconds = 0;
     }
+      
+    // //////////////////////////////////////////////////////////////////
+    storePrefDepDateRangeEnd::
+    storePrefDepDateRangeEnd (DemandStruct& ioDemand)
+      : ParserSemanticAction (ioDemand) {
+    }
+    
+    // //////////////////////////////////////////////////////////////////
+    void storePrefDepDateRangeEnd::operator() (iterator_t iStr,
+                                        iterator_t iStrEnd) const {
+      // As a Boost date period (DatePeriod_T) defines the last day of
+      // the period to be end-date - one day, we have to add one day to that
+      // end date before.
+      const stdair::DateOffset_T oneDay (1);
+      _demand._prefDepDateEnd = _demand.getDate() + oneDay;
+
+      // Transform the date pair (i.e., the date range) into a date period
+      _demand._dateRange =
+        stdair::DatePeriod_T (_demand._prefDepDateStart,
+                              _demand._prefDepDateEnd);
+        
+      // Reset the number of seconds
+      _demand._itSeconds = 0;
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    storeDow::storeDow (DemandStruct& ioDemand)
+      : ParserSemanticAction (ioDemand) {
+    }
+
+    // //////////////////////////////////////////////////////////////////
+    void storeDow::operator() (iterator_t iStr, iterator_t iStrEnd) const {
+      stdair::DOW_String_T lDow (iStr, iStrEnd);
+      _demand._dow = lDow;
+    }     
       
     // //////////////////////////////////////////////////////////////////
     storeOrigin::storeOrigin (DemandStruct& ioDemand)
@@ -499,7 +534,7 @@ namespace TRADEMGEN {
         ;
 
       demand =
-        pref_dep_date
+        pref_dep_date_range
         >> ';' >> origin >> ';' >> destination
         >> ';' >> pref_cabin[storePrefCabin(self._demand)]
         >> ';' >> pos_dist
@@ -520,8 +555,9 @@ namespace TRADEMGEN {
         boost::spirit::classic::ch_p(';')
         ;
       
-      pref_dep_date =
-        date[storePreferredDepartureDate(self._demand)]
+      pref_dep_date_range = date[storePrefDepDateRangeStart(self._demand)]
+        >> ';' >> date[storePrefDepDateRangeEnd(self._demand)]
+        >> ';' >> dow[storeDow(self._demand)]
         ;
 
       date =
@@ -532,6 +568,9 @@ namespace TRADEMGEN {
          >> '-'
          >> (day_p)[boost::spirit::classic::assign_a(self._demand._itDay)]
          ]
+        ;
+
+      dow = boost::spirit::classic::lexeme_d[ dow_p ]
         ;
 
       origin =

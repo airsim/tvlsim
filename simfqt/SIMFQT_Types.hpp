@@ -13,6 +13,13 @@
 namespace SIMFQT {
 
   // ///////// Exceptions ///////////
+  class FareFileParsingFailedException : public stdair::ParsingFileFailedException {
+  public:
+    /** Constructor. */
+    FareFileParsingFailedException (const std::string& iWhat)
+      : stdair::ParsingFileFailedException (iWhat) {}
+  };
+  
   class AirportPairNotFoundException : public stdair::ObjectNotFoundException {
   public:
     /** Constructor. */

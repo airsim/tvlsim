@@ -590,8 +590,12 @@ namespace TRADEMGEN {
       lTRADEMGEN_ServiceContext.getSTDAIR_Service();
     // Retrieve the event queue object instance
     stdair::EventQueue& lQueue = lSTDAIR_Service.getEventQueue();
+
+    // Retrieve the shared generator
+    stdair::RandomGeneration& lSharedGenerator =
+      lTRADEMGEN_ServiceContext.getUniformGenerator();
     
     // Delegate the call to the dedicated command
-    DemandManager::reset (lQueue);
+    DemandManager::reset (lQueue, lSharedGenerator.getBaseGenerator());
   }
 }

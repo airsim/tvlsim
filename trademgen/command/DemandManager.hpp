@@ -175,8 +175,7 @@ namespace TRADEMGEN {
                         const PreferredDepartureTimeContinuousDistribution_T&,
                         const stdair::WTP_T&,
                         const ValueOfTimeContinuousDistribution_T&,
-                        const DemandDistribution&,
-                        const stdair::RandomSeed_T&,
+                        const DemandDistribution&, stdair::BaseGenerator_T&,
                         const stdair::RandomSeed_T&,
                         const stdair::RandomSeed_T&,
                         const POSProbabilityMass_T&);
@@ -233,8 +232,10 @@ namespace TRADEMGEN {
      * generation without having to reparse the demand input file.
      *
      * @param stdair::EventQueue& Reference on the top of the BOM tree.
+     * @param stdair::BaseGenerator_T& The shared generator for the number
+     *   of requests generation.
      */
-    static void reset (stdair::EventQueue&);
+    static void reset (stdair::EventQueue&, stdair::BaseGenerator_T&);
   };
 
 }
