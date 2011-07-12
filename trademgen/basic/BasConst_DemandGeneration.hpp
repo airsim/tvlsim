@@ -8,6 +8,7 @@
 #include <string>
 // StdAir
 #include <stdair/stdair_maths_types.hpp>
+#include <stdair/stdair_date_time_types.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristicsTypes.hpp>
 
@@ -25,6 +26,9 @@ namespace TRADEMGEN {
     static FRAT5Pattern_T createFRAT5Pattern();
   };
 
+  /** Default last lower bound of daily rate interval in arrival pattern. */
+  extern const stdair::FloatDuration_T DEFAULT_LAST_LOWER_BOUND_ARRIVAL_PATTERN;
+  
   /** Default MAX Advance Purchase. */
   extern const double DEFAULT_MAX_ADVANCE_PURCHASE;
 

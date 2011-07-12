@@ -186,73 +186,100 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   const stdair::DateTime_T DemandStream::generateTimeOfRequestExponentialLaw() {
 
+    // Prepare arrival pattern.
     const ContinuousFloatDuration_T& lArrivalPattern =
       _demandCharacteristics._arrivalPattern;
       
     const stdair::Time_T lHardcodedReferenceDepartureTime =
       boost::posix_time::hours (8);
-    
+
+    // Prepare departure date time.
     const stdair::DateTime_T lDepartureDateTime =
       boost::posix_time::ptime (_key.getPreferredDepartureDate(),
                                 lHardcodedReferenceDepartureTime);
 
+    // If no request has been generated so far...
     if (_firstDateTimeRequest) {
       const stdair::Probability_T lProbabilityFirstRequest = 0;
-      
+
+      // Get the lower bound of the arrival pattern (correponding
+      // to a cumulative probability of 0).
       _dateTimeLastRequest =
         lArrivalPattern.getValue (lProbabilityFirstRequest);
 
       _firstDateTimeRequest = false;
     }
-    
-    assert (_firstDateTimeRequest == false);
-    
-    if (_dateTimeLastRequest == -1.0) {
-      _stillHavingRequestsToBeGenerated = false;
-      
-      const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
-        convertFloatIntoDuration (1.0);
 
-      // The request date-time is derived from departure date and arrival pattern
+    // Sanity check.
+    assert (_firstDateTimeRequest == false);
+
+    // If the date time of the last request is equal to the lower bound of
+    // the last daily rate interval (default value is -1, meaning one day
+    // before departure), we stopped generating request by returning a
+    // request date time after departure date time.
+    if (_dateTimeLastRequest == DEFAULT_LAST_LOWER_BOUND_ARRIVAL_PATTERN) {
+      _stillHavingRequestsToBeGenerated = false;
+
+      // Get a positive number of days.
+      const stdair::Duration_T lDifferenceBetweenDepartureAndThisLowerBound =
+        convertFloatIntoDuration (-DEFAULT_LAST_LOWER_BOUND_ARRIVAL_PATTERN);
+
+      // Calculate a request date-time after the departure date time to end
+      // the demand generation algorithm.
       const stdair::DateTime_T oDateTimeThisRequest =
-        lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
+        lDepartureDateTime + lDifferenceBetweenDepartureAndThisLowerBound;
 
       return oDateTimeThisRequest;
     }
     
-    // Compute the daily rate demand.
+    // Get the upper bound of the current daily rate interval.
     stdair::FloatDuration_T lUpperBound =
       lArrivalPattern.getUpperBound (_dateTimeLastRequest);
+
+    // Compute the daily rate demand.
     double lDailyRate = lArrivalPattern.getDerivativeValue(_dateTimeLastRequest);
+    // Get the expected average number of requests.
     const double lDemandMean = _demandDistribution._meanNumberOfRequests;
+    // Multiply the daily rate by the expected average number of requests.
     lDailyRate *= lDemandMean;
 
-
+    // Generate an exponential variable.
     const stdair::FloatDuration_T lExponentialVariable =
       _requestDateTimeRandomGenerator.generateExponential (lDailyRate);
 
+    // Compute the new date time request.
     const stdair::FloatDuration_T lDateTimeThisRequest =
       _dateTimeLastRequest + lExponentialVariable;
 
+    stdair::DateTime_T oDateTimeThisRequest;
+
     // Verify if this request is in the given daily rate interval.
     if (lDateTimeThisRequest < lUpperBound) {
-    
+
+      // Conversion.
       const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
         convertFloatIntoDuration (lDateTimeThisRequest);
 
-      // The request date-time is derived from departure date and arrival pattern
-      const stdair::DateTime_T oDateTimeThisRequest =
-        lDepartureDateTime + lDifferenceBetweenDepartureAndThisRequest;
+      // The request date-time is derived from departure date and arrival pattern.
+      oDateTimeThisRequest = lDepartureDateTime
+        + lDifferenceBetweenDepartureAndThisRequest;
+
+      // Remember this date time request.
+      _dateTimeLastRequest = lDateTimeThisRequest;
       
       // Update the counter of requests generated so far.
       incrementGeneratedRequestsCounter();
-      _dateTimeLastRequest = lDateTimeThisRequest;
-      
-      return oDateTimeThisRequest;
     } else {
+      
+      // The current request is not in the given daily rate interval.
+      // Change the daily rate.
       _dateTimeLastRequest = lUpperBound;
-      return generateTimeOfRequestExponentialLaw ();
+
+      // Generate a date time request in the new daily rate interval.
+      oDateTimeThisRequest = generateTimeOfRequestExponentialLaw ();
     }
+    
+    return oDateTimeThisRequest;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -345,6 +372,37 @@ namespace TRADEMGEN {
     //                   << lNumberOfDaysBetweenDepartureAndThisRequest);
     
     return oDateTimeThisRequest;
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+
+  const stdair::Duration_T DemandStream::
+  convertFloatIntoDuration (const stdair::FloatDuration_T iNumberOfDays) {
+    
+    // Convert the number of days in number of seconds + number of milliseconds
+    const stdair::FloatDuration_T lNumberOfSeconds =
+      iNumberOfDays * stdair::SECONDS_IN_ONE_DAY;
+    
+    // Get the number of seconds.
+    const stdair::IntDuration_T lIntNumberOfSeconds =
+      std::floor (lNumberOfSeconds);
+    
+    // Get the number of milliseconds.
+    const stdair::FloatDuration_T lNumberOfMilliseconds =
+      (lNumberOfSeconds - lIntNumberOfSeconds)
+      * stdair::MILLISECONDS_IN_ONE_SECOND;
+
+    // +1 is a trick to ensure that the next Event is strictly later
+    // than the current one
+    const stdair::IntDuration_T lIntNumberOfMilliseconds =
+      std::floor (lNumberOfMilliseconds) + 1;
+
+    // Convert the number of seconds and milliseconds into a duration.
+    const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
+      boost::posix_time::seconds (lIntNumberOfSeconds)
+      + boost::posix_time::millisec (lIntNumberOfMilliseconds);
+
+    return lDifferenceBetweenDepartureAndThisRequest;
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -456,13 +514,12 @@ namespace TRADEMGEN {
     // POS
     const stdair::AirportCode_T lPOS = generatePOS();
     
-    // Time of request.
+    // Compute the request date time with the correct algorithm.
     stdair::DateTime_T lDateTimeThisRequest;
     if (iGenerateRequestWithStatisticOrder) {
       lDateTimeThisRequest = generateTimeOfRequestStatisticOrder();
     } else {
-      lDateTimeThisRequest =
-        generateTimeOfRequestExponentialLaw();
+      lDateTimeThisRequest = generateTimeOfRequestExponentialLaw();
     }
     
     // Booking channel.
@@ -521,36 +578,6 @@ namespace TRADEMGEN {
   void DemandStream::reset (stdair::BaseGenerator_T& ioSharedGenerator) {
     _randomGenerationContext.reset();
     init (ioSharedGenerator);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-
-  const stdair::Duration_T DemandStream::
-  convertFloatIntoDuration (const stdair::FloatDuration_T iNumberOfDays) {
-    
-    // Convert the number of days in number of seconds + number of milliseconds
-    const stdair::FloatDuration_T lNumberOfSeconds =
-      iNumberOfDays * stdair::SECONDS_IN_ONE_DAY;
-    
-    //
-    const stdair::IntDuration_T lIntNumberOfSeconds =
-      std::floor (lNumberOfSeconds);
-    
-    //
-    const stdair::FloatDuration_T lNumberOfMilliseconds =
-      (lNumberOfSeconds - lIntNumberOfSeconds)
-      * stdair::MILLISECONDS_IN_ONE_SECOND;
-
-    // +1 is a trick to ensure that the next Event is strictly later
-    // than the current one
-    const stdair::IntDuration_T lIntNumberOfMilliseconds =
-      std::floor (lNumberOfMilliseconds) + 1;
-
-    const stdair::Duration_T lDifferenceBetweenDepartureAndThisRequest =
-      boost::posix_time::seconds (lIntNumberOfSeconds)
-      + boost::posix_time::millisec (lIntNumberOfMilliseconds);
-
-    return lDifferenceBetweenDepartureAndThisRequest;
   }
 
 }

@@ -238,7 +238,16 @@ namespace TRADEMGEN {
     /** Generate the value of time. */
     const stdair::PriceValue_T generateValueOfTime();
     
-    /** Generate the next request. */
+    /**
+     * Generate the next request.
+     *
+     * @param stdair::RandomGeneration Random generator.
+     * @param const bool Boolean describing the method used to generate the
+     * date time of the next booking request: statistic order or exponenetial
+     * law.
+     * @return stdair::BookingRequestPtr_T Next request to be simulate.
+     *
+     */
     stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
                                                      const bool);
 
@@ -282,8 +291,6 @@ namespace TRADEMGEN {
 
     const stdair::Duration_T convertFloatIntoDuration (const stdair::FloatDuration_T);
     
-
-
   protected:
     // ////////// Constructors and destructors /////////
     /**

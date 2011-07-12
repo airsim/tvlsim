@@ -31,6 +31,9 @@ namespace TRADEMGEN {
     return oMap;
   }
 
+  /** Default last lower bound of daily rate interval in arrival pattern. */ 
+  const stdair::FloatDuration_T DEFAULT_LAST_LOWER_BOUND_ARRIVAL_PATTERN = -1;
+
   /** Default FRAT5 pattern. */
   const FRAT5Pattern_T DEFAULT_FRAT5_PATTERN = DefaultMap::createFRAT5Pattern();
 

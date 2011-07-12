@@ -236,6 +236,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
   boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated
                                             * iNbOfRuns);
 
+  // Choose the algorithm to generate booking requests dates.
   const bool lGenerateDemandWithStatisticOrder = false;
 
   for (NbOfRuns_T runIdx = 1; runIdx <= iNbOfRuns; ++runIdx) {
