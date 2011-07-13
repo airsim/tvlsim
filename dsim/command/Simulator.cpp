@@ -126,7 +126,8 @@ namespace DSIM {
     // Assess whether more events should be generated for that demand stream
     const bool stillHavingRequestsToBeGenerated =
       ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
-                                                            ioPSS);
+                                                            ioPSS,
+                                                            iGenerateDemandWithStatisticOrder);
 
     // DEBUG
     // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "

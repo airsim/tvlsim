@@ -288,7 +288,8 @@ namespace TRADEMGEN {
   const bool DemandManager::
   stillHavingRequestsToBeGenerated (const stdair::EventQueue& iEventQueue,
                                     const stdair::DemandStreamKeyStr_T& iKey,
-                                    stdair::ProgressStatusSet& ioPSS) {
+                                    stdair::ProgressStatusSet& ioPSS,
+                                    const bool iGenerateRequestWithStatisticOrder) {
     // Retrieve the DemandStream which corresponds to the given key.
     const DemandStream& lDemandStream =
       stdair::BomManager::getObject<DemandStream> (iEventQueue, iKey);
@@ -300,7 +301,7 @@ namespace TRADEMGEN {
                        lDemandStream.getTotalNumberOfRequestsToBeGenerated());
     ioPSS.setSpecificGeneratorStatus (lProgressStatus, iKey);
     
-    return lDemandStream.stillHavingRequestsToBeGenerated();
+    return lDemandStream.stillHavingRequestsToBeGenerated (iGenerateRequestWithStatisticOrder);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -371,7 +372,7 @@ namespace TRADEMGEN {
 
       // Check whether there are still booking requests to be generated
       const bool stillHavingRequestsToBeGenerated =
-        lDemandStream_ptr->stillHavingRequestsToBeGenerated();
+        lDemandStream_ptr->stillHavingRequestsToBeGenerated (iGenerateRequestWithStatisticOrder);
    
       if (stillHavingRequestsToBeGenerated) {
         // Generate the next event (booking request), and insert it

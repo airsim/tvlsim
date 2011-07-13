@@ -203,12 +203,10 @@ namespace TRADEMGEN {
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated() const;
+    const bool stillHavingRequestsToBeGenerated (const bool) const;
 
     /** Generate the time of the next request with exponential law. */
     const stdair::DateTime_T generateTimeOfRequestExponentialLaw();
-
-    const stdair::Duration_T drawInterArrivalTime (double);
 
     /** Generate the time of the next request with statistic order */
     const stdair::DateTime_T generateTimeOfRequestStatisticOrder();
@@ -240,7 +238,16 @@ namespace TRADEMGEN {
     /** Generate the value of time. */
     const stdair::PriceValue_T generateValueOfTime();
     
-    /** Generate the next request. */
+    /**
+     * Generate the next request.
+     *
+     * @param stdair::RandomGeneration Random generator.
+     * @param const bool Boolean describing the method used to generate the
+     * date time of the next booking request: statistic order or exponenetial
+     * law.
+     * @return stdair::BookingRequestPtr_T Next request to be simulate.
+     *
+     */
     stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
                                                      const bool);
 
@@ -284,8 +291,6 @@ namespace TRADEMGEN {
 
     const stdair::Duration_T convertFloatIntoDuration (const stdair::FloatDuration_T);
     
-
-
   protected:
     // ////////// Constructors and destructors /////////
     /**
@@ -360,10 +365,11 @@ namespace TRADEMGEN {
     POSProbabilityMass_T _posProMass;
 
   private:
+    bool _stillHavingRequestsToBeGenerated;
 
     bool _firstDateTimeRequest;
 
-    stdair::DateTime_T _dateTimeLastRequest;
+    stdair::FloatDuration_T _dateTimeLastRequest;
   };
 
 }
