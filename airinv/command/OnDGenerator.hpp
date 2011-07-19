@@ -47,9 +47,14 @@ namespace AIRINV {
     ~DemandStruct() {}
   public:
     /** Getters */
-    const stdair::Yield_T& getYield() {return _yield;}
-    const stdair::NbOfRequests_T& getDemandMean() {return _mean;}
-    const stdair::StdDevValue_T& getDemandStdDev() {return _stdDev;}
+    const stdair::Yield_T& getYield() const {return _yield;}
+    const stdair::NbOfRequests_T& getDemandMean() const {return _mean;}
+    const stdair::StdDevValue_T& getDemandStdDev() const {return _stdDev;}
+  public:
+    /** Setters */
+    void setYield(const stdair::Yield_T& iYield) {_yield = iYield;}
+    void setDemandMean(const stdair::NbOfRequests_T& iMean) {_mean = iMean;}
+    void setDemandStdDev(const stdair::StdDevValue_T& iStdDev) {_stdDev = iStdDev;}
   public:
     /** Attributes */
     stdair::Yield_T _yield;
@@ -74,10 +79,10 @@ namespace AIRINV {
     ~OnDDateKey() {}
   public:
     /** Getters */
-    const stdair::AirportCode_T& getOrigin() { return _origin;}
-    const stdair::AirportCode_T& getDestination() { return _destination;}
-    const stdair::Date_T& getDate() { return _date;}
-    const std::vector<std::string>& getStrList() {return _strList;}
+    const stdair::AirportCode_T& getOrigin() const { return _origin;}
+    const stdair::AirportCode_T& getDestination() const { return _destination;}
+    const stdair::Date_T& getDate() const { return _date;}
+    const std::vector<std::string>& getStrList() const {return _strList;}
   public:
     /**
      * Attributes
@@ -99,10 +104,10 @@ namespace AIRINV {
     ~OnDDate () {}
   public:
     /** Getters */
-    const stdair::AirportCode_T& getOrigin() { return _key.getOrigin();}
-    const stdair::AirportCode_T& getDestination() { return _key.getDestination();}
-    const stdair::Date_T& getDate() { return _key.getDate();}
-    const std::vector<std::string>& getStrList() {return _key.getStrList();}
+    const stdair::AirportCode_T& getOrigin() const { return _key.getOrigin();}
+    const stdair::AirportCode_T& getDestination() const { return _key.getDestination();}
+    const stdair::Date_T& getDate() const { return _key.getDate();}
+    const std::vector<std::string>& getStrList() const {return _key.getStrList();}
   public:
     /** Setters */
     void addSegmentDatePtr (stdair::SegmentDate* iSD_ptr) {_segmentDateList.push_back(iSD_ptr);}
@@ -111,7 +116,7 @@ namespace AIRINV {
     }
   public:
     /** Display */
-    void display () {
+    void display () const {
       assert (!_segmentDateList.empty());
       assert (!_classPathDemandMap.empty());
       std::pair<std::string,DemandStruct> lStrDmdPair = *(_classPathDemandMap.begin());
