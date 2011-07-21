@@ -12,8 +12,6 @@
 #include <airinv/command/ScheduleParser.hpp>
 #include <airinv/command/InventoryManager.hpp>
 
-#include <airinv/command/OnDGenerator.hpp>
-
 namespace AIRINV {
 
   // //////////////////////////////////////////////////////////////////////
@@ -49,8 +47,6 @@ namespace AIRINV {
     // To be removed once bid price computation is possible
     InventoryManager::setDefaultBidPriceVectorAndYield (ioBomRoot);
 
-    // Build O&D object
-    OnDGenerator::createOnD (ioBomRoot);
   }
 
 }
