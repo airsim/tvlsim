@@ -17,7 +17,6 @@ namespace stdair {
   struct BookingRequestStruct;
   struct BasLogParams;
   struct BasDBParams;
-  struct BookingRequestStruct;
 }
 
 namespace SIMFQT {

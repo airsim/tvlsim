@@ -7,12 +7,11 @@
 #include <boost/make_shared.hpp>
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
-#include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomDisplay.hpp>
-#include <stdair/service/Logger.hpp>
-#include <stdair/STDAIR_Service.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/service/Logger.hpp>
+#include <stdair/STDAIR_Service.hpp>
 // Simfqt
 #include <simfqt/basic/BasConst_SIMFQT_Service.hpp>
 #include <simfqt/factory/FacSimfqtServiceContext.hpp>
@@ -268,7 +267,9 @@ namespace SIMFQT {
 
     // Delegate the BOM display to the dedicated service
     std::ostringstream oCSVStr;
-    stdair::BomDisplay::csvSimFQTDisplay (oCSVStr, lBomRoot);
+    const bool& lfareQuoteBomTree = true;
+    stdair::BomDisplay::csvSimFQTAirRACDisplay (oCSVStr, lBomRoot,
+                                                lfareQuoteBomTree);
     return oCSVStr.str(); 
   }
 
