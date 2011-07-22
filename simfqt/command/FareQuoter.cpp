@@ -309,10 +309,10 @@ namespace SIMFQT {
     // Construct the date-time type correponding to the flight date
     const stdair::DateTime_T lSPDateTime (lSPDate, lSPTime);
 
-    bool AtLeastOneAvailableFeaturesRule = false;
-    bool IsTripTypeValid = false;
-    bool IsStayDurationValid = false;
-    bool IsAdvancePurchaseValid = false;
+    bool atLeastOneAvailableFeaturesRule = false;
+    bool isTripTypeValid = false;
+    bool isStayDurationValid = false;
+    bool isAdvancePurchaseValid = false;
 
     // Get the list of the fare features.
     const stdair::FareFeaturesList_T& lFareFeaturesList =
@@ -329,21 +329,21 @@ namespace SIMFQT {
 
       // Does the current fare features correspond to a correct trip
       // type?
-      IsTripTypeValid =
-        lCurrentFareFeatures_ptr->IsTripTypeValid (lTripType);
+      isTripTypeValid =
+        lCurrentFareFeatures_ptr->isTripTypeValid (lTripType);
       // Does the current fare features correspond to a correct stay
       // duration?
-      IsStayDurationValid =
-        lCurrentFareFeatures_ptr->IsStayDurationValid (lStayDuration);
+      isStayDurationValid =
+        lCurrentFareFeatures_ptr->isStayDurationValid (lStayDuration);
       // Does the current fare features correspond to a correct advanced
       // purchase?
-      IsAdvancePurchaseValid = lCurrentFareFeatures_ptr->
-        IsAdvancePurchaseValid (lRequestDateTime,
+      isAdvancePurchaseValid = lCurrentFareFeatures_ptr->
+        isAdvancePurchaseValid (lRequestDateTime,
                                 lSPDateTime);
         
       // Search for the fare rules having corresponding features.
-      if (IsStayDurationValid && IsAdvancePurchaseValid && IsTripTypeValid){
-        AtLeastOneAvailableFeaturesRule = true;
+      if (isStayDurationValid && isAdvancePurchaseValid && isTripTypeValid){
+        atLeastOneAvailableFeaturesRule = true;
         // Create a fare structure for the travel solution.
         stdair::FareOptionStruct lFareOption;
         const stdair::ChangeFees_T& lChangeFees =
@@ -368,7 +368,7 @@ namespace SIMFQT {
     
     // If no fare rule matches the advance purchase, trip type and stay
     // duration criterion, the pricing is not possible, throw an exception.
-    if (AtLeastOneAvailableFeaturesRule == false) {
+    if (atLeastOneAvailableFeaturesRule == false) {
       std::ostringstream lStayDurationStream;
       lStayDurationStream << lStayDuration;
       const std::string lStayDurationString (lStayDurationStream.str());
@@ -392,7 +392,7 @@ namespace SIMFQT {
                                        + "' (POS and channel)");
     }
     // Sanity check.
-    assert (AtLeastOneAvailableFeaturesRule == true);
+    assert (atLeastOneAvailableFeaturesRule == true);
   }
 
   

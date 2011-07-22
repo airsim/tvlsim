@@ -248,9 +248,7 @@ namespace AIRRAC {
 
     // Delegate the BOM display to the dedicated service
     std::ostringstream oCSVStr;
-    const bool& lfareQuoteBomTree = false;
-    stdair::BomDisplay::csvSimFQTAirRACDisplay (oCSVStr, lBomRoot,
-                                                lfareQuoteBomTree);
+    stdair::BomDisplay::csvSimFQTAirRACDisplay (oCSVStr, lBomRoot);
     return oCSVStr.str();
     
   }
