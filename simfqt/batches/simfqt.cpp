@@ -179,7 +179,6 @@ int main (int argc, char* argv[]) {
   // Initialise the Simfqt service object
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
 
-  // Build the BOM tree from parsing an fare dump file
   SIMFQT::SIMFQT_Service simfqtService (lLogParams);
     
   // DEBUG
