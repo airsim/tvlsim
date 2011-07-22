@@ -30,7 +30,7 @@ const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ond01
 const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare01.csv");
 
 /** Default name and location for the (CSV) yield input file. */
-const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/yield01.csv");
+const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/yieldstore01.csv");
     
 
 /** Default name and location for the Xapian database. */
