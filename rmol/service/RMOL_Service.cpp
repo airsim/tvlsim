@@ -564,8 +564,9 @@ namespace RMOL {
             const stdair::TimePeriod* lTimePeriod_ptr = *itTimePeriod;
             assert (lTimePeriod_ptr != NULL);
             
-            
-            const stdair::YieldFeaturesKey lYieldFeaturesKey (lPreferredCabin);
+            // TODO: Use trip type from demand instead of default value.
+            const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::DEFAULT_TRIP_TYPE,
+                                                              lPreferredCabin);
             stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
               getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
                                                   lYieldFeaturesKey.toString());
@@ -578,9 +579,6 @@ namespace RMOL {
     return NULL;
 
   }
-
-  // TODO : retrieve the trip type option and add it here to adapt
-  // the code to trunk modifications.
 
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
