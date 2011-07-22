@@ -529,22 +529,11 @@ namespace RMOL {
       STDAIR_LOG_ERROR ("Cannot find yield corresponding to the airport "
                         << "pair: " << lAirportPairKey.toString());
       assert (false);
-    }
-    // Retrieve the PoS-Channel.
-    const stdair::PosChannelKey lPosChannelKey (stdair::DEFAULT_POS,
-                                                stdair::DEFAULT_CHANNEL);
-    stdair::PosChannel* lPosChannel_ptr = stdair::BomManager::
-      getObjectPtr<stdair::PosChannel> (*lAirportPair_ptr,
-                                        lPosChannelKey.toString());
-    if (lPosChannel_ptr == NULL) {
-      STDAIR_LOG_ERROR ("Cannot find yield corresponding to the PoS-"
-                        << "Channel: " << lPosChannelKey.toString());
-      assert (false);
-    }
+    }  
 
     // Retrieve the corresponding date period to lPreferredDepartureDate.
     const stdair::DatePeriodList_T lDatePeriodList =
-      stdair::BomManager::getList<stdair::DatePeriod> (*lPosChannel_ptr);
+      stdair::BomManager::getList<stdair::DatePeriod> (*lAirportPair_ptr);
     for (stdair::DatePeriodList_T::const_iterator itDatePeriod =
            lDatePeriodList.begin();
          itDatePeriod != lDatePeriodList.end(); ++itDatePeriod) {
@@ -555,29 +544,41 @@ namespace RMOL {
         lDatePeriod_ptr->isDepartureDateValid (lPreferredDepartureDate);
       
       if (isDepartureDateValid == true) {
-          // Retrieve the yield features.
-          const stdair::TimePeriodList_T lTimePeriodList = stdair::
-            BomManager::getList<stdair::TimePeriod> (*lDatePeriod_ptr);
-          for (stdair::TimePeriodList_T::const_iterator itTimePeriod =
-                 lTimePeriodList.begin();
-               itTimePeriod != lTimePeriodList.end(); ++itTimePeriod) {
-            const stdair::TimePeriod* lTimePeriod_ptr = *itTimePeriod;
-            assert (lTimePeriod_ptr != NULL);
-            
-            // TODO: Use trip type from demand instead of default value.
-            const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::DEFAULT_TRIP_TYPE,
-                                                              lPreferredCabin);
-            stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
-              getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
-                                                  lYieldFeaturesKey.toString());
-            if (oYieldFeatures_ptr != NULL) {
-              return oYieldFeatures_ptr;
-            }
+        // Retrieve the PoS-Channel.
+        // TODO: Use POS and Channel from demand instead of default
+        const stdair::PosChannelKey lPosChannelKey (stdair::DEFAULT_POS,
+                                                    stdair::DEFAULT_CHANNEL);
+        stdair::PosChannel* lPosChannel_ptr = stdair::BomManager::
+          getObjectPtr<stdair::PosChannel> (*lDatePeriod_ptr,
+                                            lPosChannelKey.toString());
+        if (lPosChannel_ptr == NULL) {
+          STDAIR_LOG_ERROR ("Cannot find yield corresponding to the PoS-"
+                            << "Channel: " << lPosChannelKey.toString());
+          assert (false);
+        }
+        // Retrieve the yield features.
+        const stdair::TimePeriodList_T lTimePeriodList = stdair::
+          BomManager::getList<stdair::TimePeriod> (*lPosChannel_ptr);
+        for (stdair::TimePeriodList_T::const_iterator itTimePeriod =
+               lTimePeriodList.begin();
+             itTimePeriod != lTimePeriodList.end(); ++itTimePeriod) {
+          const stdair::TimePeriod* lTimePeriod_ptr = *itTimePeriod;
+          assert (lTimePeriod_ptr != NULL);
+          
+          // TODO: Use trip type from demand instead of default value.
+          const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::DEFAULT_TRIP_TYPE,
+                                                            lPreferredCabin);
+          stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
+            getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
+                                                lYieldFeaturesKey.toString());
+          if (oYieldFeatures_ptr != NULL) {
+            return oYieldFeatures_ptr;
           }
         }
       }
+    }
     return NULL;
-
+    
   }
 
   // ///////////////////////////////////////////////////////////////////
