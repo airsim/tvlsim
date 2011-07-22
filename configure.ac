@@ -387,6 +387,7 @@ AC_CONFIG_FILES(
 	airrac/command/Makefile
 	airrac/service/Makefile
 	airrac/config/Makefile
+	airrac/config/airrac-paths.hpp
 	airrac/core/Makefile
 	airrac/batches/Makefile
 	rmol/Makefile
@@ -396,6 +397,7 @@ AC_CONFIG_FILES(
 	rmol/command/Makefile
 	rmol/service/Makefile
 	rmol/config/Makefile
+	rmol/config/rmol-paths.hpp
 	rmol/core/Makefile
 	rmol/batches/Makefile
 	airinv/Makefile
@@ -426,6 +428,7 @@ AC_CONFIG_FILES(
 	simfqt/command/Makefile
 	simfqt/service/Makefile
 	simfqt/config/Makefile
+	simfqt/config/simfqt-paths.hpp
 	simfqt/core/Makefile
 	simfqt/batches/Makefile
 	simfqt/ui/Makefile
