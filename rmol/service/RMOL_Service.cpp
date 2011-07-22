@@ -31,6 +31,7 @@
 #include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/BookingClass.hpp>
+#include <stdair/bom/OnDDate.hpp>
 // RMOL
 #include <rmol/basic/BasConst_RMOL_Service.hpp>
 #include <rmol/factory/FacRmolServiceContext.hpp>
@@ -578,6 +579,9 @@ namespace RMOL {
 
   }
 
+  // TODO : retrieve the trip type option and add it here to adapt
+  // the code to trunk modifications.
+
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
   forecast(const stdair::DTD_T& iDTD,
@@ -718,15 +722,17 @@ namespace RMOL {
     assert (!lAirlineCodeList.empty());
 
     if (lAirlineCodeList.size() == 1) {
-      // Store the forecast information in the case of a single leg
+      // Store the forecast information in the case of a single segment
       stdair::AirlineCode_T lAirlineCode = lAirlineCodeList.front();
       stdair::ClassCode_T lClassCode = lClassCodeList.front();
       setForecast(lAirlineCode, lPreferredDepartureDate, lOrigin,
                   lDestination, lPreferredCabin, lClassCode,
                   iNumberOfRequests, iStdDevValue, iBomRoot);
+
+      // TODO: add yield to the input parameters.
     }
     else {
-      // Store the forecast information in the case of a multiple leg
+      // Store the forecast information in the case of a multiple segment
       stdair::AirlineCodeList_T::const_iterator beginItAC = lAirlineCodeList.begin();
       stdair::ClassCodeList_T::const_iterator beginItCC = lClassCodeList.begin();
       const stdair::Yield_T& lYield = iAirlineClassList.getYield();
@@ -1018,4 +1024,165 @@ namespace RMOL {
     }
   }
 
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::
+  setOnDForecast (const stdair::AirlineCode_T& iAirlineCode,
+                  const stdair::Date_T& iPreferredDepartureDate,
+                  const stdair::AirportCode_T& iOrigin,
+                  const stdair::AirportCode_T& iDestination,
+                  const stdair::CabinCode_T& iPreferredCabin,
+                  const stdair::ClassCode_T& iClassCode,
+                  const stdair::MeanValue_T& iMeanValue,
+                  const stdair::StdDevValue_T& iStdDevValue,
+                  const stdair::Yield_T& iYield,
+                  stdair::BomRoot& iBomRoot) {
+    stdair::Inventory* lInventory_ptr = iBomRoot.getInventory(iAirlineCode);
+    if (lInventory_ptr == NULL) {
+      STDAIR_LOG_ERROR ("Cannot find the inventory corresponding"
+                        << " to the airline" << iAirlineCode) ;
+      assert(false);
+    }
+    const stdair::OnDDateList_T lOnDDateList =
+      stdair::BomManager::getList<stdair::OnDDate> (*lInventory_ptr);
+    assert (!lOnDDateList.empty());
+    bool lFoundOnDDate = false;
+    for (stdair::OnDDateList_T::const_iterator itOD = lOnDDateList.begin();
+         itOD != lOnDDateList.end(); ++itOD) {
+      stdair::OnDDate* lOnDDate_ptr = *itOD;
+      assert (lOnDDate_ptr != NULL);
+      const stdair::Date_T& lDepartureDate = lOnDDate_ptr->getDate();
+      const stdair::AirportCode_T& lOrigin = lOnDDate_ptr->getOrigin();
+      const stdair::AirportCode_T& lDestination = lOnDDate_ptr->getDestination();
+      if (!stdair::BomManager::hasList<stdair::SegmentDate> (*lOnDDate_ptr)) {
+        STDAIR_LOG_ERROR ("The O&D date " << lOnDDate_ptr->describeKey()
+                          << "has not been correctly initialized : SegmentDate list is missing");
+        assert (false);
+      }
+      const stdair::SegmentDateList_T& lSegmentDateList =
+        stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+      if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
+          lDestination == iDestination && lSegmentDateList.size() == 1) {       
+        stdair::CabinClassPair_T lCabinClassPair (iPreferredCabin, iClassCode);
+        stdair::CabinClassPairList_T lCabinClassPairList;
+        lCabinClassPairList.push_back(lCabinClassPair);
+        stdair::DemandStruct lDemandStruct (iYield, iMeanValue, iStdDevValue);
+        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, lDemandStruct);
+        lFoundOnDDate = true;
+        STDAIR_LOG_DEBUG (iAirlineCode << " Class " << iClassCode << " Mean " << iMeanValue
+                          << " Std Dev " << iStdDevValue);
+        break;
+      }
+    }
+
+    if (!lFoundOnDDate) {
+      STDAIR_LOG_ERROR ("Cannot find class " << iClassCode << " in cabin " << iPreferredCabin
+                        << " for the segment " << iOrigin << "-" << iDestination << " with"
+                        << " the airline " << iAirlineCode);
+      assert(false);
+    }
+  }
+  
+  // ///////////////////////////////////////////////////////////////////       
+  void RMOL_Service::
+  setOnDForecast (const stdair::AirlineCodeList_T& iAirlineCodeList,
+                  const stdair::AirlineCode_T& iAirlineCode,
+                  const stdair::Date_T& iPreferredDepartureDate,
+                  const stdair::AirportCode_T& iOrigin,
+                  const stdair::AirportCode_T& iDestination,
+                  const stdair::CabinCode_T& iPreferredCabin,
+                  const stdair::ClassCodeList_T& iClassCodeList,
+                  const stdair::MeanValue_T& iMeanValue,
+                  const stdair::StdDevValue_T& iStdDevValue,
+                  const stdair::Yield_T& iYield,
+                  stdair::BomRoot& iBomRoot) {    
+    stdair::Inventory* lInventory_ptr = iBomRoot.getInventory(iAirlineCode);
+    if (lInventory_ptr == NULL) {
+      STDAIR_LOG_ERROR ("Cannot find the inventory corresponding"
+                        << " to the airline" << iAirlineCode) ;
+      assert(false);
+    }
+    const stdair::OnDDateList_T lOnDDateList =
+      stdair::BomManager::getList<stdair::OnDDate> (*lInventory_ptr);
+    assert (!lOnDDateList.empty());
+    bool lFoundOnDDate = false;
+    for (stdair::OnDDateList_T::const_iterator itOD = lOnDDateList.begin();
+         itOD != lOnDDateList.end(); ++itOD) {
+      stdair::OnDDate* lOnDDate_ptr = *itOD;
+      assert (lOnDDate_ptr != NULL);
+      const stdair::Date_T& lDepartureDate = lOnDDate_ptr->getDate();
+      const stdair::AirportCode_T& lOrigin = lOnDDate_ptr->getOrigin();
+      const stdair::AirportCode_T& lDestination = lOnDDate_ptr->getDestination();
+      if (!stdair::BomManager::hasList<stdair::SegmentDate> (*lOnDDate_ptr)) {
+        STDAIR_LOG_ERROR ("The O&D date " << lOnDDate_ptr->describeKey()
+                          << "has not been correctly initialized : SegmentDate list is missing");
+        assert (false);
+      }
+      const stdair::SegmentDateList_T& lSegmentDateList =
+        stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+      if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
+          lDestination == iDestination && lSegmentDateList.size() == iAirlineCodeList.size()) {
+        const stdair::SegmentDateList_T& lSegmentDateList =
+          stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);        
+        stdair::AirlineCodeList_T::const_iterator itAC = iAirlineCodeList.begin();
+        stdair::SegmentDateList_T::const_iterator itSD = lSegmentDateList.begin();
+        for (;itAC != iAirlineCodeList.end(); ++itAC, ++itSD) {
+          const stdair::AirlineCode_T lForecastAirlineCode = *itAC;
+          if ((*itSD)->isOtherAirlineOperating()) {
+            const stdair::SegmentDate* lOperatingSegmentDate_ptr =
+              (*itSD)->getOperatingSegmentDate();
+            stdair::FlightDate* lFlightDate_ptr =
+              stdair::BomManager::getParentPtr<stdair::FlightDate>(*lOperatingSegmentDate_ptr);
+            const stdair::AirlineCode_T lOperatingAirlineCode = lFlightDate_ptr->getAirlineCode();
+            if (lOperatingAirlineCode != lForecastAirlineCode) {break;}
+          } else {
+            const stdair::AirlineCode_T lOperatingAirlineCode = lOnDDate_ptr->getAirlineCode();
+            if (lOperatingAirlineCode != lForecastAirlineCode) {break;}
+          }          
+        }
+        if (itAC == iAirlineCodeList.end()) {lFoundOnDDate = true;}
+      }
+      if (lFoundOnDDate) {        
+        stdair::CabinClassPairList_T lCabinClassPairList;
+        for (stdair::ClassCodeList_T::const_iterator itCC = iClassCodeList.begin();
+             itCC != iClassCodeList.end(); ++itCC) {
+          const stdair::ClassCode_T lClassCode = *itCC;
+          stdair::CabinClassPair_T lCabinClassPair (iPreferredCabin, lClassCode);
+          lCabinClassPairList.push_back(lCabinClassPair);
+        }
+        stdair::DemandStruct lDemandStruct (iYield, iMeanValue, iStdDevValue);
+        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, lDemandStruct);
+        lFoundOnDDate = true;
+        std::ostringstream oACStr;
+        for (stdair::AirlineCodeList_T::const_iterator itAC = iAirlineCodeList.begin();
+             itAC != iAirlineCodeList.end(); ++itAC) {
+          if (itAC == iAirlineCodeList.begin()) {
+            oACStr << *itAC;
+          }
+          else {
+            oACStr << "-" << *itAC;
+          }
+        }
+        std::ostringstream oCCStr;
+        for (stdair::ClassCodeList_T::const_iterator itCC = iClassCodeList.begin();
+             itCC != iClassCodeList.end(); ++itCC) {
+          if (itCC == iClassCodeList.begin()) {
+            oCCStr << *itCC;
+          }
+          else {
+            oCCStr << "-" << *itCC;
+          }
+        }
+        
+        STDAIR_LOG_DEBUG (oACStr.str() << " Classes " << oCCStr.str()
+                          << " Mean " << iMeanValue << " Std Dev " << iStdDevValue);        
+        break;
+      }
+    }
+    if (!lFoundOnDDate) {
+      STDAIR_LOG_ERROR ("Cannot find the required multi-segment O&D date:  "
+                        << iOrigin << "-" << iDestination << " " << iPreferredDepartureDate);
+      assert(false);
+    }
+  }   
+  
 }

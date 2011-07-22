@@ -205,16 +205,27 @@ namespace RMOL {
                       const stdair::StdDevValue_T&, const TRADEMGEN::DemandStream&,
                       stdair::BomRoot&);
 
-    // Single leg
+    // Single segment
     void setForecast (const stdair::AirlineCode_T&,  const stdair::Date_T&, const stdair::AirportCode_T&,
                       const stdair::AirportCode_T&, const stdair::CabinCode_T&, const stdair::ClassCode_T&,
                       const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&, stdair::BomRoot&);
-    // Multiple leg
+    // Multiple segment
     bool setForecast (stdair::AirlineCodeList_T::const_iterator&, const stdair::AirlineCodeList_T&,
                       const stdair::Date_T&, stdair::AirportCode_T&, const stdair::AirportCode_T&,
                       const stdair::CabinCode_T&, stdair::ClassCodeList_T::const_iterator&,
                       const stdair::ClassCodeList_T&, const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&,
                       const stdair::Yield_T&, stdair::AirportCodeList_T&, stdair::BomRoot&);
+
+    // Single segment O&D
+    void setOnDForecast (const stdair::AirlineCode_T&, const stdair::Date_T&, const stdair::AirportCode_T&,
+                         const stdair::AirportCode_T&, const stdair::CabinCode_T&, const stdair::ClassCode_T&,
+                         const stdair::MeanValue_T&, const stdair::StdDevValue_T&, const stdair::Yield_T&, stdair::BomRoot&);
+
+    // Multiple segment O&D
+    void setOnDForecast (const stdair::AirlineCodeList_T&, const stdair::AirlineCode_T&,const stdair::Date_T&,
+                         const stdair::AirportCode_T&, const stdair::AirportCode_T&, const stdair::CabinCode_T&,
+                         const stdair::ClassCodeList_T&, const stdair::MeanValue_T&, const stdair::StdDevValue_T&,
+                         const stdair::Yield_T&, stdair::BomRoot&);
 
     /** Optimiser */
     void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
