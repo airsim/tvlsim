@@ -51,14 +51,14 @@ namespace AIRSCHED {
     stdair::Duration_T depTime;
     stdair::Duration_T arTime;
     stdair::Duration_T dur;
-    bool Ref;
+    //bool Ref;
     stdair::AirlineCode_T airline;
     stdair::CabinCode_T cabin;
-    stdair::FlightNumber_T flightNum;
-    stdair::Fare_T fare;
-    int lagsNum;
-    bool SNS;
-    bool change;
+    //stdair::FlightNumber_T flightNum;
+    //stdair::Fare_T fare;
+    //int lagsNum;
+    //bool SNS;
+    //bool change;
     
     while (inputFile.getline (buffer, sizeof (buffer), ';')) {
       std::istringstream iStringStr (buffer);
@@ -100,9 +100,9 @@ namespace AIRSCHED {
           dur = boost::posix_time::duration_from_string (dvalStr);
 
         } else if (i == 7) {
-          if (dvalStr == "refundable fare")
-            Ref = true;
-          else Ref  = false;
+          //if (dvalStr == "refundable fare")
+          //  Ref = true;
+          //else Ref  = false;
 
         } else if (i == 8) {
           airline = dvalStr;
@@ -111,23 +111,23 @@ namespace AIRSCHED {
           cabin = dvalStr;
 
         } else if (i == 10) {
-          flightNum = dval;
+          //flightNum = dval;
 
         } else if (i == 11) {
-          fare = dval;
+          //fare = dval;
 
         } else if (i == 12) {
-          lagsNum = dval;
+          //lagsNum = dval;
 
         } else if (i == 13) {
-          if (dvalStr == "Saturday Nigth Stay mandatory")
-            SNS = true;
-          else SNS = false;
+          //if (dvalStr == "Saturday Nigth Stay mandatory")
+          //  SNS = true;
+          //else SNS = false;
 
         } else if (i == 14) {
-          if (dvalStr == "changeable fare")
-            change = true;
-          else change = false;
+          //if (dvalStr == "changeable fare")
+          //  change = true;
+          //else change = false;
           i = 0;
         }
 
