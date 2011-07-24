@@ -23,7 +23,6 @@ namespace AIRINV {
   class SegmentCabinHelper {
   public:
     // ////////// Business Methods /////////
-    
     /**
      * Update the segment-cabin with the reservation.
      */

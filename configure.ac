@@ -368,6 +368,7 @@ AC_CONFIG_FILES(
 	trademgen/command/Makefile
 	trademgen/service/Makefile
 	trademgen/config/Makefile
+	trademgen/config/trademgen-paths.hpp
 	trademgen/core/Makefile
 	trademgen/batches/Makefile
 	trademgen/python/Makefile
@@ -378,6 +379,7 @@ AC_CONFIG_FILES(
 	airsched/command/Makefile
 	airsched/service/Makefile
 	airsched/config/Makefile
+	airsched/config/airsched-paths.hpp
 	airsched/core/Makefile
 	airsched/batches/Makefile
 	airrac/Makefile
@@ -407,6 +409,7 @@ AC_CONFIG_FILES(
 	airinv/command/Makefile
 	airinv/service/Makefile
 	airinv/config/Makefile
+	airinv/config/airinv-paths.hpp
 	airinv/core/Makefile
 	airinv/batches/Makefile
 	airinv/server/Makefile
@@ -419,6 +422,7 @@ AC_CONFIG_FILES(
 	avlcal/command/Makefile
 	avlcal/service/Makefile
 	avlcal/config/Makefile
+	avlcal/config/avlcal-paths.hpp
 	avlcal/core/Makefile
 	avlcal/batches/Makefile
 	simfqt/Makefile
@@ -440,6 +444,7 @@ AC_CONFIG_FILES(
 	simcrs/command/Makefile
 	simcrs/service/Makefile
 	simcrs/config/Makefile
+	simcrs/config/simcrs-paths.hpp
 	simcrs/core/Makefile
 	simcrs/batches/Makefile
 	travelccm/Makefile
@@ -448,8 +453,9 @@ AC_CONFIG_FILES(
 	travelccm/factory/Makefile
 	travelccm/command/Makefile
 	travelccm/service/Makefile
-	travelccm/core/Makefile
 	travelccm/config/Makefile
+	travelccm/config/travelccm-paths.hpp
+	travelccm/core/Makefile
 	travelccm/batches/Makefile
 	dsim/Makefile
 	dsim/basic/Makefile
@@ -458,6 +464,7 @@ AC_CONFIG_FILES(
 	dsim/command/Makefile
 	dsim/service/Makefile
 	dsim/config/Makefile
+	dsim/config/Makefile/dsim-paths.hpp
 	dsim/core/Makefile
 	dsim/batches/Makefile
 	doc/Makefile

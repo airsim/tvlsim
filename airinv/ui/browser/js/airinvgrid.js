@@ -157,11 +157,19 @@ Ext.define('subclasses', {
 
 
 
+var url="./sample/empty.js";
+//var url="./sample/datasample.js";
+var grid_flight;
+var grid_legs;
+var grid_subclasses;
+
+var idFlight;
+
 function queryBuild(companyCode, flightNumber, date)
 {
 	
-	//var urln="http://ncevsediri-fed/api/display/inv/" + companyCode + "/" + flightNumber + "/" + date;
-	url="D:/Development%20Workspace/Dreamweaver/DsimUI/browser/sample/datasample.html";
+	url="http://ncevsediri-fed/api/display/inv/" + companyCode + "/" + flightNumber + "/" + date;
+	//url="D:/Development%20Workspace/Dreamweaver/DsimUI/browser/sample/datasample.html";
 	grid_flight.getStore().load({url:url});
 	grid_legs.getStore().load({url:url});
 	grid_subclasses.getStore().load({url:url});
@@ -170,13 +178,18 @@ function queryBuild(companyCode, flightNumber, date)
 
 Ext.onReady(function(){
 	
-    var store_flights = Ext.create('Ext.data.ArrayStore', {
-        fields: [
-				 {name: 'Departure Date', type: 'date', dateFormat: 'n/j h:ia'},
-				 {name: 'Airline Code'},
-				 {name: 'Flight Number'}
-         ],
-		data: infoFlight;
+    var store_flights = Ext.create('Ext.data.Store', {
+        autoLoad: true,
+        autoSync: true,
+        model: 'flightinfo',
+        proxy: {
+            type: 'rest',
+            url: url,
+            reader: {
+                type: 'json',
+                root: 'flight_date'
+            }, 
+        },    
     });
 	
 	var store_legs = Ext.create('Ext.data.Store', {
