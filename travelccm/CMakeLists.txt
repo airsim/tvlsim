@@ -1,6 +1,6 @@
 ##
-# TraDemGen module
-module_set_name (trademgen)
+# TravelCCM module
+module_set_name (travelccm)
 
 ##
 # Building and installation of the "standard library".

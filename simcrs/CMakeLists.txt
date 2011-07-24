@@ -1,6 +1,6 @@
 ##
-# TraDemGen module
-module_set_name (trademgen)
+# SimCRS module
+module_set_name (simcrs)
 
 ##
 # Building and installation of the "standard library".
@@ -13,7 +13,8 @@ module_set_name (trademgen)
 #  * Whether or not all the header files should be published. By default, only
 #    the header files of the root directory are to be published.
 #  * A list of additional dependency on inter-module library targets.
-module_library_add_standard (".;basic;bom;factory;command;service")
+module_library_add_standard (".;basic;bom;factory;command;service"
+  airinv airsched simfqt)
 
 ##
 # Building and installation of the executables/binaries.

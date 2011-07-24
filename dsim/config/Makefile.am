@@ -1,30 +1,9 @@
-# dsim/config
+# dsim/config sub-directory of the DSim project
 include $(top_srcdir)/Makefile.common
 
 ## Source directory
-
 DISTCLEANFILES = dsim-paths.hpp
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in Makefile
 
 EXTRA_DIST = dsim-paths.hpp
-
-# Targets
-all-local: dsim-paths.hpp
-
-dsim-paths.hpp: Makefile
-	@echo '#ifndef __DSIM_PATHS_HPP' > $@
-	@echo '#define __DSIM_PATHS_HPP' >> $@
-	@echo >> $@
-	@echo '#define PACKAGE "dsim"' >> $@
-	@echo '#define PACKAGE_NAME "DSIM"' >> $@
-	@echo '#define PACKAGE_VERSION "@VERSION@"' >> $@
-	@echo '#define PREFIXDIR "$(prefix)"' >> $@
-	@echo '#define BINDIR "$(bindir)"' >> $@
-	@echo '#define LIBEXECDIR "$(libexecdir)"' >> $@
-	@echo '#define DATADIR "$(datadir)"' >> $@
-	@echo '#define DOCDIR "$(docdir)"' >> $@
-	@echo '#define STDAIR_SAMPLE_DIR "$(STDAIR_SAMPLE_DIR)"' >> $@
-	@echo >> $@
-	@echo '#endif // __DSIM_PATHS_HPP' >> $@
-	@echo >> $@

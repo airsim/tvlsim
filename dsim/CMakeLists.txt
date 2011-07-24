@@ -1,6 +1,6 @@
 ##
-# TraDemGen module
-module_set_name (trademgen)
+# DSim module
+module_set_name (dsim)
 
 ##
 # Building and installation of the "standard library".
@@ -13,7 +13,8 @@ module_set_name (trademgen)
 #  * Whether or not all the header files should be published. By default, only
 #    the header files of the root directory are to be published.
 #  * A list of additional dependency on inter-module library targets.
-module_library_add_standard (".;basic;bom;factory;command;service")
+module_library_add_standard (".;basic;bom;factory;command;service"
+  trademgen simcrs travelccm)
 
 ##
 # Building and installation of the executables/binaries.
@@ -23,7 +24,7 @@ module_library_add_standard (".;basic;bom;factory;command;service")
 #  * If specified, the name to be given to the executable. If no such name
 #    is given as parameter, the executable is given the name of the current
 #    module.
-module_binary_add (batches)
+module_binary_add (batches simulate)
 
 ##
 # Install the CMake import helper, so that third party projects can refer to it
