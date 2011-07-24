@@ -210,6 +210,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   // Make a booking (reminder: party size is 3)
   const bool isSellSuccessful =
     simcrsService.sell (lTravelSolution, lPartySize);
+  STDAIR_LOG_DEBUG ("Was the sell successful? Answer: " << isSellSuccessful);
   //BOOST_CHECK_NO_THROW ();
 
   // Close the log file
