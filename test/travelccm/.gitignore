@@ -1,4 +1,8 @@
 tmp
+<<<<<<< HEAD
+=======
+/build/
+>>>>>>> trunk
 INSTALL
 Makefile.in
 aclocal.m4
