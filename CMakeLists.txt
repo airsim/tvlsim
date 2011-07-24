@@ -51,7 +51,7 @@ init_build ()
 
 ##
 # Sub-modules
-add_modules (trademgen airsched airrac rmol airinv avlcal simfqt simcrs 
+add_modules (trademgen airsched airrac rmol airinv avlcal simfqt simlfs simcrs
   travelccm ${PROJECT_NAME})
 
 ##
