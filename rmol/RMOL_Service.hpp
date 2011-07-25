@@ -238,6 +238,7 @@ namespace RMOL {
 
     void optimiseBPWithYieldProration (const stdair::DateTime_T&);
 
+    void optimiseUsingOnDForecast (const stdair::DateTime_T&);
     
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.

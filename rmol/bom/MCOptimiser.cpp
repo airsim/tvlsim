@@ -265,5 +265,104 @@ namespace RMOL {
     }
     return oDemandVector;
   }
+
+  // /////////////////////////////////////////////////////////////////////////
+  void MCOptimiser::
+  optimisationByMCIntegration (stdair::LegCabin& ioLegCabin) {
+    // Number of MC samples
+    unsigned int K = 100000;
+
+    const stdair::YieldDemandMap_T& lYieldDemandMap = ioLegCabin.getYieldDemandMap();
+    assert (!lYieldDemandMap.empty());
+
+    stdair::BidPriceVector_T& lBidPriceVector = ioLegCabin.getEmptyBidPriceVector();
+    const stdair::Availability_T& lAvailabilityPool = ioLegCabin.getAvailabilityPool();
+    const stdair::BidPrice_T& lMinBP = lYieldDemandMap.begin()->first;
+
+    stdair::YieldDemandMap_T::const_reverse_iterator itCurrentYD = lYieldDemandMap.rbegin();
+    stdair::YieldDemandMap_T::const_reverse_iterator itNextYD = itCurrentYD; ++itNextYD;
+    
+    // Initialise the first element of the bid price vector with the highest yield
+    lBidPriceVector.push_back(itCurrentYD->first);
+    // Initialise the partial sum holder
+    stdair::MeanStdDevPair_T lMeanStdDevPair = itCurrentYD->second;
+    stdair::GeneratedDemandVector_T lPartialSumHolder =
+      generateDemandVector(lMeanStdDevPair.first, lMeanStdDevPair.second, K);
+    stdair::UnsignedIndex_T idx = 1;
+    for (; itNextYD!=lYieldDemandMap.rend(); ++itCurrentYD, ++itNextYD) {
+      const stdair::Yield_T& yj = itCurrentYD->first;
+      const stdair::Yield_T& yj1 = itNextYD->first;      
+      // Consistency check: the yield/price of a higher class/bucket 
+      // (with the j index lower) must be higher.
+      assert (yj > yj1);
+      // Sort the partial sum holder.
+      std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
+      STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+                        << " min = " << lPartialSumHolder.front());
+      K = lPartialSumHolder.size ();
+      // Compute the optimal index lj = floor {[y(j)-y(j+1)]/y(j) . K}
+      const double ljdouble = std::floor (K * (yj - yj1) / yj);
+      stdair::UnsignedIndex_T lj =
+        static_cast<stdair::UnsignedIndex_T> (ljdouble);
+      // Consistency check. 
+      assert (lj >= 1 && lj < K);
+      //  The optimal protection: p(j) = 1/2 [S(j,lj) + S(j, lj+1)]
+      const double sjl = lPartialSumHolder.at (lj - 1);
+      const double sjlp1 = lPartialSumHolder.at (lj + 1 - 1);
+      const double pj = (sjl + sjlp1) / 2;
+      /** Compute the Bid-Price (Opportunity Cost) at index x
+          (capacity) for x between p(j-1) et p(j). This OC can be
+          proven to be equal to y(j) * Proba (D1 +...+ Dj >= x | D1 > p1,
+          D1 + D2 > p2, ..., D1 +... + D(j-1) > p(j-1)). */
+      const stdair::UnsignedIndex_T pjint = static_cast<const int> (pj);
+      stdair::GeneratedDemandVector_T::iterator itLowerBound =
+        lPartialSumHolder.begin();
+      for (; idx <= pjint && idx <= lAvailabilityPool; ++idx) {
+        itLowerBound =
+          std::lower_bound (itLowerBound, lPartialSumHolder.end(), idx);
+        const stdair::UnsignedIndex_T pos =
+          itLowerBound - lPartialSumHolder.begin();        
+
+        const stdair::BidPrice_T lBP = yj * (K - pos) / K;
+        lBidPriceVector.push_back (lBP);
+      }
+      // Update the partial sum holder.
+      lMeanStdDevPair = itNextYD->second;
+      const stdair::GeneratedDemandVector_T& lNextDV =
+        generateDemandVector(lMeanStdDevPair.first, lMeanStdDevPair.second, K - lj);
+      for (stdair::UnsignedIndex_T i = 0; i < K - lj; ++i) {
+        lPartialSumHolder.at(i) = lPartialSumHolder.at(i + lj) + lNextDV.at(i);
+      }
+      lPartialSumHolder.resize (K - lj);      
+    }
+    /** Compute the Bid-Price (Opportunity Cost) at index x
+          (capacity) for x between p(j-1) et cabin capacity. This OC can be
+          proven to be equal to y(n) * Proba (D1 +...+ Dn >= x | D1 > p1,
+          D1 + D2 > p2, ..., D1 +... + D(n-1) > p(n-1)). */
+    /** But if this value is too low it will be replaced by a fixed minimal value.
+        This is a form of protection between partners.
+     */
+    STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+                      << " min = " << lPartialSumHolder.front());
+    std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
+    const stdair::Yield_T& yn = itCurrentYD->first;
+    stdair::GeneratedDemandVector_T::iterator itLowerBound =
+      lPartialSumHolder.begin();
+    K = lPartialSumHolder.size();
+    bool lMinBPReached = false;
+    for (; idx <= lAvailabilityPool; ++idx) {
+      itLowerBound =
+        std::lower_bound (itLowerBound, lPartialSumHolder.end(), idx);
+      if (!lMinBPReached) {
+        const stdair::UnsignedIndex_T pos =
+          itLowerBound - lPartialSumHolder.begin();      
+        stdair::BidPrice_T lBP = yn * (K - pos) / K;
+        if (lBP < lMinBP) {lBP = lMinBP; lMinBPReached = true;}
+        lBidPriceVector.push_back (lBP);
+      } else {
+        lBidPriceVector.push_back (lMinBP);
+      }
+    }
+  }
   
 }

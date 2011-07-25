@@ -43,6 +43,8 @@ namespace RMOL {
     static stdair::GeneratedDemandVector_T generateDemandVector (const stdair::MeanValue_T&,
                                                                  const stdair::StdDevValue_T&,
                                                                  const unsigned int&);
+
+    static void optimisationByMCIntegration (stdair::LegCabin&);
     
   };
 }

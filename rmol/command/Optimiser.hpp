@@ -69,6 +69,8 @@ namespace RMOL {
     static void optimiseBPWithYieldProration (stdair::SegmentCabin&);
     static void optimiseBPWithYieldProration (stdair::FlightDate&);
 
+    static void optimiseUsingOnDForecast (stdair::FlightDate&);
+
   };
 }
 #endif // __RMOL_COMMAND_OPTIMISER_HPP

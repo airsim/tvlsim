@@ -334,7 +334,7 @@ namespace RMOL {
     }
   }
 
- // ////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void Optimiser::
   optimiseBPWithYieldProration (stdair::FlightDate& ioFlightDate) {
     const stdair::SegmentDateList_T& lSegmentDateList =
@@ -355,6 +355,28 @@ namespace RMOL {
         STDAIR_LOG_DEBUG ("O&D " << lCurrentSegmentDate_ptr->getBoardingPoint()
                           << "-" << lCurrentSegmentDate_ptr->getOffPoint());
         optimiseBPWithYieldProration (*lCurrentSegmentCabin_ptr);
+      }
+    }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::
+  optimiseUsingOnDForecast (stdair::FlightDate& ioFlightDate) {
+    const stdair::LegDateList_T& lLDList =
+      stdair::BomManager::getList<stdair::LegDate> (ioFlightDate);
+    for (stdair::LegDateList_T::const_iterator itLD = lLDList.begin();
+         itLD != lLDList.end(); ++itLD) {
+      stdair::LegDate* lLD_ptr = *itLD;
+      assert (lLD_ptr != NULL);
+
+      //
+      const stdair::LegCabinList_T& lLCList =
+        stdair::BomManager::getList<stdair::LegCabin> (*lLD_ptr);
+      for (stdair::LegCabinList_T::const_iterator itLC = lLCList.begin();
+           itLC != lLCList.end(); ++itLC) {
+        stdair::LegCabin* lLC_ptr = *itLC;
+        assert (lLC_ptr != NULL);
+        MCOptimiser::optimisationByMCIntegration (*lLC_ptr);
       }
     }
   }
