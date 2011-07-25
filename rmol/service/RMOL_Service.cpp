@@ -16,6 +16,7 @@
 #include <stdair/command/CmdBomManager.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
+#include <stdair/bom/LegDate.hpp>
 // StdAir
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/YieldFeatures.hpp>
@@ -1182,6 +1183,54 @@ namespace RMOL {
                         << iOrigin << "-" << iDestination << " " << iPreferredDepartureDate);
       assert(false);
     }
-  }   
+  }
+  
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::resetDemandInformation () {
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+    
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    const stdair::InventoryList_T lInventoryList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    assert (!lInventoryList.empty());
+    for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
+         itInv != lInventoryList.end(); ++itInv) {
+      const stdair::Inventory* lInventory_ptr = *itInv;
+      const stdair::FlightDateList_T lFlightDateList =
+        stdair::BomManager::getList<stdair::FlightDate> (*lInventory_ptr);
+      assert (!lFlightDateList.empty());
+      for (stdair::FlightDateList_T::const_iterator itFD = lFlightDateList.begin();
+           itFD != lFlightDateList.end(); ++itFD) {
+        const stdair::FlightDate* lFlightDate_ptr = *itFD;
+        assert (lFlightDate_ptr != NULL);
+        const stdair::LegDateList_T lLegDateList =
+          stdair::BomManager::getList<stdair::LegDate> (*lFlightDate_ptr);
+        assert (!lLegDateList.empty());
+        for (stdair::LegDateList_T::const_iterator itLD = lLegDateList.begin();
+             itLD != lLegDateList.end(); ++itLD) {
+          const stdair::LegDate* lLegDate_ptr = *itLD;
+          assert (lLegDate_ptr != NULL);
+          const stdair::LegCabinList_T lLegCabinList =
+            stdair::BomManager::getList<stdair::LegCabin> (*lLegDate_ptr);
+          assert (!lLegCabinList.empty());
+          for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+               itLC != lLegCabinList.end(); ++itLC) {
+            stdair::LegCabin* lLegCabin_ptr = *itLC;
+            assert (lLegCabin_ptr != NULL);
+            lLegCabin_ptr->resetYieldDemandMap();
+          }
+        }
+      }
+    }
+  }
   
 }
