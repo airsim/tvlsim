@@ -1232,5 +1232,78 @@ namespace RMOL {
       }
     }
   }
+
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::projectOnDDemandOntoLegCabins() {
+
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+    
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    const stdair::InventoryList_T lInventoryList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    assert (!lInventoryList.empty());
+    for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
+         itInv != lInventoryList.end(); ++itInv) {
+      const stdair::Inventory* lInventory_ptr = *itInv;
+      const stdair::OnDDateList_T lOnDDateList =
+        stdair::BomManager::getList<stdair::OnDDate> (*lInventory_ptr);
+      assert (!lOnDDateList.empty());
+      for (stdair::OnDDateList_T::const_iterator itOD = lOnDDateList.begin();
+           itOD != lOnDDateList.end(); ++itOD) {
+        stdair::OnDDate* lOnDDate_ptr = *itOD;
+        const stdair::StringDemandStructMap_T& lStringDemandStructMap =
+          lOnDDate_ptr->getDemandInfoMap ();
+        for (stdair::StringDemandStructMap_T::const_iterator itStrDS = lStringDemandStructMap.begin();
+             itStrDS != lStringDemandStructMap.end(); ++itStrDS) {
+          std::string lCabinClassPath = itStrDS->first;
+          const stdair::DemandStruct& lDemandStruct = itStrDS->second;
+          const stdair::CabinClassPairList_T& lCabinClassPairList =
+            lOnDDate_ptr->getCabinClassPairList(lCabinClassPath);
+          const unsigned int lNbOfSegments = lOnDDate_ptr->getNbOfSegments();
+          // Sanity check
+          assert (lCabinClassPairList.size() == lNbOfSegments);
+
+          const stdair::SegmentDateList_T lOnDSegmentDateList =
+            stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+          // Sanity check
+          assert (lOnDSegmentDateList.size() == lNbOfSegments);
+          stdair::CabinClassPairList_T::const_iterator itCCP = lCabinClassPairList.begin();
+          stdair::SegmentDateList_T::const_iterator itSD = lOnDSegmentDateList.begin();
+          for (; itSD != lOnDSegmentDateList.end(); ++itCCP, ++itSD) {
+            const stdair::SegmentDate* lSegmentDate_ptr = *itSD;
+            if (!lSegmentDate_ptr->isOtherAirlineOperating()) {
+              const stdair::CabinCode_T lCabinCode = itCCP->first;
+              const stdair::ClassCode_T lClassCode = itCCP->second;
+              const stdair::SegmentCabin* lSegmentCabin_ptr =
+                stdair::BomManager::getObjectPtr<stdair::SegmentCabin> (*lSegmentDate_ptr,
+                                                                        lCabinCode);
+              assert (lSegmentCabin_ptr != NULL);
+              const stdair::LegCabinList_T lLegCabinList =
+                stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
+              assert (!lLegCabinList.empty());
+              const int lNbOfLegs = lLegCabinList.size();
+              const stdair::Yield_T& lYield = lDemandStruct.getYield()/(lNbOfLegs*lNbOfSegments);
+              const stdair::MeanValue_T& lMeanValue = lDemandStruct.getDemandMean();
+              const stdair::StdDevValue_T& lStdDevValue = lDemandStruct.getDemandStdDev();
+              for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+                   itLC != lLegCabinList.end(); ++itLC) {
+                stdair::LegCabin* lLegCabin_ptr = *itLC;
+                lLegCabin_ptr->addDemandInformation (lYield, lMeanValue, lStdDevValue);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   
 }

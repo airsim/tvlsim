@@ -230,6 +230,9 @@ namespace RMOL {
     // Initialise (or re-initialise) the demand projections in all leg cabins
     void resetDemandInformation ();
 
+    // Projection of demand
+    void projectOnDDemandOntoLegCabins();
+
     /** Optimiser */
     void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
 
