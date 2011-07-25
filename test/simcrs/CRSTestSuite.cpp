@@ -67,13 +67,16 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
     
   // Schedule input filename
   const stdair::Filename_T lScheduleInputFilename (STDAIR_SAMPLE_DIR
-                                                   "/schedule01.csv");
+                                                   "/rds01/schedule.csv");
     
   // O&D input filename
   const stdair::Filename_T lOnDInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
     
   // Fare input filename
-  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/fare01.csv");
+  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/rds01/fare.csv");
+    
+  // Yield input filename
+  const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR "/rds01/yield.csv");
     
   // Yield input filename
   const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR "/yield01.csv");
@@ -106,6 +109,13 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
                        "The '" << lYieldInputFilename
                        << "' input file can not be open and read");
 
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lYieldInputFilename
+                       << "' input file can not be open and read");
+
   // Output log File
   const stdair::Filename_T lLogFilename ("CRSTestSuite.log");
 
@@ -127,7 +137,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   const stdair::AirportCode_T lOrigin ("SIN");
   const stdair::AirportCode_T lDestination ("BKK");
   const stdair::AirportCode_T lPOS ("SIN");
-  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Feb, 10);
+  const stdair::Date_T lPreferredDepartureDate(2011, boost::gregorian::Jan, 31);
   const stdair::Date_T lRequestDate (2011, boost::gregorian::Jan, 22);
   const stdair::Duration_T lRequestTime (boost::posix_time::hours(10));
   const stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
@@ -210,6 +220,7 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   // Make a booking (reminder: party size is 3)
   const bool isSellSuccessful =
     simcrsService.sell (lTravelSolution, lPartySize);
+  STDAIR_LOG_DEBUG ("Was the sell successful? Answer: " << isSellSuccessful);
   //BOOST_CHECK_NO_THROW ();
 
   // Close the log file

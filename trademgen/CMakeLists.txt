@@ -1,67 +1,31 @@
 ##
-# Convert the configuration headers (basically, just replace the @<variable>@
-# variables).
-configure_file (config.h.in config.h @ONLY)
-set (PROJ_PATH_CFG_SRC config/${PACKAGE}-paths.hpp.in)
-set (PROJ_PATH_CFG ${CMAKE_CURRENT_BINARY_DIR}/config/${PACKAGE}-paths.hpp)
-configure_file (${PROJ_PATH_CFG_SRC} ${PROJ_PATH_CFG} @ONLY)
-
-# Add the 'hdr_cfg' target, depending on the converted header
-add_custom_target (hdr_cfg ALL DEPENDS ${PROJ_PATH_CFG})
-
+# TraDemGen module
+module_set_name (trademgen)
 
 ##
-# Library sources. All listed here for simplicity, but tailored
-# compilations can be done in a given subdir if a CMakeList is
-# provided there and add_subdirectory is used here (and the
-# corresponding sources removed from here, of course).
-# The libraries could then be assembled as CMake modules.
-file (GLOB trademgenlib_root_HEADERS *.hpp)
-file (GLOB trademgenlib_basic_HEADERS basic/*.hpp)
-file (GLOB trademgenlib_bom_HEADERS bom/*.hpp)
-file (GLOB trademgenlib_factory_HEADERS factory/*.hpp)
-file (GLOB trademgenlib_dbadaptor_HEADERS dbadaptor/*.hpp)
-file (GLOB trademgenlib_command_HEADERS command/*.hpp)
-file (GLOB trademgenlib_service_HEADERS service/*.hpp)
-set (trademgenlib_HEADERS
-  ${trademgenlib_root_HEADERS} ${trademgenlib_basic_HEADERS}
-  ${trademgenlib_bom_HEADERS} ${trademgenlib_factory_HEADERS}
-  ${trademgenlib_dbadaptor_HEADERS} ${trademgenlib_command_HEADERS}
-  ${trademgenlib_service_HEADERS} ${PROJ_PATH_CFG})
-file (GLOB trademgenlib_SOURCES
-  *.cpp basic/*.cpp bom/*.cpp factory/*.cpp
-  dbadaptor/*.cpp command/*.cpp service/*.cpp)
-set (trademgenlib_SOURCES ${trademgenlib_HEADERS} ${trademgenlib_SOURCES})
+# Building and installation of the "standard library".
+# All the sources within each of the layers/sub-directories are used and
+# assembled, in order to form a single library, named here the
+# "standard library".
+# The three parameters (among which only the first one is mandatory) are:
+#  * A semi-colon separated list of all the layers in which header and source
+#    files are to be found.
+#  * Whether or not all the header files should be published. By default, only
+#    the header files of the root directory are to be published.
+#  * A list of additional dependency on inter-module library targets.
+module_library_add_standard (".;basic;bom;factory;command;service")
 
+##
+# Building and installation of the executables/binaries.
+# The two parameters (among which only the first one is mandatory) are:
+#  * The path/directory where the header and source files can be found
+#    in order to build the executable.
+#  * If specified, the name to be given to the executable. If no such name
+#    is given as parameter, the executable is given the name of the current
+#    module.
+module_binary_add (batches)
 
-## Assembling
-# Source files for the library
-add_library (${TRADEMGEN_LIB_TARGET} SHARED ${trademgenlib_SOURCES})
-# Dependencies on other libraries (Boost, MySQL, SOCI, StdAir)
-target_link_libraries (${TRADEMGEN_LIB_TARGET} 
-  ${BOOST_LIBS_FOR_LIB} ${MYSQL_LIBRARIES}
-  ${SOCI_LIBRARIES} ${SOCIMYSQL_LIBRARIES}
-  ${STDAIR_LIBRARIES})
-#
-add_dependencies (${TRADEMGEN_LIB_TARGET} hdr_cfg)
-# Filename and SONAME
-if (WIN32)
-  set_target_properties (${TRADEMGEN_LIB_TARGET} PROPERTIES 
-	OUTPUT_NAME ${TRADEMGEN_LIB_NAME} 
-	VERSION ${GENERIC_LIB_VERSION}
-	PUBLIC_HEADER "${trademgenlib_root_HEADERS}")
-else()
-  set_target_properties (${TRADEMGEN_LIB_TARGET} PROPERTIES 
-	OUTPUT_NAME ${TRADEMGEN_LIB_NAME}
-	VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION}
-	PUBLIC_HEADER "${trademgenlib_root_HEADERS}")
-endif()
-
-
-## Installation
-# Library
-install (TARGETS ${TRADEMGEN_LIB_TARGET} 
-  EXPORT TrademgenLibraryDepends
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/${PACKAGE}" COMPONENT dev)
+##
+# Install the CMake import helper, so that third party projects can refer to it
+# (for libraries, header files and binaries)
+module_export_install ()

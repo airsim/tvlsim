@@ -78,35 +78,141 @@ Ext.define('legsinfo', {
 	belongsTo: 'flightinfo'
 });
 
-var flightURL;
+
+Ext.define('subclasses', {
+    extend: 'Ext.data.Model',
+    fields: [
+	{
+        name: 'flight',
+        type: 'string'
+    }, 
+	{
+		name:'segment',
+		type:'string'
+	}, 
+	{ 
+		name:'cabin',
+		type:'string'
+	},
+	{
+		name:'ff',
+		type:'string'
+	},
+	{
+		name:'subclass',
+		type:'string'
+	},
+	{
+		name:'min/au',
+		type:'string'
+	},
+	{
+		name:'nego',
+		type:'string'
+	},
+	{
+		name:'ns%',
+		type:'string'
+	},
+	{
+		name:'ob%',
+		type:'string'
+	},
+	{
+		name:'bkgs',
+		type:'string'
+	},
+	{
+		name:'grpbks',
+		type:'string'
+	},
+	{
+		name:'stfbkgs',
+		type:'string'
+	},
+	{
+		name:'wlbkgs',
+		type:'string'
+	},
+	{
+		name:'etb',
+		type:'string'
+	},
+	{
+		name:'classavl',
+		type:'string'
+	},
+	{
+		name:'revavl',
+		type:'string'
+	},
+	{
+		name:'segavl',
+		type:'string'
+	}
+	],
+	
+	belongsTo: 'flightinfo'
+});
+
+
+
 function queryBuild(companyCode, flightNumber, date)
 {
-	var queryURL="http://ncevsediri-fed/api/display/inv/" + companyCode + "/" + flightNumber + "/" + date;
+	
+	//var urln="http://ncevsediri-fed/api/display/inv/" + companyCode + "/" + flightNumber + "/" + date;
+	url="D:/Development%20Workspace/Dreamweaver/DsimUI/browser/sample/datasample.html";
+	grid_flight.getStore().load({url:url});
+	grid_legs.getStore().load({url:url});
+	grid_subclasses.getStore().load({url:url});
 	//flightURL = queryURL;
-	onFlightCall(queryURL);
 }
- 
 
-function onFlightCall(url){
-    var store_flights = Ext.create('Ext.data.Store', {
+Ext.onReady(function(){
+	
+    var store_flights = Ext.create('Ext.data.ArrayStore', {
+        fields: [
+				 {name: 'Departure Date', type: 'date', dateFormat: 'n/j h:ia'},
+				 {name: 'Airline Code'},
+				 {name: 'Flight Number'}
+         ],
+		data: infoFlight;
+    });
+	
+	var store_legs = Ext.create('Ext.data.Store', {
         autoLoad: true,
         autoSync: true,
-        model: 'flightinfo',
+        model: 'legsinfo',
         proxy: {
             type: 'rest',
             url: url,
             reader: {
                 type: 'json',
-                root: 'flight_date'
+                root: 'flight_date.legs'
             }, 
         },    
     });
+	
+	var store_subclasses = Ext.create('Ext.data.Store', {
+        autoLoad: true,
+        autoSync: true,
+        model: 'subclasses',
+        proxy: {
+            type: 'rest',
+            url: url,
+            reader: {
+                type: 'json',
+                root: 'flight_date.subclasses'
+            }, 
+        },    
+    });
+	
 
     // create the grid
-    var grid_flight = new Ext.grid.GridPanel({
+    grid_flight = new Ext.grid.GridPanel({
         store: store_flights,
         columns: [
-            {header: "Departure Date", width: 200, dataIndex: 'departure_date', sortable: true},
+            {header: "Departure Date", width: 120, dataIndex: 'departure_date', sortable: true, flex: 1, field: {allowBlank: false}},
             {header: "Airline Code", width: 100, dataIndex: 'airline_code', sortable: true},
             {header: "Flight Number", width: 100, dataIndex: 'flight_number', sortable: true},
             //{header: "", width: 100, dataIndex: 'legs', sortable: false, renderer: renderSelect},
@@ -114,8 +220,8 @@ function onFlightCall(url){
         ],
         title: 'Found Flights',
 		renderTo:'flights-GridDisplay',
-        width:400,
-        height:300,
+        width:320,
+        height:150,
 		viewConfig: {
 			stripeRows:true
 		},
@@ -131,47 +237,64 @@ function onFlightCall(url){
     });
 	store_flights.load();
 	
-	var store_legs = Ext.create('Ext.data.Store', {
-        autoLoad: true,
-        autoSync: true,
-        model: 'legsinfo',
-        proxy: {
-            type: 'rest',
-            url: url,
-            reader: {
-                type: 'json',
-                root: 'flight_date.legs'
-            }, 
-        },    
-    });
-
+	
     // create the grid
-    var grid_legs = new Ext.grid.GridPanel({
+    grid_legs = new Ext.grid.GridPanel({
         store: store_legs,
         columns: [
-            {header: "Board Date", width: 100, dataIndex: 'board_date', sortable: true},
-            {header: "Capacity", width: 100, dataIndex: 'capacity', sortable: true},
-            {header: "Off Date", width: 100, dataIndex: 'off_date', sortable: true},
-            {header: "Distance", width: 100, dataIndex: 'distance', sortable: true},
-            {header: "Off Point", width: 100, dataIndex: 'off_point', sortable: true},
-			{header: "Board Time", width: 100, dataIndex: 'board_time', sortable: true},
-			{header: "Elapsed Time", width: 100, dataIndex: 'elapsed_time', sortable: true},
-			{header: "Date Offset", width: 100, dataIndex: 'date_offset', sortable: true},
-			{header: "Off Time", width: 100, dataIndex: 'off_time', sortable: true},
-			{header: "Board Point", width: 100, dataIndex: 'board_point', sortable: true},
-			{header: "Time Offset", width: 100, dataIndex: 'time_offset', sortable: true},
+            {header: "Board Date", width: 80, dataIndex: 'board_date', sortable: true},
+            {header: "Capacity", width: 80, dataIndex: 'capacity', sortable: true},
+            {header: "Off Date", width: 80, dataIndex: 'off_date', sortable: true},
+            {header: "Distance", width: 80, dataIndex: 'distance', sortable: true},
+            {header: "Off Point", width: 80, dataIndex: 'off_point', sortable: true},
+			{header: "Board Time", width: 80, dataIndex: 'board_time', sortable: true},
+			{header: "Elapsed Time", width: 80, dataIndex: 'elapsed_time', sortable: true},
+			{header: "Date Offset", width: 80, dataIndex: 'date_offset', sortable: true},
+			{header: "Off Time", width: 80, dataIndex: 'off_time', sortable: true},
+			{header: "Board Point", width: 80, dataIndex: 'board_point', sortable: true},
+			{header: "Time Offset", width: 80, dataIndex: 'time_offset', sortable: true},
 			
         ],
         title: 'Flight Legs',
 		renderTo:'legs-GridDisplay',
-        width:1100,
-        height:300,
+        width:880,
+        height:150,
+		viewConfig: {
+			stripeRows: true
+		}
+    });
+	
+	grid_subclasses = new Ext.grid.GridPanel({
+        store: store_subclasses,
+        columns: [
+            {header: "Flight", width: 60, dataIndex: 'flight', sortable: true},
+            {header: "Segment", width: 70, dataIndex: 'segment', sortable: true},
+            {header: "Cabin", width: 60, dataIndex: 'cabin', sortable: true},
+            {header: "FF", width: 25, dataIndex: 'ff', sortable: true},
+            {header: "Subclass", width: 70, dataIndex: 'subclass', sortable: true},
+			{header: "MIN/AU (Prot)", width: 80, dataIndex: 'min/au', sortable: true},
+			{header: "Nego", width: 40, dataIndex: 'nego', sortable: true},
+			{header: "NS%", width: 40, dataIndex: 'ns%', sortable: true},
+			{header: "OB%", width: 40, dataIndex: 'ob%', sortable: true},
+			{header: "Bookings", width: 50, dataIndex: 'bkgs', sortable: true},
+			{header: "Group Bookings", width: 80, dataIndex: 'grpbks', sortable: true},
+			{header: "Staff Bookings", width: 80, dataIndex: 'stfbkgs', sortable: true},
+			{header: "WL Bookings", width: 80, dataIndex: 'wlbkgs', sortable: true},
+			{header: "ETB", width: 40, dataIndex: 'etb', sortable: true},
+			{header: "Class AVL", width: 80, dataIndex: 'classavl', sortable: true},
+			{header: "Rev AVL", width: 80, dataIndex: 'revavl', sortable: true},
+			{header: "Seg AVL", width: 80, dataIndex: 'segavl', sortable: true},
+        ],
+        title: 'Subclasses',
+		renderTo:'subclasses-GridDisplay',
+        width:1060,
+        height:400,
 		viewConfig: {
 			stripeRows: true
 		}
     });
 }
-
+)
 /*var IMG_GO = "assets/icons/iconDeparture.png";
 function renderSelect(legsArray) {
 		//return Ext.String.format(

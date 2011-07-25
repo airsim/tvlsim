@@ -248,9 +248,21 @@ macro (get_external_libs)
       get_git (${_arg_version})
     endif (${_arg_lower} STREQUAL "git")
 
+    if (${_arg_lower} STREQUAL "python")
+      get_python (${_arg_version})
+    endif (${_arg_lower} STREQUAL "python")
+
+    if (${_arg_lower} STREQUAL "zeromq")
+      get_zeromq (${_arg_version})
+    endif (${_arg_lower} STREQUAL "zeromq")
+
     if (${_arg_lower} STREQUAL "boost")
       get_boost (${_arg_version})
     endif (${_arg_lower} STREQUAL "boost")
+
+    if (${_arg_lower} STREQUAL "readline")
+      get_readline (${_arg_version})
+    endif (${_arg_lower} STREQUAL "readline")
 
     if (${_arg_lower} STREQUAL "mysql")
       get_mysql (${_arg_version})
@@ -283,9 +295,63 @@ macro (get_git)
   endif (Git_FOUND)
 endmacro (get_git)
 
+# ~~~~~~~~~~ Python ~~~~~~~~~
+macro (get_python)
+  unset (_required_version)
+  if (${ARGC} GREATER 0)
+    set (_required_version ${ARGV0})
+    message (STATUS "Requires PythonLibs-${_required_version}")
+  else (${ARGC} GREATER 0)
+    message (STATUS "Requires PythonLibs without specifying any version")
+  endif (${ARGC} GREATER 0)
+
+  find_package (PythonLibs ${_required_version} REQUIRED)
+
+  if (PYTHONLIBS_FOUND)
+	# Derive the version of Python (for whatever reason, FindPythonLibs
+	# does not seem to provide that version variable.
+	get_filename_component (PYTHONLIBS_LIB_FILENAME ${PYTHON_LIBRARIES} NAME)
+	string (REGEX REPLACE "^libpython([0-9]+.[0-9]+).*$" "\\1"
+      PYTHONLIBS_VERSION "${PYTHONLIBS_LIB_FILENAME}")
+	message (STATUS "Found PythonLibs ${PYTHONLIBS_VERSION}")
+
+    # Update the list of include directories for the project
+    include_directories (${PYTHON_INCLUDE_DIRS})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${PYTHON_LIBRARIES})
+
+  else (PYTHONLIBS_FOUND)
+	message (FATAL_ERROR "Python libraries are missing. Please install them (e.g., 'python-devel' for the Fedora/RedHat package)")
+  endif (PYTHONLIBS_FOUND)
+
+endmacro (get_python)
+
+# ~~~~~~~~~~ ZeroMQ ~~~~~~~~~
+macro (get_zeromq)
+  unset (_required_version)
+  if (${ARGC} GREATER 0)
+    set (_required_version ${ARGV0})
+    message (STATUS "Requires ZeroMQ-${_required_version}")
+  else (${ARGC} GREATER 0)
+    message (STATUS "Requires ZeroMQ without specifying any version")
+  endif (${ARGC} GREATER 0)
+
+  find_package (ZeroMQ ${_required_version} REQUIRED)
+
+  if (ZEROMQ_FOUND)
+    # Update the list of include directories for the project
+    include_directories (${ZeroMQ_INCLUDE_DIR})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${ZeroMQ_LIBRARIES})
+  endif (ZEROMQ_FOUND)
+
+endmacro (get_zeromq)
+
 # ~~~~~~~~~~ BOOST ~~~~~~~~~~
 macro (get_boost)
-  set (_required_version 0)
+  unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
     message (STATUS "Requires Boost-${_required_version}")
@@ -303,40 +369,65 @@ macro (get_boost)
   set (BOOST_REQUIRED_COMPONENTS
     program_options date_time iostreams serialization filesystem 
     unit_test_framework)
-  find_package (Boost ${_required_version} REQUIRED
-    COMPONENTS ${BOOST_REQUIRED_COMPONENTS})
+
+  # The first check is for the required components.
+  find_package (Boost COMPONENTS ${BOOST_REQUIRED_COMPONENTS})
+
+  # The second check is for the required version (FindBoostWrapper.cmake is
+  # provided by us). Indeed, the Fedora/RedHat FindBoost.cmake does not seem
+  # to provide version enforcement.
+  find_package (BoostWrapper ${_required_version} REQUIRED)
 
   if (Boost_FOUND)
-    # 
-    set (Boost_HUMAN_VERSION
-      ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION})
-    message (STATUS "Found Boost version: ${Boost_HUMAN_VERSION}")
-
     # Update the list of include directories for the project
     include_directories (${Boost_INCLUDE_DIRS})
 
     # Update the list of dependencies for the project
-    set (PROJ_DEP_LIBS_FOR_LIB ${PROJ_DEP_LIBS_FOR_LIB}
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB
       ${Boost_IOSTREAMS_LIBRARY} ${Boost_SERIALIZATION_LIBRARY}
       ${Boost_FILESYSTEM_LIBRARY} ${Boost_DATE_TIME_LIBRARY})
-    set (PROJ_DEP_LIBS_FOR_BIN ${PROJ_DEP_LIBS_FOR_BIN}
-      ${Boost_PROGRAM_OPTIONS_LIBRARY})
-    set (PROJ_DEP_LIBS_FOR_TST ${PROJ_DEP_LIBS_FOR_TST}
-      ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+    list (APPEND PROJ_DEP_LIBS_FOR_BIN ${Boost_PROGRAM_OPTIONS_LIBRARY})
+    list (APPEND PROJ_DEP_LIBS_FOR_TST ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
     # For display purposes
     set (BOOST_REQUIRED_LIBS
       ${Boost_IOSTREAMS_LIBRARY} ${Boost_SERIALIZATION_LIBRARY}
       ${Boost_FILESYSTEM_LIBRARY} ${Boost_DATE_TIME_LIBRARY}
       ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-
   endif (Boost_FOUND)
 
 endmacro (get_boost)
 
+# ~~~~~~~~~~ Readline ~~~~~~~~~
+macro (get_readline)
+  unset (_required_version)
+  if (${ARGC} GREATER 0)
+    set (_required_version ${ARGV0})
+    message (STATUS "Requires Readline-${_required_version}")
+  else (${ARGC} GREATER 0)
+    message (STATUS "Requires Readline without specifying any version")
+  endif (${ARGC} GREATER 0)
+
+  set (READLINE_FOUND False)
+
+  find_package (Readline ${_required_version} REQUIRED)
+  if (READLINE_LIBRARY)
+    set (READLINE_FOUND True)
+  endif (READLINE_LIBRARY)
+
+  if (READLINE_FOUND)
+    # Update the list of include directories for the project
+    include_directories (${READLINE_INCLUDE_DIR})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${READLINE_LIBRARY})
+  endif (READLINE_FOUND)
+
+endmacro (get_readline)
+
 # ~~~~~~~~~~ MySQL ~~~~~~~~~
 macro (get_mysql)
-  set (_required_version 0)
+  unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
     message (STATUS "Requires MySQL-${_required_version}")
@@ -344,7 +435,7 @@ macro (get_mysql)
     message (STATUS "Requires MySQL without specifying any version")
   endif (${ARGC} GREATER 0)
 
-  find_package (MySQL)
+  find_package (MySQL ${_required_version} REQUIRED)
   if (MYSQL_FOUND)
 
     # Update the list of include directories for the project
@@ -358,7 +449,7 @@ endmacro (get_mysql)
 
 # ~~~~~~~~~~ SOCI ~~~~~~~~~~
 macro (get_soci)
-  set (_required_version 0)
+  unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
     message (STATUS "Requires SOCI-${_required_version}")
@@ -366,35 +457,24 @@ macro (get_soci)
     message (STATUS "Requires SOCI without specifying any version")
   endif (${ARGC} GREATER 0)
 
-  find_package (SOCI)
-  if (SOCI_FOUND)
+  find_package (SOCIMySQL ${_required_version} REQUIRED)
+  if (SOCIMYSQL_FOUND)
     #
-    message (STATUS "Found SOCI version: ${SOCI_VERSION}")
+    message (STATUS "Found SOCI with MySQL back-end support version: ${SOCI_VERSION}")
 
     # Update the list of include directories for the project
     include_directories (${SOCI_INCLUDE_DIR})
-
-    # Update the list of dependencies for the project
-    set (PROJ_DEP_LIBS_FOR_LIB ${PROJ_DEP_LIBS_FOR_LIB} ${SOCI_LIBRARIES})
-  endif (SOCI_FOUND)
-
-  find_package (SOCIMySQL)
-  if (SOCIMYSQL_FOUND)
-    #
-    message (STATUS "Found MySQL back-end support for SOCI")
-
-    # Update the list of include directories for the project
     include_directories (${SOCIMYSQL_INCLUDE_DIR})
 
     # Update the list of dependencies for the project
-    set (PROJ_DEP_LIBS_FOR_LIB ${PROJ_DEP_LIBS_FOR_LIB} ${SOCIMYSQL_LIBRARIES})
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${SOCI_LIBRARIES} ${SOCIMYSQL_LIBRARIES})
   endif (SOCIMYSQL_FOUND)
 
 endmacro (get_soci)
 
 # ~~~~~~~~~~ Doxygen ~~~~~~~~~
 macro (get_doxygen)
-  set (_required_version 0)
+  unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
     message (STATUS "Requires Doxygen-${_required_version}")
@@ -402,12 +482,19 @@ macro (get_doxygen)
     message (STATUS "Requires Doxygen without specifying any version")
   endif (${ARGC} GREATER 0)
 
-  find_package (Doxygen REQUIRED)
+  # The first check is to get Doxygen installation details
+  find_package (Doxygen)
+
+  # The second check is for the required version (FindDoxygenWrapper.cmake is
+  # provided by us). Indeed, the Fedora/RedHat FindDoxygen.cmake does not seem
+  # to provide version enforcement.
+  find_package (DoxygenWrapper ${_required_version} REQUIRED)
+
 endmacro (get_doxygen)
 
 # ~~~~~~~~~~ StdAir ~~~~~~~~~
 macro (get_stdair)
-  set (_required_version 0)
+  unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
     message (STATUS "Requires StdAir-${_required_version}")
@@ -415,7 +502,8 @@ macro (get_stdair)
     message (STATUS "Requires StdAir without specifying any version")
   endif (${ARGC} GREATER 0)
 
-  find_package (StdAir REQUIRED HINTS ${WITH_STDAIR_PREFIX})
+  find_package (StdAir ${_required_version} REQUIRED
+	HINTS ${WITH_STDAIR_PREFIX})
   if (StdAir_FOUND)
     #
     message (STATUS "Found StdAir version: ${STDAIR_VERSION}")
@@ -669,19 +757,21 @@ endmacro (module_library_add_standard)
 #  * The short name of the library to be built.
 #    Note that the library (CMake) target is derived directly from the library
 #    short name: a 'lib' suffix is just appended to the short name.
+#  * The directory where to find the header files.
 #  * The header files to be published/installed along with the library.
 #  * The source files to build the library.
 #    Note that the source files contain at least the header files. Hence,
 #    even when there are no .cpp source files, the .hpp files will appear.
 #
-# Note that the source files should be given as a single parameter,
+# Note that the header and source files should be given as single parameters,
 # i.e., enclosed by double quotes (").
 #
 # The additional parameters, if given, correspond to the names of the
 # modules this current module depends upon. Dependencies on the
 # external libraries (e.g., Boost, SOCI, StdAir) are automatically
 # appended, thanks to the get_external_libs() macro.
-macro (module_library_add_specific _lib_short_name _lib_headers _lib_sources)
+macro (module_library_add_specific
+	_lib_short_name _lib_dir _lib_headers _lib_sources)
   # Derive the library (CMake) target from its name
   set (_lib_target ${_lib_short_name}lib)
 
@@ -693,7 +783,7 @@ macro (module_library_add_specific _lib_short_name _lib_headers _lib_sources)
   set (_intermodule_dependencies "")
   foreach (_arg_module ${ARGV})
 
-    if (NOT "${_lib_short_name};${_lib_headers};${_lib_sources}" 
+    if (NOT "${_lib_dir};${_lib_short_name};${_lib_headers};${_lib_sources}" 
 	MATCHES "${_arg_module}")
       list (APPEND _intermodule_dependencies ${_arg_module}lib)
     endif ()
@@ -731,22 +821,16 @@ macro (module_library_add_specific _lib_short_name _lib_headers _lib_sources)
   # DEBUG
   #message ("DEBUG -- [${_lib_target}] _lib_headers = ${_lib_headers}")
 
-  # Register the library target in the project (for reporting purpose)
-  set (PROJ_ALL_LIB_TARGETS
-	${PROJ_ALL_LIB_TARGETS} ${MODULE_LIB_TARGET} PARENT_SCOPE)
-
   ##
   # Library name (and soname)
   if (WIN32)
     set_target_properties (${_lib_target} PROPERTIES 
       OUTPUT_NAME ${_lib_short_name} 
-      VERSION ${GENERIC_LIB_VERSION}
-      PUBLIC_HEADER "${_lib_headers}")
+      VERSION ${GENERIC_LIB_VERSION})
   else (WIN32)
     set_target_properties (${_lib_target} PROPERTIES 
       OUTPUT_NAME ${_lib_short_name}
-      VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION}
-      PUBLIC_HEADER "${_lib_headers}")
+      VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
   endif (WIN32)
 
   # If everything else is not enough for CMake to derive the language to
@@ -758,20 +842,14 @@ macro (module_library_add_specific _lib_short_name _lib_headers _lib_sources)
   endif ("${_linker_lang}" STREQUAL "_linker_lang-NOTFOUND")
 
   ##
-  # Installation
-  set (_all_targets ${_lib_target})
-  foreach (_arg_lib_name ${${MODULE_NAME}_INTER_TARGETS})
-    list (APPEND _all_targets ${_arg_lib_name}lib)
-  endforeach (_arg_lib_name)
-
-  # Installation of the library binaries
-  install (TARGETS ${_all_targets}
+  # Installation of the library
+  install (TARGETS ${_lib_target}
     EXPORT ${LIB_DEPENDENCY_EXPORT}
     LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT runtime)
 
   # Register, for reporting purpose, the list of libraries to be built
   # and installed for that module
-  list (APPEND ${MODULE_NAME}_ALL_LIBS ${_all_targets})
+  list (APPEND ${MODULE_NAME}_ALL_LIBS ${_lib_target})
   set (${MODULE_NAME}_ALL_LIBS ${${MODULE_NAME}_ALL_LIBS} PARENT_SCOPE)
 
   # Install the header files for the library
@@ -839,7 +917,7 @@ macro (module_binary_add _exec_source_dir)
 
   # Register the (CMake) target for the executable, and specify the name
   # of that latter
-  add_executable (${_exec_name}bin ${_exec_source_dir}/${MODULE_NAME}.cpp)
+  add_executable (${_exec_name}bin ${_exec_source_dir}/${_exec_name}.cpp)
   set_target_properties (${_exec_name}bin PROPERTIES OUTPUT_NAME ${_exec_name})
 
   # Register the dependencies on which the binary depends upon
@@ -858,7 +936,7 @@ macro (module_binary_add _exec_source_dir)
 
   # Register, for reporting purpose, the list of executables to be built
   # and installed for that module
-  list (APPEND ${MODULE_NAME}_ALL_EXECS ${PROJ_ALL_BIN_TARGETS})
+  list (APPEND ${MODULE_NAME}_ALL_EXECS ${_exec_name})
   set (${MODULE_NAME}_ALL_EXECS ${${MODULE_NAME}_ALL_EXECS} PARENT_SCOPE)
 
 endmacro (module_binary_add)
@@ -876,22 +954,32 @@ endmacro (module_export_install)
 ##                            Tests                              ##
 ###################################################################
 #
-macro (add_test_suites _test_suite_dir_list)
+macro (add_test_suites)
+  #
+  set (_test_suite_dir_list ${ARGV})
+
   if (Boost_FOUND)
     # Tell CMake/CTest that tests will be performed
     enable_testing() 
 
-    #
+    # Browse all the modules, and register test suites for each of them
+    set (_check_target_list "")
     foreach (_module_name ${_test_suite_dir_list})
       set (${_module_name}_ALL_TST_TARGETS "")
       # Each individual test suite is specified within the dedicated
       # sub-directory. The CMake file within each of those test sub-directories
       # specifies a target named check_${_module_name}tst.
       add_subdirectory (test/${_module_name})
-      add_custom_target (check DEPENDS check_${_module_name}tst)
+
+      # Register, for book-keeping purpose (a few lines below), 
+      # the (CMake/CTest) test target of the current module 
+      list (APPEND _check_target_list check_${_module_name}tst)
     endforeach (_module_name)
 
-    # Register, for book-keeping purpose, the list of modules to be tested
+    # Register all the module (CMake/CTest) test targets at once
+    add_custom_target (check DEPENDS ${_check_target_list})
+
+    # Register, for reporting purpose, the list of modules to be tested
     set (PROJ_ALL_MOD_FOR_TST ${_test_suite_dir_list})
 
   endif (Boost_FOUND)
@@ -1014,9 +1102,45 @@ endmacro (install_dev_helper_files)
 #######################################
 ##          Overall Status           ##
 #######################################
+# Doxygen
+macro (display_doxygen)
+  message (STATUS)
+  message (STATUS "* Doxygen:")
+  message (STATUS "  - DOXYGEN_VERSION .............. : ${DOXYGEN_VERSION}")
+  message (STATUS "  - DOXYGEN_EXECUTABLE ........... : ${DOXYGEN_EXECUTABLE}")
+  message (STATUS "  - DOXYGEN_DOT_EXECUTABLE ....... : ${DOXYGEN_DOT_EXECUTABLE}")
+  message (STATUS "  - DOXYGEN_DOT_PATH ............. : ${DOXYGEN_DOT_PATH}")
+endmacro (display_doxygen)
+
+# Python
+macro (display_python)
+  if (PYTHONLIBS_FOUND)
+    message (STATUS)
+	message (STATUS "* Python:")
+	message (STATUS "  - PYTHONLIBS_VERSION ......... : ${PYTHONLIBS_VERSION}")
+	message (STATUS "  - PYTHON_LIBRARIES ........... : ${PYTHON_LIBRARIES}")
+	message (STATUS "  - PYTHON_INCLUDE_PATH ........ : ${PYTHON_INCLUDE_PATH}")
+	message (STATUS "  - PYTHON_INCLUDE_DIRS ........ : ${PYTHON_INCLUDE_DIRS}")
+	message (STATUS "  - PYTHON_DEBUG_LIBRARIES ..... : ${PYTHON_DEBUG_LIBRARIES}")
+	message (STATUS "  - Python_ADDITIONAL_VERSIONS . : ${Python_ADDITIONAL_VERSIONS}")
+  endif (PYTHONLIBS_FOUND)
+endmacro (display_python)
+
+# ZeroMQ
+macro (display_zeromq)
+  if (ZEROMQ_FOUND)
+    message (STATUS)
+	message (STATUS "* ZeroMQ:")
+	message (STATUS "  - ZeroMQ_VERSION ............. : ${ZeroMQ_VERSION}")
+	message (STATUS "  - ZeroMQ_LIBRARIES ........... : ${ZeroMQ_LIBRARIES}")
+	message (STATUS "  - ZeroMQ_INCLUDE_DIR ......... : ${ZeroMQ_INCLUDE_DIR}")
+  endif (ZEROMQ_FOUND)
+endmacro (display_zeromq)
+
 # Boost
 macro (display_boost)
   if (Boost_FOUND)
+    message (STATUS)
     message (STATUS "* Boost:")
     message (STATUS "  - Boost_VERSION .............. : ${Boost_VERSION}")
     message (STATUS "  - Boost_LIB_VERSION .......... : ${Boost_LIB_VERSION}")
@@ -1026,6 +1150,17 @@ macro (display_boost)
     message (STATUS "  - Boost required libraries ... : ${BOOST_REQUIRED_LIBS}")
   endif (Boost_FOUND)
 endmacro (display_boost)
+
+# Readline
+macro (display_readline)
+  if (READLINE_FOUND)
+    message (STATUS)
+    message (STATUS "* Readline:")
+    message (STATUS "  - READLINE_VERSION ........... : ${READLINE_VERSION}")
+    message (STATUS "  - READLINE_INCLUDE_DIR ....... : ${READLINE_INCLUDE_DIR}")
+    message (STATUS "  - READLINE_LIBRARY ........... : ${READLINE_LIBRARY}")
+  endif (READLINE_FOUND)
+endmacro (display_readline)
 
 # MySQL
 macro (display_mysql)
@@ -1068,6 +1203,7 @@ endmacro (display_stdair)
 
 ##
 macro (display_status_all_modules)
+  message (STATUS)
   foreach (_module_name ${PROJ_ALL_MOD_FOR_BLD})
     message (STATUS "* Module ....................... : ${_module_name}")
     message (STATUS "  + Layers to be built ......... : ${${_module_name}_ALL_LAYERS}")
@@ -1102,10 +1238,12 @@ macro (display_status)
   message (STATUS "Modules to test ................ : ${PROJ_ALL_MOD_FOR_TST}")
   message (STATUS "Binaries to test ............... : ${PROJ_ALL_TST_TARGETS}")
   display_status_all_modules ()
+  message (STATUS)
   message (STATUS "BUILD_SHARED_LIBS .............. : ${BUILD_SHARED_LIBS}")
   message (STATUS "CMAKE_BUILD_TYPE ............... : ${CMAKE_BUILD_TYPE}")
   message (STATUS "CMAKE_MODULE_PATH .............. : ${CMAKE_MODULE_PATH}")
   message (STATUS "CMAKE_INSTALL_PREFIX ........... : ${CMAKE_INSTALL_PREFIX}")
+  display_doxygen ()
   message (STATUS)
   message (STATUS "----------------------------------")
   message (STATUS "--- Installation Configuration ---")
@@ -1135,7 +1273,10 @@ macro (display_status)
   message (STATUS "---     External libraries    ---")
   message (STATUS "---------------------------------")
   #
+  display_python ()
+  display_zeromq ()
   display_boost ()
+  display_readline ()
   display_mysql ()
   display_soci ()
   display_stdair ()
