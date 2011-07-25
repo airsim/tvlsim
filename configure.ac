@@ -464,7 +464,7 @@ AC_CONFIG_FILES(
 	dsim/command/Makefile
 	dsim/service/Makefile
 	dsim/config/Makefile
-	dsim/config/Makefile/dsim-paths.hpp
+	dsim/config/dsim-paths.hpp
 	dsim/core/Makefile
 	dsim/batches/Makefile
 	doc/Makefile
