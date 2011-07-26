@@ -15,6 +15,7 @@
 #include <stdair/bom/GuillotineBlock.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
+#include <stdair/bom/LegCabin.hpp>
 // AirInv
 #include <airinv/bom/InventoryHelper.hpp>
 #include <airinv/bom/FlightDateHelper.hpp>
@@ -124,6 +125,29 @@ namespace AIRINV {
 
       stdair::BidPriceVector_T lBPV = lSegmentCabin_ptr->getBidPriceVector();
 
+      // TODO: Enable when O&D forecast and optimisation process is ready
+      if (false) {
+        stdair::BidPriceVector_T lBPV;
+        stdair::LegCabinList_T lLegCabinList =
+          stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
+        assert (!lLegCabinList.empty());
+        if (lLegCabinList.size() > 1) {
+          stdair::BidPrice_T lBidPriceValue = 0;
+          for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+               itLC != lLegCabinList.end(); ++itLC) {
+            const stdair::LegCabin* lLegCabin_ptr = *itLC;
+            const stdair::BidPriceVector_T& lLegCabinBPV = lLegCabin_ptr->getBidPriceVector();
+            assert(!lLegCabinBPV.empty());
+            lBidPriceValue += lLegCabinBPV.back();
+          }
+          lBPV.push_back(lBidPriceValue);
+        } else {
+          const stdair::LegCabin* lLegCabin_ptr = lLegCabinList.front();
+          lBPV = lLegCabin_ptr->getBidPriceVector();
+        }
+      }
+      
+
 
       // const stdair::CabinCapacity_T& lCabinCapacity = lSegmentCabin_ptr->getCapacity();
       // const stdair::CommittedSpace_T& lCommittedSpace = lSegmentCabin_ptr->getCommittedSpace();
@@ -132,7 +156,9 @@ namespace AIRINV {
 
       const stdair::Availability_T& lAvailabilityPool = lSegmentCabin_ptr->getAvailabilityPool();
       //assert (lAvailabilityPool > 0);
-      lBPV.resize(lAvailabilityPool);
+      if (lAvailabilityPool < lBPV.size()) {
+        lBPV.resize(lAvailabilityPool);
+      }
 
 
 
