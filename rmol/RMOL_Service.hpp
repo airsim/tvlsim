@@ -228,10 +228,10 @@ namespace RMOL {
                          const stdair::Yield_T&, stdair::BomRoot&);
 
     // Initialise (or re-initialise) the demand projections in all leg cabins
-    void resetDemandInformation ();
+    void resetDemandInformation (const stdair::DateTime_T&);
 
     // Projection of demand
-    void projectOnDDemandOntoLegCabins();
+    void projectOnDDemandOntoLegCabins(const stdair::DateTime_T&);
 
     /** Optimiser */
     void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
@@ -239,6 +239,10 @@ namespace RMOL {
     void optimiseBPWithYieldProration (const stdair::DateTime_T&);
 
     void optimiseUsingOnDForecast (const stdair::DateTime_T&);
+
+    // Communicate bid price to partners
+    void communicateBidPrice (const stdair::DateTime_T&);
+    void communicateBidPrice (const stdair::FlightDate&, stdair::BomRoot&);
     
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.

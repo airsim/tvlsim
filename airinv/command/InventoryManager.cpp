@@ -329,9 +329,11 @@ namespace AIRINV {
               stdair::LegCabin* lCurrentLegCabin_ptr = *itLegCabin;
               assert (lCurrentLegCabin_ptr != NULL);
               stdair::CabinCapacity_T lCabinCapacity = lCurrentLegCabin_ptr->getPhysicalCapacity();
-              stdair::BidPriceVector_T lBPV = lCurrentLegCabin_ptr->getEmptyBidPriceVector();
+              stdair::BidPriceVector_T& lBPV = lCurrentLegCabin_ptr->getEmptyBidPriceVector();
               //for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400 + 300/sqrt(k+1));}
               for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400);}
+              lCurrentLegCabin_ptr->setPreviousBidPrice(lBPV.back());
+              lCurrentLegCabin_ptr->setCurrentBidPrice(lBPV.back());
             }
           }
         }

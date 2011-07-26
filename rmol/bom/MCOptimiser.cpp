@@ -363,6 +363,8 @@ namespace RMOL {
         lBidPriceVector.push_back (lMinBP);
       }
     }
+    ioLegCabin.updatePreviousBidPrice();
+    ioLegCabin.setCurrentBidPrice (lBidPriceVector.back());
   }
   
 }
