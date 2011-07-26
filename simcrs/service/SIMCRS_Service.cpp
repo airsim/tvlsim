@@ -580,7 +580,8 @@ namespace SIMCRS {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::optimise (const stdair::RMEventStruct& iRMEvent) {
+  void SIMCRS_Service::optimise (const stdair::RMEventStruct& iRMEvent,
+                                 const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -592,6 +593,6 @@ namespace SIMCRS {
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
       lSIMCRS_ServiceContext.getAIRINV_Master_Service();
 
-    lAIRINV_Master_Service.optimise (iRMEvent);
+    lAIRINV_Master_Service.optimise (iRMEvent, iForecastingMethod);
   }
 }

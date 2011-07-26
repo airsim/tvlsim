@@ -8,6 +8,7 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
@@ -82,7 +83,8 @@ namespace DSIM {
   public:
     // /////////// Business Methods /////////////
     /** Perform a simulation. */
-    void simulate(const bool);
+    void simulate (const bool,
+                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
     /** Display the list of airlines. */
     void displayAirlineListFromDB() const;

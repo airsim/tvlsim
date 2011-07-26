@@ -479,7 +479,8 @@ namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
-  optimise (const stdair::RMEventStruct& iRMEvent) {
+  optimise (const stdair::RMEventStruct& iRMEvent,
+            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the AIRINV service context
     if (_airinvMasterServiceContext == NULL) {
@@ -502,6 +503,7 @@ namespace AIRINV {
     const stdair::KeyDescription_T lFDDescription =
       iRMEvent.getFlightDateDescription();
 
-    lAIRINV_Service.optimise (lAirlineCode, lFDDescription, lRMEventTime);
+    lAIRINV_Service.optimise (lAirlineCode, lFDDescription, lRMEventTime,
+                              iForecastingMethod);
   }
 }

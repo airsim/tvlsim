@@ -36,7 +36,8 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
-                            const bool iGenerateDemandWithStatisticOrder) {
+                            const bool iGenerateDemandWithStatisticOrder,
+                            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
@@ -91,7 +92,8 @@ namespace DSIM {
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
-                                               lEventStruct); break;
+                                               lEventStruct,
+                                               iForecastingMethod); break;
       default: assert (false); break;
       }
 
@@ -221,13 +223,14 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playRMEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-               const stdair::EventStruct& iEventStruct) {
+               const stdair::EventStruct& iEventStruct,
+               const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
     // Retrieve the RM event struct from the event.
     const stdair::RMEventStruct lRMEvent = iEventStruct.getRMEvent();
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
-    ioSIMCRS_Service.optimise (lRMEvent);
+    ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod);
   }
 }

@@ -14,6 +14,7 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
@@ -357,7 +358,8 @@ int main (int argc, char* argv[]) {
   const bool lGenerateDemandWithStatisticOrder = true;
   
   // Perform a simulation
-  dsimService.simulate(lGenerateDemandWithStatisticOrder);
+  dsimService.simulate (lGenerateDemandWithStatisticOrder,
+                        stdair::ForecastingMethod::MUL_PK);
 
   // DEBUG
   // Display the airlines stored in the database

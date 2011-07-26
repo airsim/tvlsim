@@ -9,16 +9,17 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/bom/RMEventTypes.hpp>
 
 /// Forward declarations
 namespace stdair {
   class AirlineFeatureSet;
   class STDAIR_Service;
-  struct BasLogParams;
-  struct BasDBParams;
   class Inventory;
   struct TravelSolutionStruct;
+  struct BasLogParams;
+  struct BasDBParams;
 }
 
 namespace AIRINV {
@@ -162,7 +163,8 @@ namespace AIRINV {
      * Optimise (revenue management) an flight-date/network-date
      */
     void optimise (const stdair::AirlineCode_T&,
-                   const stdair::KeyDescription_T&, const stdair::DateTime_T&);
+                   const stdair::KeyDescription_T&, const stdair::DateTime_T&,
+                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
 
   public:

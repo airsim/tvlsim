@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Types.hpp>
@@ -154,7 +155,8 @@ namespace SIMCRS {
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-    void optimise (const stdair::RMEventStruct&);
+    void optimise (const stdair::RMEventStruct&,
+                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
     /**
      * Build a sample list of travel solutions.

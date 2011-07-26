@@ -499,7 +499,8 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Service::optimise (const stdair::AirlineCode_T& iAirlineCode,
                                  const stdair::KeyDescription_T& iFDDescription,
-                                 const stdair::DateTime_T& iRMEventTime) {
+                                 const stdair::DateTime_T& iRMEventTime,
+                                 const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
     if (_airinvServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInv service "
                                                     "has not been initialised");
@@ -521,7 +522,8 @@ namespace AIRINV {
     RMOL::RMOL_Service& lRMOL_Service =lAIRINV_ServiceContext.getRMOL_Service();
 
     // Optimise the flight-date.
-    bool isOptimised = lRMOL_Service.optimise (lFlightDate, iRMEventTime);
+    bool isOptimised = lRMOL_Service.optimise (lFlightDate, iRMEventTime,
+                                               iForecastingMethod);
 
     // Update the inventory with the new controls.
     if (isOptimised == true) {
