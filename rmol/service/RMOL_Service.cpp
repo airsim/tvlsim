@@ -1082,6 +1082,7 @@ namespace RMOL {
       }
       const stdair::SegmentDateList_T& lSegmentDateList =
         stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+      // Check if the the O&D date is the one we are looking for
       if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
           lDestination == iDestination && lSegmentDateList.size() == 1) {       
         stdair::CabinClassPair_T lCabinClassPair (iPreferredCabin, iClassCode);
@@ -1141,6 +1142,8 @@ namespace RMOL {
       }
       const stdair::SegmentDateList_T& lSegmentDateList =
         stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+      // Check if the O&D date might be the one we are looking for.
+      // There still is a test to go through to see if the combination of airlines is right.
       if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
           lDestination == iDestination && lSegmentDateList.size() == iAirlineCodeList.size()) {
         const stdair::SegmentDateList_T& lSegmentDateList =
@@ -1149,6 +1152,7 @@ namespace RMOL {
         stdair::SegmentDateList_T::const_iterator itSD = lSegmentDateList.begin();
         for (;itAC != iAirlineCodeList.end(); ++itAC, ++itSD) {
           const stdair::AirlineCode_T lForecastAirlineCode = *itAC;
+          // Get the operating airline code and check if it is the airline we are looking for.
           if ((*itSD)->isOtherAirlineOperating()) {
             const stdair::SegmentDate* lOperatingSegmentDate_ptr =
               (*itSD)->getOperatingSegmentDate();
@@ -1244,8 +1248,9 @@ namespace RMOL {
       
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the demand forecast info corresponding to this flight date needs to be reset.
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
-          
+          // Find all leg cabin and reset the forecast they are holding.
           const stdair::LegDateList_T lLegDateList =
             stdair::BomManager::getList<stdair::LegDate> (*lFlightDate_ptr);
           assert (!lLegDateList.empty());
@@ -1307,8 +1312,10 @@ namespace RMOL {
       
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the forecast for this O&D date needs to be projected.
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
-        
+
+          // Find all leg cabins and project the demand info.
           const stdair::StringDemandStructMap_T& lStringDemandStructMap =
             lOnDDate_ptr->getDemandInfoMap ();
           for (stdair::StringDemandStructMap_T::const_iterator itStrDS = lStringDemandStructMap.begin();
@@ -1330,6 +1337,7 @@ namespace RMOL {
             for (; itSD != lOnDSegmentDateList.end(); ++itCCP, ++itSD) {
               const stdair::SegmentDate* lSegmentDate_ptr = *itSD;
               assert (lSegmentDate_ptr != NULL);
+              // Only operated legs receive the demand information.
               if (!lSegmentDate_ptr->isOtherAirlineOperating()) {
                 const stdair::CabinCode_T lCabinCode = itCCP->first;
                 const stdair::ClassCode_T lClassCode = itCCP->second;
@@ -1341,6 +1349,7 @@ namespace RMOL {
                   stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
                 assert (!lLegCabinList.empty());
                 const int lNbOfLegs = lLegCabinList.size();
+                // Determine the yield (equally distributed over segments and then legs).
                 const stdair::Yield_T& lYield = lDemandStruct.getYield()/(lNbOfLegs*lNbOfSegments);
                 const stdair::MeanValue_T& lMeanValue = lDemandStruct.getDemandMean();
                 const stdair::StdDevValue_T& lStdDevValue = lDemandStruct.getDemandStdDev();
@@ -1398,6 +1407,7 @@ namespace RMOL {
       
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the optimisation is needed.
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
           STDAIR_LOG_DEBUG ("Optimisation using O&D forecast: " << lCurrentInv_ptr->getAirlineCode()
                             << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
@@ -1447,6 +1457,7 @@ namespace RMOL {
       
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the operation is needed.
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
           communicateBidPrice (*lCurrentFlightDate_ptr, lBomRoot);
         }
@@ -1469,25 +1480,33 @@ namespace RMOL {
       if (stdair::BomManager::hasList<stdair::SegmentDate>(*lSegmentDate_ptr)) {
         const stdair::LegDateList_T& lLegDateList =
           stdair::BomManager::getList<stdair::LegDate>(*lSegmentDate_ptr);
+        // Get the list of marketing carriers segments.
+        // These are part of maketing partners inventories images held by the operating airline.
         const stdair::SegmentDateList_T& lMktSegmentDateList =
           stdair::BomManager::getList<stdair::SegmentDate>(*lSegmentDate_ptr);
         for (stdair::SegmentDateList_T::const_iterator itMktSD = lMktSegmentDateList.begin();
              itMktSD != lMktSegmentDateList.end(); ++itMktSD) {
+          // Get the marketing airline code.
           stdair::SegmentDate* lMktSD_ptr = *itMktSD;
           assert (lMktSD_ptr != NULL);
           stdair::FlightDate* lMktFD_ptr =
             stdair::BomManager::getParentPtr<stdair::FlightDate>(*lMktSD_ptr);
           assert (lMktFD_ptr != NULL);
           const stdair::AirlineCode_T& lMktAC = lMktFD_ptr->getAirlineCode();
+          // Get the (real) marketer inventory.
           const stdair::Inventory* lMktInv_ptr =
             stdair::BomManager::getObjectPtr<stdair::Inventory>(iBomRoot,lMktAC);
           assert (lMktInv_ptr != NULL);
+          // Get the image of the operating airline inventory held by the marketer.
           const stdair::Inventory* lOptInv_ptr =
             stdair::BomManager::getObjectPtr<stdair::Inventory>(*lMktInv_ptr,lOptAC);
           assert (lOptInv_ptr != NULL);
+          // Find the image of the concerned flight date.
           const stdair::FlightDate* lOptFD_ptr =
             stdair::BomManager::getObjectPtr<stdair::FlightDate>(*lOptInv_ptr,lFDKeyStr);
           assert (lOptFD_ptr != NULL);
+          // Browse the list of leg dates in the real operating inventory.
+          // Retrieve the image of each leg date.
           for (stdair::LegDateList_T::const_iterator itLD = lLegDateList.begin();
                itLD != lLegDateList.end(); ++itLD) {
             const stdair::LegDate* lLD_ptr = *itLD;
@@ -1498,6 +1517,8 @@ namespace RMOL {
             assert (lOptLD_ptr != NULL);
             const stdair::LegCabinList_T& lLegCabinList_T =
               stdair::BomManager::getList<stdair::LegCabin>(*lLD_ptr);
+            // Browse the list of leg cabins in the real operating inventory.
+            // Retrieve the image of each leg cabin and communicate the bid price from the real to the image.
             for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList_T.begin();
                  itLC != lLegCabinList_T.end(); ++itLC) {
               const stdair::LegCabin* lLC_ptr = *itLC;
@@ -1554,8 +1575,10 @@ namespace RMOL {
       
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the forecast for this O&D date needs to be projected.
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
-        
+
+          // Find all leg cabins and project the demand info.
           const stdair::StringDemandStructMap_T& lStringDemandStructMap =
             lOnDDate_ptr->getDemandInfoMap ();
           for (stdair::StringDemandStructMap_T::const_iterator itStrDS = lStringDemandStructMap.begin();
@@ -1575,8 +1598,11 @@ namespace RMOL {
             assert (lOnDSegmentDateList.size() == lNbOfSegments);
             stdair::CabinClassPairList_T::const_iterator itCCP = lCabinClassPairList.begin();
             stdair::SegmentDateList_T::const_iterator itSD = lOnDSegmentDateList.begin();
+            // List of bid prices that will be used to easily compute displacement-ajusted yields.
             std::list<stdair::BidPrice_T> lBidPriceList;
+            // The sum of bid prices that will be stored in the list above.
             stdair::BidPrice_T lTotalBidPrice = 0;
+            // Retrieve the bid prices
             for (; itSD != lOnDSegmentDateList.end(); ++itCCP, ++itSD) {
               stdair::SegmentDate* lSegmentDate_ptr = *itSD;
               assert (lSegmentDate_ptr != NULL);
@@ -1610,6 +1636,7 @@ namespace RMOL {
               stdair::BidPrice_T lComplementaryBidPrice = lTotalBidPrice - lBidPrice;
               const stdair::SegmentDate* lSegmentDate_ptr = *itSD;
               assert (lSegmentDate_ptr != NULL);
+              // Only operated legs receive the demand information.
               if (!lSegmentDate_ptr->isOtherAirlineOperating()) {
                 const stdair::CabinCode_T lCabinCode = itCCP->first;
                 const stdair::ClassCode_T lClassCode = itCCP->second;
@@ -1620,6 +1647,7 @@ namespace RMOL {
                 const stdair::LegCabinList_T lLegCabinList =
                   stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
                 assert (!lLegCabinList.empty());
+                 // Determine the displacement-adjusted yield.
                 const stdair::Yield_T& lYield = lDemandStruct.getYield() - lComplementaryBidPrice;
                 const stdair::MeanValue_T& lMeanValue = lDemandStruct.getDemandMean();
                 const stdair::StdDevValue_T& lStdDevValue = lDemandStruct.getDemandStdDev();
@@ -1654,7 +1682,8 @@ namespace RMOL {
 
     // Retrieve the date from the RM event
     const stdair::Date_T lDate = iRMEventTime.date();
-    
+
+    // Browse the list of inventories and optimise within each one independently.
     const stdair::InventoryList_T& lInvList =
       stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
     for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
@@ -1664,6 +1693,7 @@ namespace RMOL {
       
       double lMaxBPVariation = 1.0;
       short lIterationCounter = 0;
+      // Iterate until the variation is under the wanted level or the maximal number of iterations is reached.
       while (lMaxBPVariation > 0.01 && lIterationCounter < 10) {
         lMaxBPVariation = 0.0;
         lIterationCounter++;
@@ -1681,6 +1711,7 @@ namespace RMOL {
           
           stdair::DCPList_T::const_iterator itDCP =
             std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+          // Check if the optimisation is needed.
           if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
             const double lBPVariation = Optimiser::optimiseUsingOnDForecast (*lCurrentFlightDate_ptr);
             lMaxBPVariation = std::max(lMaxBPVariation, lBPVariation);
@@ -1707,10 +1738,13 @@ namespace RMOL {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
     
     // Retrieve the date from the RM event
-    const stdair::Date_T lDate = iRMEventTime.date();    
+    const stdair::Date_T lDate = iRMEventTime.date();
 
     double lMaxBPVariation = 1.0;
     short lIterationCounter = 0;
+    // Iterate until the variation is under the wanted level or the maximal number of iterations is reached.
+    // Every iteration corresponds to the optimisation of the whole network. Bid prices are communicated
+    // between partners at the end of each iteration.
     while (lMaxBPVariation > 0.01 && lIterationCounter < 10) {
       lMaxBPVariation = 0.0;
       lIterationCounter++;
