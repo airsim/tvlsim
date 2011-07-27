@@ -69,9 +69,7 @@ namespace RMOL {
     static void optimiseBPWithYieldProration (stdair::SegmentCabin&);
     static void optimiseBPWithYieldProration (stdair::FlightDate&);
 
-    static void optimiseUsingOnDForecast (stdair::FlightDate&);
-
-    static void optimisationByMCIntegration (stdair::LegCabin&);
+    static double optimiseUsingOnDForecast (stdair::FlightDate&);
 
   };
 }

@@ -245,8 +245,6 @@ namespace RMOL {
 
     void optimiseUsingDynamicIBP (const stdair::DateTime_T&);
 
-    void optimiseUsingIterativeDA (stdair::Inventory&, const stdair::DateTime_T&);
-
     // Communicate bid price to partners
     void communicateBidPrice (const stdair::DateTime_T&);
     void communicateBidPrice (const stdair::FlightDate&, stdair::BomRoot&);

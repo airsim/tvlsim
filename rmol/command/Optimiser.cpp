@@ -360,8 +360,9 @@ namespace RMOL {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void Optimiser::
+  double Optimiser::
   optimiseUsingOnDForecast (stdair::FlightDate& ioFlightDate) {
+    double lMaxBPVariation = 0.0;
     const stdair::LegDateList_T& lLDList =
       stdair::BomManager::getList<stdair::LegDate> (ioFlightDate);
     for (stdair::LegDateList_T::const_iterator itLD = lLDList.begin();
@@ -377,13 +378,14 @@ namespace RMOL {
         stdair::LegCabin* lLC_ptr = *itLC;
         assert (lLC_ptr != NULL);
         MCOptimiser::optimisationByMCIntegration (*lLC_ptr);
+        const stdair::BidPrice_T& lCurrentBidPrice = lLC_ptr->getCurrentBidPrice();
+        const stdair::BidPrice_T& lPreviousBidPrice = lLC_ptr->getPreviousBidPrice();
+        assert (lPreviousBidPrice != 0);
+        const double lBPVariation = (lCurrentBidPrice - lPreviousBidPrice)/lPreviousBidPrice;
+        lMaxBPVariation = std::max(lMaxBPVariation, lBPVariation);
       }
     }
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void Optimiser::optimisationByMCIntegration (stdair::LegCabin& ioLegCabin) {
-    MCOptimiser::optimisationByMCIntegration (ioLegCabin);
+    return lMaxBPVariation;
   }
 
 }
