@@ -289,18 +289,32 @@ namespace AIRINV {
     }
   }
   
-  // To be removed once bid price computation is possible
   //MODIF
   // ////////////////////////////////////////////////////////////////////
-  void InventoryManager::setDefaultBidPriceVectorAndYield (stdair::BomRoot& iBomRoot) {
+  void InventoryManager::setDefaultBidPriceVector (stdair::BomRoot& ioBomRoot) {
 
     const stdair::InventoryList_T& lInvList =
-      stdair::BomManager::getList<stdair::Inventory> (iBomRoot);
+      stdair::BomManager::getList<stdair::Inventory> (ioBomRoot);
     for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
          itInv != lInvList.end(); ++itInv) {
       stdair::Inventory* lCurrentInv_ptr = *itInv;
       assert (lCurrentInv_ptr != NULL);
 
+      // TODO: Enable and make it replace the next part,
+      // once the O&D forecast and optimisation process is ready
+      if (false) {
+        setDefaultBidPriceVector (*lCurrentInv_ptr);
+        if (stdair::BomManager::hasList<stdair::Inventory> (*lCurrentInv_ptr)) {
+          const stdair::InventoryList_T& lPartnerInvList =
+            stdair::BomManager::getList<stdair::Inventory> (*lCurrentInv_ptr);
+          for (stdair::InventoryList_T::const_iterator itPartnerInv = lPartnerInvList.begin();
+               itPartnerInv != lPartnerInvList.end(); ++itPartnerInv) {
+            stdair::Inventory* lCurrentPartnerInv_ptr = *itPartnerInv;
+            assert (lCurrentPartnerInv_ptr != NULL);
+            setDefaultBidPriceVector (*lCurrentPartnerInv_ptr);
+          }
+        }
+      }
       
       const stdair::FlightDateList_T& lFlightDateList =
         stdair::BomManager::getList<stdair::FlightDate> (*lCurrentInv_ptr);
@@ -309,35 +323,6 @@ namespace AIRINV {
            itFlightDate != lFlightDateList.end(); ++itFlightDate) {
         stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
         assert (lCurrentFlightDate_ptr != NULL);
-
-        // TODO: Enable and make it replace the next part,
-        // once the O&D forecast and optimisation process is ready
-        if (false) {
-          const stdair::LegDateList_T& lLegDateList =
-            stdair::BomManager::getList<stdair::LegDate> (*lCurrentFlightDate_ptr);
-          for (stdair::LegDateList_T::const_iterator itLegDate =
-                 lLegDateList.begin();
-               itLegDate != lLegDateList.end(); ++itLegDate) {
-            stdair::LegDate* lCurrentLegDate_ptr = *itLegDate;
-            assert (lCurrentLegDate_ptr != NULL);
-            
-            const stdair::LegCabinList_T& lLegCabinList =
-              stdair::BomManager::getList<stdair::LegCabin> (*lCurrentLegDate_ptr);
-            for (stdair::LegCabinList_T::const_iterator itLegCabin =
-                   lLegCabinList.begin();
-                 itLegCabin != lLegCabinList.end(); ++itLegCabin) {
-              stdair::LegCabin* lCurrentLegCabin_ptr = *itLegCabin;
-              assert (lCurrentLegCabin_ptr != NULL);
-              stdair::CabinCapacity_T lCabinCapacity = lCurrentLegCabin_ptr->getPhysicalCapacity();
-              stdair::BidPriceVector_T& lBPV = lCurrentLegCabin_ptr->getEmptyBidPriceVector();
-              //for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400 + 300/sqrt(k+1));}
-              for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400);}
-              lCurrentLegCabin_ptr->setPreviousBidPrice(lBPV.back());
-              lCurrentLegCabin_ptr->setCurrentBidPrice(lBPV.back());
-            }
-          }
-        }
-      
 
 	const stdair::SegmentDateList_T& lSegmentDateList =
 	  stdair::BomManager::getList<stdair::SegmentDate> (*lCurrentFlightDate_ptr);
@@ -387,6 +372,43 @@ namespace AIRINV {
     }     
   }
 
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::setDefaultBidPriceVector (stdair::Inventory& ioInventory) {
+
+    const stdair::FlightDateList_T& lFlightDateList =
+      stdair::BomManager::getList<stdair::FlightDate> (ioInventory);
+    for (stdair::FlightDateList_T::const_iterator itFlightDate =
+           lFlightDateList.begin();
+         itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+      stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+      assert (lCurrentFlightDate_ptr != NULL);
+      
+      const stdair::LegDateList_T& lLegDateList =
+        stdair::BomManager::getList<stdair::LegDate> (*lCurrentFlightDate_ptr);
+      for (stdair::LegDateList_T::const_iterator itLegDate =
+             lLegDateList.begin();
+             itLegDate != lLegDateList.end(); ++itLegDate) {
+        stdair::LegDate* lCurrentLegDate_ptr = *itLegDate;
+        assert (lCurrentLegDate_ptr != NULL);
+        
+        const stdair::LegCabinList_T& lLegCabinList =
+          stdair::BomManager::getList<stdair::LegCabin> (*lCurrentLegDate_ptr);
+        for (stdair::LegCabinList_T::const_iterator itLegCabin =
+               lLegCabinList.begin();
+             itLegCabin != lLegCabinList.end(); ++itLegCabin) {
+          stdair::LegCabin* lCurrentLegCabin_ptr = *itLegCabin;
+          assert (lCurrentLegCabin_ptr != NULL);
+          stdair::CabinCapacity_T lCabinCapacity = lCurrentLegCabin_ptr->getPhysicalCapacity();
+          stdair::BidPriceVector_T& lBPV = lCurrentLegCabin_ptr->getEmptyBidPriceVector();
+          //for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400 + 300/sqrt(k+1));}
+          for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400);}
+          lCurrentLegCabin_ptr->setPreviousBidPrice(lBPV.back());
+          lCurrentLegCabin_ptr->setCurrentBidPrice(lBPV.back());          
+        }
+      }
+    }
+  }
+  
   
   // ////////////////////////////////////////////////////////////////////
   bool InventoryManager::sell (stdair::Inventory& ioInventory,

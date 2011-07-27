@@ -89,8 +89,9 @@ namespace AIRINV {
 
 
     //MODIF
-    // To be removed once bid price computation is possible
-    static void setDefaultBidPriceVectorAndYield (stdair::BomRoot&);
+    // Bid price vectors initialisation
+    static void setDefaultBidPriceVector (stdair::BomRoot&);
+    static void setDefaultBidPriceVector (stdair::Inventory&);
     
   private:
     /** Constructors. */

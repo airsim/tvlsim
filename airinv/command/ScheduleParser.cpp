@@ -44,8 +44,8 @@ namespace AIRINV {
     // blocks.
     InventoryManager::buildSimilarSegmentCabinSets (ioBomRoot);
 
-    // To be removed once bid price computation is possible
-    InventoryManager::setDefaultBidPriceVectorAndYield (ioBomRoot);
+    // Bid price vector initialisation
+    InventoryManager::setDefaultBidPriceVector (ioBomRoot);
 
   }
 
