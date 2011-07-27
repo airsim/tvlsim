@@ -380,5 +380,10 @@ namespace RMOL {
       }
     }
   }
-  
+
+  // ////////////////////////////////////////////////////////////////////
+  void Optimiser::optimisationByMCIntegration (stdair::LegCabin& ioLegCabin) {
+    MCOptimiser::optimisationByMCIntegration (ioLegCabin);
+  }
+
 }

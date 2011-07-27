@@ -23,6 +23,7 @@ namespace stdair {
   class BomRoot;
   class AirlineClassList;
   class YieldFeatures;
+  class Inventory;
 }
 
 namespace TRADEMGEN {
@@ -241,6 +242,10 @@ namespace RMOL {
     void optimiseBPWithYieldProration (const stdair::DateTime_T&);
 
     void optimiseUsingOnDForecast (const stdair::DateTime_T&);
+
+    void optimiseUsingDynamicIBP (const stdair::DateTime_T&);
+
+    void optimiseUsingIterativeDA (stdair::Inventory&, const stdair::DateTime_T&);
 
     // Communicate bid price to partners
     void communicateBidPrice (const stdair::DateTime_T&);

@@ -1388,7 +1388,7 @@ namespace RMOL {
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::communicateBidPrice (const stdair::DateTime_T& iRMEventTime) {
 
-        if (_rmolServiceContext == NULL) {
+    if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
                                                     "has not been initialised");
     }
@@ -1610,6 +1610,83 @@ namespace RMOL {
               }
             }
           }
+        }
+      }
+    }
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::optimiseUsingDynamicIBP (const stdair::DateTime_T& iRMEventTime) {
+
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    
+    const stdair::InventoryList_T& lInvList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
+         itInv != lInvList.end(); ++itInv) {
+      stdair::Inventory* lCurrentInv_ptr = *itInv;
+      assert (lCurrentInv_ptr != NULL);
+      optimiseUsingIterativeDA (*lCurrentInv_ptr, iRMEventTime);
+    }
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::optimiseUsingIterativeDA (stdair::Inventory& ioInventory,
+                                               const stdair::DateTime_T& iRMEventTime) {
+    // Retrieve the date from the RM event
+    const stdair::Date_T lDate = iRMEventTime.date();
+    double lMaxBPVariation = 1.0;
+    short lIterationCounter = 0;
+    while (lMaxBPVariation > 0.01 && lIterationCounter < 10) {
+      lMaxBPVariation = 0.0;
+      ++lIterationCounter;
+      const stdair::FlightDateList_T& lFlightDateList =
+        stdair::BomManager::getList<stdair::FlightDate> (ioInventory);
+      for (stdair::FlightDateList_T::const_iterator itFlightDate =
+             lFlightDateList.begin();
+           itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+        stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+        assert (lCurrentFlightDate_ptr != NULL);
+        
+        const stdair::Date_T& lCurrentDepartureDate = lCurrentFlightDate_ptr->getDepartureDate();
+        stdair::DateOffset_T lDateOffset = lCurrentDepartureDate - lDate;
+        stdair::DTD_T lDTD = short (lDateOffset.days());
+        
+        stdair::DCPList_T::const_iterator itDCP =
+          std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
+          const stdair::LegDateList_T& lLegDateList =
+            stdair::BomManager::getList<stdair::LegDate> (*lCurrentFlightDate_ptr);
+          for (stdair::LegDateList_T::const_iterator itLD = lLegDateList.begin();
+               itLD != lLegDateList.end(); ++itLD) {
+            stdair::LegDate* lLegDate_ptr = *itLD;
+            assert (lLegDate_ptr != NULL);
+            
+            //
+            const stdair::LegCabinList_T& lLegCabinList =
+              stdair::BomManager::getList<stdair::LegCabin> (*lLegDate_ptr);
+            for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+                 itLC != lLegCabinList.end(); ++itLC) {
+              stdair::LegCabin* lLegCabin_ptr = *itLC;
+              assert (lLegCabin_ptr != NULL);
+              Optimiser::optimisationByMCIntegration (*lLegCabin_ptr);
+              const stdair::BidPrice_T& lCurrentBidPrice = lLegCabin_ptr->getCurrentBidPrice();
+              const stdair::BidPrice_T& lPreviousBidPrice = lLegCabin_ptr->getPreviousBidPrice();
+              assert (lPreviousBidPrice != 0);
+              const double lBPVariation = (lCurrentBidPrice - lPreviousBidPrice)/lPreviousBidPrice;
+              lMaxBPVariation = std::max(lMaxBPVariation, lBPVariation);
+            }
+          }          
         }
       }
     }

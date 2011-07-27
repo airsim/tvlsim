@@ -71,6 +71,8 @@ namespace RMOL {
 
     static void optimiseUsingOnDForecast (stdair::FlightDate&);
 
+    static void optimisationByMCIntegration (stdair::LegCabin&);
+
   };
 }
 #endif // __RMOL_COMMAND_OPTIMISER_HPP
