@@ -729,7 +729,16 @@ namespace RMOL {
                   lDestination, lPreferredCabin, lClassCode,
                   iNumberOfRequests, iStdDevValue, iBomRoot);
 
-      // TODO: add yield to the input parameters.
+      // TODO: enable and make it replace the previous part
+      if (false) {
+        stdair::AirlineCode_T lAirlineCode = lAirlineCodeList.front();
+        stdair::ClassCode_T lClassCode = lClassCodeList.front();
+        stdair::Yield_T lYield = iAirlineClassList.getYield();
+        setOnDForecast(lAirlineCode, lPreferredDepartureDate, lOrigin,
+                       lDestination, lPreferredCabin, lClassCode,
+                       iNumberOfRequests, iStdDevValue, lYield, iBomRoot);
+      }
+      
     }
     else {
       // Store the forecast information in the case of a multiple segment
@@ -747,6 +756,19 @@ namespace RMOL {
                           << lOrigin << "-" << lDestination);
         assert(false);
       }
+
+      // TODO: enable and make it replace the previous part
+      if (false) {
+        stdair::Yield_T lYield = iAirlineClassList.getYield();
+        for (stdair::AirlineCodeList_T::const_iterator itAC = lAirlineCodeList.begin();
+             itAC != lAirlineCodeList.end(); ++itAC) {
+          const stdair::AirlineCode_T& lAirlineCode = *itAC;
+          setOnDForecast(lAirlineCodeList, lAirlineCode, lPreferredDepartureDate, lOrigin,
+                         lDestination, lPreferredCabin, lClassCodeList,
+                         iNumberOfRequests, iStdDevValue, lYield, iBomRoot);
+        }
+      }
+      
     }
   }
 
