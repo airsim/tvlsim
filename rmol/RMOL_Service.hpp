@@ -233,6 +233,8 @@ namespace RMOL {
     // Projection of demand
     void projectOnDDemandOntoLegCabins(const stdair::DateTime_T&);
 
+    void projectOnDDemandOntoLegCabinsUsingDA(const stdair::DateTime_T&);
+
     /** Optimiser */
     void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
 
