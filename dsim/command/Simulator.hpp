@@ -4,6 +4,8 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
+// StdAir
+#include <stdair/basic/ForecastingMethod.hpp>
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
 
@@ -31,9 +33,10 @@ namespace DSIM {
   private:
 
     /** Perform a simulation. */
-    static void simulate (SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
-                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
-                          const bool);
+    static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
+                         TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
+                         const bool,
+                         const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
@@ -49,8 +52,8 @@ namespace DSIM {
 
 
     /** Play a RM event. */
-    static void playRMEvent (SIMCRS::SIMCRS_Service&,
-                             const stdair::EventStruct&);
+    static void playRMEvent (SIMCRS::SIMCRS_Service&, const stdair::EventStruct&,
+                             const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
   private:
     /** Constructors. */

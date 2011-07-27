@@ -11,6 +11,7 @@
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/stdair_maths_types.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 // RMOL
 #include <rmol/RMOL_Types.hpp>
 
@@ -188,7 +189,8 @@ namespace RMOL {
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-    bool optimise (stdair::FlightDate&, const stdair::DateTime_T&);
+    bool optimise (stdair::FlightDate&, const stdair::DateTime_T&,
+                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
     /**
      * Forecaster

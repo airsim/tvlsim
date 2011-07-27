@@ -428,8 +428,10 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   bool RMOL_Service::optimise (stdair::FlightDate& ioFlightDate,
-                               const stdair::DateTime_T& iRMEventTime) {
+                               const stdair::DateTime_T& iRMEventTime,
+                               const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
+    
     STDAIR_LOG_DEBUG ("RMOL::optimise called");    
 
     if (_previousForecastDate < iRMEventTime.date()) {
@@ -437,11 +439,18 @@ namespace RMOL {
       // optimiseBPWithDemandAggregation (iRMEventTime);
       optimiseBPWithYieldProration (iRMEventTime);
     }    
-    return false;    
-    //Call the functions in the forecaster and the optimiser.
-    //DEBUG
+    return false;
+    
+    // Call the functions in the forecaster and the optimiser.
+    // DEBUG
     // STDAIR_LOG_DEBUG ("Forecast");
-    // bool isForecasted = Forecaster::forecast (ioFlightDate, iRMEventTime);
+    // bool isForecasted = false;
+    // switch (iForecastingMethod) {
+    // case stdair::ForecastingMethod::ADD_PK: Forecaster::forecastUsingAdditivePickUp (ioFlightDate, iRMEventTime); break;
+    // case stdair::ForecastingMethod::MUL_PK: Forecaster::forecastUsingMultiplicativePickUp (ioFlightDate, iRMEventTime); break;
+    // default: assert (false); break;
+    // }
+                                 
     // STDAIR_LOG_DEBUG ("Forecast successful: " << isForecasted);
     // if (isForecasted == true) {
     //   STDAIR_LOG_DEBUG ("Optimise");
@@ -452,7 +461,7 @@ namespace RMOL {
     // }
   }
 
-    // ////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
   void RMOL_Service::forecast (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
@@ -567,7 +576,7 @@ namespace RMOL {
           assert (lTimePeriod_ptr != NULL);
           
           // TODO: Use trip type from demand instead of default value.
-          const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::DEFAULT_TRIP_TYPE,
+          const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::TRIP_TYPE_ONE_WAY,
                                                             lPreferredCabin);
           stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
             getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
@@ -767,8 +776,7 @@ namespace RMOL {
                          lDestination, lPreferredCabin, lClassCodeList,
                          iNumberOfRequests, iStdDevValue, lYield, iBomRoot);
         }
-      }
-      
+      }      
     }
   }
 

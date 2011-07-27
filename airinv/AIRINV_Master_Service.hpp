@@ -11,6 +11,7 @@
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/stdair_maths_types.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 
 /// Forward declarations
 namespace stdair {
@@ -163,8 +164,8 @@ namespace AIRINV {
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-
-    void optimise (const stdair::RMEventStruct&);    
+    void optimise (const stdair::RMEventStruct&,
+                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
 
   public:

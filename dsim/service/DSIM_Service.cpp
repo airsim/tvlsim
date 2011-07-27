@@ -197,7 +197,9 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::simulate(const bool iGenerateDemandWithStatisticOrder) {
+  void DSIM_Service::
+  simulate (const bool iGenerateDemandWithStatisticOrder,
+            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     if (_dsimServiceContext == NULL) {
       throw NonInitialisedServiceException();
@@ -226,7 +228,8 @@ namespace DSIM {
     lSimulationChronometer.start();
     Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                          lTRAVELCCM_Service, lSTDAIR_Service,
-                         iGenerateDemandWithStatisticOrder);
+                         iGenerateDemandWithStatisticOrder,
+                         iForecastingMethod);
     const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
     // DEBUG
