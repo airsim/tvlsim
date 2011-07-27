@@ -1644,7 +1644,7 @@ namespace RMOL {
       short lIterationCounter = 0;
       while (lMaxBPVariation > 0.01 && lIterationCounter < 10) {
         lMaxBPVariation = 0.0;
-        ++lIterationCounter;
+        lIterationCounter++;
         const stdair::FlightDateList_T& lFlightDateList =
           stdair::BomManager::getList<stdair::FlightDate> (*lCurrentInv_ptr);
         for (stdair::FlightDateList_T::const_iterator itFlightDate =
@@ -1667,5 +1667,61 @@ namespace RMOL {
       }
     }
   }
+
+   
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::optimiseUsingNetworkCohosting (const stdair::DateTime_T& iRMEventTime) {
+
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    
+    // Retrieve the date from the RM event
+    const stdair::Date_T lDate = iRMEventTime.date();    
+
+    double lMaxBPVariation = 1.0;
+    short lIterationCounter = 0;
+    while (lMaxBPVariation > 0.01 && lIterationCounter < 10) {
+      lMaxBPVariation = 0.0;
+      lIterationCounter++;
+
+      const stdair::InventoryList_T& lInvList =
+        stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+      for (stdair::InventoryList_T::const_iterator itInv = lInvList.begin();
+           itInv != lInvList.end(); ++itInv) {
+        stdair::Inventory* lCurrentInv_ptr = *itInv;
+        assert (lCurrentInv_ptr != NULL);
+        const stdair::FlightDateList_T& lFlightDateList =
+          stdair::BomManager::getList<stdair::FlightDate> (*lCurrentInv_ptr);
+        for (stdair::FlightDateList_T::const_iterator itFlightDate =
+               lFlightDateList.begin();
+             itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+          stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+          assert (lCurrentFlightDate_ptr != NULL);
+          
+          const stdair::Date_T& lCurrentDepartureDate = lCurrentFlightDate_ptr->getDepartureDate();
+          stdair::DateOffset_T lDateOffset = lCurrentDepartureDate - lDate;
+          stdair::DTD_T lDTD = short (lDateOffset.days());
+          
+          stdair::DCPList_T::const_iterator itDCP =
+            std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+          if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
+            const double lBPVariation = Optimiser::optimiseUsingOnDForecast (*lCurrentFlightDate_ptr);
+            lMaxBPVariation = std::max(lMaxBPVariation, lBPVariation);
+          }
+        }
+      }
+      communicateBidPrice (iRMEventTime);
+    }    
+  }
+  
  
 }
