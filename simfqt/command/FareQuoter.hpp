@@ -150,6 +150,23 @@ namespace SIMFQT {
                             const stdair::FareFeatures&,
                             const stdair::PosChannel&,
                             stdair::FareOptionStruct&);
+
+    /**
+     * Reset all the booleans to their default value false.
+     */
+    static void reset ();
+
+    /**
+     * Display the correct error message and throw the right exception when no
+     * fare rule match the travel solution to fare quote.
+     *
+     * @param const stdair::BookingRequestStruct&  Booking request correponding
+     * to the travel solution list.
+     * @param stdair::TravelSolutionStruct&        Travel solution to fare
+     * quote.
+     */
+    static void displayMissingFareRuleMessage (const stdair::BookingRequestStruct&,
+                                               stdair::TravelSolutionStruct&);
     
     /**
      * Return the parsed key of the first segment of a travel solution.
@@ -187,6 +204,32 @@ namespace SIMFQT {
      * Destructor.
      */
     ~FareQuoter();
+
+  private:
+
+    /** Boolean saying if there is at least one fare rule matching the airport
+        pair and the date range. */
+    static bool _atLeastOneAvailableDateRule;
+
+    /** Boolean saying if there is at least one fare rule matching the airport
+        pair, the date range, the point-of-sale and the channel. */
+    static bool _atLeastOneAvailablePosChannel;
+
+    /** Boolean saying if there is at least one fare rule matching the airport
+        pair, the date range, the point-of-sale, the channel and the time
+        range. */
+    static bool _atLeastOneAvailableTimeRule;
+
+    /** Boolean saying if there is at least one fare rule matching the airport
+        pair, the date range, the point-of-sale, the channel, the time
+        range and the fare features. */
+    static bool _atLeastOneAvailableFeaturesRule;
+
+    /** Boolean saying if there is at least one fare rule matching the airport
+        pair, the date range, the point-of-sale, the channel, the time
+        range, the fare features and the airline class list. */
+    static bool _atLeastOneAvailableAirlineClassRule;
+    
   };
 
 }

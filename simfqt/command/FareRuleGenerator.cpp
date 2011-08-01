@@ -97,7 +97,7 @@ namespace SIMFQT {
 
     // Create the point-of-sale-channel primary key.
     const stdair::CityCode_T& lPosition = iFareRuleStruct.getPOS ();
-      const stdair::ChannelLabel_T& lChannel =
+    const stdair::ChannelLabel_T& lChannel =
         iFareRuleStruct.getChannel ();
     const stdair::PosChannelKey lFarePosChannelKey (lPosition, lChannel);
 
