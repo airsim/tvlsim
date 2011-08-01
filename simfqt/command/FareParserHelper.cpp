@@ -129,8 +129,13 @@ namespace SIMFQT {
     void storeDateRangeEnd::operator() (boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type,
                                         boost::spirit::qi::unused_type) const {
-      stdair::Date_T lDateEnd = _fareRule.getDate ();
-      _fareRule.setDateRangeEnd (lDateEnd);
+      const stdair::Date_T& lDateEnd = _fareRule.getDate ();
+      // As a Boost date period (DatePeriod_T) defines the last day of
+      // the period to be end-date - one day, we have to add one day to that
+      // end date before.
+      const stdair::DateOffset_T oneDay (1);
+      const stdair::Date_T lBoostDateEnd = lDateEnd + oneDay;
+      _fareRule.setDateRangeEnd (lBoostDateEnd);
        // DEBUG
       //STDAIR_LOG_DEBUG ("Date Range End: " << _fareRule.getDateRangeEnd ());
     }
