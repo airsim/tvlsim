@@ -1654,8 +1654,10 @@ namespace RMOL {
                 const stdair::LegCabinList_T lLegCabinList =
                   stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
                 assert (!lLegCabinList.empty());
-                 // Determine the displacement-adjusted yield.
-                const stdair::Yield_T& lYield = lDemandStruct.getYield() - lComplementaryBidPrice;
+                // Determine the displacement-adjusted yield.
+                //It is set to 0, if the computed value is negative.
+                const stdair::Yield_T& lYield =
+                  std::max(0., lDemandStruct.getYield() - lComplementaryBidPrice);
                 const stdair::MeanValue_T& lMeanValue = lDemandStruct.getDemandMean();
                 const stdair::StdDevValue_T& lStdDevValue = lDemandStruct.getDemandStdDev();
                 for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
