@@ -32,8 +32,15 @@ const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare
 /** Default name and location for the (CSV) yield input file. */
 const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/yieldstore01.csv");
     
+/**
+ * Default for the input type. It can be either built-in or provided by an
+ * input file. That latter must then be given with the -i option.
+ */
+const bool K_AIRINV_DEFAULT_BUILT_IN_INPUT = false;
 
-/** Default name and location for the Xapian database. */
+/**
+ * Default name and location for the MySQL database.
+ */
 const std::string K_SIMCRS_DEFAULT_DB_USER ("dsim");
 const std::string K_SIMCRS_DEFAULT_DB_PASSWD ("dsim");
 const std::string K_SIMCRS_DEFAULT_DB_DBNAME ("sim_dsim");
@@ -53,6 +60,7 @@ const int K_SIMCRS_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[],
+                       bool& ioIsBuiltin,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
@@ -61,6 +69,8 @@ int readConfiguration (int argc, char* argv[],
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
+  // Default for the built-in input
+  ioIsBuiltin = K_AIRINV_DEFAULT_BUILT_IN_INPUT;
 
   // Declare a group of options that will be allowed only on command line
   boost::program_options::options_description generic ("Generic options");
@@ -73,6 +83,8 @@ int readConfiguration (int argc, char* argv[],
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the input files must be specified as well (e.g., -s/--schedule,  -o/--ond, -f/--fare, -y/--yield)")
     ("schedule,s",
      boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_SIMCRS_DEFAULT_SCHEDULE_INPUT_FILENAME),
      "(CVS) input file for the schedules")
@@ -82,7 +94,7 @@ int readConfiguration (int argc, char* argv[],
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME),
      "(CVS) input file for the fares")
-    ("yield,f",
+    ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
     ("log,l",
@@ -90,19 +102,19 @@ int readConfiguration (int argc, char* argv[],
      "Filepath for the logs")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_SIMCRS_DEFAULT_DB_USER),
-     "SQL database hostname (e.g., dsim)")
+     "SQL database username")
     ("passwd,p",
      boost::program_options::value< std::string >(&ioDBPasswd)->default_value(K_SIMCRS_DEFAULT_DB_PASSWD),
-     "SQL database hostname (e.g., dsim)")
+     "SQL database password")
     ("host,H",
      boost::program_options::value< std::string >(&ioDBHost)->default_value(K_SIMCRS_DEFAULT_DB_HOST),
-     "SQL database hostname (e.g., localhost)")
+     "SQL database hostname")
     ("port,P",
      boost::program_options::value< std::string >(&ioDBPort)->default_value(K_SIMCRS_DEFAULT_DB_PORT),
-     "SQL database port (e.g., 3306)")
+     "SQL database port")
     ("dbname,m",
      boost::program_options::value< std::string >(&ioDBDBName)->default_value(K_SIMCRS_DEFAULT_DB_DBNAME),
-     "SQL database name (e.g., dsim)")
+     "SQL database name")
     ;
 
   // Hidden options, will be allowed both on command line and
@@ -150,25 +162,65 @@ int readConfiguration (int argc, char* argv[],
     return K_SIMCRS_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("schedule")) {
-    ioScheduleInputFilename = vm["schedule"].as< std::string >();
-    std::cout << "Schedule input filename is: " << ioScheduleInputFilename
-              << std::endl;
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
   }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
 
-  if (vm.count ("ond")) {
-    ioOnDInputFilename = vm["ond"].as< std::string >();
-    std::cout << "O&D input filename is: " << ioOnDInputFilename << std::endl;
-  }
+  //
+  std::ostringstream oErrorMessageStr;
+  oErrorMessageStr << "Either the -b/--builtin option, or the combination of "
+                   << "the -s/--schedule, -o/--ond, -f/--fare and -y/--yield "
+                   << "options must be specified";
 
-  if (vm.count ("fare")) {
-    ioFareInputFilename = vm["fare"].as< std::string >();
-    std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
-  }
+  if (ioIsBuiltin == false) {
+    if (vm.count ("schedule")) {
+      ioScheduleInputFilename = vm["schedule"].as< std::string >();
+      std::cout << "Schedule input filename is: " << ioScheduleInputFilename
+                << std::endl;
 
-  if (vm.count ("yield")) {
-    ioYieldInputFilename = vm["yield"].as< std::string >();
-    std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+      }
+    }
+
+    if (vm.count ("ond")) {
+      ioOnDInputFilename = vm["ond"].as< std::string >();
+      std::cout << "O&D input filename is: " << ioOnDInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+      }
+    }
+
+    if (vm.count ("fare")) {
+      ioFareInputFilename = vm["fare"].as< std::string >();
+      std::cout << "Fare input filename is: " << ioFareInputFilename
+                << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+      }
+    }
+
+    if (vm.count ("yield")) {
+      ioYieldInputFilename = vm["yield"].as< std::string >();
+      std::cout << "Yield input filename is: " << ioYieldInputFilename
+                << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+      }
+    }
   }
 
   if (vm.count ("log")) {
@@ -207,6 +259,10 @@ int readConfiguration (int argc, char* argv[],
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
+  // State whether the BOM tree should be built-in or parsed from an
+  // input file
+  bool isBuiltin;
+
   // Schedule input filename
   stdair::Filename_T lScheduleInputFilename;
     
@@ -234,7 +290,8 @@ int main (int argc, char* argv[]) {
     
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lScheduleInputFilename, lOnDInputFilename,
+    readConfiguration (argc, argv, isBuiltin,
+                       lScheduleInputFilename, lOnDInputFilename,
                        lFareInputFilename, lYieldInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
@@ -242,42 +299,6 @@ int main (int argc, char* argv[]) {
     return 0;
   }
     
-  // Check that the file path given as input corresponds to an actual file
-  bool doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
-  if (doesExistAndIsReadable == false) {
-    STDAIR_LOG_ERROR ("The '" << lScheduleInputFilename
-                      << "' input file can not be open and read");
-    return -1;
-  }
-
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lOnDInputFilename);
-  if (doesExistAndIsReadable == false) {
-    STDAIR_LOG_ERROR ("The '" << lOnDInputFilename
-                      << "' input file can not be open and read");
-    return -1;
-  }
-
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
-  if (doesExistAndIsReadable == false) {
-    STDAIR_LOG_ERROR ("The '" << lFareInputFilename
-                      << "' input file can not be open and read");
-    return -1;
-  }
-
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
-  if (doesExistAndIsReadable == false) {
-    STDAIR_LOG_ERROR ("The '" << lYieldInputFilename
-                      << "' input file can not be open and read");
-    return -1;
-  }
-
   // Set the database parameters
   const stdair::BasDBParams lDBParams (lDBUser, lDBPasswd, lDBHost, lDBPort,
                                        lDBDBName);
@@ -290,13 +311,23 @@ int main (int argc, char* argv[]) {
     
   // Initialise the list of classes/buckets
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
-                                        lScheduleInputFilename,
-                                        lOnDInputFilename, lFareInputFilename,
-                                        lYieldInputFilename);
+  SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode);
 
-  // TODO: instead of building a sample, read the parameters from the
-  //       command-line options, and build the corresponding booking request
+  // Check wether or not (CSV) input files should be read
+  if (isBuiltin == true) {
+
+    // Build the sample BOM tree
+    simcrsService.buildSampleBom();
+
+  } else {
+    // Build the BOM tree from parsing input files
+    simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
+                                lFareInputFilename, lYieldInputFilename);
+  }
+
+  // TODO (issue #37707): instead of building a sample, read the parameters
+  //      from the command-line options, and build the corresponding
+  //      booking request
   const bool isForCRS = true;
   const stdair::BookingRequestStruct& lBookingRequest =
     simcrsService.buildSampleBookingRequest (isForCRS);
