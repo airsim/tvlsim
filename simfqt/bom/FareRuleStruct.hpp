@@ -142,12 +142,12 @@ namespace SIMFQT {
     }
 
   public:
-    // ///////// Getters //////////
-    /** Get the date from the staging details. */
-    stdair::Date_T getDate() const;
+    // ///////// Display support methods //////////
+    /** Calculate the date from the staging details. */
+    stdair::Date_T calculateDate() const;
 
-    /** Get the time from the staging details. */
-    stdair::Duration_T getTime() const;    
+    /** Calculate the time from the staging details. */
+    stdair::Duration_T calculateTime() const;    
 
     /** Display of the structure. */
     const std::string describe() const;
@@ -260,12 +260,12 @@ namespace SIMFQT {
     }
 
     /** Add an airline code to the list.*/
-    void addAirlineCode (stdair::AirlineCode_T& iAirlineCode)  {
+    void addAirlineCode (const stdair::AirlineCode_T& iAirlineCode)  {
       _airlineCodeList.push_back (iAirlineCode);
     }
 
     /** Add a class code to the list.*/
-    void addClassCode (stdair::ClassCode_T& iClassCode) {
+    void addClassCode (const stdair::ClassCode_T& iClassCode) {
       _classCodeList.push_back (iClassCode);
     }
 
