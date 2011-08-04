@@ -5,7 +5,7 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
-#include <map>
+#include <string>
 // Boost
 #include <boost/shared_ptr.hpp>
 // StdAir
@@ -16,11 +16,16 @@ namespace TRAVELCCM {
   /// Forward declarations
   class TRAVELCCM_Service;
 
+
   // ///////// Exceptions ///////////
-  /** TravelCCM-specific root exception. */
+  /**
+   * TravelCCM specific root exception.
+   */
   class CustomerChoiceException : public stdair::RootException {
   public:
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     CustomerChoiceException (const std::string& iWhat)
       : stdair::RootException (iWhat) {}
   };

@@ -27,7 +27,8 @@ namespace TRADEMGEN {
   /**
    * Exception when no demand input file can be found
    */
-  class DemandInputFileNotFoundException : public stdair::FileNotFoundException {
+  class DemandInputFileNotFoundException
+    : public stdair::FileNotFoundException {
   public:
     /**
      * Constructor.

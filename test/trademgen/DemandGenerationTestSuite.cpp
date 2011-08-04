@@ -92,16 +92,20 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   
   // Initialise the TraDemGen service object
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams);
+
+  // Create the DemandStream objects, and insert them within the BOM tree
+  BOOST_CHECK_NO_THROW (trademgenService.parseAndLoad (lInputFilename));
 
   /**
-     Initialise the current number of generated events and the
-     expected total numbers of requests to be generated, depending on
-     the demand streams.
-     <br>The current number of generated events starts at one, for each demand
-     stream, because the initialisation step generates exactly one event
-     for each demand stream.
-  */
+   * Initialise the current number of generated events and the
+   * expected total numbers of requests to be generated, depending on
+   * the demand streams.
+   *
+   * The current number of generated events starts at one, for each demand
+   * stream, because the initialisation step generates exactly one event
+   * for each demand stream.
+   */
   NbOfEventsByDemandStreamMap_T lNbOfEventsMap;
   lNbOfEventsMap.insert (NbOfEventsByDemandStreamMap_T::
                          value_type ("SIN-HND 2010-Feb-08 Y",

@@ -11,30 +11,55 @@
 
 namespace AIRSCHED {
 
+  // Forward declarations
+  class AIRSCHED_Service;
+
+
   // ///////// Exceptions ///////////
+  /**
+   * Specific exception when some BOM objects can not be found within
+   * the schedule.
+   */
   class SegmentDateNotFoundException : public stdair::ParserException {
   public:
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     SegmentDateNotFoundException (const std::string& iWhat)
       : stdair::ParserException (iWhat) {}
   };
 
-  /** The O&D input file cannot be retrieved. */
+  /**
+   * The O&D input file cannot be retrieved.
+   */
   class OnDInputFileNotFoundException : public stdair::FileNotFoundException {
   public:
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     OnDInputFileNotFoundException (const std::string& iWhat)
       : stdair::FileNotFoundException (iWhat) {}
   };
 
-  /** The schedule input file cannot be retrieved. */
+  /**
+   * The schedule input file cannot be retrieved.
+   */
   class ScheduleInputFileNotFoundException
     : public stdair::FileNotFoundException {
   public:
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     ScheduleInputFileNotFoundException (const std::string& iWhat)
       : stdair::FileNotFoundException (iWhat) {}
   };
 
+
+  // //////// Type definitions specific to AirSched /////////
+  /**
+   * (Smart) Pointer on the AirSched service handler.
+   */
+  typedef boost::shared_ptr<AIRSCHED_Service> AIRSCHED_ServicePtr_T;
+  
 }
 #endif // __AIRSCHED_AIRSCHED_TYPES_HPP

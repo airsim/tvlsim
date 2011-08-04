@@ -13,13 +13,13 @@
 namespace SIMCRS {
 
   // //////////////////////////////////////////////////////////////////////
-  SIMCRS_ServiceContext::SIMCRS_ServiceContext () : _CRSCode (DEFAULT_CRS_CODE) {
-    assert (false);
+  SIMCRS_ServiceContext::SIMCRS_ServiceContext ()
+    : _ownStdairService (false), _CRSCode (DEFAULT_CRS_CODE) {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  SIMCRS_ServiceContext::SIMCRS_ServiceContext (const SIMCRS_ServiceContext&) {
-    assert (false);
+  SIMCRS_ServiceContext::SIMCRS_ServiceContext (const SIMCRS_ServiceContext&)
+    : _ownStdairService (false) {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@ namespace SIMCRS {
   // //////////////////////////////////////////////////////////////////////
   const std::string SIMCRS_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "SIMCRS_ServiceContext - CRS code: " << _CRSCode;
+    oStr << "SIMCRS_ServiceContext [" << _CRSCode
+         << "] - Owns StdAir service: " << _ownStdairService;
     return oStr.str();
   }
 
@@ -44,4 +45,17 @@ namespace SIMCRS {
     oStr << shortDisplay();
     return oStr.str();
   }
+
+  // //////////////////////////////////////////////////////////////////////
+  const std::string SIMCRS_ServiceContext::describe() const {
+    return shortDisplay();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void SIMCRS_ServiceContext::reset() {
+    if (_ownStdairService == true) {
+      _stdairService.reset();
+    }
+  }
+
 }

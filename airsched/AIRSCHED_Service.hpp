@@ -80,117 +80,27 @@ namespace AIRSCHED {
     AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr);
 
     /**
-     * Constructor.
+     * Parse the schedule input file and load it into memory.
      *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
+     * The CSV file, describing the airline schedule for the
+     * simulator, is parsed and instantiated in memory accordingly.
      *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * Moreover, database connection parameters are given, so that a
-     * session can be created on the corresponding database.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      */
-    AIRSCHED_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                      const stdair::Filename_T& iScheduleInputFilename);  
-    
-    /**
-     * Constructor.
-     *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     */
-    AIRSCHED_Service (const stdair::BasLogParams&,
-                      const stdair::Filename_T& iScheduleInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename);
 
     /**
-     * Constructor.
+     * Parse the schedule and O&D input files, and load them into memory.
      *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
+     * The CSV files, describing the airline schedule and the O&Ds for
+     * the simulator, are parsed and instantiated in memory accordingly.
      *
-     * Moreover, as no reference on any output stream is given, it is
-     * assumed that the StdAir log service has already been initialised
-     * with the proper log output stream by some other methods in the
-     * calling chain (for instance, when the AIRSCHED_Service is
-     * itself being initialised by another library service such as
-     * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     */
-    AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                      const stdair::Filename_T& iScheduleInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * Moreover, database connection parameters are given, so that a
-     * session can be created on the corresponding database.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
      */
-    AIRSCHED_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                      const stdair::Filename_T& iScheduleInputFilename,
-                      const stdair::Filename_T& iODInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iScheduleFilename,
+                       const stdair::Filename_T& iODInputFilename);
 
-    /**
-     * Constructor.
-     *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    AIRSCHED_Service (const stdair::BasLogParams&,
-                      const stdair::Filename_T& iScheduleInputFilename,
-                      const stdair::Filename_T& iODInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initAirschedService() method is called; see the corresponding
-     * documentation for more details.
-     *
-     * Moreover, as no reference on any output stream is given, it is
-     * assumed that the StdAir log service has already been initialised
-     * with the proper log output stream by some other methods in the
-     * calling chain (for instance, when the AIRSCHED_Service is
-     * itself being initialised by another library service such as
-     * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                      const stdair::Filename_T& iScheduleInputFilename,
-                      const stdair::Filename_T& iODInputFilename);
-    
     /**
      * Destructor.
      */
@@ -224,6 +134,24 @@ namespace AIRSCHED {
 
 
   public:
+    // //////////////// Export support methods /////////////////
+    /**
+     * Recursively dump, in the returned string and in JSON format,
+     * the flight-period corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to dump.
+     * @param const stdair::Date_T& Departure date of a flight within the
+     *        flight period to dump.
+     * @return std::string Output string in which the BOM tree is JSON-ified.
+     */
+    std::string jsonExport (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
+
+
+  public:
     // //////////////// Display support methods /////////////////
     /**
      * Recursively display (dump in the returned string) the objects
@@ -233,6 +161,23 @@ namespace AIRSCHED {
      *        logged/dumped.
      */
     std::string csvDisplay() const;
+
+    /**
+     * Recursively display (dump in the returned string) the flight-period
+     * corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight period
+     *        to display.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to display.
+     * @param const stdair::Date_T& Departure date of a flight within the
+     *        flight-period to display.
+     * @return std::string Output string in which the BOM tree is
+     *        logged/dumped.
+     */
+    std::string csvDisplay (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
 
 
   private:
@@ -246,12 +191,6 @@ namespace AIRSCHED {
      * Default copy constructor. It should not be used.
      */
     AIRSCHED_Service (const AIRSCHED_Service&);
-
-    /**
-     * Initialise the (AirSched) service context (i.e., the
-     * AIRSCHED_ServiceContext object).
-     */
-    void initServiceContext();
 
     /**
      * Initialise the STDAIR service (including the log service).
@@ -287,6 +226,12 @@ namespace AIRSCHED {
                            const bool iOwnStdairService);
     
     /**
+     * Initialise the (AirSched) service context (i.e., the
+     * AIRSCHED_ServiceContext object).
+     */
+    void initServiceContext();
+
+    /**
      * Initialise.
      *
      * No input file is given. A sample BOM tree may be built by
@@ -294,28 +239,6 @@ namespace AIRSCHED {
      */
     void initAirschedService();
 
-    /**
-     * Initialise.
-     *
-     * The CSV file, describing the airline schedules for the simulator,
-     * is parsed and the inventories are generated accordingly.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     */
-    void initAirschedService (const stdair::Filename_T& iScheduleInputFilename);
-    
-    /**
-     * Initialise.
-     *
-     * The CSV file, describing the airline schedules for the simulator,
-     * is parsed and the inventories are generated accordingly.
-     * The BOM tree is then completed with O&D periods.
-     *
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    void initAirschedService (const stdair::Filename_T& iScheduleInputFilename,
-                              const stdair::Filename_T& iODInputFilename);
-        
     /**
      * Finalise.
      */
@@ -325,7 +248,7 @@ namespace AIRSCHED {
   private:
     // ///////// Service Context /////////
     /**
-     * Airsched context.
+     * AirSched context.
      */
     AIRSCHED_ServiceContext* _airschedServiceContext;
   };
