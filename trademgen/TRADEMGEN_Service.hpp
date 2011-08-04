@@ -83,59 +83,15 @@ namespace TRADEMGEN {
     TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T);
     
     /**
-     * @brief Constructor.
+     * Parse the demand input file.
      *
-     * The initTrademgenService() method is called; see the
-     * corresponding documentation for more details.
+     * The CSV file, describing the parameters of the demand to be generated
+     * for the simulator, is parsed and instantiated in memory accordingly.
      *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * Moreover, database connection parameters are given, so that a
-     * session can be created on the corresponding database.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const stdair::Filename_T& Filename of the input demand file.
      */
-    TRADEMGEN_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                       const stdair::Filename_T& iDemandInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iDemandInputFilename);
 
-    /**
-     * Constructor.
-     *
-     * The initTrademgenService() method is called; see the
-     * corresponding documentation for more details.
-     *
-     * A reference on an output stream is given, so that log outputs
-     * can be directed onto that stream.
-     *
-     * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const stdair::Filename_T& Filename of the input demand file.
-     */
-    TRADEMGEN_Service (const stdair::BasLogParams&,
-                       const stdair::Filename_T& iDemandInputFilename);
-
-    /**
-     * Constructor.
-     *
-     * The initTrademgenService() method is called; see the
-     * corresponding documentation for more details.
-     *
-     * Moreover, as no reference on any output stream is given,
-     * neither any database access parameter is given, it is assumed
-     * that the StdAir log service has already been initialised with
-     * the proper log output stream by some other methods in the
-     * calling chain (for instance, when the TRADEMGEN_Service is
-     * itself being initialised by another library service such as
-     * SIMCRS_Service).
-     *
-     * @param stdair::STDAIR_ServicePtr_T Handler on the STDAIR_Service.
-     * @param const stdair::Filename_T& Filename of the input demand file.
-     */
-    TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T,
-                       const stdair::Filename_T& iDemandInputFilename);
-    
     /**
      * Destructor.
      */
@@ -250,6 +206,8 @@ namespace TRADEMGEN {
      *  <li>Dis-utility: 100.0 EUR/hour</li>
      * </ul>
      *
+     * \see stdair::CmdBomManager for more details.
+     *
      * @param const bool isForCRS Whether the sample booking request is for CRS.
      * @return BookingRequestStruct& Sample booking request structure.
      */
@@ -298,22 +256,31 @@ namespace TRADEMGEN {
      *
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
+     * @param bool States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return bool Whether or not there are still events to be
      *   generated for that demand stream.
      */
     const bool
     stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T&,
                                       stdair::ProgressStatusSet&,
-                                      const bool) const;
+                                      const bool iGenerateRequestWithStatisticOrder) const;
 
     /**
      * Browse the list of demand streams and generate the first
      * request of each stream.
      *
+     * @param bool States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return stdair::Count_T The expected total number of events to
      *         be generated
      */
-    stdair::Count_T generateFirstRequests(const bool) const;
+    stdair::Count_T
+    generateFirstRequests (const bool iGenerateRequestWithStatisticOrder) const;
 
     /**
      * Generate a request with the demand stream which corresponds to
@@ -321,12 +288,16 @@ namespace TRADEMGEN {
      *
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
+     * @param bool States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return stdair::BookingRequestPtr_T (Boost) shared pointer on
      *   the booking request structure, which has just been created.
      */
     stdair::BookingRequestPtr_T
     generateNextRequest (const stdair::DemandStreamKeyStr_T&,
-                         const bool) const;
+                         const bool iGenerateRequestWithStatisticOrder) const;
 
     /**
      * Pop the next coming (in time) event, and remove it from the
@@ -385,12 +356,6 @@ namespace TRADEMGEN {
     TRADEMGEN_Service (const TRADEMGEN_Service&);
 
     /**
-     * Initialise the (TRADEMGEN) service context (i.e., the
-     * TRADEMGEN_ServiceContext object).
-     */
-    void initServiceContext();
-
-    /**
      * Initialise the STDAIR service (including the log service).
      *
      * A reference on the root of the BOM tree, namely the BomRoot
@@ -427,6 +392,12 @@ namespace TRADEMGEN {
                            const bool iOwnStdairService);
     
     /**
+     * Initialise the (TRADEMGEN) service context (i.e., the
+     * TRADEMGEN_ServiceContext object).
+     */
+    void initServiceContext();
+
+    /**
      * Initialise.
      *
      * Nothing is being done at that stage. The buildSampleBom() method may
@@ -434,17 +405,6 @@ namespace TRADEMGEN {
      */
     void initTrademgenService();
 
-    /**
-     * Initialise.
-     *
-     * The CSV file, describing the characteristics of the demand for
-     * the simulator, is parsed and the demand streams are generated
-     * accordingly.
-     *
-     * @param const stdair::Filename_T& Filename of the input demand file.
-     */
-    void initTrademgenService (const stdair::Filename_T& iDemandInputFilename);
-    
     /**
      * Finalise.
      */

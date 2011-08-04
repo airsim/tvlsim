@@ -395,52 +395,31 @@ int main (int argc, char* argv[]) {
   // Set up the log parameters
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
 
+  // Initialise the TraDemGen service object
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams);
+
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
-    /**
-     * Initialise the TraDemGen service object:
-     * <ul>
-     *  <li>Create a sample DemandStream object, and insert it within the
-     *      BOM tree;</li>
-     *  <li>Calculate the expected number of events to be generated.</li>
-     * </ul>
-     */
-    TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams);
-
-    // Build a sample BOM tree (with a single DemandStream object)
+    // Create a sample DemandStream object, and insert it within the BOM tree
     trademgenService.buildSampleBom();
 
-    // Delegate the call
-    generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
-
   } else {
-    /**
-     * Initialise the TraDemGen service object:
-     * <ul>
-     *  <li>Parse the input file;</li>
-     *  <li>Create the DemandStream objects, and insert them within the
-     *      BOM tree;</li>
-     *  <li>Calculate the expected number of events to be generated.</li>
-     * </ul>
-     */
-    TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lInputFilename);
-
-    // Delegate the call
-    generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
+    // Create the DemandStream objects, and insert them within the BOM tree
+    trademgenService.parseAndLoad (lInputFilename);
   }  
+
+  // Calculate the expected number of events to be generated.
+  generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
 
   // Close the Log outputFile
   logOutputFile.close();
 
   /*
-    Note: as that program is not intended to be run on a server in
+    \note: as that program is not intended to be run on a server in
     production, it is better not to catch the exceptions. When it
     happens (that an exception is throwned), that way we get the
     call stack.
   */
-
-  //
-  std::cout << std::endl;
 
   return 0;
 }

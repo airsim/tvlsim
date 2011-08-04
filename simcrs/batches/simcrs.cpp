@@ -17,26 +17,41 @@
 #include <simcrs/config/simcrs-paths.hpp>
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_SIMCRS_DEFAULT_LOG_FILENAME ("simcrs.log");
 
-/** Default name and location for the (CSV) schedule input file. */
-const std::string K_SIMCRS_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/schedule01.csv");
+/**
+ * Default name and location for the (CSV) schedule input file.
+ */
+const std::string K_SIMCRS_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                            "/schedule01.csv");
 
-/** Default name and location for the (CSV) O&D input file. */
-const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
+/**
+ * Default name and location for the (CSV) O&D input file.
+ */
+const std::string K_SIMCRS_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                       "/ond01.csv");
 
-/** Default name and location for the (CSV) fare input file. */
-const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/fare01.csv");
-
-/** Default name and location for the (CSV) yield input file. */
-const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/yieldstore01.csv");
+/**
+ * Default name and location for the (CSV) yield input file.
+ */
+const std::string K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                         "/yieldstore01.csv");
     
 /**
- * Default for the input type. It can be either built-in or provided by an
- * input file. That latter must then be given with the -i option.
+ * Default name and location for the (CSV) fare input file.
  */
-const bool K_AIRINV_DEFAULT_BUILT_IN_INPUT = false;
+const std::string K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                        "/fare01.csv");
+
+/**
+ * Default for the BOM tree building. The BOM tree can either be built-in
+ * or provided by an input file. That latter must then be given with input
+ * file options (-s, -o, -f, -y).
+ */
+const bool K_SIMCRS_DEFAULT_BUILT_IN_INPUT = false;
 
 /**
  * Default name and location for the MySQL database.
@@ -63,14 +78,14 @@ int readConfiguration (int argc, char* argv[],
                        bool& ioIsBuiltin,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
-                       stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioYieldInputFilename,
+                       stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
   // Default for the built-in input
-  ioIsBuiltin = K_AIRINV_DEFAULT_BUILT_IN_INPUT;
+  ioIsBuiltin = K_SIMCRS_DEFAULT_BUILT_IN_INPUT;
 
   // Declare a group of options that will be allowed only on command line
   boost::program_options::options_description generic ("Generic options");
@@ -91,12 +106,12 @@ int readConfiguration (int argc, char* argv[],
     ("ond,o",
      boost::program_options::value< std::string >(&ioOnDInputFilename)->default_value(K_SIMCRS_DEFAULT_OND_INPUT_FILENAME),
      "(CVS) input file for the O&D definitions")
-    ("fare,f",
-     boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME),
-     "(CVS) input file for the fares")
     ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_SIMCRS_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
+    ("fare,f",
+     boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_SIMCRS_DEFAULT_FARE_INPUT_FILENAME),
+     "(CVS) input file for the fares")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_SIMCRS_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
@@ -184,7 +199,6 @@ int readConfiguration (int argc, char* argv[],
       // The built-in option is not selected. However, no schedule input file
       // is specified
       std::cerr << oErrorMessageStr.str() << std::endl;
-      }
     }
 
     if (vm.count ("ond")) {
@@ -195,19 +209,6 @@ int readConfiguration (int argc, char* argv[],
       // The built-in option is not selected. However, no schedule input file
       // is specified
       std::cerr << oErrorMessageStr.str() << std::endl;
-      }
-    }
-
-    if (vm.count ("fare")) {
-      ioFareInputFilename = vm["fare"].as< std::string >();
-      std::cout << "Fare input filename is: " << ioFareInputFilename
-                << std::endl;
-
-    } else {
-      // The built-in option is not selected. However, no schedule input file
-      // is specified
-      std::cerr << oErrorMessageStr.str() << std::endl;
-      }
     }
 
     if (vm.count ("yield")) {
@@ -219,7 +220,17 @@ int readConfiguration (int argc, char* argv[],
       // The built-in option is not selected. However, no schedule input file
       // is specified
       std::cerr << oErrorMessageStr.str() << std::endl;
-      }
+    }
+
+    if (vm.count ("fare")) {
+      ioFareInputFilename = vm["fare"].as< std::string >();
+      std::cout << "Fare input filename is: " << ioFareInputFilename
+                << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
     }
   }
 
@@ -269,11 +280,11 @@ int main (int argc, char* argv[]) {
   // O&D input filename
   stdair::Filename_T lOnDInputFilename;
     
-  // Fare input filename
-  stdair::Filename_T lFareInputFilename;
-    
   // Yield input filename
   stdair::Filename_T lYieldInputFilename;
+    
+  // Fare input filename
+  stdair::Filename_T lFareInputFilename;
     
   // Output log File
   stdair::Filename_T lLogFilename;
@@ -292,7 +303,7 @@ int main (int argc, char* argv[]) {
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, isBuiltin,
                        lScheduleInputFilename, lOnDInputFilename,
-                       lFareInputFilename, lYieldInputFilename, lLogFilename,
+                       lYieldInputFilename, lFareInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_SIMCRS_EARLY_RETURN_STATUS) {
@@ -322,7 +333,7 @@ int main (int argc, char* argv[]) {
   } else {
     // Build the BOM tree from parsing input files
     simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
-                                lFareInputFilename, lYieldInputFilename);
+                                lYieldInputFilename, lFareInputFilename);
   }
 
   // TODO (issue #37707): instead of building a sample, read the parameters

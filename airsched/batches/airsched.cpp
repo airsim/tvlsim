@@ -11,6 +11,7 @@
 #include <boost/lexical_cast.hpp>
 // StdAir
 #include <stdair/STDAIR_Service.hpp>
+#include <stdair/bom/BomDisplay.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
@@ -24,41 +25,35 @@ typedef std::vector<std::string> WordList_T;
 
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_AIRSCHED_DEFAULT_LOG_FILENAME ("airsched.log");
 
-/** Default name and location for the (CSV) input file. */
-const std::string K_AIRSCHED_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/schedule03.csv");
+/**
+ * Default name and location for the (CSV) input file.
+ */
+const std::string K_AIRSCHED_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                     "/schedule03.csv");
 
-/** Default for the input type. It can be either built-in or provided by an
-    input file. That latter must then be given with the -i option. */
+/**
+ * Default for the BOM tree building. The BOM tree can either be built-in
+ * or provided by an input file. That latter must then be given with the
+ * -s option.
+ */
+const bool K_AIRSCHED_DEFAULT_BUILT_IN_INPUT = false;
+
+/**
+ * Default for the input type. It can be either built-in or provided by
+ * an input file. That latter must then be given with the -i option.
+ */
 const bool K_AIRSCHED_DEFAULT_BOOKING_REQUEST_MODE = false;
 
-/** Default booking request string, to be seached against the AirSched
-    network. */
+/**
+ * Default booking request string, to be seached against the AirSched
+ * network.
+ */
 const std::string K_AIRSCHED_DEFAULT_BOOKING_REQUEST ("NCE BKK NCE 2007-04-21 2007-03-21 08:32:00 C 1 DF RO 5 NONE 10:00:00 2000.0 20.0");
-
-// //////////////////////////////////////////////////////////////////////
-void tokeniseStringIntoWordList (const std::string& iPhrase,
-                                 WordList_T& ioWordList) {
-  // Empty the word list
-  ioWordList.clear();
-  
-  // Boost Tokeniser
-  typedef boost::tokenizer<boost::char_separator<char> > Tokeniser_T;
-  
-  // Define the separators
-  const boost::char_separator<char> lSepatorList(" .,;:|+-*/_=!@#$%`~^&(){}[]?'<>\"");
-  
-  // Initialise the phrase to be tokenised
-  Tokeniser_T lTokens (iPhrase, lSepatorList);
-  for (Tokeniser_T::const_iterator tok_iter = lTokens.begin();
-       tok_iter != lTokens.end(); ++tok_iter) {
-    const std::string& lTerm = *tok_iter;
-    ioWordList.push_back (lTerm);
-  }
-  
-}
 
 // //////////////////////////////////////////////////////////////////////
 std::string createStringFromWordList (const WordList_T& iWordList) {
@@ -90,7 +85,7 @@ const int K_AIRSCHED_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[],
-                       bool& ioReadBookingRequestFromCmdLine,
+                       bool& ioIsBuiltin, bool& ioReadBookingRequestFromCmdLine,
                        stdair::Filename_T& ioInputFilename,
                        std::string& ioLogFilename,
                        std::string& ioBookingRequestString) {
@@ -111,6 +106,8 @@ int readConfiguration (int argc, char* argv[],
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the -i/--input option must be specified as well")
     ("input,i",
      boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_AIRSCHED_DEFAULT_INPUT_FILENAME),
      "(CVS) input file for the demand distributions")
@@ -169,11 +166,30 @@ int readConfiguration (int argc, char* argv[],
     return K_AIRSCHED_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("input")) {
-    ioInputFilename = vm["input"].as< std::string >();
-    std::cout << "Input filename is: " << ioInputFilename << std::endl;
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
+  }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
+
+  //
+  std::ostringstream oErrorMessageStr;
+  oErrorMessageStr << "Either the -b/--builtin option, or the -i/--input option"
+                   << " must be specified";
+
+  if (ioIsBuiltin == false) {
+    if (vm.count ("input")) {
+      ioInputFilename = vm["input"].as< std::string >();
+      std::cout << "Input filename is: " << ioInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
   }
 
+  //
   if (vm.count ("read_booking_request")) {
     ioReadBookingRequestFromCmdLine = true;
   }
@@ -314,6 +330,10 @@ parseBookingRequest (const std::string& iRequestOption) {
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
+  // State whether the BOM tree should be built-in or parsed from an
+  // input file
+  bool isBuiltin;
+
   // A booking request should be given as command-line option
   bool readBookingRequestFromCmdLine;
     
@@ -328,7 +348,7 @@ int main (int argc, char* argv[]) {
     
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, readBookingRequestFromCmdLine,
+    readConfiguration (argc, argv, isBuiltin, readBookingRequestFromCmdLine,
                        lInputFilename, lLogFilename, lBookingRequestString);
 
   if (lOptionParserStatus == K_AIRSCHED_EARLY_RETURN_STATUS) {
@@ -343,7 +363,18 @@ int main (int argc, char* argv[]) {
 
   // Initialise the AirSched service object
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  AIRSCHED::AIRSCHED_Service airschedService (lLogParams, lInputFilename);
+  AIRSCHED::AIRSCHED_Service airschedService (lLogParams);
+
+  // Check wether or not (CSV) input files should be read
+  if (isBuiltin == true) {
+
+    // Build the sample BOM tree
+    airschedService.buildSampleBom();
+
+  } else {
+    // Build the BOM tree from parsing input files
+    airschedService.parseAndLoad (lInputFilename);
+  }
 
   // Check wether or not a booking request is given as a command-line option
   if (readBookingRequestFromCmdLine == false) {
@@ -364,36 +395,11 @@ int main (int argc, char* argv[]) {
   // DEBUG
   STDAIR_LOG_DEBUG ("Parsed booking request: " << lBookingRequest);
 
-  /**
-     TODO: move the following display code within the StdAir library
-   */
-  // Browse the list of travel-solution objects
-  unsigned short segmentPathIdx = 1;
-  stdair::TravelSolutionList_T::const_iterator itTravelSolution =
-    lTravelSolutionList.begin();
-  for ( ; itTravelSolution != lTravelSolutionList.end();
-        ++itTravelSolution, ++segmentPathIdx) {
-    //
-    const stdair::SegmentPath_T& lSegmentPath = (*itTravelSolution).getSegmentPath();
+  // DEBUG
+  std::ostringstream oStream;
+  stdair::BomDisplay::csvDisplay (oStream, lTravelSolutionList);
+  STDAIR_LOG_DEBUG (oStream.str());
 
-    // Dump the segment-path
-    std::ostringstream oStr;
-    unsigned short segmentIdx = 1;
-    for (stdair::SegmentPath_T::const_iterator itSegment = lSegmentPath.begin();
-         itSegment != lSegmentPath.end(); ++itSegment, ++segmentIdx) {
-      //
-      const std::string& lSegmentKey = *itSegment;
-
-      if (segmentIdx != 1) {
-        oStr << "; ";
-      }
-      oStr << lSegmentKey;
-    }
-
-    // DEBUG
-    STDAIR_LOG_DEBUG ("[" << segmentPathIdx << "] " << oStr.str());
-  }
-    
   // Close the Log outputFile
   logOutputFile.close();
 

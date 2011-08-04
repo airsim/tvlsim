@@ -14,13 +14,11 @@
 
 /// Forward declarations
 namespace stdair {
-  class STDAIR_Service;
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
   struct SnapshotStruct;
   struct RMEventStruct;
-  struct TravelSolutionStruct;
 }
 
 namespace SIMCRS {
@@ -50,17 +48,9 @@ namespace SIMCRS {
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const CRSCode_T& Code of the owner of the distribution system.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
      */
     SIMCRS_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                    const CRSCode_T&,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
-                    const stdair::Filename_T& iYieldInputFilename);
+                    const CRSCode_T&);
 
     /**
      * Constructor.
@@ -73,16 +63,8 @@ namespace SIMCRS {
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const CRSCode_T& Code of the owner of the distribution system.
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
      */
-    SIMCRS_Service (const stdair::BasLogParams&, const CRSCode_T&,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
-                    const stdair::Filename_T& iYieldInputFilename);
+    SIMCRS_Service (const stdair::BasLogParams&, const CRSCode_T&);
 
     /**
      * Constructor.
@@ -99,22 +81,34 @@ namespace SIMCRS {
      *
      * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
      * @param const CRSCode_T& Code of the owner of the distribution system.
+     */
+    SIMCRS_Service (stdair::STDAIR_ServicePtr_T, const CRSCode_T&); 
+
+
+    /**
+     * Parse the schedule, O&D, fare and yield input files.
+     *
+     * The CSV files, describing the airline schedule, O&Ds, fares and yields
+     * for the simulator, are parsed and instantiated in memory accordingly.
+     *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input yield file.
+     * @param const stdair::Filename_T& Filename of the input fare file.
      */
-    SIMCRS_Service (stdair::STDAIR_ServicePtr_T, const CRSCode_T&, 
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
-                    const stdair::Filename_T& iYieldInputFilename);
+    void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
+                       const stdair::Filename_T& iODInputFilename,
+                       const stdair::Filename_T& iYieldInputFilename,
+                       const stdair::Filename_T& iFareInputFilename);
 
-    /** Initialise the snapshot and RM events for the inventories.
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
+    /**
+     * Initialise the snapshot and RM events for the inventories.
+     *
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation.
      */
-    void initSnapshotAndRMEvents (const stdair::Date_T&, const stdair::Date_T&);
+    void initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
+                                  const stdair::Date_T& iEndDate);
 
     /**
      * Destructor.
@@ -123,7 +117,7 @@ namespace SIMCRS {
 
     
   public:
-    // /////////// Business Methods /////////////
+    // /////////////// Business Methods /////////////////
     /**
      * Construct the list of travel solutions corresponding to the
      * booking request.
@@ -159,6 +153,17 @@ namespace SIMCRS {
                    const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
     /**
+     * Build a sample BOM tree, and attach it to the BomRoot instance.
+     *
+     * As for now, the BOM sample tree is the one built by the AirInv
+     * component.
+     *
+     * \see AIRINV::AIRINV_Master_Service and stdair::CmdBomManager for
+     *      more details.
+     */
+    void buildSampleBom ();
+
+    /**
      * Build a sample list of travel solutions.
      *
      * As of now (March 2011), that list is made of the following
@@ -171,6 +176,8 @@ namespace SIMCRS {
      *  <li>WTP: 900</li>
      *  <li>Change fee: 20; Non refundable; Saturday night stay</li>
      * </ul>
+     *
+     * \see stdair::CmdBomManager for more details.
      *
      * @param TravelSolutionList_T& Sample list of travel solution structures.
      *        It should be given empty. It is altered with the returned sample.
@@ -202,11 +209,30 @@ namespace SIMCRS {
      *  <li>Dis-utility: 100.0 EUR/hour</li>
      * </ul>
      *
+     * \see stdair::CmdBomManager for more details.
+     *
      * @param const bool isForCRS Whether the sample booking request is for CRS.
      * @return BookingRequestStruct& Sample booking request structure.
      */
     stdair::BookingRequestStruct
     buildSampleBookingRequest (const bool isForCRS = false);
+
+
+  public:
+    // //////////////// Export support methods /////////////////
+    /**
+     * Recursively dump, in the returned string and in JSON format,
+     * the flight-date corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to dump.
+     * @param const stdair::Date_T& Departure date of the flight to dump.
+     * @return std::string Output string in which the BOM tree is JSON-ified.
+     */
+    std::string jsonExport (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
 
 
   public:
@@ -236,18 +262,11 @@ namespace SIMCRS {
      * Default constructor. It should not be used.
      */
     SIMCRS_Service();
+
     /**
      * Default copy constructor. It should not be used.
      */
     SIMCRS_Service (const SIMCRS_Service&);
-
-    /**
-     * Initialise the (SIMCRS) service context (i.e., the
-     * SIMCRS_ServiceContext object).
-     *
-     * @param const CRSCode_T& Code of the owner of the distribution system.
-     */
-    void initServiceContext (const CRSCode_T&);
 
     /**
      * Initialise the STDAIR service (including the log service).
@@ -258,8 +277,8 @@ namespace SIMCRS {
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::BasDBParams& Parameters for the database access.
      */
-    void initStdAirService (const stdair::BasLogParams&,
-                            const stdair::BasDBParams&);
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&,
+                                                   const stdair::BasDBParams&);
     
     /**
      * Initialise the STDAIR service (including the log service).
@@ -270,51 +289,47 @@ namespace SIMCRS {
      * @param const stdair::BasLogParams& Parameters for the output log
      *        stream.
      */
-    void initStdAirService (const stdair::BasLogParams&);
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
     
     /**
-     * Initialise.
-     *
-     * The CSV file, describing the airline schedules for the
-     * simulator, is parsed and the inventories are generated accordingly.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
+     * Initialise the AirSched service (including the log service).
      */
-    void init (const stdair::Filename_T& iScheduleInputFilename,
-               const stdair::Filename_T& iODInputFilename,
-               const stdair::Filename_T& iFareInputFilename,
-               const stdair::Filename_T& iYieldInputFilename);
-
-    /**
-     * Initialise the AIRSCHED service with the given schedule file.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     */
-    void initAIRSCHEDService (const stdair::Filename_T& iScheduleInputFilename,
-                              const stdair::Filename_T& iODInputFilename);
+    void initAIRSCHEDService();
     
     /**
-     * Initialise the SIMFQT service with the given schedule file.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
+     * Initialise the SimFQT service (including the log service).
      */
-    void initSIMFQTService (const stdair::Filename_T& iFareInputFilename);
+    void initSIMFQTService();
 
     /**
-     * Initialise the AIRINV Master service with the given schedule file.
-     *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
+     * Initialise the AirInv service (including the log service).
      */
-    void
-    initAIRINV_Master_Service (const stdair::Filename_T& iScheduleInputFilename,
-                               const stdair::Filename_T& iODInputFilename,
-                               const stdair::Filename_T& iYieldInputFilename);
+    void initAIRINVService();
+
+    /**
+     * Attach the StdAir service (holding the log and database services) to
+     * the SIMCRS_Service.
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the StdAir service.
+     * @param const bool State whether or not SimCRS owns the StdAir service
+     *        resources.
+     */
+    void addStdAirService (stdair::STDAIR_ServicePtr_T,
+                           const bool iOwnStdairService);
+    
+    /**
+     * Initialise the (SimCRS) service context (i.e., the
+     * SIMCRS_ServiceContext object).
+     *
+     * @param const CRSCode_T& Code of the owner of the distribution system.
+     */
+    void initServiceContext (const CRSCode_T&);
+
+    /**
+     * Initialise the (SimCRS) service context (i.e., the SIMCRS_ServiceContext
+     * object).
+     */
+    void initSimcrsService();
 
     /**
      * Finalise.

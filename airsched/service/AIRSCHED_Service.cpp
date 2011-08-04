@@ -38,13 +38,12 @@ namespace AIRSCHED {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
-                                      const stdair::BasDBParams& iDBParams) 
+  AIRSCHED_Service::AIRSCHED_Service (const stdair::BasLogParams& iLogParams) 
     : _airschedServiceContext (NULL) {
     
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams, iDBParams);
+      initStdAirService (iLogParams);
     
     // Initialise the service context
     initServiceContext();
@@ -59,12 +58,13 @@ namespace AIRSCHED {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::AIRSCHED_Service (const stdair::BasLogParams& iLogParams) 
+  AIRSCHED_Service::AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
+                                      const stdair::BasDBParams& iDBParams) 
     : _airschedServiceContext (NULL) {
     
     // Initialise the STDAIR service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams);
+      initStdAirService (iLogParams, iDBParams);
     
     // Initialise the service context
     initServiceContext();
@@ -93,135 +93,6 @@ namespace AIRSCHED {
     
     // Initialise the context
     initAirschedService();
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::BasDBParams& iDBParams,
-                    const stdair::Filename_T& iScheduleInputFilename) 
-    : _airschedServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context
-    // \note AirSched owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initAirschedService (iScheduleInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::Filename_T& iScheduleInputFilename) 
-    : _airschedServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams);
-    
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context
-    // \note AirSched owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initAirschedService (iScheduleInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr,
-                    const stdair::Filename_T& iScheduleInputFilename)
-    : _airschedServiceContext (NULL) {
-
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context.
-    // \note AirSched does not own the STDAIR service resources here.
-    const bool doesNotOwnStdairService = false;
-    addStdAirService (ioSTDAIRServicePtr, doesNotOwnStdairService);
-    
-    // Initialise the context
-    initAirschedService (iScheduleInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::BasDBParams& iDBParams,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename) 
-    : _airschedServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context
-    // \note AirSched owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initAirschedService (iScheduleInputFilename, iODInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (const stdair::BasLogParams& iLogParams,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename) 
-    : _airschedServiceContext (NULL) {
-    
-    // Initialise the STDAIR service handler
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      initStdAirService (iLogParams);
-    
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context
-    // \note AirSched owns the STDAIR service resources here.
-    const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
-    
-    // Initialise the (remaining of the) context
-    initAirschedService (iScheduleInputFilename, iODInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  AIRSCHED_Service::
-  AIRSCHED_Service (stdair::STDAIR_ServicePtr_T ioSTDAIRServicePtr,
-                    const stdair::Filename_T& iScheduleInputFilename,
-                    const stdair::Filename_T& iODInputFilename)
-    : _airschedServiceContext (NULL) {
-
-    // Initialise the service context
-    initServiceContext();
-    
-    // Add the StdAir service context to the AirSched service context.
-    // \note AirSched does not own the STDAIR service resources here.
-    const bool doesNotOwnStdairService = false;
-    addStdAirService (ioSTDAIRServicePtr, doesNotOwnStdairService);
-    
-    // Initialise the context
-    initAirschedService (iScheduleInputFilename, iODInputFilename);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -262,6 +133,23 @@ namespace AIRSCHED {
 
   // //////////////////////////////////////////////////////////////////////
   stdair::STDAIR_ServicePtr_T AIRSCHED_Service::
+  initStdAirService (const stdair::BasLogParams& iLogParams) {
+
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
+      boost::make_shared<stdair::STDAIR_Service> (iLogParams);
+
+    return lSTDAIR_Service_ptr;
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_ServicePtr_T AIRSCHED_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams,
                      const stdair::BasDBParams& iDBParams) {
 
@@ -278,23 +166,6 @@ namespace AIRSCHED {
     return lSTDAIR_Service_ptr;
   }
   
-  // //////////////////////////////////////////////////////////////////////
-  stdair::STDAIR_ServicePtr_T AIRSCHED_Service::
-  initStdAirService (const stdair::BasLogParams& iLogParams) {
-
-    /**
-     * Initialise the STDAIR service handler.
-     *
-     * \note The (Boost.)Smart Pointer keeps track of the references
-     *       on the Service object, and deletes that object when it is
-     *       no longer referenced (e.g., at the end of the process).
-     */
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      boost::make_shared<stdair::STDAIR_Service> (iLogParams);
-
-    return lSTDAIR_Service_ptr;
-  }
-  
   // ////////////////////////////////////////////////////////////////////
   void AIRSCHED_Service::initAirschedService() {
     // Do nothing at this stage. A sample BOM tree may be built by
@@ -303,9 +174,9 @@ namespace AIRSCHED {
 
   // ////////////////////////////////////////////////////////////////////
   void AIRSCHED_Service::
-  initAirschedService (const stdair::Filename_T& iScheduleInputFilename) {
+  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename) {
 
-    // Retrieve the BOM tree root
+    // Retrieve the BOM root object.
     assert (_airschedServiceContext != NULL);
     AIRSCHED_ServiceContext& lAIRSCHED_ServiceContext =
       *_airschedServiceContext;
@@ -319,16 +190,16 @@ namespace AIRSCHED {
     const double lGenerationMeasure = lINVGeneration.elapsed();
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Inv generation time: " << lGenerationMeasure);
+    STDAIR_LOG_DEBUG ("Inventory generation time: " << lGenerationMeasure);
   }
   
   // ////////////////////////////////////////////////////////////////////
   void AIRSCHED_Service::
-  initAirschedService (const stdair::Filename_T& iScheduleInputFilename,
-                       const stdair::Filename_T& iODInputFilename) {
+  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
+                const stdair::Filename_T& iODInputFilename) {
 
     // First, build the airline inventories from the schedule file
-    initAirschedService (iScheduleInputFilename);
+    parseAndLoad (iScheduleInputFilename);
 
     // Retrieve the BOM tree root
     assert (_airschedServiceContext != NULL);
@@ -338,7 +209,7 @@ namespace AIRSCHED {
       lAIRSCHED_ServiceContext.getSTDAIR_Service();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
-    // Parse the schedule input file, and generate the Inventories
+    // Parse the O&D input file, and generate the O&D periods
     stdair::BasChronometer lOnDGeneration; lOnDGeneration.start();
     OnDParser::generateOnDPeriods (iODInputFilename, lBomRoot);
     const double lGenerationMeasure = lOnDGeneration.elapsed();
@@ -367,6 +238,30 @@ namespace AIRSCHED {
     lSTDAIR_Service.buildSampleBom();
   }
 
+  // ////////////////////////////////////////////////////////////////////
+  std::string AIRSCHED_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the AirSched service context
+    if (_airschedServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirSched service "
+                                                    "has not been initialised");
+    }
+    assert (_airschedServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    AIRSCHED_ServiceContext& lAIRSCHED_ServiceContext =
+      *_airschedServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRSCHED_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the JSON export to the dedicated service
+    return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+  
   // //////////////////////////////////////////////////////////////////////
   std::string AIRSCHED_Service::csvDisplay() const {
 
@@ -385,6 +280,30 @@ namespace AIRSCHED {
 
     // Delegate the BOM building to the dedicated service
     return lSTDAIR_Service.csvDisplay();
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  std::string AIRSCHED_Service::
+  csvDisplay (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the AirSched service context
+    if (_airschedServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirSched service has "
+                                                    "not been initialised");
+    }
+    assert (_airschedServiceContext != NULL);
+
+    // Retrieve the STDAIR service object from the (AirSched) service context
+    AIRSCHED_ServiceContext& lAIRSCHED_ServiceContext =
+      *_airschedServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lAIRSCHED_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lSTDAIR_Service.csvDisplay (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
   }
   
   // ////////////////////////////////////////////////////////////////////

@@ -12,7 +12,8 @@
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/AirlineStruct.hpp>
-#include <stdair/bom/AirlineFeature.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/service/DBSessionManager.hpp>
 #include <stdair/STDAIR_Service.hpp>
@@ -20,12 +21,11 @@
 #include <simcrs/SIMCRS_Service.hpp>
 // TraDemGen
 #include <trademgen/TRADEMGEN_Service.hpp>
-// Travelccm
+// TravelCCM
 #include <travelccm/TRAVELCCM_Service.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
-#include <dsim/command/DBManager.hpp>
 #include <dsim/command/Simulator.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
 #include <dsim/DSIM_Service.hpp>
@@ -43,64 +43,109 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+  DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate,
-                              const stdair::Filename_T& iScheduleInputFilename,
-                              const stdair::Filename_T& iODInputFilename,
-                              const stdair::Filename_T& iFareInputFilename,
-                              const stdair::Filename_T& iYieldInputFilename,
-                              const stdair::Filename_T& iDemandInputFilename)
+                              const stdair::Date_T& iEndDate)
     : _dsimServiceContext (NULL) {
+    
+    // Initialise the StdAir service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams);
     
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
     
-    // Retrieve the DSim service context
-    assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
-    
-    // Store the STDAIR service object within the (DSim) service context
-    lDSIM_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
-    
-    // Initialise the context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iYieldInputFilename, iDemandInputFilename);
+    // Add the StdAir service context to the DSim service context
+    // \note DSim owns the StdAir service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
-    // Initialise the snapshot and RM events
-    initSnapshotAndRMEvents (iStartDate, iEndDate);
+    // Initalise the TraDemGen service.
+    initTRADEMGENService();
+
+    // Initalise the TravelCCM service.
+    initTRAVELCCMService();    
+
+    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // and SimFQT.
+    initSIMCRSService();
+
+    // Initialise the (remaining of the) context
+    initDsimService();
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate,
-                              const stdair::Filename_T& iScheduleInputFilename,
-                              const stdair::Filename_T& iODInputFilename,
-                              const stdair::Filename_T& iFareInputFilename,
-                              const stdair::Filename_T& iYieldInputFilename,
-                              const stdair::Filename_T& iDemandInputFilename)
+                              const stdair::Date_T& iEndDate)
+    : _dsimServiceContext (NULL) {
+    
+    // Initialise the StdAir service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams, iDBParams);
+    
+    // Initialise the service context
+    initServiceContext (iStartDate, iEndDate);
+    
+    // Add the StdAir service context to the DSim service context
+    // \note DSim owns the StdAir service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+
+    // Initalise the TraDemGen service.
+    initTRADEMGENService();
+
+    // Initalise the TravelCCM service.
+    initTRAVELCCMService();    
+
+    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // and SimFQT.
+    initSIMCRSService();
+
+    // Initialise the (remaining of the) context
+    initDsimService();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                              const stdair::Date_T& iStartDate,
+                              const stdair::Date_T& iEndDate)
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
     
-    // Initialise the STDAIR service handler
-    initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iYieldInputFilename, iDemandInputFilename);
+    // Store the STDAIR service object within the (AIRINV) service context
+    // \note AirInv does not own the STDAIR service resources here.
+    const bool doesNotOwnStdairService = false;
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
 
-    // Initialise the snapshot and RM events
-    initSnapshotAndRMEvents (iStartDate, iEndDate);
+    // Initalise the TraDemGen service.
+    initTRADEMGENService();
+
+    // Initalise the TravelCCM service.
+    initTRAVELCCMService();    
+
+    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // and SimFQT.
+    initSIMCRSService();
+
+    // Initialise the (remaining of the) context
+    initDsimService();
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::~DSIM_Service () {
+  DSIM_Service::~DSIM_Service() {
     // Delete/Clean all the objects from memory
     finalise();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::finalise() {
+    assert (_dsimServiceContext != NULL);
+    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
+    _dsimServiceContext->reset();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -112,97 +157,304 @@ namespace DSIM {
     _dsimServiceContext = &lDSIM_ServiceContext;
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initStdAirService (const stdair::BasLogParams& iLogParams,
-                                        const stdair::BasDBParams& iDBParams) {
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::
+  addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                    const bool iOwnStdairService) {
 
     // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     
-    // Initialise the STDAIR service handler
-    // Note that the track on the object memory is kept thanks to the Boost
-    // Smart Pointers component.
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
-
-    // Retrieve the root of the BOM tree, on which all of the other BOM objects
-    // will be attached
-    assert (lSTDAIR_Service_ptr != NULL);
-
-    // Store the STDAIR service object within the (DSim) service context
-    lDSIM_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
+    // Store the StdAir service object within the (DSim) service context
+    lDSIM_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
+                                            iOwnStdairService);
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::init (const stdair::Filename_T& iScheduleInputFilename,
-                           const stdair::Filename_T& iODInputFilename,
-                           const stdair::Filename_T& iFareInputFilename,
-                           const stdair::Filename_T& iYieldInputFilename,
-                           const stdair::Filename_T& iDemandInputFilename) {
-    // Retrieve the service context
+  stdair::STDAIR_ServicePtr_T DSIM_Service::
+  initStdAirService (const stdair::BasLogParams& iLogParams) {
+
+    /**
+     * Initialise the StdAir service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
+      boost::make_shared<stdair::STDAIR_Service> (iLogParams);
+
+    return lSTDAIR_Service_ptr;
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  stdair::STDAIR_ServicePtr_T DSIM_Service::
+  initStdAirService (const stdair::BasLogParams& iLogParams,
+                     const stdair::BasDBParams& iDBParams) {
+
+    /**
+     * Initialise the StdAir service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
+      boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
+
+    return lSTDAIR_Service_ptr;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initSIMCRSService() {
+
+    // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lDSIM_ServiceContext.getSTDAIR_Service_Ptr();
-    assert (lSTDAIR_Service_ptr != NULL);
-    
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
+
     // TODO: do not hardcode the CRS code (e.g., take it from a
     // configuration file).
     // Initialise the SIMCRS service handler
     const SIMCRS::CRSCode_T lCRSCode = "1S";
     
-    // Note that the (Boost.)Smart Pointer keeps track of the references
-    // on the Service object, and deletes that object when it is no longer
-    // referenced (e.g., at the end of the process).
-    SIMCRS_ServicePtr_T lSIMCRS_Service =
-      boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr, lCRSCode,
-                                                  iScheduleInputFilename,
-                                                  iODInputFilename,
-                                                  iFareInputFilename,
-                                                  iYieldInputFilename);
-    lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service);
+    /**
+     * Initialise the SIMCRS service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    SIMCRS::SIMCRS_ServicePtr_T lSIMCRS_Service_ptr = 
+      boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr,
+                                                  lCRSCode);
+    
+    // Store the SIMCRS service object within the (DSim) service context
+    lDSIM_ServiceContext.setSIMCRS_Service (lSIMCRS_Service_ptr);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initTRADEMGENService() {
 
-    // Initialise the TRADEMGEN service handler
-    TRADEMGEN_ServicePtr_T lTRADEMGEN_Service =
-      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
-                                                        iDemandInputFilename);
-    lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service);
+    // Retrieve the Dsim service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
 
-    // Initialise the TRAVELCCM service handler
-    TRAVELCCM_ServicePtr_T lTRAVELCCM_Service =
+    /**
+     * Initialise the TraDemGen service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    TRADEMGEN::TRADEMGEN_ServicePtr_T lTRADEMGEN_Service_ptr = 
+      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr);
+    
+    // Store the TRADEMGEN service object within the (DSim) service context
+    lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service_ptr);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initTRAVELCCMService() {
+
+    // Retrieve the Dsim service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
+
+    /**
+     * Initialise the TravelCCM service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    TRAVELCCM::TRAVELCCM_ServicePtr_T lTRAVELCCM_Service_ptr = 
       boost::make_shared<TRAVELCCM::TRAVELCCM_Service> (lSTDAIR_Service_ptr);
-    lDSIM_ServiceContext.setTRAVELCCM_Service (lTRAVELCCM_Service);
+    
+    // Store the TRAVELCCM service object within the (DSim) service context
+    lDSIM_ServiceContext.setTRAVELCCM_Service (lTRAVELCCM_Service_ptr);
+  }
+  
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initDsimService() {
+    // Do nothing at this stage. A sample BOM tree may be built by
+    // calling the buildSampleBom() method
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
-                                              const stdair::Date_T& iEndDate) {
-    // Retrieve the service context
+  void DSIM_Service::
+  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
+                const stdair::Filename_T& iODInputFilename,
+                const stdair::Filename_T& iYieldInputFilename,
+                const stdair::Filename_T& iFareInputFilename,
+                const stdair::Filename_T& iDemandInputFilename) {
+
+    // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
+    /**
+     * Let the schedule, inventory and pricing managers parse their input files.
+     */
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+    lSIMCRS_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
+                                  iYieldInputFilename, iFareInputFilename);
+
+    // Parse the demand input file.
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service();
+    lTRADEMGEN_Service.parseAndLoad (iDemandInputFilename);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::buildSampleBom() {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Build the SimCRS sample BOM tree
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+    lSIMCRS_Service.buildSampleBom();
+
+    // Build the TraDemGen sample BOM tree
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service();
+    lTRADEMGEN_Service.buildSampleBom();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::
+  buildSampleTravelSolutions(stdair::TravelSolutionList_T& ioTravelSolutionList){
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    lSTDAIR_Service.buildSampleTravelSolutions (ioTravelSolutionList);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  stdair::BookingRequestStruct DSIM_Service::
+  buildSampleBookingRequest (const bool isForCRS) {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.buildSampleBookingRequest (isForCRS);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the JSON export to the dedicated service
+    return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initSnapshotAndRMEvents() {
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Retrieve the simulation parameters
+    const stdair::Date_T& lStartDate = lDSIM_ServiceContext.getStartDate();
+    const stdair::Date_T& lEndDate = lDSIM_ServiceContext.getEndDate();
 
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
 
-    lSIMCRS_Service.initSnapshotAndRMEvents (iStartDate, iEndDate);
+    lSIMCRS_Service.initSnapshotAndRMEvents (lStartDate, lEndDate);
   }
   
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::finalise () {
-    assert (_dsimServiceContext != NULL);
-  }
+  std::string DSIM_Service::csvDisplay() const {
 
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (AirSched) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM building to the dedicated service
+    return lSTDAIR_Service.csvDisplay();
+  }
+  
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
   simulate (const bool iGenerateDemandWithStatisticOrder,
             const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
+    // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The DSim service has not "
+                                                    "been initialised");
     }
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext= *_dsimServiceContext;
@@ -239,8 +491,11 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::displayAirlineListFromDB () const {
+
+    // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
-      throw NonInitialisedServiceException();
+      throw stdair::NonInitialisedServiceException ("The DSim service has not "
+                                                    "been initialised");
     }
     assert (_dsimServiceContext != NULL);
     //DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
@@ -267,13 +522,17 @@ namespace DSIM {
     // Prepare and execute the select statement
     stdair::AirlineStruct lAirline;
     stdair::DBRequestStatement_T lSelectStatement (lDBSession);
-    DBManager::prepareSelectStatement(lDBSession, lSelectStatement, lAirline);
+    stdair::DBManagerForAirlines::prepareSelectStatement (lDBSession,
+                                                          lSelectStatement,
+                                                          lAirline);
     
     // Prepare the SQL request corresponding to the select statement
     bool hasStillData = true;
     unsigned int idx = 0;
     while (hasStillData == true) {
-      hasStillData = DBManager::iterateOnStatement (lSelectStatement, lAirline);
+      hasStillData =
+        stdair::DBManagerForAirlines::iterateOnStatement (lSelectStatement,
+                                                          lAirline);
       
       // DEBUG
       STDAIR_LOG_DEBUG ("[" << idx << "]: " << lAirline);
