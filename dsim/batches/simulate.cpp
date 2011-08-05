@@ -48,6 +48,9 @@ const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                         "/rds01/demand.csv");
 
+/** Default forecasting method name: 'M' for MultiplicativePickUp. */
+const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
+
 /**
  * Default for the BOM tree building. The BOM tree can either be built-in
  * or provided by an input file. That latter must then be given with input
@@ -125,10 +128,14 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioYieldInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioDemandInputFilename,
-                       std::string& ioLogFilename,
+                       std::string& ioLogFilename,  
+                       stdair::ForecastingMethod& ioForecastingMethod,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
+
+  // Forecast method as a single char (e.g., 'A' or 'M'). */
+  char lForecastingMethodChar;
 
   // Default for the built-in input
   ioIsBuiltin = K_DSIM_DEFAULT_BUILT_IN_INPUT;
@@ -173,6 +180,9 @@ int readConfiguration (int argc, char* argv[],
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
+    ("forecast,F",
+     boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
+     "Method used to forecast demand: AdditivePickUp (e.g., A) or MultiplicativePickUp (e.g., M)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -309,6 +319,11 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Log filename is: " << ioLogFilename << std::endl;
   }
 
+  if (vm.count ("forecast")) {
+    ioForecastingMethod = stdair::ForecastingMethod (lForecastingMethodChar);
+    std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
+  }
+
   if (vm.count ("user")) {
     ioDBUser = vm["user"].as< std::string >();
     std::cout << "SQL database user name is: " << ioDBUser << std::endl;
@@ -374,6 +389,9 @@ int main (int argc, char* argv[]) {
   // Output log File
   std::string lLogFilename;
 
+  // Forecasting method.
+  stdair::ForecastingMethod lForecastingMethod(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
+
   // SQL database parameters
   std::string lDBUser;
   std::string lDBPasswd;
@@ -385,7 +403,8 @@ int main (int argc, char* argv[]) {
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, isBuiltin, lQuery, lScheduleInputFilename,
                        lOnDInputFilename, lYieldInputFilename,
-                       lFareInputFilename, lDemandInputFilename, lLogFilename,
+                       lFareInputFilename, lDemandInputFilename,
+                       lLogFilename, lForecastingMethod, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -424,10 +443,14 @@ int main (int argc, char* argv[]) {
 
   // Generate the date time request with the statistic order.
   const bool lGenerateDemandWithStatisticOrder = true;
+
+  // Convert to the right forecasting method object to match DSim API.
+  const stdair::ForecastingMethod::EN_ForecastingMethod& lENForecastingMethod =
+    lForecastingMethod.getMethod();
   
   // Perform a simulation
   dsimService.simulate (lGenerateDemandWithStatisticOrder,
-                        stdair::ForecastingMethod::MUL_PK);
+                        lENForecastingMethod);
 
   // DEBUG
   // Display the airlines stored in the database
