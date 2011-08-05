@@ -15,6 +15,7 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
@@ -442,14 +443,16 @@ int main (int argc, char* argv[]) {
   dsimService.initSnapshotAndRMEvents();
 
   // Generate the date time request with the statistic order.
-  const bool lGenerateDemandWithStatisticOrder = true;
+  stdair::DateGenerationMethod lDateGenerationMethod ('S');
+  stdair::DateGenerationMethod::EN_DateGenerationMethod lENDateGenerationMethod =
+    lDateGenerationMethod.getMethod();
 
   // Convert to the right forecasting method object to match DSim API.
   const stdair::ForecastingMethod::EN_ForecastingMethod& lENForecastingMethod =
     lForecastingMethod.getMethod();
   
   // Perform a simulation
-  dsimService.simulate (lGenerateDemandWithStatisticOrder,
+  dsimService.simulate (lENDateGenerationMethod,
                         lENForecastingMethod);
 
   // DEBUG
