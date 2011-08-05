@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/RandomGeneration.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
 #include <stdair/command/CmdAbstract.hpp>
 // TraDemGen
@@ -194,7 +195,8 @@ namespace TRADEMGEN {
     static const bool
     stillHavingRequestsToBeGenerated (const stdair::EventQueue&,
                                       const stdair::DemandStreamKeyStr_T&,
-                                      stdair::ProgressStatusSet&, const bool);
+                                      stdair::ProgressStatusSet&,
+                                      const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
 
     /**
      * Generate the first event/booking request for every demand
@@ -206,7 +208,7 @@ namespace TRADEMGEN {
      */
     static stdair::Count_T generateFirstRequests (stdair::EventQueue&,
                                                   stdair::RandomGeneration&,
-                                                  const bool);
+                                                  const stdair::DateGenerationMethod::EN_DateGenerationMethod& );
 
     /**
      * Generate a request with the demand stream, for which the key is
@@ -225,7 +227,8 @@ namespace TRADEMGEN {
      */
     static stdair::BookingRequestPtr_T
     generateNextRequest (stdair::EventQueue&, stdair::RandomGeneration&,
-                         const stdair::DemandStreamKeyStr_T&, const bool);
+                         const stdair::DemandStreamKeyStr_T&,
+                         const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
 
     /**
      * Reset the context of the demand streams for another demand
