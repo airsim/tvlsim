@@ -145,13 +145,10 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
   // Initialise the snapshot and RM events
   BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());
-
-  // Generate the request date time with statistic order.
-  const bool lGenerateDemandWithStatisticOrder = true;
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate (lGenerateDemandWithStatisticOrder,
+  BOOST_CHECK_NO_THROW (dsimService.simulate (stdair::DateGenerationMethod::STA_ORD,
                                               stdair::ForecastingMethod::ADD_PK));
 
   // Close the log file
