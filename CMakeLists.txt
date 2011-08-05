@@ -38,7 +38,7 @@ packaging_set_other_options (TBZ2 "TBZ2;TGZ")
 ##            Dependencies            ##
 ########################################
 #
-get_external_libs (git "boost 1.41" readline mysql "soci 3.0"
+get_external_libs (git "python 2.6" "boost 1.41" readline mysql "soci 3.0"
   "stdair 0.35" doxygen)
 
 
