@@ -20,6 +20,7 @@
 #include <stdair/STDAIR_Service.hpp>
 // Airline Inventory
 #include <airinv/AIRINV_Master_Service.hpp>
+#include <airinv/command/InventoryManager.hpp> // To build guillotine for sample bom
 // Airline Schedule
 #include <airsched/AIRSCHED_Service.hpp>
 // Fare Quote
@@ -336,6 +337,10 @@ namespace SIMCRS {
 
     // Delegate the BOM building to the dedicated service
     lSTDAIR_Service.buildSampleBom();
+
+    // Retrieve the BOM tree root
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    AIRINV::InventoryManager::buildSimilarSegmentCabinSets (lBomRoot);
   }
 
   // //////////////////////////////////////////////////////////////////////
