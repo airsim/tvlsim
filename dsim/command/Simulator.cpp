@@ -36,7 +36,7 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
-                            const bool iGenerateDemandWithStatisticOrder,
+                            const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod,
                             const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // DEBUG
@@ -52,7 +52,7 @@ namespace DSIM {
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests(iGenerateDemandWithStatisticOrder);
+      ioTRADEMGEN_Service.generateFirstRequests(iDateGenerationMethod);
 
     // Initialise the (Boost) progress display object
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -88,7 +88,7 @@ namespace DSIM {
                                                            ioTRAVELCCM_Service,
                                                            lEventStruct,
                                                            lPSS,
-                                                           iGenerateDemandWithStatisticOrder); break;
+                                                           iDateGenerationMethod); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -112,7 +112,7 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const bool iGenerateDemandWithStatisticOrder) {
+                      const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -129,7 +129,7 @@ namespace DSIM {
     const bool stillHavingRequestsToBeGenerated =
       ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                                             ioPSS,
-                                                            iGenerateDemandWithStatisticOrder);
+                                                            iDateGenerationMethod);
 
     // DEBUG
     // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
@@ -142,7 +142,7 @@ namespace DSIM {
     if (stillHavingRequestsToBeGenerated) {
       stdair::BookingRequestPtr_T lNextRequest_ptr =
         ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
-                                                 iGenerateDemandWithStatisticOrder);
+                                                 iDateGenerationMethod);
       assert (lNextRequest_ptr != NULL);
   
       // Sanity check
