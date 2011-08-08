@@ -432,7 +432,7 @@ namespace RMOL {
                                const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     
-    STDAIR_LOG_DEBUG ("RMOL::optimise called");    
+    STDAIR_LOG_DEBUG ("Forecast & Optimisation");    
 
     if (_previousForecastDate < iRMEventTime.date()) {
       forecast (iRMEventTime);
@@ -659,8 +659,8 @@ namespace RMOL {
     // Compute the "forecast demand to come" proportion by class
     itACL = lAirlineClassListList.begin();
     for (; itACL != lAirlineClassListList.end(); ++itACL) {
-      const stdair::AirlineClassList* lAirlineClassList = *itACL;
-      const stdair::Yield_T& lYield = lAirlineClassList->getYield();
+      const stdair::AirlineClassList* lAirlineClassList_ptr = *itACL;
+      const stdair::Yield_T& lYield = lAirlineClassList_ptr->getYield();
       stdair::ProportionFactor_T lProportionFactor =
         exp ((lYield - lMinWTP)*log(0.5)/(lMinWTP*(lFrat5Coef-1.0)));
       // If the yield is smaller than minimal WTP, the factor is greater than 1.
@@ -668,7 +668,7 @@ namespace RMOL {
       lProportionFactor = std::min (lProportionFactor, 1.0);
       lProportionFactorList.push_back(lProportionFactor - lPreviousProportionFactor);      
       lPreviousProportionFactor = lProportionFactor;
-      oStr << lPreviousProportionFactor << " ";
+      oStr << lAirlineClassList_ptr->toString() << lProportionFactor << " ";
     }
 
     STDAIR_LOG_DEBUG (oStr.str());
@@ -683,11 +683,11 @@ namespace RMOL {
     stdair::ProportionFactorList_T::const_iterator itPF = lProportionFactorList.begin();
     itACL = lAirlineClassListList.begin();
     for (; itACL != lAirlineClassListList.end(); ++itACL, ++itPF) {
-      const stdair::AirlineClassList* lAirlineClassList = *itACL;
+      const stdair::AirlineClassList* lAirlineClassList_ptr = *itACL;
       const stdair::ProportionFactor_T& lProportionFactor = *itPF;
       stdair::NbOfRequests_T lNumberOfRequests = lProportionFactor*lMeanNumberOfRequests;
       stdair::StdDevValue_T lStdDevValue = lProportionFactor*lStdDevNumberOfRequests;
-      setForecast(*lAirlineClassList, lNumberOfRequests, lStdDevValue,
+      setForecast(*lAirlineClassList_ptr, lNumberOfRequests, lStdDevValue,
                   iDemandStream, iBomRoot);
     }  
     
@@ -1045,7 +1045,7 @@ namespace RMOL {
         stdair::DCPList_T::const_iterator itDCP =
           std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
-          STDAIR_LOG_DEBUG ("Optimisation with demand aggregation: " << lCurrentInv_ptr->getAirlineCode()
+          STDAIR_LOG_DEBUG ("Optimisation with yield proration: " << lCurrentInv_ptr->getAirlineCode()
                             << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
           Optimiser::optimiseBPWithYieldProration (*lCurrentFlightDate_ptr);
         }
