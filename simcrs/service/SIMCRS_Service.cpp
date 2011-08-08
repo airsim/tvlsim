@@ -313,7 +313,9 @@ namespace SIMCRS {
     lAIRINV_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
                                   iYieldInputFilename);
 
-    // Parse the fare structures.
+    /**
+     * Let the pricing component to build the fare rule structures.
+     */
     SIMFQT::SIMFQT_Service& lSIMFQT_Service =
       lSIMCRS_ServiceContext.getSIMFQT_Service();
     lSIMFQT_Service.parseAndLoad (iFareInputFilename);
@@ -329,13 +331,61 @@ namespace SIMCRS {
     }
     assert (_simcrsServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (SimCRS) service context
+    // Retrieve the SimCRS service context and whether it owns the Stdair
+    // service
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+    const bool doesOwnStdairService =
+      lSIMCRS_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (SimCRS) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMCRS_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the BOM building to the dedicated service
-    lSTDAIR_Service.buildSampleBom();
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (SimCRS here).
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components.
+     */
+    /**
+     * Let the schedule manager (i.e., the AirSched component) build
+     * the schedules and O&Ds. AirSched holds the flight-periods (aka schedule)
+     * only, not the flight-dates (aka the inventory).
+     */
+    AIRSCHED::AIRSCHED_Service& lAIRSCHED_Service =
+      lSIMCRS_ServiceContext.getAIRSCHED_Service();
+    lAIRSCHED_Service.buildSampleBom();
+
+    /**
+     * Let the inventory manager (i.e., the AirInv component) build
+     * the schedules, O&Ds and yields. From the schedules and O&Ds,
+     * AirInv builds the flight-dates (aka the inventory).
+     * The flight-periods (aka schedule) are then dropped.
+     */
+    AIRINV::AIRINV_Master_Service& lAIRINV_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Service();
+    lAIRINV_Service.buildSampleBom();
+
+    /**
+     * Let the pricing component to build the fare rules.
+     */
+    SIMFQT::SIMFQT_Service& lSIMFQT_Service =
+      lSIMCRS_ServiceContext.getSIMFQT_Service();
+    lSIMFQT_Service.buildSampleBom();
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    SimCRS).
+     *
+     * \note: Currently, no more things to do by SimCRS.
+     */
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -400,7 +450,7 @@ namespace SIMCRS {
     return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
                                        iDepartureDate);
   }
-  
+
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
@@ -641,5 +691,4 @@ namespace SIMCRS {
 
     lAIRINV_Master_Service.optimise (iRMEvent, iForecastingMethod);
   }
-  
 }
