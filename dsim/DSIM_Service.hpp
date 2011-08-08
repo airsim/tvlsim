@@ -9,6 +9,7 @@
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
@@ -124,12 +125,13 @@ namespace DSIM {
     /**
      * Perform a simulation.
      *
-     * @param bool States whether the demand generation must be performed
+     * @param stdair::DateGenerationMethod::EN_DateGenerationMethod
+     *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
      *        sequential algorithm.
      */
-    void simulate (const bool iGenerateDemandWithStatisticOrder,
+    void simulate (const stdair::DateGenerationMethod::EN_DateGenerationMethod&,
                    const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
     /**

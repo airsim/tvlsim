@@ -21,6 +21,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
@@ -237,7 +238,9 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
                                             * iNbOfRuns);
 
   // Choose the algorithm to generate booking requests dates.
-  const bool lGenerateDemandWithStatisticOrder = false;
+  stdair::DateGenerationMethod lDateGenerationMethod ('P');
+  stdair::DateGenerationMethod::EN_DateGenerationMethod lENDateGenerationMethod =
+    lDateGenerationMethod.getMethod();
 
   for (NbOfRuns_T runIdx = 1; runIdx <= iNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
@@ -248,7 +251,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTrademgenService.generateFirstRequests(lGenerateDemandWithStatisticOrder);
+      ioTrademgenService.generateFirstRequests(lENDateGenerationMethod);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("[" << runIdx << "] Expected: "
@@ -292,7 +295,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       const bool stillHavingRequestsToBeGenerated = ioTrademgenService.
         stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                           lProgressStatusSet,
-                                          lGenerateDemandWithStatisticOrder);
+                                          lENDateGenerationMethod);
 
       // DEBUG
       STDAIR_LOG_DEBUG (lProgressStatusSet.describe());
@@ -306,7 +309,8 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
         
         stdair::BookingRequestPtr_T lNextRequest_ptr =
           ioTrademgenService.generateNextRequest (lDemandStreamKey,
-                                                  lGenerateDemandWithStatisticOrder);
+                                                  lENDateGenerationMethod);
+        
         assert (lNextRequest_ptr != NULL);
 
         // Sanity check
