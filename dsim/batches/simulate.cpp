@@ -459,16 +459,12 @@ int main (int argc, char* argv[]) {
   // Initialise the snapshot and RM events
   dsimService.initSnapshotAndRMEvents();
 
-  // Convert to the right date-time request generation method object to match DSim API.
-  stdair::DateGenerationMethod::EN_DateGenerationMethod lENDateGenerationMethod =
-    lDateGenerationMethod.getMethod();
-
   // Convert to the right forecasting method object to match DSim API.
   const stdair::ForecastingMethod::EN_ForecastingMethod& lENForecastingMethod =
     lForecastingMethod.getMethod();
-  
+
   // Perform a simulation
-  dsimService.simulate (lENDateGenerationMethod,
+  dsimService.simulate (lDateGenerationMethod,
                         lENForecastingMethod);
 
   // DEBUG

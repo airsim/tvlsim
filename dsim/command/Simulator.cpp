@@ -36,7 +36,7 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
-                            const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod,
+                            const stdair::DateGenerationMethod& iDateGenerationMethod,
                             const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // DEBUG
@@ -112,7 +112,7 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) {
+                      const stdair::DateGenerationMethod& iDateGenerationMethod) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();

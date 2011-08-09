@@ -125,13 +125,13 @@ namespace DSIM {
     /**
      * Perform a simulation.
      *
-     * @param stdair::DateGenerationMethod::EN_DateGenerationMethod
+     * @param stdair::DateGenerationMethod&
      *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
      *        sequential algorithm.
      */
-    void simulate (const stdair::DateGenerationMethod::EN_DateGenerationMethod&,
+    void simulate (const stdair::DateGenerationMethod&,
                    const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
     /**

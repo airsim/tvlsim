@@ -489,7 +489,7 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  simulate (const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod,
+  simulate (const stdair::DateGenerationMethod& iDateGenerationMethod,
             const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the DSim service context

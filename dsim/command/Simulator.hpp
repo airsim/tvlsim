@@ -36,7 +36,7 @@ namespace DSIM {
     /** Perform a simulation. */
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
-                         const stdair::DateGenerationMethod::EN_DateGenerationMethod&,
+                         const stdair::DateGenerationMethod&,
                          const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
     /** Play a booking request event. */
@@ -45,7 +45,7 @@ namespace DSIM {
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
                                     stdair::ProgressStatusSet&,
-                                    const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
+                                    const stdair::DateGenerationMethod&);
 
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
