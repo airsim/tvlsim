@@ -491,11 +491,24 @@ namespace AIRINV {
       assert (lCurrentSegmentDate_ptr != NULL);
 
       /*
-       * If the segment is just marketed by this carrier, nothing has to be done.
+       * If the segment is just marketed by this carrier,
+       * retrieve the operating segment and call the createDirectAcces
+       * method on its parent (flight date).
        */
       bool lCurrentSegmentIsOperatedByPartner =
         lCurrentSegmentDate_ptr->isOtherAirlineOperating();
-      if (lCurrentSegmentIsOperatedByPartner == false) {
+      if (lCurrentSegmentIsOperatedByPartner){
+        // First get the operating segment date.
+        stdair::SegmentDate* lOperatingSegmentDate_ptr =
+          lCurrentSegmentDate_ptr->getOperatingSegmentDate();
+        assert (lOperatingSegmentDate_ptr != NULL);
+        // Then get the (parent) flight date and create direct access.
+        stdair::FlightDate* lOperatingFlightDate_ptr =
+          stdair::BomManager::getParentPtr<stdair::FlightDate>(*lOperatingSegmentDate_ptr);
+        assert (lOperatingFlightDate_ptr != NULL);
+                
+        createDirectAccesses (*lOperatingFlightDate_ptr);
+      } else {
 
         const stdair::AirportCode_T& lBoardingPoint =
           lCurrentSegmentDate_ptr->getBoardingPoint();
