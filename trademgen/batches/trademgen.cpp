@@ -56,6 +56,9 @@ const stdair::Filename_T K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /** Default name and location for the (CSV) output file. */
 const stdair::Filename_T K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME ("request.csv");
 
+/** Default date-time request generation method name: 'P' for Poisson Process. */
+const char K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR ('P');
+
 /** Default number of random draws to be generated (best if over 100). */
 const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
 
@@ -101,7 +104,11 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
                        NbOfRuns_T& ioRandomRuns,
                        stdair::Filename_T& ioInputFilename,
                        stdair::Filename_T& ioOutputFilename,
-                       stdair::Filename_T& ioLogFilename) {
+                       stdair::Filename_T& ioLogFilename,
+                       stdair::DateGenerationMethod& ioDateGenerationMethod) {
+
+  // Date-time request generation method as a single char (e.g., 'P' or 'S').
+  char lDateGenerationMethodChar;
 
   // Default for the built-in input
   ioIsBuiltin = K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT;
@@ -131,6 +138,9 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_TRADEMGEN_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
+    ("dategeneration,G",
+     boost::program_options::value< char >(&lDateGenerationMethodChar)->default_value(K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR),
+     "Method used to generate the date-time of the booking requests: Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ;
 
   // Hidden options, will be allowed both on command line and
@@ -207,6 +217,11 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
   if (vm.count ("log")) {
     ioLogFilename = vm["log"].as< std::string >();
     std::cout << "Log filename is: " << ioLogFilename << std::endl;
+  }
+
+  if (vm.count ("dategeneration")) {
+    ioDateGenerationMethod = stdair::DateGenerationMethod (lDateGenerationMethodChar);
+    std::cout << "Date-time request generation method is: " << ioDateGenerationMethod.describe() << std::endl;
   }
 
   //
@@ -380,11 +395,14 @@ int main (int argc, char* argv[]) {
 
   // Output log File
   stdair::Filename_T lLogFilename;
+  
+  // Date-Generation method.
+  stdair::DateGenerationMethod lDateGenerationMethod(K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR);
 
   // Call the command-line option parser
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, isBuiltin, lNbOfRuns, lInputFilename,
-                       lOutputFilename, lLogFilename);
+                       lOutputFilename, lLogFilename, lDateGenerationMethod);
 
   if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
     return 0;

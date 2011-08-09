@@ -2,9 +2,9 @@
 include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
-DISTCLEANFILES = pytrademgen.py
+DISTCLEANFILES = pytrademgen
 
-EXTRA_DIST = pytrademgen.py
+EXTRA_DIST = pytrademgen
 
 # Library
 lib_LTLIBRARIES = libpytrademgen.la

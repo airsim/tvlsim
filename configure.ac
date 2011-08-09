@@ -372,6 +372,7 @@ AC_CONFIG_FILES(
 	trademgen/core/Makefile
 	trademgen/batches/Makefile
 	trademgen/python/Makefile
+	trademgen/python/pytrademgen
 	airsched/Makefile
 	airsched/basic/Makefile
 	airsched/bom/Makefile
