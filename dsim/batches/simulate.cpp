@@ -52,6 +52,9 @@ const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /** Default forecasting method name: 'M' for MultiplicativePickUp. */
 const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
 
+/** Default date-time request generation method name: 'S' for Statistics Order. */
+const char K_DSIM_DATE_GENERATION_METHOD_CHAR ('S');
+
 /**
  * Default for the BOM tree building. The BOM tree can either be built-in
  * or provided by an input file. That latter must then be given with input
@@ -131,12 +134,15 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioDemandInputFilename,
                        std::string& ioLogFilename,  
                        stdair::ForecastingMethod& ioForecastingMethod,
+                       stdair::DateGenerationMethod& ioDateGenerationMethod,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
 
-  // Forecast method as a single char (e.g., 'A' or 'M'). */
+  // Forecast method as a single char (e.g., 'A' or 'M').
   char lForecastingMethodChar;
+  // Date-time request generation method as a single char (e.g., 'P' or 'S').
+  char lDateGenerationMethodChar;
 
   // Default for the built-in input
   ioIsBuiltin = K_DSIM_DEFAULT_BUILT_IN_INPUT;
@@ -184,6 +190,9 @@ int readConfiguration (int argc, char* argv[],
     ("forecast,F",
      boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
      "Method used to forecast demand: AdditivePickUp (e.g., A) or MultiplicativePickUp (e.g., M)")
+    ("dategeneration,G",
+     boost::program_options::value< char >(&lDateGenerationMethodChar)->default_value(K_DSIM_DATE_GENERATION_METHOD_CHAR),
+     "Method used to generate the date-time of the booking requests: Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -325,6 +334,11 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
   }
 
+  if (vm.count ("dategeneration")) {
+    ioDateGenerationMethod = stdair::DateGenerationMethod (lDateGenerationMethodChar);
+    std::cout << "Date-time request generation method is: " << ioDateGenerationMethod.describe() << std::endl;
+  }
+
   if (vm.count ("user")) {
     ioDBUser = vm["user"].as< std::string >();
     std::cout << "SQL database user name is: " << ioDBUser << std::endl;
@@ -393,6 +407,9 @@ int main (int argc, char* argv[]) {
   // Forecasting method.
   stdair::ForecastingMethod lForecastingMethod(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
 
+  // Date generation method.
+  stdair::DateGenerationMethod lDateGenerationMethod(K_DSIM_DATE_GENERATION_METHOD_CHAR);
+
   // SQL database parameters
   std::string lDBUser;
   std::string lDBPasswd;
@@ -405,7 +422,7 @@ int main (int argc, char* argv[]) {
     readConfiguration (argc, argv, isBuiltin, lQuery, lScheduleInputFilename,
                        lOnDInputFilename, lYieldInputFilename,
                        lFareInputFilename, lDemandInputFilename,
-                       lLogFilename, lForecastingMethod, 
+                       lLogFilename, lForecastingMethod, lDateGenerationMethod, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -442,8 +459,7 @@ int main (int argc, char* argv[]) {
   // Initialise the snapshot and RM events
   dsimService.initSnapshotAndRMEvents();
 
-  // Generate the date time request with the statistic order.
-  stdair::DateGenerationMethod lDateGenerationMethod ('S');
+  // Convert to the right date-time request generation method object to match DSim API.
   stdair::DateGenerationMethod::EN_DateGenerationMethod lENDateGenerationMethod =
     lDateGenerationMethod.getMethod();
 
