@@ -490,41 +490,49 @@ namespace AIRINV {
       stdair::SegmentDate* lCurrentSegmentDate_ptr = *itSegmentDate;
       assert (lCurrentSegmentDate_ptr != NULL);
 
-      const stdair::AirportCode_T& lBoardingPoint =
-        lCurrentSegmentDate_ptr->getBoardingPoint();
+      /*
+       * If the segment is just marketed by this carrier, nothing has to be done.
+       */
+      bool lCurrentSegmentIsOperatedByPartner =
+        lCurrentSegmentDate_ptr->isOtherAirlineOperating();
+      if (lCurrentSegmentIsOperatedByPartner == false) {
 
-      stdair::AirportCode_T currentBoardingPoint = lBoardingPoint;
-      const stdair::AirportCode_T& lOffPoint =
-        lCurrentSegmentDate_ptr->getOffPoint();
-      
-      // Add a sanity check so as to ensure that the loop stops. If
-      // there are more than MAXIMAL_NUMBER_OF_LEGS legs, there is
-      // an issue somewhere in the code (not in the parser, as the
-      // segments are derived from the legs thanks to the
-      // FlightPeriodStruct::buildSegments() method).
-      unsigned short i = 1;
-      while (currentBoardingPoint != lOffPoint
-             && i <= stdair::MAXIMAL_NUMBER_OF_LEGS_IN_FLIGHT) {
-        // Retrieve the (unique) LegDate getting that Boarding Point
-        stdair::LegDate& lLegDate = stdair::BomManager::
-          getObject<stdair::LegDate> (ioFlightDate, currentBoardingPoint);
-
-        // Link the SegmentDate and LegDate together
-        stdair::FacBomManager::addToListAndMap (*lCurrentSegmentDate_ptr,
-                                                lLegDate);
-        stdair::FacBomManager::addToListAndMap (lLegDate,
-                                                *lCurrentSegmentDate_ptr);
-
-        // Prepare the next iteration
-        currentBoardingPoint = lLegDate.getOffPoint();
-        ++i;
-      }
-      assert (i <= stdair::MAXIMAL_NUMBER_OF_LEGS_IN_FLIGHT);
+        const stdair::AirportCode_T& lBoardingPoint =
+          lCurrentSegmentDate_ptr->getBoardingPoint();
+        
+        stdair::AirportCode_T currentBoardingPoint = lBoardingPoint;
+        const stdair::AirportCode_T& lOffPoint =
+          lCurrentSegmentDate_ptr->getOffPoint();
+        
+        // Add a sanity check so as to ensure that the loop stops. If
+        // there are more than MAXIMAL_NUMBER_OF_LEGS legs, there is
+        // an issue somewhere in the code (not in the parser, as the
+        // segments are derived from the legs thanks to the
+        // FlightPeriodStruct::buildSegments() method).
+        unsigned short i = 1;
+        while (currentBoardingPoint != lOffPoint
+               && i <= stdair::MAXIMAL_NUMBER_OF_LEGS_IN_FLIGHT) {
+          // Retrieve the (unique) LegDate getting that Boarding Point
+          stdair::LegDate& lLegDate = stdair::BomManager::
+            getObject<stdair::LegDate> (ioFlightDate, currentBoardingPoint);
           
-      // Create the routing for the leg- and segment-cabins.
-      // At the same time, set the SegmentDate attributes derived from
-      // its routing legs (e.g., boarding and off dates).
-      createDirectAccesses (*lCurrentSegmentDate_ptr);
+          // Link the SegmentDate and LegDate together
+          stdair::FacBomManager::addToListAndMap (*lCurrentSegmentDate_ptr,
+                                                  lLegDate);
+          stdair::FacBomManager::addToListAndMap (lLegDate,
+                                                  *lCurrentSegmentDate_ptr);
+          
+          // Prepare the next iteration
+          currentBoardingPoint = lLegDate.getOffPoint();
+          ++i;
+        }
+        assert (i <= stdair::MAXIMAL_NUMBER_OF_LEGS_IN_FLIGHT);
+        
+        // Create the routing for the leg- and segment-cabins.
+        // At the same time, set the SegmentDate attributes derived from
+        // its routing legs (e.g., boarding and off dates).
+        createDirectAccesses (*lCurrentSegmentDate_ptr);
+      }
     }
   }
 
