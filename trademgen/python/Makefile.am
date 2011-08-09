@@ -2,6 +2,7 @@
 include $(top_srcdir)/Makefile.common
 
 MAINTAINERCLEANFILES = Makefile.in
+DISTCLEANFILES = pytrademgen.py
 
 EXTRA_DIST = pytrademgen.py
 

@@ -21,6 +21,7 @@
 #include <airsched/command/OnDParser.hpp>
 #include <airsched/command/SegmentPathProvider.hpp>
 #include <airsched/command/InventoryGenerator.hpp>
+#include <airsched/command/SegmentPathGenerator.hpp>
 #include <airsched/service/AIRSCHED_ServiceContext.hpp>
 #include <airsched/AIRSCHED_Service.hpp>
 
@@ -228,14 +229,44 @@ namespace AIRSCHED {
     }
     assert (_airschedServiceContext != NULL);
 
-    // Retrieve the STDAIR service object from the (AirSched) service context
+    // Retrieve the AirSched service context and whether it owns the Stdair
+    // service
     AIRSCHED_ServiceContext& lAIRSCHED_ServiceContext =
       *_airschedServiceContext;
+    const bool doesOwnStdairService =
+      lAIRSCHED_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (AirSched) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lAIRSCHED_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the BOM building to the dedicated service
-    lSTDAIR_Service.buildSampleBom();
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (AirSched here)
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components
+     * 
+     * \note: Currently, no more things to do by AirSched at that stage,
+     *        as there is no child
+     */
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    AirSched)
+     *
+     *    AirSched has to build the network from the schedule.
+     *    \note: that operation is also invoked by the
+     *    ScheduleParser::generateInventories() in parseAndLoad().
+     */
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+    SegmentPathGenerator::createSegmentPathNetwork (lBomRoot);
   }
 
   // ////////////////////////////////////////////////////////////////////
