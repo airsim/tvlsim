@@ -257,7 +257,7 @@ namespace TRADEMGEN {
      *
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
-     * @param const stdair::DateGenerationMethod::EN_DateGenerationMethod&
+     * @param const stdair::DateGenerationMethod&
      *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
@@ -268,13 +268,13 @@ namespace TRADEMGEN {
     const bool
     stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T&,
                                       stdair::ProgressStatusSet&,
-                                      const stdair::DateGenerationMethod::EN_DateGenerationMethod&) const;
+                                      const stdair::DateGenerationMethod&) const;
 
     /**
      * Browse the list of demand streams and generate the first
      * request of each stream.
      *
-     * @param const stdair::DateGenerationMethod::EN_DateGenerationMethod&
+     * @param const stdair::DateGenerationMethod&
      *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
@@ -283,7 +283,7 @@ namespace TRADEMGEN {
      *         be generated
      */
     stdair::Count_T
-    generateFirstRequests (const stdair::DateGenerationMethod::EN_DateGenerationMethod&) const;
+    generateFirstRequests (const stdair::DateGenerationMethod&) const;
 
     /**
      * Generate a request with the demand stream which corresponds to
@@ -291,7 +291,7 @@ namespace TRADEMGEN {
      *
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
-     * @param const bool iGenerateRequestWithStatisticOrder
+     * @param const stdair::DateGenerationMethod&
      *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
@@ -301,7 +301,7 @@ namespace TRADEMGEN {
      */
     stdair::BookingRequestPtr_T
     generateNextRequest (const stdair::DemandStreamKeyStr_T&,
-                         const stdair::DateGenerationMethod::EN_DateGenerationMethod&) const;
+                         const stdair::DateGenerationMethod&) const;
 
     /**
      * Pop the next coming (in time) event, and remove it from the

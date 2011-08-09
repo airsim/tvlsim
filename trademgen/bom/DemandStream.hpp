@@ -204,7 +204,7 @@ namespace TRADEMGEN {
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated (const bool) const;
+    const bool stillHavingRequestsToBeGenerated (const stdair::DateGenerationMethod& iDateGenerationMethod) const;
 
     /** Generate the time of the next request with poisson process. */
     const stdair::DateTime_T generateTimeOfRequestPoissonProcess();
@@ -250,7 +250,7 @@ namespace TRADEMGEN {
      *
      */
     stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
-                                                     const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
+                                                     const stdair::DateGenerationMethod&);
 
     /** Reset all the contexts of the demand stream. */
     void reset (stdair::BaseGenerator_T& ioSharedGenerator);

@@ -426,7 +426,7 @@ namespace TRADEMGEN {
   const bool TRADEMGEN_Service::
   stillHavingRequestsToBeGenerated (const stdair::DemandStreamKeyStr_T& iKey,
                                     stdair::ProgressStatusSet& ioPSS,
-                                    const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) const {
+                                    const stdair::DateGenerationMethod& iDateGenerationMethod) const {
     
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -451,7 +451,7 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   stdair::Count_T TRADEMGEN_Service::
-  generateFirstRequests (const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) const {
+  generateFirstRequests (const stdair::DateGenerationMethod& iDateGenerationMethod) const {
 
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);
@@ -481,7 +481,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T TRADEMGEN_Service::
   generateNextRequest (const stdair::DemandStreamKeyStr_T& iKey,
-                       const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) const {
+                       const stdair::DateGenerationMethod& iDateGenerationMethod) const {
 
     // Retrieve the TraDemGen service context
     assert (_trademgenServiceContext != NULL);

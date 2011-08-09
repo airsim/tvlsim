@@ -289,7 +289,7 @@ namespace TRADEMGEN {
   stillHavingRequestsToBeGenerated (const stdair::EventQueue& iEventQueue,
                                     const stdair::DemandStreamKeyStr_T& iKey,
                                     stdair::ProgressStatusSet& ioPSS,
-                                    const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) {
+                                    const stdair::DateGenerationMethod& iDateGenerationMethod) {
     // Retrieve the DemandStream which corresponds to the given key.
     const DemandStream& lDemandStream =
       stdair::BomManager::getObject<DemandStream> (iEventQueue, iKey);
@@ -309,7 +309,7 @@ namespace TRADEMGEN {
   generateNextRequest (stdair::EventQueue& ioEventQueue,
                        stdair::RandomGeneration& ioGenerator,
                        const stdair::DemandStreamKeyStr_T& iKey,
-                       const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) {
+                       const stdair::DateGenerationMethod& iDateGenerationMethod) {
 
     // Retrieve the DemandStream which corresponds to the given key.
     DemandStream& lDemandStream = 
@@ -340,7 +340,7 @@ namespace TRADEMGEN {
   stdair::Count_T DemandManager::
   generateFirstRequests (stdair::EventQueue& ioEventQueue,
                          stdair::RandomGeneration& ioGenerator,
-                         const stdair::DateGenerationMethod::EN_DateGenerationMethod& iDateGenerationMethod) {
+                         const stdair::DateGenerationMethod& iDateGenerationMethod) {
 
     // Actual total number of events to be generated
     stdair::NbOfRequests_T lActualTotalNbOfEvents = 0.0;

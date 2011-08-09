@@ -189,6 +189,11 @@ namespace TRADEMGEN {
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
      * @param stdair::ProgressStatusSet
+     * @param const stdair::DateGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return bool Whether or not there are still some events to be
      *   generated.
      */
@@ -196,19 +201,25 @@ namespace TRADEMGEN {
     stillHavingRequestsToBeGenerated (const stdair::EventQueue&,
                                       const stdair::DemandStreamKeyStr_T&,
                                       stdair::ProgressStatusSet&,
-                                      const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
+                                      const stdair::DateGenerationMethod&);
 
     /**
      * Generate the first event/booking request for every demand
      * stream.
      *
      * @param stdair::EventQueue& Reference on the top of the BOM tree.
+     * @param stdair::RandomGeneration& Random generator.
+     * @param const stdair::DateGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return stdair::Count_T The actual total number of events to
      *         be generated, for all the demand stream.
      */
     static stdair::Count_T generateFirstRequests (stdair::EventQueue&,
                                                   stdair::RandomGeneration&,
-                                                  const stdair::DateGenerationMethod::EN_DateGenerationMethod& );
+                                                  const stdair::DateGenerationMethod&);
 
     /**
      * Generate a request with the demand stream, for which the key is
@@ -222,13 +233,18 @@ namespace TRADEMGEN {
      * @param stdair::RandomGeneration& Random generator.
      * @param const DemandStreamKey& A string identifying uniquely the
      *   demand stream (e.g., "SIN-HND 2010-Feb-08 Y").
+     * @param const stdair::DateGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
      * @return stdair::BookingRequestPtr_T (Boost) shared pointer on
      *   the booking request structure, which has just been created.
      */
     static stdair::BookingRequestPtr_T
     generateNextRequest (stdair::EventQueue&, stdair::RandomGeneration&,
                          const stdair::DemandStreamKeyStr_T&,
-                         const stdair::DateGenerationMethod::EN_DateGenerationMethod&);
+                         const stdair::DateGenerationMethod&);
 
     /**
      * Reset the context of the demand streams for another demand
