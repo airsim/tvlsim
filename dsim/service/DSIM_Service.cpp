@@ -329,18 +329,59 @@ namespace DSIM {
     }
     assert (_dsimServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (AirSched) service context
+    // Retrieve the DSim service context and whether it owns the Stdair
+    // service
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    const bool doesOwnStdairService =
+      lDSIM_ServiceContext.getOwnStdairServiceFlag();
 
-    // Build the SimCRS sample BOM tree
+    // Retrieve the StdAir service object from the (SimCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (DSim here).
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components.
+     */
+    /**
+     * Let the CRS (i.e., the SimCRS component) build the schedules, O&Ds,
+     * inventories, yields and fares.
+     */
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
     lSIMCRS_Service.buildSampleBom();
 
-    // Build the TraDemGen sample BOM tree
+    /**
+     * Let the demand manager (i.e., the TraDemGen component) build the
+     * demand generators/streams.
+     */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service();
     lTRADEMGEN_Service.buildSampleBom();
+
+    /**
+     * Let the customer choice manager (i.e., the TravelCCM component) build the
+     * customer choice sets.
+     */
+    TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
+      lDSIM_ServiceContext.getTRAVELCCM_Service();
+    lTRAVELCCM_Service.buildSampleBom();
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    DSim).
+     *
+     * \note: Currently, no more things to do by DSim.
+     */
   }
 
   // //////////////////////////////////////////////////////////////////////

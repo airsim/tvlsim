@@ -220,9 +220,38 @@ namespace TRADEMGEN {
     }
     assert (_trademgenServiceContext != NULL);
 
+    // Retrieve the TraDemGen service context and whether it owns the Stdair
+    // service
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
       *_trademgenServiceContext;
+    const bool doesOwnStdairService =
+      lTRADEMGEN_ServiceContext.getOwnStdairServiceFlag();
 
+    // Retrieve the StdAir service object from the (TraDemGen) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_Service();
+
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (TraDemGen here)
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components
+     * 
+     * \note: Currently, no more things to do by TraDemGen at that stage,
+     *        as there is no child
+     */
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    TraDemGen)
+     */
     // Retrieve the shared generator
     stdair::RandomGeneration& lSharedGenerator =
       lTRADEMGEN_ServiceContext.getUniformGenerator();
@@ -231,10 +260,6 @@ namespace TRADEMGEN {
     const POSProbabilityMass_T& lDefaultPOSProbabilityMass =
       lTRADEMGEN_ServiceContext.getPOSProbabilityMass();
     
-    // Retrieve the STDAIR service object from the (TraDemGen) service context
-    stdair::STDAIR_Service& lSTDAIR_Service =
-      lTRADEMGEN_ServiceContext.getSTDAIR_Service();
-
     // Retrieve the event queue
     stdair::EventQueue& lEventQueue = lSTDAIR_Service.getEventQueue();
 

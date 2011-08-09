@@ -169,22 +169,47 @@ namespace TRAVELCCM {
   // //////////////////////////////////////////////////////////////////////
   void TRAVELCCM_Service::buildSampleBom() {
 
-    // Retrieve the TRAVELCCM service context
+    // Retrieve the TravelCCM service context
     if (_travelccmServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The Travelccm service has "
+      throw stdair::NonInitialisedServiceException ("The TravelCCM service has "
                                                     "not been initialised");
     }
     assert (_travelccmServiceContext != NULL);
 
+    // Retrieve the TravelCCM service context and whether it owns the Stdair
+    // service
     TRAVELCCM_ServiceContext& lTRAVELCCM_ServiceContext =
       *_travelccmServiceContext;
-  
-    // Retrieve the STDAIR service object from the (TRAVELCCM) service context
+    const bool doesOwnStdairService =
+      lTRAVELCCM_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (TravelCCM) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lTRAVELCCM_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the BOM building to the dedicated service
-    lSTDAIR_Service.buildSampleBom();
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (TravelCCM here)
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components
+     * 
+     * \note: Currently, no more things to do by TravelCCM at that stage,
+     *        as there is no child
+     */
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    TravelCCM)
+     *
+     * \note: Currently, no more things to do by TravelCCM at that stage.
+     */
   }
 
   // //////////////////////////////////////////////////////////////////////
