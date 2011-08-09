@@ -348,6 +348,11 @@ namespace AIRINV {
      * guillotine blocks.
      */
     InventoryManager::buildSimilarSegmentCabinSets (lBomRoot);
+
+    /**
+     * 3.3. Initialise the bid price vectors.
+     */
+    InventoryManager::setDefaultBidPriceVector (lBomRoot);
   }
 
   // ////////////////////////////////////////////////////////////////////
