@@ -20,6 +20,7 @@
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
