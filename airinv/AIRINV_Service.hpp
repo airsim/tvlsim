@@ -125,18 +125,16 @@ namespace AIRINV {
      *   <li>The other BOM tree is fake, as a hook for RMOL to work.</li>
      * </ul>
      *
-     * @param const bool isForRMOL Whether the sample BOM tree is for RMOL.
      * @param const CabinCapacity_T Capacity of the cabin for RMOL optimisation.
      */
-    void buildSampleBom (const bool isForRMOL = false,
-                         const stdair::CabinCapacity_T iCabinCapacity = 0);
+    void buildSampleBom (const stdair::CabinCapacity_T iCabinCapacity = 0);
 
     /** Initialise the RM events for the inventory.
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
+        @param const stdair::Date_T& Parameters for the start date.
+        @param const stdair::Date_T& Parameters for the end date.
      */
-    stdair::RMEventList_T initRMEvents (const stdair::Date_T&,
-                                        const stdair::Date_T&);
+    stdair::RMEventList_T initRMEvents (const stdair::Date_T& iStartDate,
+                                        const stdair::Date_T& iEndDate);
     
     /**
      * Compute the availability for the given travel solution.
@@ -157,13 +155,16 @@ namespace AIRINV {
     /**
      * Take inventory snapshots.
      */
-    void takeSnapshots (const stdair::AirlineCode_T&,const stdair::DateTime_T&);
+    void takeSnapshots (const stdair::AirlineCode_T&,
+                        const stdair::DateTime_T&);
     
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-    void optimise (const stdair::AirlineCode_T&, const stdair::KeyDescription_T&,
-                   const stdair::DateTime_T&, const stdair::ForecastingMethod&);
+    void optimise (const stdair::AirlineCode_T&,
+                   const stdair::KeyDescription_T&,
+                   const stdair::DateTime_T&,
+                   const stdair::ForecastingMethod&);
 
 
   public:
