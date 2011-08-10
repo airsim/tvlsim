@@ -150,7 +150,7 @@ namespace SIMCRS {
      * Optimise (revenue management) an flight-date/network-date
      */
     void optimise (const stdair::RMEventStruct&,
-                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
+                   const stdair::ForecastingMethod&);
     
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.

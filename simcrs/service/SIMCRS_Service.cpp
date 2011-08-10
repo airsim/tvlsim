@@ -675,7 +675,7 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   optimise (const stdair::RMEventStruct& iRMEvent,
-            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+            const stdair::ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
