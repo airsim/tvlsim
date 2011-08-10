@@ -162,9 +162,8 @@ namespace AIRINV {
     /**
      * Optimise (revenue management) an flight-date/network-date
      */
-    void optimise (const stdair::AirlineCode_T&,
-                   const stdair::KeyDescription_T&, const stdair::DateTime_T&,
-                   const stdair::ForecastingMethod::EN_ForecastingMethod&);
+    void optimise (const stdair::AirlineCode_T&, const stdair::KeyDescription_T&,
+                   const stdair::DateTime_T&, const stdair::ForecastingMethod&);
 
 
   public:

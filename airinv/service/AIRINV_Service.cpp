@@ -544,7 +544,7 @@ namespace AIRINV {
   void AIRINV_Service::optimise (const stdair::AirlineCode_T& iAirlineCode,
                                  const stdair::KeyDescription_T& iFDDescription,
                                  const stdair::DateTime_T& iRMEventTime,
-                                 const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+                                 const stdair::ForecastingMethod& iForecastingMethod) {
     if (_airinvServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInv service "
                                                     "has not been initialised");
