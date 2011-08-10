@@ -136,6 +136,9 @@ namespace AIRINV {
       // Update the commited space of the segment-cabins and the leg-cabins.
       SegmentCabinHelper::updateFromReservation (lFlightDate, lSegmentCabin,
                                                  iPartySize);
+      
+      // STDAIR_LOG_NOTIFICATION (lFlightDate.getDepartureDate()
+      //                          << ";" << iClassCode);
       hasSaleBeenSuccessful = true;
     }
 

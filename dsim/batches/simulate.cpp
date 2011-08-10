@@ -47,6 +47,12 @@ const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /** Default name and location for the (CSV) yield input file. */
 const std::string K_DSIM_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/rds01/yield.csv");
+
+/** Default demand generator. */
+const char K_DSIM_DEFAULT_DEMAND_GENERATOR ('P');
+
+/** Default forecasting method. */
+const char K_DSIM_DEFAULT_FORECASTING_METHOD ('A');
     
 /** Default query string. */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
@@ -118,6 +124,8 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioYieldInputFilename,
+                       stdair::DateGenerationMethod& ioDemandGenerator,
+                       stdair::ForecastingMethod& ioForecastingMethod,
                        std::string& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
@@ -158,6 +166,12 @@ int readConfiguration (int argc, char* argv[],
     ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
+    ("generator,g",
+     boost::program_options::value< std::string >(&ioDemandGenerator)->default_value(K_DSIM_DEFAULT_DEMAND_GENERATOR),
+     "demand generator")
+    ("fct,r",
+     boost::program_options::value< std::string >(&ioForecastingMethod)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD),
+     "forecasting method")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
@@ -247,6 +261,16 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
   }
 
+  if (vm.count ("generator")) {
+    ioDemandGenerator = vm["generator"].as< std::string >();
+    std::cout << "The demand generator is: " << ioDemandGenerator << std::endl;
+  }
+
+  if (vm.count ("fct")) {
+    ioForecastingMethod = vm["fct"].as< std::string >();
+    std::cout << "The forecasting method is: " << ioForecastingMethod << std::endl;
+  }
+
   if (vm.count ("schedule")) {
     ioScheduleInputFilename = vm["schedule"].as< std::string >();
     std::cout << "Schedule input filename is: " << ioScheduleInputFilename
@@ -296,10 +320,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2010, boost::gregorian::Jan, 01);
+  stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Mar, 01);
+  stdair::Date_T lEndDate (2012, boost::gregorian::Jun, 01);
 
   // Demand input file name
   stdair::Filename_T lDemandInputFilename;
@@ -315,6 +339,12 @@ int main (int argc, char* argv[]) {
     
   // Yield input filename
   std::string lYieldInputFilename;
+
+  // Demand generator
+  std::string lDemandGenerator;
+  
+  // Forecasting method
+  std::string lForecastingMethod;
     
   // Output log File
   std::string lLogFilename;
@@ -330,7 +360,8 @@ int main (int argc, char* argv[]) {
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, lQuery, lDemandInputFilename,
                        lScheduleInputFilename, lOnDInputFilename,
-                       lFareInputFilename, lYieldInputFilename, lLogFilename,
+                       lFareInputFilename, lYieldInputFilename,
+                       lDemandGenerator, lForecastingMethod, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -348,19 +379,30 @@ int main (int argc, char* argv[]) {
   logOutputFile.clear();
 
   // Initialise the simulation context
-  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  const stdair::BasLogParams lLogParams (stdair::LOG::NOTIFICATION,
+                                         logOutputFile);
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lScheduleInputFilename, lOnDInputFilename,
                                   lFareInputFilename, lYieldInputFilename, 
                                   lDemandInputFilename);
 
   // Generate the date time request with the statistic order.
-  const bool lGenerateDemandWithStatisticOrder = true;
+  bool lGenerateDemandWithStatisticOrder = false;
+  if (lDemandGenerator == "0") {
+    lGenerateDemandWithStatisticOrder = false;
+  } else {
+    lGenerateDemandWithStatisticOrder = true;
+  }
   
   // Perform a simulation
-  dsimService.simulate (lGenerateDemandWithStatisticOrder,
-                        stdair::ForecastingMethod::MUL_PK);
-
+  if (lForecastingMethod == "0") {
+    dsimService.simulate (lGenerateDemandWithStatisticOrder,
+                          stdair::ForecastingMethod::ADD_PK);
+  } else {
+    dsimService.simulate (lGenerateDemandWithStatisticOrder,
+                          stdair::ForecastingMethod::MUL_PK);
+  }
+  
   // DEBUG
   // Display the airlines stored in the database
   dsimService.displayAirlineListFromDB();

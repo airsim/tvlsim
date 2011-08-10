@@ -6,6 +6,9 @@
 // StdAir
 #include <stdair/basic/BasConst_Inventory.hpp>
 #include <stdair/bom/GuillotineBlock.hpp>
+#include <stdair/bom/BomManager.hpp>
+#include <stdair/bom/FlightDate.hpp>
+#include <stdair/bom/SegmentDate.hpp>
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/service/Logger.hpp>
@@ -47,6 +50,8 @@ namespace RMOL {
       UnconstrainedDemandVector_T& lUncDemVector = itBCUDV->second;
 
       STDAIR_LOG_DEBUG ("Unconstrain product-oriented bookings for " << lBCKey);
+      // STDAIR_LOG_NOTIFICATION (lBCKey << ";" << iDCPBegin
+      //                          << ";" << iDCPEnd);
       unconstrainUsingAdditivePickUp (lGuillotineBlock, lUncDemVector,
                                       iDCPBegin, iDCPEnd,
                                       lNbOfUsableSegments, lBlockIdx);
@@ -61,9 +66,10 @@ namespace RMOL {
       lGuillotineBlock.getBlockIndex (lSCMapKey.str());
 
     STDAIR_LOG_DEBUG ("Unconstrain price-oriented bookings");
+    //STDAIR_LOG_NOTIFICATION (iDCPBegin << ";" << iDCPEnd);
     unconstrainUsingAdditivePickUp (lGuillotineBlock, ioQEquivalentDemandVector,
                                     iDCPBegin, iDCPEnd, lNbOfUsableSegments,
-                                    lCabinIdx);
+                                    lCabinIdx, iSegmentCabin, iCurrentDate);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -111,6 +117,75 @@ namespace RMOL {
       // DEBUG
       STDAIR_LOG_DEBUG ("Historical bkgs: " << lNbOfHistoricalBkgs
                         << ", censored: " << lCensorshipFlag);
+      // STDAIR_LOG_NOTIFICATION (lNbOfHistoricalBkgs
+      //                          << ";" << lCensorshipFlag);
+    }
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Unconstrain by EM");
+    
+    // Unconstrain the booking figures
+    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+
+    // Add the unconstrained demand of the period to the unconstrained demand
+    // vector.    
+    short idx = 0;
+    for (UnconstrainedDemandVector_T::iterator itUD = ioUncDemVector.begin();
+         itUD != ioUncDemVector.end(); ++itUD, ++idx) {
+      *itUD += lHBHolder.getUnconstrainedDemand (idx);
+      //STDAIR_LOG_NOTIFICATION (lHBHolder.getUnconstrainedDemand (idx));
+    }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void Detruncator::unconstrainUsingAdditivePickUp
+  (const stdair::GuillotineBlock& iGuillotineBlock,
+   UnconstrainedDemandVector_T& ioUncDemVector,
+   const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
+   const stdair::NbOfSegments_T& iNbOfUsableSegments,
+   const stdair::BlockIndex_T& iBlockIdx,
+   const stdair::SegmentCabin& iSegmentCabin,
+   const stdair::Date_T& iCurrentDate) {
+    // Retrieve the gross daily booking and availability snapshots.
+    stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+    stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+    
+    // Browse the list of segments and build the historical booking holder.
+    const stdair::ValueTypeIndexMap_T& lVTIdxMap =
+      iGuillotineBlock.getValueTypeIndexMap();
+    const unsigned int lNbOfValueTypes = lVTIdxMap.size();
+    HistoricalBookingHolder lHBHolder;
+    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+      stdair::Flag_T lCensorshipFlag = false;
+      stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
+      const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
+      
+      // Parse the DTDs during the period
+      for (short j = 0; j < lNbOfDTDs; ++j) {
+        // Check if the data has been censored during this day.
+        // STDAIR_LOG_DEBUG ("i: " << i << ", NbOfValues: " << lNbOfValueTypes
+        //                   << ", BlockIdx: " << iBlockIdx << ", j: " << j);
+        if (lCensorshipFlag == false) {
+          if (lAvlView[i*lNbOfValueTypes + iBlockIdx][j] < 1.0) {
+            lCensorshipFlag = true;
+          }
+        }
+        
+        // Get the bookings of the day.
+        //STDAIR_LOG_DEBUG ("Bookings of the day: " << lBookingView[i*lNbOfValueTypes + iBlockIdx][j]);
+        lNbOfHistoricalBkgs += lBookingView[i*lNbOfValueTypes + iBlockIdx][j];
+      }
+      
+      HistoricalBooking lHistoricalBkg (lNbOfHistoricalBkgs, lCensorshipFlag);
+      lHBHolder.addHistoricalBooking (lHistoricalBkg);
+
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Historical bkgs: " << lNbOfHistoricalBkgs
+                        << ", censored: " << lCensorshipFlag);
+      // STDAIR_LOG_NOTIFICATION (lNbOfHistoricalBkgs
+      //                          << ";" << lCensorshipFlag);
     }
 
     // DEBUG
@@ -121,10 +196,29 @@ namespace RMOL {
 
     // Add the unconstrained demand of the period to the unconstrained demand
     // vector.
+    // LOG
+    const stdair::SegmentDate& lSegmentDate = stdair::BomManager::
+      getParent<stdair::SegmentDate, stdair::SegmentCabin> (iSegmentCabin);
+    const stdair::FlightDate& lFlightDate = stdair::BomManager::
+      getParent<stdair::FlightDate, stdair::SegmentDate> (lSegmentDate);
+    const stdair::Date_T& lDepDate = lFlightDate.getDepartureDate();
+    const boost::gregorian::date_duration lDD = lDepDate - iCurrentDate;
+    const long lDTD = lDD.days();
+    stdair::Date_T lRefDate (2012, boost::gregorian::Jan, 01);
+    
     short idx = 0;
     for (UnconstrainedDemandVector_T::iterator itUD = ioUncDemVector.begin();
          itUD != ioUncDemVector.end(); ++itUD, ++idx) {
       *itUD += lHBHolder.getUnconstrainedDemand (idx);
+      if (lDepDate > lRefDate) {
+        const stdair::DateOffset_T lDateOffset (7 *(iNbOfUsableSegments - idx) + 420);
+        const stdair::Date_T lHDate = lDepDate - lDateOffset;
+        STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
+                                 << ";" << lDTD << ";" << iDCPBegin << ";"
+                                 << iDCPEnd << ";"
+                                 << boost::gregorian::to_iso_string (lHDate)
+                                 <<";"<<lHBHolder.getUnconstrainedDemand (idx));
+      }
     }
   }
   
@@ -185,12 +279,18 @@ namespace RMOL {
     
     // Sum the bookings from the first day till the given iFirstDCP in order to
     // get the supposing unconstrained demand for this period.
+    const stdair::ValueTypeIndexMap_T& lVTIdxMap =
+      iGuillotineBlock.getValueTypeIndexMap();
+    const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     for (int itSegment = 0; itSegment < iNbOfSegments; ++itSegment) {
       for (int i = iFirstDCP; i <= stdair::DEFAULT_MAX_DTD; ++i) {
         stdair::NbOfRequests_T& lUncDemand =
           ioUnconstrainedDemandVector.at(itSegment);
-        lUncDemand += lRangeBookingView[iValueIdx][i-iFirstDCP];
+        lUncDemand +=
+          lRangeBookingView[iValueIdx + itSegment*lNbOfValueTypes][i-iFirstDCP];
       }
+      // STDAIR_LOG_NOTIFICATION (ioUnconstrainedDemandVector.at(itSegment)
+      //                          << ";" << itSegment);
     }
   }
   
@@ -241,7 +341,8 @@ namespace RMOL {
     unconstrainUsingMultiplicativePickUp (lGuillotineBlock,
                                           ioQEquivalentDemandVector,
                                           iDCPBegin, iDCPEnd,
-                                          lNbOfUsableSegments, lCabinIdx);
+                                          lNbOfUsableSegments, lCabinIdx,
+                                          iSegmentCabin, iCurrentDate);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -316,6 +417,104 @@ namespace RMOL {
       const stdair::NbOfRequests_T& lUncDemandFactorOfThisPeriod =
         lHBHolder.getUnconstrainedDemand (i);
       lPastDemand *= (1+lUncDemandFactorOfThisPeriod);
+    }
+  }  
+
+  // ////////////////////////////////////////////////////////////////////
+  void Detruncator::unconstrainUsingMultiplicativePickUp
+  (const stdair::GuillotineBlock& iGuillotineBlock,
+   UnconstrainedDemandVector_T& ioUncDemVector,
+   const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
+   const stdair::NbOfSegments_T& iNbOfUsableSegments,
+   const stdair::BlockIndex_T& iBlockIdx,
+   const stdair::SegmentCabin& iSegmentCabin,
+   const stdair::Date_T& iCurrentDate) {
+    // Retrieve the gross daily booking and availability snapshots.
+    stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+    stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+    
+    // Browse the list of segments and build the historical booking holder.
+    const stdair::ValueTypeIndexMap_T& lVTIdxMap =
+      iGuillotineBlock.getValueTypeIndexMap();
+    const unsigned int lNbOfValueTypes = lVTIdxMap.size();
+    HistoricalBookingHolder lHBHolder;
+    std::vector<short> lDataIndexList;
+    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+      stdair::Flag_T lCensorshipFlag = false;
+      stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
+      const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
+      
+      // Parse the DTDs during the period
+      for (short j = 0; j < lNbOfDTDs; ++j) {
+        // Check if the data has been censored during this day.
+        // STDAIR_LOG_DEBUG ("i: " << i << ", NbOfValues: " << lNbOfValueTypes
+        //                   << ", BlockIdx: " << iBlockIdx << ", j: " << j);
+        if (lCensorshipFlag == false) {
+          if (lAvlView[i*lNbOfValueTypes + iBlockIdx][j] < 1.0) {
+            lCensorshipFlag = true;
+          }
+        }
+        
+        // Get the bookings of the day.
+        //STDAIR_LOG_DEBUG ("Bookings of the day: " << lBookingView[i*lNbOfValueTypes + iBlockIdx][j]);
+        lNbOfHistoricalBkgs += lBookingView[i*lNbOfValueTypes + iBlockIdx][j];
+      }
+
+      // If there is no booking till now for this class and for this segment,
+      // there will be no unconstraining process.
+      stdair::NbOfRequests_T& lUncDemand = ioUncDemVector.at (i);
+      if (lUncDemand < 1.0) {
+        lUncDemand += lNbOfHistoricalBkgs;
+      } else {
+        double lBkgDemandFactor = lNbOfHistoricalBkgs / lUncDemand;
+        HistoricalBooking lHistoricalBkg (lBkgDemandFactor, lCensorshipFlag);
+        lHBHolder.addHistoricalBooking (lHistoricalBkg);
+        lDataIndexList.push_back (i);
+      }
+      
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Historical bkgs: " << lNbOfHistoricalBkgs
+                        << ", censored: " << lCensorshipFlag);
+    }
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up using EM");
+    
+    // Unconstrain the booking figures
+    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+
+    // Update the unconstrained demand vector.
+    // LOG
+    const stdair::SegmentDate& lSegmentDate = stdair::BomManager::
+      getParent<stdair::SegmentDate, stdair::SegmentCabin> (iSegmentCabin);
+    const stdair::FlightDate& lFlightDate = stdair::BomManager::
+      getParent<stdair::FlightDate, stdair::SegmentDate> (lSegmentDate);
+    const stdair::Date_T& lDepDate = lFlightDate.getDepartureDate();
+    const boost::gregorian::date_duration lDD = lDepDate - iCurrentDate;
+    const long lDTD = lDD.days();
+    stdair::Date_T lRefDate (2012, boost::gregorian::Jan, 01);
+    
+    short i = 0;
+    for (std::vector<short>::iterator itIdx = lDataIndexList.begin();
+         itIdx != lDataIndexList.end(); ++itIdx, ++i) {
+      short lIdx = *itIdx;
+      stdair::NbOfRequests_T& lPastDemand = ioUncDemVector.at (lIdx);
+      const stdair::NbOfRequests_T& lUncDemandFactorOfThisPeriod =
+        lHBHolder.getUnconstrainedDemand (i);
+      lPastDemand *= (1+lUncDemandFactorOfThisPeriod);
+      if (lDepDate > lRefDate) {
+        const stdair::DateOffset_T lDateOffset (7 *(iNbOfUsableSegments - lIdx) + 420);
+        const stdair::Date_T lHDate = lDepDate - lDateOffset;
+        const double lUncDemThisPeriod =
+          lPastDemand * lUncDemandFactorOfThisPeriod;
+        STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
+                                 << ";" << lDTD << ";" << iDCPBegin << ";"
+                                 << iDCPEnd << ";"
+                                 << boost::gregorian::to_iso_string (lHDate)
+                                 << ";" << lUncDemThisPeriod);
+      }
     }
   }  
 }

@@ -77,6 +77,19 @@ namespace RMOL {
                                                   const stdair::NbOfSegments_T&,
                                                   const stdair::BlockIndex_T&,
                                                   const stdair::NbOfSegments_T&);
+    
+    /**
+     * Forecast the product-oriented demand for a given class ou
+     * Q-equivalent class. */
+    static void forecastUsingMultiplicativePickUp(const stdair::GuillotineBlock&,
+                                                  UnconstrainedDemandVector_T&,
+                                                  const stdair::DCP_T&,
+                                                  const stdair::DCP_T&,
+                                                  const stdair::NbOfSegments_T&,
+                                                  const stdair::BlockIndex_T&,
+                                                  const stdair::NbOfSegments_T&,
+                                                  const stdair::SegmentCabin&,
+                                                  const stdair::Date_T&);
 
     /**
      * Forecast product-oriented and price-oriented demand given the

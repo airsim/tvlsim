@@ -20,7 +20,7 @@ namespace AIRINV {
     oCurve[31] = 1.7;  oCurve[28] = 1.8;  oCurve[24] = 2.0;
     oCurve[21] = 2.3;  oCurve[17] = 2.6;  oCurve[14] = 3.0;
     oCurve[10] = 3.3;  oCurve[7]  = 3.4;  oCurve[5]  = 3.44;
-    oCurve[3] = 3.47;  oCurve[1]  = 3.5;
+    oCurve[3] = 3.47;  oCurve[1]  = 3.5;  oCurve[0]  = 3.5;
     return oCurve;
   };
 

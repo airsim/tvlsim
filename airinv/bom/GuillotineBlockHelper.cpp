@@ -45,7 +45,7 @@ namespace AIRINV {
         stdair::BomManager::getParent<stdair::SegmentDate> (*lSC_ptr);
       const stdair::Date_T& lDepartureDate = lSegmentDate.getBoardingDate();
       const stdair::DateOffset_T lDateOffset = lDepartureDate - lSnapshotDate;
-      const stdair::DTD_T lDTD = lDateOffset.days();
+      const stdair::DTD_T lDTD = lDateOffset.days() + 1;
       
       if (lDTD >= 0 && lDTD <= stdair::DEFAULT_MAX_DTD) {
         SegmentCabinHelper::updateAvailabilities (*lSC_ptr);
@@ -165,10 +165,7 @@ namespace AIRINV {
     }
 
     // Retrieve the FRAT5 coefficient and compute the sell-up coef.
-    FRAT5Curve_T::const_iterator itFRAT5 =
-      DEFAULT_PICKUP_FRAT5_CURVE.lower_bound (iDTD);
-    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.end());
-    const double lFRAT5Coef = itFRAT5->second;
+    const double lFRAT5Coef = getFRAT5Coefficient (iDTD);
     const double lSellUpCoef = -log(0.5) / (lFRAT5Coef - 1); 
     
     // Browse the booking class list
@@ -207,5 +204,30 @@ namespace AIRINV {
         }
       }
     }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  double GuillotineBlockHelper::getFRAT5Coefficient (const stdair::DTD_T& iDTD){
+    FRAT5Curve_T::const_iterator itFRAT5 =
+      DEFAULT_PICKUP_FRAT5_CURVE.lower_bound (iDTD);
+    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.end());
+
+    if (itFRAT5 == DEFAULT_PICKUP_FRAT5_CURVE.begin()) {
+      return itFRAT5->second;
+    }
+    
+    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.begin());
+    FRAT5Curve_T::const_iterator itNextFRAT5 = itFRAT5; --itNextFRAT5;
+
+    const stdair::DTD_T& lPrevDTD = itFRAT5->first;
+    const stdair::DTD_T& lNextDTD = itNextFRAT5->first;
+    const double& lPrevFRAT5 = itFRAT5->second;
+    const double& lNextFRAT5 = itNextFRAT5->second;
+    assert (lPrevDTD > lNextDTD);
+
+    double oFRAT5 = lPrevFRAT5
+      + (iDTD - lNextDTD) * (lNextFRAT5 - lPrevFRAT5) / (lPrevDTD - lNextDTD);
+
+    return oFRAT5;
   }
 }

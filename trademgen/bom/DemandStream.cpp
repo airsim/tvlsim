@@ -237,7 +237,7 @@ namespace TRADEMGEN {
       lArrivalPattern.getUpperBound (_dateTimeLastRequest);
 
     // Compute the daily rate demand.
-    double lDailyRate = lArrivalPattern.getDerivativeValue(_dateTimeLastRequest);
+    double lDailyRate =lArrivalPattern.getDerivativeValue(_dateTimeLastRequest);
     // Get the expected average number of requests.
     const double lDemandMean = _demandDistribution._meanNumberOfRequests;
     // Multiply the daily rate by the expected average number of requests.
@@ -269,6 +269,9 @@ namespace TRADEMGEN {
       
       // Update the counter of requests generated so far.
       incrementGeneratedRequestsCounter();
+
+      const double lRefDateTimeThisRequest = lDateTimeThisRequest + double(1.0/3.0);
+      STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << lRefDateTimeThisRequest);
     } else {
       
       // The current request is not in the given daily rate interval.
@@ -370,6 +373,11 @@ namespace TRADEMGEN {
     // DEBUG
     // STDAIR_LOG_DEBUG (lCumulativeProbabilityThisRequest << "; "
     //                   << lNumberOfDaysBetweenDepartureAndThisRequest);
+
+    // NOTIFICATION
+    double lRefNumberOfDaysBetweenDepartureAndThisRequest =
+      lNumberOfDaysBetweenDepartureAndThisRequest + double(1.0/3.0);
+    STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << lRefNumberOfDaysBetweenDepartureAndThisRequest);
     
     return oDateTimeThisRequest;
   }
@@ -550,23 +558,17 @@ namespace TRADEMGEN {
     //  (into the command layer, e.g., within the DemandManager command).
     
     // Create the booking request
-    stdair::BookingRequestPtr_T oBookingRequest_ptr = stdair::
-      BookingRequestPtr_T (new
-                           stdair::BookingRequestStruct (describeKey(),
-                                                         lOrigin,
-                                                         lDestination,
-                                                         lPOS,
-                                                         lPreferredDepartureDate,
-                                                         lDateTimeThisRequest,
-                                                         lPreferredCabin,
-                                                         lPartySize,
-                                                         lChannelLabel,
-                                                         lTripType,
-                                                         lStayDuration,
-                                                         lFrequentFlyer,
-                                                         lPreferredDepartureTime,
-                                                         lWTP,
-                                                         lValueOfTime));
+    stdair::BookingRequestPtr_T oBookingRequest_ptr =
+      stdair::BookingRequestPtr_T
+      (new stdair::BookingRequestStruct (describeKey(), lOrigin,
+                                         lDestination, lPOS,
+                                         lPreferredDepartureDate,
+                                         lDateTimeThisRequest,
+                                         lPreferredCabin, lPartySize,
+                                         lChannelLabel, lTripType,
+                                         lStayDuration, lFrequentFlyer,
+                                         lPreferredDepartureTime,
+                                         lWTP, lValueOfTime));
     
     // DEBUG
     // STDAIR_LOG_DEBUG ("\n[BKG] " << oBookingRequest_ptr->describe());

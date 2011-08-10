@@ -29,6 +29,7 @@ namespace RMOL {
     // Compute the mean
     for (UnconstrainedDemandVector_T::const_iterator itSample = iVector.begin();
          itSample != iVector.end(); ++itSample) {
+      //STDAIR_LOG_NOTIFICATION (*itSample);
       ioMean += *itSample;
     }
     ioMean /= lNbOfSamples;
