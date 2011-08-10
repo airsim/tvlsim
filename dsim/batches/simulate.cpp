@@ -12,6 +12,8 @@
 #include <boost/program_options.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
+#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
@@ -341,10 +343,10 @@ int main (int argc, char* argv[]) {
   std::string lYieldInputFilename;
 
   // Demand generator
-  std::string lDemandGenerator;
+  stdair::DateGenerationMethod lDemandGenerator (K_DSIM_DEFAULT_DEMAND_GENERATOR);
   
   // Forecasting method
-  std::string lForecastingMethod;
+  stdair::ForecastingMethod lForecastingMethod (K_DSIM_DEFAULT_FORECASTING_METHOD);
     
   // Output log File
   std::string lLogFilename;
@@ -395,13 +397,9 @@ int main (int argc, char* argv[]) {
   }
   
   // Perform a simulation
-  if (lForecastingMethod == "0") {
-    dsimService.simulate (lGenerateDemandWithStatisticOrder,
-                          stdair::ForecastingMethod::ADD_PK);
-  } else {
-    dsimService.simulate (lGenerateDemandWithStatisticOrder,
-                          stdair::ForecastingMethod::MUL_PK);
-  }
+  dsimService.simulate (lGenerateDemandWithStatisticOrder,
+                        lForecastingMethod);
+
   
   // DEBUG
   // Display the airlines stored in the database
