@@ -489,8 +489,8 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  simulate (const stdair::DateGenerationMethod& iDateGenerationMethod,
-            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+  simulate (const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+            const stdair::ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -521,7 +521,7 @@ namespace DSIM {
     lSimulationChronometer.start();
     Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                          lTRAVELCCM_Service, lSTDAIR_Service,
-                         iDateGenerationMethod, iForecastingMethod);
+                         iDemandGenerationMethod, iForecastingMethod);
     const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
     // DEBUG

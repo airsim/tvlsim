@@ -36,8 +36,8 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
-                            const stdair::DateGenerationMethod& iDateGenerationMethod,
-                            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+                            const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+                            const stdair::ForecastingMethod& iForecastingMethod) {
 
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
@@ -52,7 +52,7 @@ namespace DSIM {
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests(iDateGenerationMethod);
+      ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
 
     // Initialise the (Boost) progress display object
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -88,7 +88,7 @@ namespace DSIM {
                                                            ioTRAVELCCM_Service,
                                                            lEventStruct,
                                                            lPSS,
-                                                           iDateGenerationMethod); break;
+                                                           iDemandGenerationMethod); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -112,7 +112,7 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const stdair::DateGenerationMethod& iDateGenerationMethod) {
+                      const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -129,7 +129,7 @@ namespace DSIM {
     const bool stillHavingRequestsToBeGenerated =
       ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                                             ioPSS,
-                                                            iDateGenerationMethod);
+                                                            iDemandGenerationMethod);
 
     // DEBUG
     // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
@@ -142,7 +142,7 @@ namespace DSIM {
     if (stillHavingRequestsToBeGenerated) {
       stdair::BookingRequestPtr_T lNextRequest_ptr =
         ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
-                                                 iDateGenerationMethod);
+                                                 iDemandGenerationMethod);
       assert (lNextRequest_ptr != NULL);
   
       // Sanity check
@@ -224,7 +224,7 @@ namespace DSIM {
   void Simulator::
   playRMEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
                const stdair::EventStruct& iEventStruct,
-               const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+               const stdair::ForecastingMethod& iForecastingMethod) {
     // Retrieve the RM event struct from the event.
     const stdair::RMEventStruct lRMEvent = iEventStruct.getRMEvent();
 
