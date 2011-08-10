@@ -28,7 +28,12 @@ typedef std::vector<std::string> WordList_T;
 const std::string K_TRADEMGEN_DEFAULT_LOG_FILENAME ("trademgen_with_db.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR "/demand01.csv");
+const std::string K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                      "/demand01.csv");
+
+/** Default for the input type. It can be either built-in or provided by an
+    input file. That latter must then be given with the -i option. */
+const bool K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT = false;
 
 /** Default query string. */
 const std::string K_TRADEMGEN_DEFAULT_QUERY_STRING ("my good old query");
@@ -93,13 +98,16 @@ template<class T> std::ostream& operator<< (std::ostream& os,
 const int K_TRADEMGEN_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
-int readConfiguration (int argc, char* argv[], 
+int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin, 
                        std::string& ioQueryString,
                        stdair::Filename_T& ioInputFilename,
                        std::string& ioLogFilename,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
+
+  // Default for the built-in input
+  ioIsBuiltin = K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT;
 
   // Initialise the travel query string, if that one is empty
   if (ioQueryString.empty() == true) {
@@ -121,6 +129,8 @@ int readConfiguration (int argc, char* argv[],
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from an input file. That latter must then be given with the -i/--input option")
     ("input,i",
      boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_TRADEMGEN_DEFAULT_INPUT_FILENAME),
      "(CVS) input file for the demand distributions")
@@ -192,9 +202,25 @@ int readConfiguration (int argc, char* argv[],
     return K_TRADEMGEN_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("input")) {
-    ioInputFilename = vm["input"].as< std::string >();
-    std::cout << "Input filename is: " << ioInputFilename << std::endl;
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
+  }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
+
+  if (ioIsBuiltin == false) {
+
+    // The BOM tree should be built from parsing a demand input file
+    if (vm.count ("input")) {
+      ioInputFilename = vm["input"].as< std::string >();
+      std::cout << "Input filename is: " << ioInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no demand input file
+      // is specified
+      std::cerr << "Either one among the -b/--builtin and -i/--input "
+                << "options must be specified" << std::endl;
+    }
   }
 
   if (vm.count ("log")) {
@@ -237,6 +263,9 @@ int readConfiguration (int argc, char* argv[],
 // /////////////// M A I N /////////////////
 int main (int argc, char* argv[]) {
 
+  // State whether the BOM tree should be built-in or parsed from an input file
+  bool isBuiltin;
+
   // Query
   std::string lQuery;
 
@@ -258,7 +287,8 @@ int main (int argc, char* argv[]) {
   
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lQuery, lInputFilename, lLogFilename,
+    readConfiguration (argc, argv, isBuiltin, lQuery,
+                       lInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
@@ -275,10 +305,21 @@ int main (int argc, char* argv[]) {
   logOutputFile.open (lLogFilename.c_str());
   logOutputFile.clear();
   
-  // Initialise the TraDemGen service object
+  // Set up the log parameters
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams,
-                                                 lInputFilename);
+
+  // Initialise the TraDemGen service object
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams);
+
+  // Check wether or not a (CSV) input file should be read
+  if (isBuiltin == true) {
+    // Create a sample DemandStream object, and insert it within the BOM tree
+    trademgenService.buildSampleBom();
+
+  } else {
+    // Create the DemandStream objects, and insert them within the BOM tree
+    trademgenService.parseAndLoad (lInputFilename);
+  }  
 
   // Query the database
   trademgenService.displayAirlineListFromDB();

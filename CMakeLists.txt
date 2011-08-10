@@ -8,6 +8,7 @@ include (config/project_config_embeddable.cmake)
 ##
 # Project info
 set_project_names (dsim DSim)
+set_project_brief ("C++ Simulated Travel-Oriented Distribution System Library")
 set_project_versions (99 99 99)
 
 ##
@@ -22,7 +23,6 @@ set_project_options (on)
 #####################################
 #
 packaging_init (${PROJECT_NAME})
-packaging_set_description ("C++ Simulated Travel-Oriented Distribution System Library")
 packaging_set_summary ("${PROJECT_NAME} aims at providing a clean API and a simple implementation, as a C++ library, of a Travel-oriented Distribution System. It corresponds to the simulated version of the real-world Computerized Reservation Systems (CRS).
 ${PROJECT_NAME} makes an extensive use of existing open-source libraries for
 increased functionality, speed and accuracy. In particular the Boost
@@ -38,7 +38,7 @@ packaging_set_other_options (TBZ2 "TBZ2;TGZ")
 ##            Dependencies            ##
 ########################################
 #
-get_external_libs (git "boost 1.41" readline mysql "soci 3.0"
+get_external_libs (git "python 2.6" "boost 1.41" readline mysql "soci 3.0"
   "stdair 0.35" doxygen)
 
 

@@ -9,6 +9,8 @@
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
+#include <stdair/bom/TravelSolutionTypes.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
@@ -16,6 +18,7 @@
 namespace stdair {
   struct BasLogParams;
   struct BasDBParams;
+  struct BookingRequestStruct;
 }
 
 namespace DSIM {
@@ -24,124 +27,301 @@ namespace DSIM {
   class DSIM_ServiceContext;
   struct RDSParameters;
   
-  /** Interface for the DSIM Services. */
+  /**
+   * Interface (API) for the simulator services.
+   */
   class DSIM_Service {
   public:
-    // ////////// Constructors and destructors //////////
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>A reference on an output stream is given, so that log
-        outputs can be directed onto that stream.
-        <br>Moreover, database connection parameters are given, so that a
-        session can be created on the corresponding database.
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::BasDBParams& Parameters for the database access.
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
-        @param const stdair::Filename_T& Filename of the input schedule file.
-        @param const stdair::Filename_T& Filename of the input O&D file.
-        @param const stdair::Filename_T& Filename of the input fare file.
-        @param const stdair::Filename_T& Filename of the input yield file.
-        @param const stdair::Filename_T& Filename of the input demand file. */
+    // ////////////////// Constructors and Destructors //////////////////    
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * A reference on an output stream is given, so that log
+     * outputs can be directed onto that stream.
+     *
+     * Moreover, database connection parameters are given, so that a
+     * session can be created on the corresponding database.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const stdair::BasDBParams& Parameters for the database access.
+     * @param const CRSCode_T& Code of the owner of the distribution system.
+     */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
-                  const stdair::Date_T&, const stdair::Date_T&,
-                  const stdair::Filename_T& iScheduleInputFilename,
-                  const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename,
-                  const stdair::Filename_T& iYieldInputFilename,
-                  const stdair::Filename_T& iDemandInputFilenames);
+                  const stdair::Date_T& iStartDate,
+                  const stdair::Date_T& iEndDate);
 
-    /** Constructor.
-        <br>The init() method is called; see the corresponding documentation
-        for more details.
-        <br>Moreover, as no reference on any output stream is given,
-        neither any database access parameter is given, it is assumed
-        that the StdAir log service has already been initialised with
-        the proper log output stream by some other methods in the
-        calling chain (for instance, when the DSIM_Service is
-        itself being initialised by another library service).
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
-        @param const stdair::Filename_T& Filename of the input schedule file.
-        @param const stdair::Filename_T& Filename of the input O&D file.
-        @param const stdair::Filename_T& Filename of the input Fare file.
-        @param const stdair::Filename_T& Filename of the input Yield file.
-        @param const stdair::Filename_T& Filename of the input demand file. */
-    DSIM_Service (stdair::STDAIR_ServicePtr_T,
-                  const stdair::Date_T&, const stdair::Date_T&,
-                  const stdair::Filename_T& iScheduleInputFilename,
-                  const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename,
-                  const stdair::Filename_T& iYieldInputFilename,
-                  const stdair::Filename_T& iDemandInputFilenames);
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * Moreover, a reference on an output stream is given, so
+     * that log outputs can be directed onto that stream.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const CRSCode_T& Code of the owner of the distribution system.
+     */
+    DSIM_Service (const stdair::BasLogParams&, const stdair::Date_T& iStartDate,
+                  const stdair::Date_T& iEndDate);
 
-    /** Destructor. */
+    /**
+     * Constructor.
+     *
+     * The init() method is called; see the corresponding documentation
+     * for more details.
+     *
+     * Moreover, as no reference on any output stream is given,
+     * it is assumed that the StdAir log service has already been
+     * initialised with the proper log output stream by some other
+     * methods in the calling chain (for instance, when the DSIM_Service
+     * is itself being initialised by another library service. However,
+     * there is currently no other known library service using/calling DSim).
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
+     * @param const stdiar::Date_T& Parameters for the start date.
+     * @param const stdiar::Date_T& Parameters for the end date.
+     */
+    DSIM_Service (stdair::STDAIR_ServicePtr_T, const stdair::Date_T& iStartDate,
+                  const stdair::Date_T& iEndDate);
+
+    /**
+     * Parse the schedule, O&D, fare and yield input files.
+     *
+     * The CSV files, describing the airline schedule, O&Ds, fares and yields
+     * for the simulator, are parsed and instantiated in memory accordingly.
+     *
+     * @param const stdair::Filename_T& Filename of the input schedule file.
+     * @param const stdair::Filename_T& Filename of the input O&D file.
+     * @param const stdair::Filename_T& Filename of the input yield file.
+     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const stdair::Filename_T& Filename of the input demand file.
+     */
+    void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
+                       const stdair::Filename_T& iODInputFilename,
+                       const stdair::Filename_T& iYieldInputFilename,
+                       const stdair::Filename_T& iFareInputFilename,
+                       const stdair::Filename_T& iDemandInputFilenames);
+
+    /**
+     * Initialise the snapshot and RM events for the inventories.
+     */
+    void initSnapshotAndRMEvents();
+
+    /**
+     * Destructor.
+     */
     ~DSIM_Service();
 
     
   public:
     // /////////// Business Methods /////////////
-    /** Perform a simulation. */
-    void simulate (const bool,
+    /**
+     * Perform a simulation.
+     *
+     * @param stdair::DateGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
+     */
+    void simulate (const stdair::DateGenerationMethod&,
                    const stdair::ForecastingMethod::EN_ForecastingMethod&);
     
-    /** Display the list of airlines. */
+    /**
+     * Display the list of airlines.
+     */
     void displayAirlineListFromDB() const;
 
+    /**
+     * Build a sample BOM tree, and attach it to the BomRoot instance.
+     *
+     * As for now, the BOM sample tree is the one built by the SimCRS and
+     * TraDemGen components.
+     *
+     * \see SIMCRS::SIMCRS_Service, TRADEMGEN::TRADEMGEN_Service and
+     *      stdair::CmdBomManager for more details.
+     */
+    void buildSampleBom();
+
+    /**
+     * Build a sample list of travel solutions.
+     *
+     * As of now (March 2011), that list is made of the following
+     * travel solutions:
+     * <ul>
+     *  <li>BA9</li>
+     *  <li>LHR-SYD</li>
+     *  <li>2011-06-10</li>
+     *  <li>Q</li>
+     *  <li>WTP: 900</li>
+     *  <li>Change fee: 20; Non refundable; Saturday night stay</li>
+     * </ul>
+     *
+     * \see stdair::CmdBomManager for more details.
+     *
+     * @param TravelSolutionList_T& Sample list of travel solution structures.
+     *        It should be given empty. It is altered with the returned sample.
+     */
+    void buildSampleTravelSolutions (stdair::TravelSolutionList_T&);
+
+    /**
+     * Build a sample booking request structure.
+     *
+     * As of now (March 2011), the sample booking request is made of the
+     * following parameters:
+     * <ul>
+     *  <li>Return trip (inbound): LHR-SYD (POS: LHR, Channel: DN), </li>
+     *  <li>Departing 10-JUN-2011 around 8:00, staying 7 days</li>
+     *  <li>Requested on 15-MAY-2011 at 10:00</li>
+     *  <li>Economy cabin, 3 persons, FF member</li>
+     *  <li>WTP: 1000.0 EUR</li>
+     *  <li>Dis-utility: 100.0 EUR/hour</li>
+     * </ul>
+     *
+     * As of now (March 2011), the CRS-related booking request is made
+     * of the following parameters:
+     * <ul>
+     *  <li>Return trip (inbound): SIN-BKK (POS: SIN, Channel: IN), </li>
+     *  <li>Departing 30-JAN-2010 around 10:00, staying 7 days</li>
+     *  <li>Requested on 22-JAN-2010 at 10:00</li>
+     *  <li>Economy cabin, 3 persons, FF member</li>
+     *  <li>WTP: 1000.0 EUR</li>
+     *  <li>Dis-utility: 100.0 EUR/hour</li>
+     * </ul>
+     *
+     * \see stdair::CmdBomManager for more details.
+     *
+     * @param const bool isForCRS Whether the sample booking request is for CRS.
+     * @return BookingRequestStruct& Sample booking request structure.
+     */
+    stdair::BookingRequestStruct
+    buildSampleBookingRequest (const bool isForCRS = false);
+
     
-  private:
+  public:
+    // //////////////// Export support methods /////////////////
+    /**
+     * Recursively dump, in the returned string and in JSON format,
+     * the flight-date corresponding to the parameters given as input.
+     *
+     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
+     * @param const stdair::FlightNumber_T& Flight number of the
+     *        flight to dump.
+     * @param const stdair::Date_T& Departure date of the flight to dump.
+     * @return std::string Output string in which the BOM tree is JSON-ified.
+     */
+    std::string jsonExport (const stdair::AirlineCode_T&,
+                            const stdair::FlightNumber_T&,
+                            const stdair::Date_T& iDepartureDate) const;
+
+
+  public:
+    // //////////////// Display support methods /////////////////
+    /**
+     * Recursively display (dump in the returned string) the objects
+     * of the BOM tree.
+     *
+     * @return std::string Output string in which the BOM tree is
+     *        logged/dumped.
+     */
+    std::string csvDisplay() const;
+
+
     // /////// Construction and Destruction helper methods ///////
-    /** Default constructor. */
-    DSIM_Service ();
-    /** Default copy constructor. */
+    /**
+     * Default constructor. It should not be used.
+     */
+    DSIM_Service();
+
+    /**
+     * Default copy constructor. It should not be used.
+     */
     DSIM_Service (const DSIM_Service&);
 
-    /** Initialise the (DSIM) service context (i.e., the
-        DSIM_ServiceContext object). 
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
-    */
-    void initServiceContext (const stdair::Date_T&, const stdair::Date_T&);
-
-    /** Initialise the STDAIR service (including the log service).
-        <br>A reference on the root of the BOM tree, namely the BomRoot object,
-        is stored within the service context for later use.
-        @param const stdair::BasLogParams& Parameters for the output log stream.
-        @param const stdair::BasDBParams& Parameters for the database access.
-        @param const stdair::AirlineFeatureSet& Set of airline features. */
-    void initStdAirService (const stdair::BasLogParams&,
-                            const stdair::BasDBParams&);
-    
-    /** Initialise.
-        <br>The CSV file, describing the airline schedules for the
-        simulator, is parsed and the inventories are generated accordingly.
-        @param const stdair::Filename_T& Filename of the input schedule file.
-        @param const stdair::Filename_T& Filename of the input O&D file.
-        @param const stdair::Filename_T& Filename of the input Fare file.
-        @param const stdair::Filename_T& Filename of the input Yield file.
-        @param const stdair::Filename_T& Filename of the input demand file. */
-    void init (const stdair::Filename_T& iScheduleInputFilename,
-               const stdair::Filename_T& iODInputFilename,
-               const stdair::Filename_T& iFareInputFilename,
-               const stdair::Filename_T& iYieldInputFilename,
-               const stdair::Filename_T& iDemandInputFilename);
-
-    /** Initialise the snapshot and RM events for the inventories.
-        @param const stdiar::Date_T& Parameters for the start date.
-        @param const stdiar::Date_T& Parameters for the end date.
+    /**
+     * Initialise the STDAIR service (including the log service).
+     *
+     * A reference on the root of the BOM tree, namely the BomRoot object,
+     * is stored within the service context for later use.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const stdair::BasDBParams& Parameters for the database access.
      */
-    void initSnapshotAndRMEvents (const stdair::Date_T&, const stdair::Date_T&);
-
-    /** Finalise. */
-    void finalise ();
-
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&,
+                                                   const stdair::BasDBParams&);
     
+    /**
+     * Initialise the STDAIR service (including the log service).
+     *
+     * A reference on the root of the BOM tree, namely the BomRoot object,
+     * is stored within the service context for later use.
+     *
+     * @param const stdair::BasLogParams& Parameters for the output log
+     *        stream.
+     */
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
+    
+    /**
+     * Initialise the SimCRS service (including the log service).
+     */
+    void initSIMCRSService();
+
+    /**
+     * Initialise the TraDemGen service (including the log service).
+     */
+    void initTRADEMGENService();
+
+    /**
+     * Initialise the TravelCCM service (including the log service).
+     */
+    void initTRAVELCCMService();
+
+    /**
+     * Attach the StdAir service (holding the log and database services) to
+     * the SIMCRS_Service.
+     *
+     * @param stdair::STDAIR_ServicePtr_T Reference on the StdAir service.
+     * @param const bool State whether or not SimCRS owns the StdAir service
+     *        resources.
+     */
+    void addStdAirService (stdair::STDAIR_ServicePtr_T,
+                           const bool iOwnStdairService);
+    
+    /**
+     * Initialise the (DSim) service context (i.e., the
+     * DSIM_ServiceContext object).
+     *
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation.
+     */
+    void initServiceContext (const stdair::Date_T& iStartDate,
+                             const stdair::Date_T& iEndDate);
+
+    /**
+     * Initialise the (DSim) service context (i.e., the DSIM_ServiceContext
+     * object).
+     */
+    void initDsimService();
+
+    /**
+     * Finalise.
+     */
+    void finalise();
+
+
   private:
     // ///////// Service Context /////////
-    /** Dsim context. */
+    /**
+     * DSim context.
+     */
     DSIM_ServiceContext* _dsimServiceContext;
-
   };
 }
 #endif // __DSIM_SVC_DSIM_SERVICE_HPP

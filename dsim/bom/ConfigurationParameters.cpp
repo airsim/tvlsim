@@ -44,8 +44,7 @@ namespace DSIM {
   const std::string ConfigurationParameters::describe() const {
     std::ostringstream oStr;
 
-    oStr << "Start date: " << _startDate
-         << ", end date: " << _endDate;
+    oStr << "Start date: " << _startDate << ", end date: " << _endDate;
     
     return oStr.str();
   }

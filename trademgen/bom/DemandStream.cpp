@@ -161,9 +161,11 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   const bool DemandStream::
-  stillHavingRequestsToBeGenerated (const bool iGenerateRequestWithStatisticOrder) const {
-
-    if (iGenerateRequestWithStatisticOrder == true) {
+  stillHavingRequestsToBeGenerated (const stdair::DateGenerationMethod& iDateGenerationMethod) const {
+    
+    const stdair::DateGenerationMethod::EN_DateGenerationMethod& lENDateGenerationMethod =
+      iDateGenerationMethod.getMethod();
+    if (lENDateGenerationMethod == stdair::DateGenerationMethod::STA_ORD) {
       bool hasStillHavingRequestsToBeGenerated = true;
       
       // Check whether enough requests have already been generated
@@ -184,7 +186,7 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::DateTime_T DemandStream::generateTimeOfRequestExponentialLaw() {
+  const stdair::DateTime_T DemandStream::generateTimeOfRequestPoissonProcess() {
 
     // Prepare arrival pattern.
     const ContinuousFloatDuration_T& lArrivalPattern =
@@ -279,14 +281,14 @@ namespace TRADEMGEN {
       _dateTimeLastRequest = lUpperBound;
 
       // Generate a date time request in the new daily rate interval.
-      oDateTimeThisRequest = generateTimeOfRequestExponentialLaw ();
+      oDateTimeThisRequest = generateTimeOfRequestPoissonProcess ();
     }
     
     return oDateTimeThisRequest;
   }
 
   // ////////////////////////////////////////////////////////////////////
-  const stdair::DateTime_T DemandStream::generateTimeOfRequestStatisticOrder() {
+  const stdair::DateTime_T DemandStream::generateTimeOfRequestStatisticsOrder() {
    
     /**
      * Sequential Generation in Increasing Order.
@@ -506,7 +508,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T DemandStream::
   generateNextRequest (stdair::RandomGeneration& ioGenerator,
-                       const bool iGenerateRequestWithStatisticOrder) {
+                       const stdair::DateGenerationMethod& iDateGenerationMethod) {
 
     // Origin
     const stdair::AirportCode_T& lOrigin = _key.getOrigin();
@@ -524,10 +526,14 @@ namespace TRADEMGEN {
     
     // Compute the request date time with the correct algorithm.
     stdair::DateTime_T lDateTimeThisRequest;
-    if (iGenerateRequestWithStatisticOrder) {
-      lDateTimeThisRequest = generateTimeOfRequestStatisticOrder();
-    } else {
-      lDateTimeThisRequest = generateTimeOfRequestExponentialLaw();
+    const stdair::DateGenerationMethod::EN_DateGenerationMethod& lENDateGenerationMethod =
+      iDateGenerationMethod.getMethod();
+    switch(lENDateGenerationMethod) {
+    case stdair::DateGenerationMethod::POI_PRO:
+      lDateTimeThisRequest = generateTimeOfRequestPoissonProcess(); break;
+    case stdair::DateGenerationMethod::STA_ORD:
+      lDateTimeThisRequest = generateTimeOfRequestStatisticsOrder(); break;
+    default: assert (false); break;
     }
     
     // Booking channel.

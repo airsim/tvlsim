@@ -17,6 +17,7 @@
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
@@ -30,10 +31,6 @@ typedef std::vector<std::string> WordList_T;
 /** Default name and location for the log file. */
 const std::string K_DSIM_DEFAULT_LOG_FILENAME ("simulate.log");
 
-/** Default name and location for the (CSV) demand input file. */
-const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                        "/rds01/demand.csv");
-
 /** Default name and location for the (CSV) schedule input file. */
 const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                           "/rds01/schedule.csv");
@@ -42,20 +39,31 @@ const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 const std::string K_DSIM_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                      "/ond01.csv");
 
+/** Default name and location for the (CSV) yield input file. */
+const std::string K_DSIM_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                      "/rds01/yield.csv");
+    
 /** Default name and location for the (CSV) fare input file. */
 const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/rds01/fare.csv");
 
-/** Default name and location for the (CSV) yield input file. */
-const std::string K_DSIM_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                      "/rds01/yield.csv");
+/** Default name and location for the (CSV) demand input file. */
+const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
+                                                        "/rds01/demand.csv");
 
-/** Default demand generator. */
-const char K_DSIM_DEFAULT_DEMAND_GENERATOR ('P');
+/** Default forecasting method name: 'M' for MultiplicativePickUp. */
+const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
 
-/** Default forecasting method. */
-const char K_DSIM_DEFAULT_FORECASTING_METHOD ('A');
-    
+/** Default date-time request generation method name: 'S' for Statistics Order. */
+const char K_DSIM_DATE_GENERATION_METHOD_CHAR ('S');
+
+/**
+ * Default for the BOM tree building. The BOM tree can either be built-in
+ * or provided by an input file. That latter must then be given with input
+ * file options (-d, -s, -o, -f, -y).
+ */
+const bool K_DSIM_DEFAULT_BUILT_IN_INPUT = false;
+
 /** Default query string. */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
 
@@ -120,18 +128,26 @@ const int K_DSIM_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[], 
-                       std::string& ioQueryString,
-                       stdair::Filename_T& ioDemandInputFilename,
+                       bool& ioIsBuiltin, std::string& ioQueryString,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
-                       stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioYieldInputFilename,
-                       stdair::DateGenerationMethod& ioDemandGenerator,
+                       stdair::Filename_T& ioFareInputFilename,
+                       stdair::Filename_T& ioDemandInputFilename,
                        stdair::ForecastingMethod& ioForecastingMethod,
-                       std::string& ioLogFilename,
+                       stdair::DateGenerationMethod& ioDateGenerationMethod
+                       std::string& ioLogFilename,  ,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
+
+  // Forecast method as a single char (e.g., 'A' or 'M').
+  char lForecastingMethodChar;
+  // Date-time request generation method as a single char (e.g., 'P' or 'S').
+  char lDateGenerationMethodChar;
+
+  // Default for the built-in input
+  ioIsBuiltin = K_DSIM_DEFAULT_BUILT_IN_INPUT;
 
   // Initialise the travel query string, if that one is empty
   if (ioQueryString.empty() == true) {
@@ -153,30 +169,32 @@ int readConfiguration (int argc, char* argv[],
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
-    ("demand,d",
-     boost::program_options::value< std::string >(&ioDemandInputFilename)->default_value(K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME),
-     "(CVS) input file for the demand distributions")
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the input files must be specified as well (e.g., -d/--demand, -s/--schedule,  -o/--ond, -f/--fare, -y/--yield)")
     ("schedule,s",
      boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME),
      "(CVS) input file for the schedules")
     ("ond,o",
      boost::program_options::value< std::string >(&ioOnDInputFilename)->default_value(K_DSIM_DEFAULT_OND_INPUT_FILENAME),
      "(CVS) input file for the O&D definitions")
-    ("fare,f",
-     boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
-     "(CVS) input file for the fares")
     ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
      "(CVS) input file for the yields")
-    ("generator,g",
-     boost::program_options::value< std::string >(&ioDemandGenerator)->default_value(K_DSIM_DEFAULT_DEMAND_GENERATOR),
-     "demand generator")
-    ("fct,r",
-     boost::program_options::value< std::string >(&ioForecastingMethod)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD),
-     "forecasting method")
+    ("fare,f",
+     boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
+     "(CVS) input file for the fares")
+    ("demand,d",
+     boost::program_options::value< std::string >(&ioDemandInputFilename)->default_value(K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME),
+     "(CVS) input file for the demand distributions")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
+    ("forecast,F",
+     boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
+     "Method used to forecast demand: AdditivePickUp (e.g., A) or MultiplicativePickUp (e.g., M)")
+    ("dategeneration,G",
+     boost::program_options::value< char >(&lDateGenerationMethodChar)->default_value(K_DSIM_DATE_GENERATION_METHOD_CHAR),
+     "Method used to generate the date-time of the booking requests: Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -242,46 +260,84 @@ int readConfiguration (int argc, char* argv[],
     return K_DSIM_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("demand")) {
-    ioDemandInputFilename = vm["demand"].as< std::string >();
-    std::cout << "Demand input filename is: " << ioDemandInputFilename
-              << std::endl;
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
   }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
 
-  if (vm.count ("ond")) {
-    ioOnDInputFilename = vm["ond"].as< std::string >();
-    std::cout << "O&D input filename is: " << ioOnDInputFilename << std::endl;
-  }
+  //
+  std::ostringstream oErrorMessageStr;
+  oErrorMessageStr << "Either the -b/--builtin option, or the combination of "
+                   << "the -d/--demand, -s/--schedule, -o/--ond, -f/--fare "
+                   << "and -y/--yield options must be specified";
 
-  if (vm.count ("fare")) {
-    ioFareInputFilename = vm["fare"].as< std::string >();
-    std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
-  }
+  if (ioIsBuiltin == false) {
+    if (vm.count ("schedule")) {
+      ioScheduleInputFilename = vm["schedule"].as< std::string >();
+      std::cout << "Schedule input filename is: " << ioScheduleInputFilename
+                << std::endl;
 
-  if (vm.count ("yield")) {
-    ioYieldInputFilename = vm["yield"].as< std::string >();
-    std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
-  }
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
 
-  if (vm.count ("generator")) {
-    ioDemandGenerator = vm["generator"].as< std::string >();
-    std::cout << "The demand generator is: " << ioDemandGenerator << std::endl;
-  }
+    if (vm.count ("ond")) {
+      ioOnDInputFilename = vm["ond"].as< std::string >();
+      std::cout << "O&D input filename is: " << ioOnDInputFilename << std::endl;
 
-  if (vm.count ("fct")) {
-    ioForecastingMethod = vm["fct"].as< std::string >();
-    std::cout << "The forecasting method is: " << ioForecastingMethod << std::endl;
-  }
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
 
-  if (vm.count ("schedule")) {
-    ioScheduleInputFilename = vm["schedule"].as< std::string >();
-    std::cout << "Schedule input filename is: " << ioScheduleInputFilename
-              << std::endl;
+    if (vm.count ("yield")) {
+      ioYieldInputFilename = vm["yield"].as< std::string >();
+      std::cout << "Yield input filename is: " << ioYieldInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
+
+    if (vm.count ("fare")) {
+      ioFareInputFilename = vm["fare"].as< std::string >();
+      std::cout << "Fare input filename is: " << ioFareInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
+
+    if (vm.count ("demand")) {
+      ioDemandInputFilename = vm["demand"].as< std::string >();
+      std::cout << "Demand input filename is: " << ioDemandInputFilename
+                << std::endl;
+    } else {
+      // The built-in option is not selected. However, no schedule input file
+      // is specified
+      std::cerr << oErrorMessageStr.str() << std::endl;
+    }
   }
 
   if (vm.count ("log")) {
     ioLogFilename = vm["log"].as< std::string >();
     std::cout << "Log filename is: " << ioLogFilename << std::endl;
+  }
+
+  if (vm.count ("forecast")) {
+    ioForecastingMethod = stdair::ForecastingMethod (lForecastingMethodChar);
+    std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
+  }
+
+  if (vm.count ("dategeneration")) {
+    ioDateGenerationMethod = stdair::DateGenerationMethod (lDateGenerationMethodChar);
+    std::cout << "Date-time request generation method is: " << ioDateGenerationMethod.describe() << std::endl;
   }
 
   if (vm.count ("user")) {
@@ -318,6 +374,10 @@ int readConfiguration (int argc, char* argv[],
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
+  // State whether the BOM tree should be built-in or parsed from an
+  // input file
+  bool isBuiltin;
+
   // Query
   std::string lQuery;
 
@@ -327,29 +387,29 @@ int main (int argc, char* argv[]) {
   // End date
   stdair::Date_T lEndDate (2012, boost::gregorian::Jun, 01);
 
-  // Demand input file name
-  stdair::Filename_T lDemandInputFilename;
-
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
 
   // O&D input filename
   std::string lOnDInputFilename;
     
+  // Yield input filename
+  std::string lYieldInputFilename;
+    
   // Fare input filename
   std::string lFareInputFilename;
     
-  // Yield input filename
-  std::string lYieldInputFilename;
+  // Demand input file name
+  stdair::Filename_T lDemandInputFilename;
 
-  // Demand generator
-  stdair::DateGenerationMethod lDemandGenerator (K_DSIM_DEFAULT_DEMAND_GENERATOR);
-  
-  // Forecasting method
-  stdair::ForecastingMethod lForecastingMethod (K_DSIM_DEFAULT_FORECASTING_METHOD);
-    
   // Output log File
   std::string lLogFilename;
+
+  // Forecasting method.
+  stdair::ForecastingMethod lForecastingMethod(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
+
+  // Date generation method.
+  stdair::DateGenerationMethod lDateGenerationMethod(K_DSIM_DATE_GENERATION_METHOD_CHAR);
 
   // SQL database parameters
   std::string lDBUser;
@@ -360,10 +420,10 @@ int main (int argc, char* argv[]) {
                        
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lQuery, lDemandInputFilename,
-                       lScheduleInputFilename, lOnDInputFilename,
-                       lFareInputFilename, lYieldInputFilename,
-                       lDemandGenerator, lForecastingMethod, lLogFilename,
+    readConfiguration (argc, argv, isBuiltin, lQuery, lScheduleInputFilename,
+                       lOnDInputFilename, lYieldInputFilename,
+                       lFareInputFilename, lDemandInputFilename,
+                       lLogFilename, lForecastingMethod, lDateGenerationMethod, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -383,22 +443,31 @@ int main (int argc, char* argv[]) {
   // Initialise the simulation context
   const stdair::BasLogParams lLogParams (stdair::LOG::NOTIFICATION,
                                          logOutputFile);
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
-                                  lScheduleInputFilename, lOnDInputFilename,
-                                  lFareInputFilename, lYieldInputFilename, 
-                                  lDemandInputFilename);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate);
 
-  // Generate the date time request with the statistic order.
-  bool lGenerateDemandWithStatisticOrder = false;
-  if (lDemandGenerator == "0") {
-    lGenerateDemandWithStatisticOrder = false;
+  // Check wether or not (CSV) input files should be read
+  if (isBuiltin == true) {
+
+    // Build the sample BOM tree
+    dsimService.buildSampleBom();
+
   } else {
-    lGenerateDemandWithStatisticOrder = true;
+    // Build the BOM tree from parsing input files
+    dsimService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
+                              lYieldInputFilename, lFareInputFilename,
+                              lDemandInputFilename);
   }
-  
+
+  // Initialise the snapshot and RM events
+  dsimService.initSnapshotAndRMEvents();
+
+  // Convert to the right forecasting method object to match DSim API.
+  const stdair::ForecastingMethod::EN_ForecastingMethod& lENForecastingMethod =
+    lForecastingMethod.getMethod();
+
   // Perform a simulation
-  dsimService.simulate (lGenerateDemandWithStatisticOrder,
-                        lForecastingMethod);
+  dsimService.simulate (lDateGenerationMethod,
+                        lENForecastingMethod);
 
   
   // DEBUG

@@ -12,34 +12,18 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
+// AirInv
+#include <airinv/AIRINV_Types.hpp>
+// AirSched
+#include <airsched/AIRSCHED_Types.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Types.hpp>
 #include <simcrs/service/ServiceAbstract.hpp>
 
-namespace AIRINV {
-  class AIRINV_Master_Service;
-}
-
-namespace AIRSCHED {
-  class AIRSCHED_Service;
-}
-
-namespace SIMFQT {
-  class SIMFQT_Service;
-}
-
 namespace SIMCRS {
 
-  /** Pointer on the AIRINV Master Service handler. */
-  typedef boost::shared_ptr<AIRINV::AIRINV_Master_Service> AIRINV_Master_ServicePtr_T;
-
-  /** Pointer on the AIRSCHED Service handler. */
-  typedef boost::shared_ptr<AIRSCHED::AIRSCHED_Service> AIRSCHED_ServicePtr_T;
-
-  /** Pointer on the SIMFQT Service handler. */
-  typedef boost::shared_ptr<SIMFQT::SIMFQT_Service> SIMFQT_ServicePtr_T;
-
-  
   /**
    * @brief Class holding the context of the Simcrs services.
    */
@@ -53,26 +37,23 @@ namespace SIMCRS {
     friend class FacSimcrsServiceContext;
     
   private:
-    /// //////////////// Constructors and destructors /////////////
-    /** Constructor. */
-    SIMCRS_ServiceContext (const CRSCode_T& iCRSCode);
-    /** Default constructor (not to be used). */
-    SIMCRS_ServiceContext ();
-    /** Default copy constructor (not to be used). */
-    SIMCRS_ServiceContext (const SIMCRS_ServiceContext&);
-
-    /** Destructor. */
-    ~SIMCRS_ServiceContext();
-    
-  private:
     // ///////////////// Getters ///////////////////
+    /**
+     * Get the CRS code (identifier of the current SimCRS component).
+     *
+     * \note: this identifier is not used for now.
+     */
+    const CRSCode_T& getCRSCode() const {
+      return _CRSCode;
+    }
+
     /**
      * Get the pointer on the STDAIR service handler.
      */
     stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr() const {
       return _stdairService;
     }
-    
+
     /**
      * Get the STDAIR service handler.
      */
@@ -81,83 +62,156 @@ namespace SIMCRS {
       return *_stdairService;
     }
 
-    /** Get the CRS code. */
-    const CRSCode_T& getCRSCode () const {
-      return _CRSCode;
+    /**
+     * State whether or not SIMCRS_Service owns the STDAIR service resources.
+     */
+    const bool getOwnStdairServiceFlag() const {
+      return _ownStdairService;
     }
 
-    /** Get a reference on the AIRINV Master service handler. */
-    AIRINV::AIRINV_Master_Service& getAIRINV_Master_Service () const {
-      assert (_airinvMasterService != NULL);
-      return *_airinvMasterService;
+    /**
+     * Get the AirInv service handler.
+     */
+    AIRINV::AIRINV_Master_Service& getAIRINV_Service() const {
+      assert (_airinvService != NULL);
+      return *_airinvService;
     }
 
-    /** Get a reference on the AIRSCHED service handler. */
-    AIRSCHED::AIRSCHED_Service& getAIRSCHED_Service () const {
+    /**
+     * Get the AirSched service handler.
+     */
+    AIRSCHED::AIRSCHED_Service& getAIRSCHED_Service() const {
       assert (_airschedService != NULL);
       return *_airschedService;
     }
 
-    /** Get a reference on the SIMFQT service handler. */
-    SIMFQT::SIMFQT_Service& getSIMFQT_Service () const {
+    /**
+     * Get the SimFQT service handler.
+     */
+    SIMFQT::SIMFQT_Service& getSIMFQT_Service() const {
       assert (_simfqtService != NULL);
       return *_simfqtService;
     }
-      
+
+
+  private:
     // ///////////////// Setters ///////////////////
-    /** Set the pointer on the STDAIR service handler. */
-    void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
-      _stdairService = ioSTDAIR_ServicePtr;
-    }
-    
-    /** Set the CRS code. */
+    /**
+     * Set the CRS code.
+     */
     void setCRSCode (const CRSCode_T& iCRSCode) {
       _CRSCode = iCRSCode;
     }
 
-    /** Set the pointer on the AIRINV Master service handler. */
-    void setAIRINV_Master_Service (AIRINV_Master_ServicePtr_T ioAIRINV_Master_ServicePtr) {
-      _airinvMasterService = ioAIRINV_Master_ServicePtr;
+    /**
+     * Set the pointer on the STDAIR service handler.
+     */
+    void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                            const bool iOwnStdairService) {
+      _stdairService = ioSTDAIR_ServicePtr;
+      _ownStdairService = iOwnStdairService;
     }
-
-    /** Set the pointer on the AIRSCHED service handler. */
-    void setAIRSCHED_Service (AIRSCHED_ServicePtr_T ioAIRSCHED_ServicePtr) {
-      _airschedService = ioAIRSCHED_ServicePtr;
+    
+    /**
+     * Set the pointer on the AirInv service handler.
+     */
+    void setAIRINV_Service (AIRINV::AIRINV_Master_ServicePtr_T ioServicePtr) {
+      _airinvService = ioServicePtr;
     }
-
-    /** Set the pointer on the SIMFQT service handler. */
-    void setSIMFQT_Service (SIMFQT_ServicePtr_T ioSIMFQT_ServicePtr) {
-      _simfqtService = ioSIMFQT_ServicePtr;
+    
+    /**
+     * Set the pointer on the AirSched service handler.
+     */
+    void setAIRSCHED_Service (AIRSCHED::AIRSCHED_ServicePtr_T ioServicePtr) {
+      _airschedService = ioServicePtr;
     }
-
+    
+    /**
+     * Set the pointer on the SimFQT service handler.
+     */
+    void setSIMFQT_Service (SIMFQT::SIMFQT_ServicePtr_T ioServicePtr) {
+      _simfqtService = ioServicePtr;
+    }
+    
 
   private:
     // //////////////////// Display Methods /////////////////////
-    /** Display the short SIMCRS_ServiceContext content. */
+    /**
+     * Display the short AIRINV_ServiceContext content.
+     */
     const std::string shortDisplay() const;
     
-    /** Display the full SIMCRS_ServiceContext content. */
+    /**
+     * Display the full AIRINV_ServiceContext content.
+     */
     const std::string display() const;
-
     
+    /**
+     * Display of the structure.
+     */
+    const std::string describe() const;
+
+
   private:
-    // /////////////// Children ///////////////
-    /** Standard Airline (StdAir) Service Handler. */
+    /// //////////////// Constructors and destructors /////////////
+    /**
+     * Main constructor.
+     */
+    SIMCRS_ServiceContext (const CRSCode_T& iCRSCode);
+    /**
+     * Default constructor (not to be used).
+     */
+    SIMCRS_ServiceContext();
+    /**
+     * Copy constructor (not to be used).
+     */
+    SIMCRS_ServiceContext (const SIMCRS_ServiceContext&);
+
+    /**
+     * Destructor.
+     */
+    ~SIMCRS_ServiceContext();
+
+    /**
+     * Clear the context (cabin capacity, bucket holder).
+     */
+    void reset();
+
+
+  private:
+    /**
+     * Standard Airline (StdAir) Service Handler.
+     */
     stdair::STDAIR_ServicePtr_T _stdairService;
 
-    /** Airline Schedule Service Handler. */
-    AIRSCHED_ServicePtr_T _airschedService;
+    /**
+     * State whether or not AIRINV owns the STDAIR service resources.
+     */
+    bool _ownStdairService;
 
-    /** Fare Quote Service Handler. */
-    SIMFQT_ServicePtr_T _simfqtService;
+    /**
+     * Airline Schedule Service Handler.
+     */
+    AIRSCHED::AIRSCHED_ServicePtr_T _airschedService;
 
-    /** Airline Inventory Service Handler. */
-    AIRINV_Master_ServicePtr_T _airinvMasterService;
+    /**
+     * Airline Inventory Service Handler.
+     */
+    AIRINV::AIRINV_Master_ServicePtr_T _airinvService;
+
+    /**
+     * Fare Quote Service Handler.
+     */
+    SIMFQT::SIMFQT_ServicePtr_T _simfqtService;
 
     
   private:
-    // //////////// Attributes //////////////////
-    /** CRS code. */
+    // /////////////// Attributes //////////////////
+    /**
+     * CRS code (identifier of the current SimCRS component).
+     *
+     * \note: this identifier is not used for now.
+     */
     CRSCode_T _CRSCode;
   };
   

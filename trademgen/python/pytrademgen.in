@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys, getopt
-sys.path.append('.libs')
+sys.path.append('@INSTALL_LIB_DIR@')
 
 # Default search string
 defaultSearchString = 'my good old python query string'
@@ -46,7 +46,7 @@ searchString = handle_opt()
 # Initialise the Trademgen C++ library
 import libpytrademgen
 trademgenLibrary = libpytrademgen.Trademgener()
-trademgenLibrary.init ('pytrademgen.log', '../../test/samples/demand01.csv', 'dsim', 'dsim', 'localhost', '3306', 'dsim')
+trademgenLibrary.init ('pytrademgen.log', '@STDAIR_SAMPLE_DIR@/demand01.csv', 'dsim', 'dsim', 'localhost', '3306', 'sim_dsim')
 
 # If no search string was supplied as arguments of the command-line,
 # ask the user for some

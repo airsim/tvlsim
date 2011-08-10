@@ -6,6 +6,7 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
 
@@ -35,7 +36,7 @@ namespace DSIM {
     /** Perform a simulation. */
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
-                         const bool,
+                         const stdair::DateGenerationMethod&,
                          const stdair::ForecastingMethod::EN_ForecastingMethod&);
 
     /** Play a booking request event. */
@@ -44,7 +45,7 @@ namespace DSIM {
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
                                     stdair::ProgressStatusSet&,
-                                    const bool);
+                                    const stdair::DateGenerationMethod&);
 
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,

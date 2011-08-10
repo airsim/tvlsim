@@ -72,11 +72,13 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   // O&D input filename
   const stdair::Filename_T lOnDInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
     
-  // Fare input filename
-  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR "/rds01/fare.csv");
-    
   // Yield input filename
-  const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR "/rds01/yield.csv");
+  const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR
+                                                "/rds01/yield.csv");
+    
+  // Fare input filename
+  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
+                                               "/rds01/fare.csv");
     
   // Check that the file path given as input corresponds to an actual file
   bool doesExistAndIsReadable =
@@ -94,16 +96,16 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
 
   // Check that the file path given as input corresponds to an actual file
   doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
+    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
   BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lFareInputFilename
+                       "The '" << lYieldInputFilename
                        << "' input file can not be open and read");
 
   // Check that the file path given as input corresponds to an actual file
   doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
+    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
   BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lYieldInputFilename
+                       "The '" << lFareInputFilename
                        << "' input file can not be open and read");
 
   // Output log File
@@ -117,10 +119,11 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
     
   // Initialise the list of classes/buckets
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode,
-                                        lScheduleInputFilename,
-                                        lOnDInputFilename, lFareInputFilename,
-                                        lYieldInputFilename);
+  SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode);
+
+  // Build the BOM tree from parsing input files
+  simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
+                              lYieldInputFilename, lFareInputFilename);
 
   // Create an empty booking request structure
   // TODO: fill the booking request structure from the input parameters

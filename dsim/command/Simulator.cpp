@@ -36,7 +36,7 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
-                            const bool iGenerateDemandWithStatisticOrder,
+                            const stdair::DateGenerationMethod& iDateGenerationMethod,
                             const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
 
     // DEBUG
@@ -52,7 +52,7 @@ namespace DSIM {
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests(iGenerateDemandWithStatisticOrder);
+      ioTRADEMGEN_Service.generateFirstRequests(iDateGenerationMethod);
 
     // Initialise the (Boost) progress display object
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -88,7 +88,7 @@ namespace DSIM {
                                                            ioTRAVELCCM_Service,
                                                            lEventStruct,
                                                            lPSS,
-                                                           iGenerateDemandWithStatisticOrder); break;
+                                                           iDateGenerationMethod); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -112,7 +112,7 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const bool iGenerateDemandWithStatisticOrder) {
+                      const stdair::DateGenerationMethod& iDateGenerationMethod) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -129,38 +129,39 @@ namespace DSIM {
       // Retrieve the corresponding demand stream
       const stdair::DemandGeneratorKey_T& lDemandStreamKey =
         lPoppedRequest.getDemandGeneratorKey();
-
+      
       // Assess whether more events should be generated for that demand stream
       const bool stillHavingRequestsToBeGenerated =
         ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                                               ioPSS,
-                                                              iGenerateDemandWithStatisticOrder);
+                                                              iDateGenerationMethod);
 
       // DEBUG
       // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
       //                   << "Still generate events for that demand stream? "
-      //                   << stillHavingRequestsToBeGenerated);
+    //                   << stillHavingRequestsToBeGenerated);
       STDAIR_LOG_DEBUG ("Progress status" << ioPSS.describe());
-
+      
       // If there are still events to be generated for that demand stream,
       // generate and add them to the event queue
       if (stillHavingRequestsToBeGenerated) {
-        stdair::BookingRequestPtr_T lNextRequest_ptr =
-          ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
-                                                   iGenerateDemandWithStatisticOrder);
-        assert (lNextRequest_ptr != NULL);
+      stdair::BookingRequestPtr_T lNextRequest_ptr =
+        ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
+                                                 iDateGenerationMethod);
+      assert (lNextRequest_ptr != NULL);
   
-        // Sanity check
-        const stdair::Duration_T lDuration =
-          lNextRequest_ptr->getRequestDateTime()
-          - lPoppedRequest.getRequestDateTime();
+      // Sanity check
+      const stdair::Duration_T lDuration =
+        lNextRequest_ptr->getRequestDateTime()
+        - lPoppedRequest.getRequestDateTime();
         if (lDuration.total_milliseconds() < 0) {
           STDAIR_LOG_NOTIFICATION ("[" << lDemandStreamKey
-                            << "] The date-time of the generated event ("
-                            << lNextRequest_ptr->getRequestDateTime()
-                            << ") is lower than the date-time "
-                            << "of the current event ("
-                            << lPoppedRequest.getRequestDateTime() << ")");
+                                   << "] The date-time of the generated event ("
+                                   << lNextRequest_ptr->getRequestDateTime()
+                                   << ") is lower than the date-time "
+                                   << "of the current event ("
+                                   << lPoppedRequest.getRequestDateTime()
+                                   << ")");
           assert (false);
         }
 
@@ -175,14 +176,14 @@ namespace DSIM {
       // booking request.
       stdair::TravelSolutionList_T lTravelSolutionList =
         ioSIMCRS_Service.calculateSegmentPathList (lPoppedRequest);
-    
+      
       if (lTravelSolutionList.empty() == false) {
         // Get the fare quote for each travel solution.
         ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
-      
+        
         // Get the availability for each travel solution.
         ioSIMCRS_Service.calculateAvailability (lTravelSolutionList);
-
+        
         // Get a travel solution choice.
         const stdair::TravelSolutionStruct* lChosenTS_ptr =
           ioTRAVELCCM_Service.chooseTravelSolution (lTravelSolutionList,
@@ -190,7 +191,7 @@ namespace DSIM {
         if (lChosenTS_ptr != NULL) {
           // DEBUG
           STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS_ptr->describe());
-        
+          
           // Retrieve and convert the party size
           const stdair::NbOfSeats_T& lPartySizeDouble =
             lPoppedRequest.getPartySize();

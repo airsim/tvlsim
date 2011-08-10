@@ -8,6 +8,7 @@
 #include <stdair/bom/BomAbstract.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
 #include <stdair/basic/RandomGeneration.hpp>
+#include <stdair/basic/DateGenerationMethod.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristics.hpp>
 #include <trademgen/basic/DemandDistribution.hpp>
@@ -203,13 +204,13 @@ namespace TRADEMGEN {
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated (const bool) const;
+    const bool stillHavingRequestsToBeGenerated (const stdair::DateGenerationMethod& iDateGenerationMethod) const;
 
-    /** Generate the time of the next request with exponential law. */
-    const stdair::DateTime_T generateTimeOfRequestExponentialLaw();
+    /** Generate the time of the next request with poisson process. */
+    const stdair::DateTime_T generateTimeOfRequestPoissonProcess();
 
-    /** Generate the time of the next request with statistic order */
-    const stdair::DateTime_T generateTimeOfRequestStatisticOrder();
+    /** Generate the time of the next request with statistics order */
+    const stdair::DateTime_T generateTimeOfRequestStatisticsOrder();
 
     /** Generate the POS. */
     const stdair::AirportCode_T generatePOS();
@@ -242,14 +243,14 @@ namespace TRADEMGEN {
      * Generate the next request.
      *
      * @param stdair::RandomGeneration Random generator.
-     * @param const bool Boolean describing the method used to generate the
-     * date time of the next booking request: statistic order or exponenetial
-     * law.
+     * @param const stdair::DateGenerationMethod::EN_DateGenerationMethod Method
+     * used to generate the date time of the next booking request: statistic
+     * order or poisson process.
      * @return stdair::BookingRequestPtr_T Next request to be simulate.
      *
      */
     stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
-                                                     const bool);
+                                                     const stdair::DateGenerationMethod&);
 
     /** Reset all the contexts of the demand stream. */
     void reset (stdair::BaseGenerator_T& ioSharedGenerator);

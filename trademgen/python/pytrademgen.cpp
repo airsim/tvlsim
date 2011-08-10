@@ -40,10 +40,10 @@ namespace TRADEMGEN {
       
         if (_trademgenService == NULL) {
           oStream << "The Trademgen service has not been initialised, "
-                         << "i.e., the init() method has not been called "
-                         << "correctly on the Trademgener object. Please "
-                         << "check that all the parameters are not empty and "
-                         << "point to actual files.";
+                  << "i.e., the init() method has not been called "
+                  << "correctly on the Trademgener object. Please "
+                  << "check that all the parameters are not empty and "
+                  << "point to actual files.";
           *_logOutputStream << oStream.str();
           return oStream.str();
         }
@@ -125,9 +125,12 @@ namespace TRADEMGEN {
         // Initialise the context
         stdair::BasDBParams lDBParams (iDBUser, iDBPasswd, iDBHost, iDBPort,
                                        iDBDBName);
-        _trademgenService = new TRADEMGEN_Service (lLogParams, lDBParams,
-                                                   iDemandInputFilename);
-        
+        _trademgenService = new TRADEMGEN_Service (lLogParams, lDBParams);
+        assert (_trademgenService != NULL);
+
+        // Create the DemandStream objects, and insert them within the BOM tree
+        _trademgenService->parseAndLoad (iDemandInputFilename);
+
         // DEBUG
         *_logOutputStream << "Python wrapper initialised" << std::endl;
         

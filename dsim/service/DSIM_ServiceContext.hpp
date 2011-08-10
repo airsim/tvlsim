@@ -6,36 +6,19 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Boost
-#include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/service/ServiceAbstract.hpp>
-// Dsim
+// SimCRS
+#include <simcrs/SIMCRS_Types.hpp>
+// TraDemGen
+#include <trademgen/TRADEMGEN_Types.hpp>
+// TravelCCM
+#include <travelccm/TRAVELCCM_Types.hpp>
+// DSim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/bom/ConfigurationParameters.hpp>
 #include <dsim/bom/RDSParameters.hpp>
-
-// Forward declarations
-namespace SIMCRS {
-  class SIMCRS_Service;
-}
-namespace TRADEMGEN {
-  class TRADEMGEN_Service;
-}
-namespace TRAVELCCM {
-  class TRAVELCCM_Service;
-}
-
-/** Pointer on the SIMCRS Service handler. */
-typedef boost::shared_ptr<SIMCRS::SIMCRS_Service> SIMCRS_ServicePtr_T;
-
-/** Pointer on the TRADEMGEN Service handler. */
-typedef boost::shared_ptr<TRADEMGEN::TRADEMGEN_Service> TRADEMGEN_ServicePtr_T;
-
-/** Pointer on the TRAVELCCM Service handler. */
-typedef boost::shared_ptr<TRAVELCCM::TRAVELCCM_Service> TRAVELCCM_ServicePtr_T;
-
 
 namespace DSIM {
     
@@ -43,16 +26,16 @@ namespace DSIM {
    * @brief Class holding the context of the Dsim services.
    */
   class DSIM_ServiceContext : public stdair::ServiceAbstract {
-    friend class FacDsimServiceContext;
-  public:
-    // ///////// Getters //////////
     /**
-     * Get the pointer on the STDAIR service handler.
+     * The SIMCRS_Service class should be the sole class to get access
+     * to ServiceContext content: general users do not want to bother
+     * with a context interface.
      */
-    stdair::STDAIR_ServicePtr_T getSTDAIR_Service_Ptr() const {
-      return _stdairService;
-    }
+    friend class DSIM_Service;
+    friend class FacDsimServiceContext;
     
+  private:
+    // ///////////// Getters on attributes //////////////
     /**
      * Get the simulator ID.
      */
@@ -67,6 +50,45 @@ namespace DSIM {
       return _configurationParameters;
     }
     
+    /**
+     * Get the start date of the simulation (delegated to the
+     * ConfigurationParameters object).
+     */
+    const stdair::Date_T& getStartDate() const {
+      return _configurationParameters.getStartDate();
+    }
+      
+    /**
+     * Get the end date of the simulation (delegated to the
+     * ConfigurationParameters object).
+     */
+    const stdair::Date_T& getEndDate() const {
+      return _configurationParameters.getEndDate();
+    }
+    
+    // /////////////// Getters on children //////////////
+    /**
+     * Get the pointer on the STDAIR service handler.
+     */
+    stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr() const {
+      return _stdairService;
+    }
+
+    /**
+     * Get the STDAIR service handler.
+     */
+    stdair::STDAIR_Service& getSTDAIR_Service() const {
+      assert (_stdairService != NULL);
+      return *_stdairService;
+    }
+
+    /**
+     * State whether or not SIMCRS_Service owns the STDAIR service resources.
+     */
+    const bool getOwnStdairServiceFlag() const {
+      return _ownStdairService;
+    }
+
     /**
      * Get the RDS parameters.
      */
@@ -95,26 +117,40 @@ namespace DSIM {
       return *_travelccmService.get();
     }
     
-    /**
-     * Get a reference on the STDAIR service handler.
-     */
-    stdair::STDAIR_Service& getSTDAIR_Service() const {
-      return *_stdairService.get();
-    }
-    
-    // ///////// Setters //////////
-    /**
-     * Set the pointer on the STDAIR service handler.
-     */
-    void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr) {
-      _stdairService = ioSTDAIR_ServicePtr;
-    }
 
+  private:
+    // //////// Setters on attributes /////////     
     /** Set the simulator ID. */
     void setSimulatorID (const SimulatorID_T& iSimulatorID) {
       _simulatorID = iSimulatorID;
     }
 
+    /**
+     * Set the start date of the simulation (delegated to the
+     * ConfigurationParameters object).
+     */
+    void setStartDate (const stdair::Date_T& iStartDate) {
+      _configurationParameters.setEndDate (iStartDate);
+    }
+      
+    /**
+     * Set the end date of the simulation (delegated to the
+     * ConfigurationParameters object).
+     */
+    void setEndDate (const stdair::Date_T& iEndDate) {
+      _configurationParameters.setEndDate (iEndDate);
+    }
+    
+    // ///////// Setters on children //////////
+    /**
+     * Set the pointer on the STDAIR service handler.
+     */
+    void setSTDAIR_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
+                            const bool iOwnStdairService) {
+      _stdairService = ioSTDAIR_ServicePtr;
+      _ownStdairService = iOwnStdairService;
+    }
+    
     /**
      * Set the RDS parameters.
      */
@@ -125,48 +161,59 @@ namespace DSIM {
     /**
      * Set the pointer on the SIMCRS service handler.
      */
-    void setSIMCRS_Service (SIMCRS_ServicePtr_T ioSIMCRS_ServicePtr) {
-      _simcrsService = ioSIMCRS_ServicePtr;
+    void setSIMCRS_Service (SIMCRS::SIMCRS_ServicePtr_T ioServicePtr) {
+      _simcrsService = ioServicePtr;
     }
 
     /**
      * Set the pointer on the TRADEMGEN service handler.
      */
-    void setTRADEMGEN_Service (TRADEMGEN_ServicePtr_T ioTRADEMGEN_ServicePtr) {
-      _trademgenService = ioTRADEMGEN_ServicePtr;
+    void setTRADEMGEN_Service (TRADEMGEN::TRADEMGEN_ServicePtr_T ioServicePtr) {
+      _trademgenService = ioServicePtr;
     }
 
     /**
      * Set the pointer on the TRAVELCCM service handler.
      */
-    void setTRAVELCCM_Service (TRAVELCCM_ServicePtr_T ioTRAVELCCM_ServicePtr) {
-      _travelccmService = ioTRAVELCCM_ServicePtr;
+    void setTRAVELCCM_Service (TRAVELCCM::TRAVELCCM_ServicePtr_T ioServicePtr) {
+      _travelccmService = ioServicePtr;
     }
 
-    // ///////// Display Methods //////////
+
+  private:
+    // //////////////////// Display Methods /////////////////////
     /**
-     * Display the short DSIM_ServiceContext content.
+     * Display the short AIRINV_ServiceContext content.
      */
     const std::string shortDisplay() const;
     
     /**
-     * Display the full DSIM_ServiceContext content.
+     * Display the full AIRINV_ServiceContext content.
      */
     const std::string display() const;
+    
+    /**
+     * Display of the structure.
+     */
+    const std::string describe() const;
+
 
   private:
-    // /////// Construction / initialisation ////////
+    /// //////////////// Constructors and destructors /////////////
     /**
-     * Default constructor.
+     * Main constructors.
      */
-    DSIM_ServiceContext (const stdair::Date_T&, const stdair::Date_T&);
+    DSIM_ServiceContext (const stdair::Date_T& iStartDate,
+                         const stdair::Date_T& iEndDate);
+    DSIM_ServiceContext (const SimulatorID_T&, const stdair::Date_T& iStartDate,
+                         const stdair::Date_T& iEndDate);
+
     /**
-     * Constructor.
+     * Default constructor (not to be used).
      */
-    DSIM_ServiceContext (const SimulatorID_T&,
-                         const stdair::Date_T&, const stdair::Date_T&);
+    DSIM_ServiceContext();
     /**
-     * Copy constructor.
+     * Copy constructor (not to be used).
      */
     DSIM_ServiceContext (const DSIM_ServiceContext&);
 
@@ -175,21 +222,46 @@ namespace DSIM {
      */
     ~DSIM_ServiceContext();
 
+    /**
+     * Clear the context.
+     */
+    void reset();
+
+
   private:
     // //////////////////// Children ///////////////////////
-    /** Standard Airline (StdAir) Service Handler. */
+    /**
+     * Standard Airline (StdAir) service handler.
+     */
     stdair::STDAIR_ServicePtr_T _stdairService;
-    /** CRS Service Handler. */
-    SIMCRS_ServicePtr_T _simcrsService;
-    /** TRADEMGEN Service Handler. */
-    TRADEMGEN_ServicePtr_T _trademgenService;
-    /** TRAVELCCM Service Handler. */
-    TRAVELCCM_ServicePtr_T _travelccmService;
+
+    /**
+     * State whether or not AIRINV owns the STDAIR service resources.
+     */
+    bool _ownStdairService;
+
+    /**
+     * CRS service handler.
+     */
+    SIMCRS::SIMCRS_ServicePtr_T _simcrsService;
+
+    /**
+     * TraDemGen service handler.
+     */
+    TRADEMGEN::TRADEMGEN_ServicePtr_T _trademgenService;
+
+    /**
+     * TravelCCM service handler.
+     */
+    TRAVELCCM::TRAVELCCM_ServicePtr_T _travelccmService;
+
 
   private:
     // /////////////////// Attributes ////////////////////////
     /**
      * Simulator ID.
+     *
+     * \note: it is currently not used.
      */
     SimulatorID_T _simulatorID;
 

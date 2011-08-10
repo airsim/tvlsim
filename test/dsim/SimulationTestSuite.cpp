@@ -76,16 +76,16 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                                    "/rds01/schedule.csv");
     
   // O&D input file name
-  const stdair::Filename_T lODInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
-
-  // Fare input file name
-  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
-                                               "/rds01/fare.csv");
+  const stdair::Filename_T lOnDInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
 
   // Yield input file name
   const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR
                                                "/rds01/yield.csv");
     
+  // Fare input file name
+  const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
+                                               "/rds01/fare.csv");
+
   // Check that the file path given as input corresponds to an actual file
   bool doesExistAndIsReadable =
     stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
@@ -95,9 +95,9 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
   // Check that the file path given as input corresponds to an actual file
   doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lODInputFilename);
+    stdair::BasFileMgr::doesExistAndIsReadable (lOnDInputFilename);
   BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lODInputFilename
+                       "The '" << lOnDInputFilename
                        << "' input file can not be open and read");
 
   // Check that the file path given as input corresponds to an actual file
@@ -134,18 +134,22 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
                                        "sim_dsim");
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
-                                  lScheduleInputFilename, lODInputFilename,
-                                  lFareInputFilename, lYieldInputFilename,
-                                  lDemandInputFilename);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate);
 
-  // Generate the request date time with statistic order.
-  const bool lGenerateDemandWithStatisticOrder = true;
+  // Build the BOM tree from parsing input files
+  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,
+                                                  lOnDInputFilename,
+                                                  lYieldInputFilename, 
+                                                  lFareInputFilename,
+                                                  lDemandInputFilename));
+
+  // Initialise the snapshot and RM events
+  BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW(dsimService.simulate(lGenerateDemandWithStatisticOrder,
-                                            stdair::ForecastingMethod::ADD_PK));
+  BOOST_CHECK_NO_THROW (dsimService.simulate (stdair::DateGenerationMethod::STA_ORD,
+                                              stdair::ForecastingMethod::ADD_PK));
 
   // Close the log file
   logOutputFile.close();

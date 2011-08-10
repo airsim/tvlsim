@@ -44,71 +44,91 @@ namespace SIMCRS {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  SIMCRS_Service::
-  SIMCRS_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_ServicePtr,
-                  const CRSCode_T& iCRSCode,
-                  const stdair::Filename_T& iScheduleInputFilename,
-                  const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename,
-                  const stdair::Filename_T& iYieldInputFilename)
+  SIMCRS_Service::SIMCRS_Service (const stdair::BasLogParams& iLogParams,
+                                  const CRSCode_T& iCRSCode)
     : _simcrsServiceContext (NULL) {
-
+    
+    // Initialise the StdAir service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams);
+    
     // Initialise the service context
     initServiceContext (iCRSCode);
-
-    // Retrieve the Simcrs service context
-    assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-
-    // Store the STDAIR service object within the (SIMCRS) service context
-    lSIMCRS_ServiceContext.setSTDAIR_Service (ioSTDAIR_ServicePtr);
     
-    // Initialise the context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iYieldInputFilename);
+    // Add the StdAir service context to the SimCRS service context
+    // \note SIMCRS owns the STDAIR service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+
+    // Initalise the SimFQT service.
+    initSIMFQTService();
+    
+    // Initalise the AirSched service.
+    initAIRSCHEDService();
+    
+    // Initalise the AirInv service.
+    initAIRINVService();
+    
+    // Initialise the (remaining of the) context
+    initSimcrsService();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  SIMCRS_Service::SIMCRS_Service (const stdair::BasLogParams& iLogParams,
+                                  const stdair::BasDBParams& iDBParams,
+                                  const CRSCode_T& iCRSCode)
+    : _simcrsServiceContext (NULL) {
+    
+    // Initialise the STDAIR service handler
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      initStdAirService (iLogParams, iDBParams);
+    
+    // Initialise the service context
+    initServiceContext (iCRSCode);
+    
+    // Add the StdAir service context to the SIMCRS service context
+    // \note SIMCRS owns the STDAIR service resources here.
+    const bool ownStdairService = true;
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+
+    // Initalise the SIMFQT service.
+    initSIMFQTService();
+    
+    // Initalise the AIRSCHED service.
+    initAIRSCHEDService();
+    
+    // Initalise the AIRINV service.
+    initAIRINVService();
+    
+    // Initialise the (remaining of the) context
+    initSimcrsService();
   }
 
   // ////////////////////////////////////////////////////////////////////
   SIMCRS_Service::
-  SIMCRS_Service (const stdair::BasLogParams& iLogParams,
-                  const stdair::BasDBParams& iDBParams,
-                  const CRSCode_T& iCRSCode,
-                  const stdair::Filename_T& iScheduleInputFilename,
-                  const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename,
-                  const stdair::Filename_T& iYieldInputFilename)
+  SIMCRS_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                  const CRSCode_T& iCRSCode)
     : _simcrsServiceContext (NULL) {
-    
-    // Initialise the service context
-    initServiceContext (iCRSCode);
-    
-    // Initialise the STDAIR service handler
-    initStdAirService (iLogParams, iDBParams);
-    
-    // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iYieldInputFilename);
-  }
 
-  // ////////////////////////////////////////////////////////////////////
-  SIMCRS_Service::
-  SIMCRS_Service (const stdair::BasLogParams& iLogParams,
-                  const CRSCode_T& iCRSCode,
-                  const stdair::Filename_T& iScheduleInputFilename,
-                  const stdair::Filename_T& iODInputFilename,
-                  const stdair::Filename_T& iFareInputFilename,
-                  const stdair::Filename_T& iYieldInputFilename)
-    : _simcrsServiceContext (NULL) {
-    
     // Initialise the service context
     initServiceContext (iCRSCode);
+
+    // Store the STDAIR service object within the (AIRINV) service context
+    // \note AirInv does not own the STDAIR service resources here.
+    const bool doesNotOwnStdairService = false;
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
+
+    // Initalise the SIMFQT service.
+    initSIMFQTService();
     
-    // Initialise the STDAIR service handler
-    initStdAirService (iLogParams);
+    // Initalise the AIRSCHED service.
+    initAIRSCHEDService();
+    
+    // Initalise the AIRINV service.
+    initAIRINVService();
     
     // Initialise the (remaining of the) context
-    init (iScheduleInputFilename, iODInputFilename, iFareInputFilename,
-          iYieldInputFilename);
+    initSimcrsService();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -120,6 +140,8 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::finalise() {
     assert (_simcrsServiceContext != NULL);
+    // Reset the (Boost.)Smart pointer pointing on the STDAIR_Service object.
+    _simcrsServiceContext->reset();
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -132,230 +154,253 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
-  initStdAirService (const stdair::BasLogParams& iLogParams,
-                     const stdair::BasDBParams& iDBParams) {
+  addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                    const bool iOwnStdairService) {
 
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-    
-    /**
-     * Initialise the StdAir service handler
-     *
-     * \note The (Boost) Smart Pointer keeps track of the references
-     * on the Service object, and deletes that object when it is no
-     * longer referenced (e.g., at the end of the process).
-     */
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
-      boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
-    assert (lSTDAIR_Service_ptr != NULL);
 
-    // Store the STDAIR service object within the (SIMCRS) service context
-    lSIMCRS_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
+    // Store the StdAir service object within the (SimCRS) service context
+    lSIMCRS_ServiceContext.setSTDAIR_Service (ioSTDAIR_Service_ptr,
+                                              iOwnStdairService);
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
+  stdair::STDAIR_ServicePtr_T SIMCRS_Service::
   initStdAirService (const stdair::BasLogParams& iLogParams) {
 
-    // Retrieve the SimCRS service context
-    assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-    
     /**
-     * Initialise the StdAir service handler
+     * Initialise the StdAir service handler.
      *
-     * \note The (Boost) Smart Pointer keeps track of the references
-     * on the Service object, and deletes that object when it is no
-     * longer referenced (e.g., at the end of the process).
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
      */
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
       boost::make_shared<stdair::STDAIR_Service> (iLogParams);
-    assert (lSTDAIR_Service_ptr != NULL);
 
-    // Store the STDAIR service object within the (SIMCRS) service context
-    lSIMCRS_ServiceContext.setSTDAIR_Service (lSTDAIR_Service_ptr);
+    return lSTDAIR_Service_ptr;
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::init (const stdair::Filename_T& iScheduleInputFilename,
-                             const stdair::Filename_T& iODInputFilename,
-                             const stdair::Filename_T& iFareInputFilename,
-                             const stdair::Filename_T& iYieldInputFilename) {
+  stdair::STDAIR_ServicePtr_T SIMCRS_Service::
+  initStdAirService (const stdair::BasLogParams& iLogParams,
+                     const stdair::BasDBParams& iDBParams) {
 
-    // Initialise the children AirSched service context
-    initAIRSCHEDService (iScheduleInputFilename, iODInputFilename);
-
-    // Initialise the children AirInv service context
-    initAIRINV_Master_Service (iScheduleInputFilename, iODInputFilename,
-                               iYieldInputFilename);
-
-    // Initialise the children SimFQT service context
-    initSIMFQTService (iFareInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
-  initAIRSCHEDService (const stdair::Filename_T& iScheduleInputFilename,
-                       const stdair::Filename_T& iODInputFilename) {
+    /**
+     * Initialise the STDAIR service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr = 
+      boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
     
-    // Check that the file path given as input corresponds to an actual file
-    bool doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iScheduleInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The schedule input file, '" << iScheduleInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw stdair::FileNotFoundException ("The schedule input file, '"
-                                           + iScheduleInputFilename
-                                           + "', can not be retrieved on the "
-                                           + "file-system");
-    }
-
-    // Check that the file path given as input corresponds to an actual file
-    doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iODInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The O&D input file, '" << iODInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw stdair::FileNotFoundException ("The O&D input file, '"
-                                           + iODInputFilename
-                                           + "', can not be retrieved on the "
-                                           + "file-system");
-    }
+    return lSTDAIR_Service_ptr;
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::initAIRSCHEDService() {
 
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-    
+
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service_ptr != NULL);
 
     /**
-     * Initialise the AirSched service handler
+     * Initialise the AIRSCHED service handler.
      *
-     * \note The (Boost) Smart Pointer keeps track of the references
-     * on the Service object, and deletes that object when it is no
-     * longer referenced (e.g., at the end of the process).
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
      */
-    AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr =
-      boost::make_shared<AIRSCHED::AIRSCHED_Service> (lSTDAIR_Service_ptr,
-                                                      iScheduleInputFilename,
-                                                      iODInputFilename);
-
-    // Store the AirSched service object within the (SimCRS) service context
+    AIRSCHED::AIRSCHED_ServicePtr_T lAIRSCHED_Service_ptr = 
+      boost::make_shared<AIRSCHED::AIRSCHED_Service> (lSTDAIR_Service_ptr);
+    
+    // Store the AIRSCHED service object within the (SimCRS) service context
     lSIMCRS_ServiceContext.setAIRSCHED_Service (lAIRSCHED_Service_ptr);
   }
-
+  
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
-  initSIMFQTService (const stdair::Filename_T& iFareInputFilename) {
-    
-    // Check that the file path given as input corresponds to an actual file
-    const bool doesExistAndIsReadable =
-      stdair::BasFileMgr::doesExistAndIsReadable (iFareInputFilename);
-    if (doesExistAndIsReadable == false) {
-      STDAIR_LOG_ERROR ("The fare input file, '" << iFareInputFilename
-                        << "', can not be retrieved on the file-system");
-      throw stdair::FileNotFoundException ("The fare input file, '"
-                                           + iFareInputFilename
-                                           + "', can not be retrieved on the "
-                                           + "file-system");
-    }
+  void SIMCRS_Service::initSIMFQTService() {
 
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-    
+
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service_ptr != NULL);
 
     /**
-     * Initialise the SimFQT service handler
+     * Initialise the SIMFQT service handler.
      *
-     * \note The (Boost) Smart Pointer keeps track of the references
-     * on the Service object, and deletes that object when it is no
-     * longer referenced (e.g., at the end of the process).
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
      */
-    SIMFQT_ServicePtr_T lSIMFQT_Service_ptr =
+    SIMFQT::SIMFQT_ServicePtr_T lSIMFQT_Service_ptr = 
       boost::make_shared<SIMFQT::SIMFQT_Service> (lSTDAIR_Service_ptr);
-
-    // Store the Simfqt service object within the (SimLFS) service context
-    lSIMCRS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr); 
-
-    // Parse the fare input file and load its content into memory
-    lSIMFQT_Service_ptr->parseAndLoad (iFareInputFilename);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
-  initAIRINV_Master_Service (const stdair::Filename_T& iScheduleInputFilename,
-                             const stdair::Filename_T& iODInputFilename,
-                             const stdair::Filename_T& iYieldInputFilename) {
     
-    // Retrieve the SimCRS service context
-    assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-    
-    // Retrieve the StdAir service context
-    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
-    assert (lSTDAIR_Service_ptr != NULL);
-
-    /**
-     * Initialise the AirInv service handler
-     *
-     * \note The (Boost) Smart Pointer keeps track of the references
-     * on the Service object, and deletes that object when it is no
-     * longer referenced (e.g., at the end of the process).
-     */
-    AIRINV_Master_ServicePtr_T lAIRINV_Master_Service_ptr =
-      boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr);
-
-    // Parse and load the schedule and O&D input files
-    lAIRINV_Master_Service_ptr->parseAndLoad (iScheduleInputFilename,
-                                              iODInputFilename,
-                                              iYieldInputFilename);
-
-    // Store the Airinv service object within the (SimCRS) service context
-    lSIMCRS_ServiceContext.setAIRINV_Master_Service(lAIRINV_Master_Service_ptr);
-  }
-
-  // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::
-  initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
-                           const stdair::Date_T& iEndDate) {
-    if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
-                                                    "not been initialised");
-    }
-    assert (_simcrsServiceContext != NULL);
-    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-
-    // Retrieve the AIRINV Master service.
-    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
-      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
-
-    lAIRINV_Master_Service.initSnapshotAndRMEvents (iStartDate, iEndDate);
+    // Store the SIMFQT service object within the (SimCRS) service context
+    lSIMCRS_ServiceContext.setSIMFQT_Service (lSIMFQT_Service_ptr);
   }
   
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::initAIRINVService() {
+
+    // Retrieve the SimCRS service context
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lSIMCRS_ServiceContext.getSTDAIR_ServicePtr();
+
+    /**
+     * Initialise the AIRINV service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    AIRINV::AIRINV_Master_ServicePtr_T lAIRINV_Service_ptr = 
+      boost::make_shared<AIRINV::AIRINV_Master_Service> (lSTDAIR_Service_ptr);
+    
+    // Store the AIRINV service object within the (SimCRS) service context
+    lSIMCRS_ServiceContext.setAIRINV_Service (lAIRINV_Service_ptr);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::initSimcrsService() {
+    // Do nothing at this stage. A sample BOM tree may be built by
+    // calling the buildSampleBom() method
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::
+  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
+                const stdair::Filename_T& iODInputFilename,
+                const stdair::Filename_T& iYieldInputFilename,
+                const stdair::Filename_T& iFareInputFilename) {
+
+    // Retrieve the SimCRS service context
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+    
+    /**
+     * Let the schedule manager (i.e., the AirSched component) parse
+     * the schedules and O&Ds. AirSched holds the flight-periods (aka schedule)
+     * only, not the flight-dates (aka the inventory).
+     */
+    AIRSCHED::AIRSCHED_Service& lAIRSCHED_Service =
+      lSIMCRS_ServiceContext.getAIRSCHED_Service();
+    lAIRSCHED_Service.parseAndLoad (iScheduleInputFilename);
+
+    /**
+     * Let the inventory manager (i.e., the AirInv component) parse
+     * the schedules, O&Ds and yields. From the schedules and O&Ds,
+     * AirInv builds the flight-dates (aka the inventory).
+     * The flight-periods (aka schedule) are then dropped.
+     */
+    AIRINV::AIRINV_Master_Service& lAIRINV_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Service();
+    lAIRINV_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
+                                  iYieldInputFilename);
+
+    /**
+     * Let the pricing component to build the fare rule structures.
+     */
+    SIMFQT::SIMFQT_Service& lSIMFQT_Service =
+      lSIMCRS_ServiceContext.getSIMFQT_Service();
+    lSIMFQT_Service.parseAndLoad (iFareInputFilename);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::buildSampleBom() {
+
+    // Retrieve the SimCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    // Retrieve the SimCRS service context and whether it owns the Stdair
+    // service
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+    const bool doesOwnStdairService =
+      lSIMCRS_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (SimCRS) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    /**
+     * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
+     *    owned by the current component (SimCRS here).
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.buildSampleBom();
+    }
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components.
+     */
+    /**
+     * Let the schedule manager (i.e., the AirSched component) build
+     * the schedules and O&Ds. AirSched holds the flight-periods (aka schedule)
+     * only, not the flight-dates (aka the inventory).
+     */
+    AIRSCHED::AIRSCHED_Service& lAIRSCHED_Service =
+      lSIMCRS_ServiceContext.getAIRSCHED_Service();
+    lAIRSCHED_Service.buildSampleBom();
+
+    /**
+     * Let the inventory manager (i.e., the AirInv component) build
+     * the schedules, O&Ds and yields. From the schedules and O&Ds,
+     * AirInv builds the flight-dates (aka the inventory).
+     * The flight-periods (aka schedule) are then dropped.
+     */
+    AIRINV::AIRINV_Master_Service& lAIRINV_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Service();
+    lAIRINV_Service.buildSampleBom();
+
+    /**
+     * Let the pricing component to build the fare rules.
+     */
+    SIMFQT::SIMFQT_Service& lSIMFQT_Service =
+      lSIMCRS_ServiceContext.getSIMFQT_Service();
+    lSIMFQT_Service.buildSampleBom();
+
+    /**
+     * 3. Build the complementary objects/links for the current component (here,
+     *    SimCRS).
+     *
+     * \note: Currently, no more things to do by SimCRS.
+     */
+  }
+
   // //////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   buildSampleTravelSolutions(stdair::TravelSolutionList_T& ioTravelSolutionList){
 
-    // Retrieve the SIMCRS service context
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
-                                                    "been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
 
+    // Retrieve the StdAir service object from the (SimCRS) service context
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-  
-    // Retrieve the STDAIR service object from the (SIMCRS) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMCRS_ServiceContext.getSTDAIR_Service();
 
@@ -367,16 +412,15 @@ namespace SIMCRS {
   stdair::BookingRequestStruct SIMCRS_Service::
   buildSampleBookingRequest (const bool isForCRS) {
 
-    // Retrieve the SIMCRS service context
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
-                                                    "been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
 
+    // Retrieve the StdAir service object from the (SimCRS) service context
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-  
-    // Retrieve the STDAIR service object from the (SIMCRS) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMCRS_ServiceContext.getSTDAIR_Service();
 
@@ -384,19 +428,61 @@ namespace SIMCRS {
     return lSTDAIR_Service.buildSampleBookingRequest (isForCRS);
   }
 
-  // //////////////////////////////////////////////////////////////////////
-  std::string SIMCRS_Service::csvDisplay() const {
+  // ////////////////////////////////////////////////////////////////////
+  std::string SIMCRS_Service::
+  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
 
-    // Retrieve the SIMCRS service context
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
-                                                    "been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
 
+    // Retrieve the StdAir service object from the (SimCRS) service context
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMCRS_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the JSON export to the dedicated service
+    return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void SIMCRS_Service::
+  initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
+                           const stdair::Date_T& iEndDate) {
+
+    // Retrieve the SimCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Service();
+
+    lAIRINV_Master_Service.initSnapshotAndRMEvents (iStartDate, iEndDate);
+  }
   
-    // Retrieve the STDAIR service object from the (SIMCRS) service context
+  // //////////////////////////////////////////////////////////////////////
+  std::string SIMCRS_Service::csvDisplay() const {
+
+    // Retrieve the SimCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (SimCRS) service context
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMCRS_ServiceContext.getSTDAIR_Service();
 
@@ -408,16 +494,15 @@ namespace SIMCRS {
   std::string SIMCRS_Service::
   csvDisplay (const stdair::TravelSolutionList_T& ioTravelSolutionList) const {
 
-    // Retrieve the SIMCRS service context
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has not "
-                                                    "been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
 
+    // Retrieve the StdAir service object from the (SimCRS) service context
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
-  
-    // Retrieve the STDAIR service object from the (SIMCRS) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lSIMCRS_ServiceContext.getSTDAIR_Service();
 
@@ -429,11 +514,13 @@ namespace SIMCRS {
   stdair::TravelSolutionList_T SIMCRS_Service::
   calculateSegmentPathList(const stdair::BookingRequestStruct& iBookingRequest){
      
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
-      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
-                                                    "not been initialised");
+      throw stdair::NonInitialisedServiceException ("The SimCRS service "
+                                                    "has not been initialised");
     }
     assert (_simcrsServiceContext != NULL);
+
     SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
 
     stdair::TravelSolutionList_T oTravelSolutionList;
@@ -464,6 +551,7 @@ namespace SIMCRS {
   fareQuote (const stdair::BookingRequestStruct& iBookingRequest,
              stdair::TravelSolutionList_T& ioTravelSolutionList) {
      
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -492,6 +580,8 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -505,7 +595,7 @@ namespace SIMCRS {
 
     // Retrieve the AIRINV Master service.
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
-      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+      lSIMCRS_ServiceContext.getAIRINV_Service();
     
     // Delegate the availability retrieval to the dedicated command
     stdair::BasChronometer lAvlChronometer;
@@ -526,6 +616,7 @@ namespace SIMCRS {
         const stdair::PartySize_T& iPartySize) {
     bool hasSaleBeenSuccessful = false;
 
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -539,7 +630,7 @@ namespace SIMCRS {
 
     // Retrieve the AIRINV Master service.
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
-      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+      lSIMCRS_ServiceContext.getAIRINV_Service();
     
     // Delegate the booking to the dedicated command
     stdair::BasChronometer lSellChronometer;
@@ -565,6 +656,8 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::takeSnapshots (const stdair::SnapshotStruct& iSnapshot) {
+
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -574,14 +667,17 @@ namespace SIMCRS {
 
     // Retrieve the AIRINV Master service.
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
-      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+      lSIMCRS_ServiceContext.getAIRINV_Service();
 
     lAIRINV_Master_Service.takeSnapshots (iSnapshot);
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void SIMCRS_Service::optimise (const stdair::RMEventStruct& iRMEvent,
-                                 const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+  void SIMCRS_Service::
+  optimise (const stdair::RMEventStruct& iRMEvent,
+            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+
+    // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The SimCRS service has "
                                                     "not been initialised");
@@ -591,7 +687,7 @@ namespace SIMCRS {
 
     // Retrieve the AIRINV Master service.
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
-      lSIMCRS_ServiceContext.getAIRINV_Master_Service();
+      lSIMCRS_ServiceContext.getAIRINV_Service();
 
     lAIRINV_Master_Service.optimise (iRMEvent, iForecastingMethod);
   }
