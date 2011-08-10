@@ -8,7 +8,7 @@
 #include <stdair/bom/BomAbstract.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
 #include <stdair/basic/RandomGeneration.hpp>
-#include <stdair/basic/DateGenerationMethod.hpp>
+#include <stdair/basic/DemandGenerationMethod.hpp>
 // TraDemGen
 #include <trademgen/basic/DemandCharacteristics.hpp>
 #include <trademgen/basic/DemandDistribution.hpp>
@@ -204,7 +204,7 @@ namespace TRADEMGEN {
     }
     
     /** Check whether enough requests have already been generated. */
-    const bool stillHavingRequestsToBeGenerated (const stdair::DateGenerationMethod& iDateGenerationMethod) const;
+    const bool stillHavingRequestsToBeGenerated (const stdair::DemandGenerationMethod& iDemandGenerationMethod) const;
 
     /** Generate the time of the next request with poisson process. */
     const stdair::DateTime_T generateTimeOfRequestPoissonProcess();
@@ -243,14 +243,14 @@ namespace TRADEMGEN {
      * Generate the next request.
      *
      * @param stdair::RandomGeneration Random generator.
-     * @param const stdair::DateGenerationMethod::EN_DateGenerationMethod Method
+     * @param const stdair::DemandGenerationMethod::EN_DemandGenerationMethod Method
      * used to generate the date time of the next booking request: statistic
      * order or poisson process.
      * @return stdair::BookingRequestPtr_T Next request to be simulate.
      *
      */
     stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
-                                                     const stdair::DateGenerationMethod&);
+                                                     const stdair::DemandGenerationMethod&);
 
     /** Reset all the contexts of the demand stream. */
     void reset (stdair::BaseGenerator_T& ioSharedGenerator);
