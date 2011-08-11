@@ -490,21 +490,21 @@ namespace RMOL {
       */
       
       // 4. IBP using displacement-adjusted yield
-      
+      /*
       forecastOnD (iRMEventTime);
       resetDemandInformation (iRMEventTime);
       projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
       optimiseUsingCooperatedIBP (iRMEventTime);
       communicateBidPrice (iRMEventTime);
-      
+      */
 
       // 5. Advanced version of IBP using displacement-adjusted yield (network optimisation)
-      /*
+      
       forecastOnD (iRMEventTime);
       resetDemandInformation (iRMEventTime);
       projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
       optimiseUsingAdvancedCooperatedIBP (iRMEventTime);
-      */
+      
     }    
     return false;
     
