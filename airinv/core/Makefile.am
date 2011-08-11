@@ -1,29 +1,26 @@
-## test/airrac sub-directory
+# airinv/core
 include $(top_srcdir)/Makefile.common
 include $(srcdir)/sources.mk
 
-##
+## Source directory
+
+MAINTAINERCLEANFILES = Makefile.in
+
 SUBDIRS =
 
-EXTRA_DIST =
 
-##
-nofail_PRG = YieldTestSuite
-fail_PRG =
+# Library
+lib_LTLIBRARIES = libairinv.la
 
-#
-MAINTAINERCLEANFILES = Makefile.in
-CLEANFILES = ${nofail_PRG:%=%_utfresults.xml} ${nofail_PRG:%=%.log}
-
-#
-check_PROGRAMS = $(nofail_PRG) $(fail_PRG)
-TESTS = $(check_PROGRAMS)
-XFAIL_TESTS = $(fail_PRG)
-
-#
-YieldTestSuite_SOURCES = $(airrac_test_bin_cc_sources)
-YieldTestSuite_CXXFLAGS = $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
-YieldTestSuite_LDADD =
-YieldTestSuite_LDFLAGS = \
-		$(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(STDAIR_LIBS) \
-		$(top_builddir)/airrac/core/libairrac.la
+libairinv_la_SOURCES = $(airinv_service_h_sources) $(airinv_service_cc_sources)
+libairinv_la_LIBADD = \
+	$(top_builddir)/airinv/basic/libairinvbas.la \
+	$(top_builddir)/airinv/bom/libairinvbom.la \
+	$(top_builddir)/airinv/factory/libairinvfac.la \
+	$(top_builddir)/airinv/command/libairinvcmd.la \
+	$(top_builddir)/airinv/service/libairinvsvc.la
+libairinv_la_LDFLAGS = \
+	$(BOOST_DATE_TIME_LIB) $(BOOST_PROGRAM_OPTIONS_LIB) $(STDAIR_LIBS) \
+	$(top_builddir)/rmol/core/librmol.la \
+	$(top_builddir)/airrac/core/libairrac.la \
+	-version-info $(GENERIC_LIBRARY_VERSION)

@@ -1,6 +1,6 @@
-airrac_test_lib_h_sources =
-airrac_test_lib_cc_sources =
-
-airrac_test_bin_h_sources =
-airrac_test_bin_cc_sources = \
-	$(top_srcdir)/test/airrac/YieldTestSuite.cpp
+airinv_service_h_sources = \
+	$(top_srcdir)/airinv/AIRINV_Types.hpp \
+	$(top_srcdir)/airinv/AIRINV_Master_Service.hpp \
+	$(top_srcdir)/airinv/AIRINV_Service.hpp \
+	$(top_srcdir)/airinv/FlightRequestStatus.hpp
+airinv_service_cc_sources =

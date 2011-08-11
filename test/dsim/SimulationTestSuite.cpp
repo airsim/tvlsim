@@ -20,6 +20,7 @@
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate (stdair::DateGenerationMethod::STA_ORD,
+  BOOST_CHECK_NO_THROW (dsimService.simulate (stdair::DemandGenerationMethod::STA_ORD,
                                               stdair::ForecastingMethod::ADD_PK));
 
   // Close the log file
