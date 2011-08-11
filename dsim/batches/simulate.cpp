@@ -6,8 +6,6 @@
 #include <vector>
 #include <string>
 // Boost (Extended STL)
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/program_options.hpp>
 // StdAir
@@ -22,6 +20,10 @@
 #include <dsim/config/dsim-paths.hpp>
 
 // //////// Type definitions ///////
+/** Number of runs to be performed by the simulation. */
+typedef unsigned int NbOfRuns_T;
+
+/** List of workds for a query. */
 typedef std::vector<std::string> WordList_T;
 
 
@@ -49,11 +51,20 @@ const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                         "/rds01/demand.csv");
 
-/** Default forecasting method name: 'M' for MultiplicativePickUp. */
+/**
+ * Default forecasting method name: 'M' for MultiplicativePickUp.
+ */
 const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
 
-/** Default date-time request generation method name: 'S' for Statistics Order. */
+/**
+ * Default demand generation method name: 'S' for Statistics Order.
+ */
 const char K_DSIM_DEMAND_GENERATION_METHOD_CHAR ('S');
+
+/**
+ * Default number of random draws to be generated (best if over 100).
+ */
+const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
 
 /**
  * Default for the BOM tree building. The BOM tree can either be built-in
@@ -126,7 +137,8 @@ const int K_DSIM_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[], 
-                       bool& ioIsBuiltin, std::string& ioQueryString,
+                       bool& ioIsBuiltin, NbOfRuns_T& ioRandomRuns,
+                       std::string& ioQueryString,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioYieldInputFilename,
@@ -141,7 +153,7 @@ int readConfiguration (int argc, char* argv[],
 
   // Forecast method as a single char (e.g., 'A' or 'M').
   char lForecastingMethodChar;
-  // Date-time request generation method as a single char (e.g., 'P' or 'S').
+  // Demand generation method as a single char (e.g., 'P' or 'S').
   char lDemandGenerationMethodChar;
 
   // Default for the built-in input
@@ -169,6 +181,9 @@ int readConfiguration (int argc, char* argv[],
   config.add_options()
     ("builtin,b",
      "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the input files must be specified as well (e.g., -d/--demand, -s/--schedule,  -o/--ond, -f/--fare, -y/--yield)")
+    ("runs,r",
+     boost::program_options::value<NbOfRuns_T>(&ioRandomRuns)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_DRAWS),
+     "Number of simulation runs")
     ("schedule,s",
      boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME),
      "(CVS) input file for the schedules")
@@ -190,9 +205,9 @@ int readConfiguration (int argc, char* argv[],
     ("forecast,F",
      boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
      "Method used to forecast demand: AdditivePickUp (e.g., A) or MultiplicativePickUp (e.g., M)")
-    ("dategeneration,G",
+    ("demandgeneration,G",
      boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_DSIM_DEMAND_GENERATION_METHOD_CHAR),
-     "Method used to generate the date-time of the booking requests: Poisson Process (e.g., P) or Statistics Order (e.g., S)")
+     "Method used to generate the demand (i.e., booking requests): Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -334,10 +349,16 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
   }
 
-  if (vm.count ("dategeneration")) {
-    ioDemandGenerationMethod = stdair::DemandGenerationMethod (lDemandGenerationMethodChar);
-    std::cout << "Date-time request generation method is: " << ioDemandGenerationMethod.describe() << std::endl;
+  if (vm.count ("demandgeneration")) {
+    ioDemandGenerationMethod =
+      stdair::DemandGenerationMethod (lDemandGenerationMethodChar);
+    std::cout << "Demand generation method is: "
+              << ioDemandGenerationMethod.describe() << std::endl;
   }
+
+  //
+  std::cout << "The number of simulation runs is: " << ioRandomRuns
+            << std::endl;
 
   if (vm.count ("user")) {
     ioDBUser = vm["user"].as< std::string >();
@@ -377,6 +398,9 @@ int main (int argc, char* argv[]) {
   // input file
   bool isBuiltin;
 
+  // Number of simulation runs to be performed
+  NbOfRuns_T lNbOfRuns;
+
   // Query
   std::string lQuery;
 
@@ -407,7 +431,7 @@ int main (int argc, char* argv[]) {
   // Forecasting method.
   stdair::ForecastingMethod lForecastingMethod(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
 
-  // Date generation method.
+  // Demand generation method.
   stdair::DemandGenerationMethod lDemandGenerationMethod(K_DSIM_DEMAND_GENERATION_METHOD_CHAR);
 
   // SQL database parameters
@@ -419,10 +443,11 @@ int main (int argc, char* argv[]) {
                        
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, isBuiltin, lQuery, lScheduleInputFilename,
-                       lOnDInputFilename, lYieldInputFilename,
-                       lFareInputFilename, lDemandInputFilename,
-                       lLogFilename, lForecastingMethod, lDemandGenerationMethod, 
+    readConfiguration (argc, argv, isBuiltin, lNbOfRuns, lQuery,
+                       lScheduleInputFilename, lOnDInputFilename,
+                       lYieldInputFilename, lFareInputFilename,
+                       lDemandInputFilename, lLogFilename,
+                       lForecastingMethod, lDemandGenerationMethod, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -460,8 +485,7 @@ int main (int argc, char* argv[]) {
   dsimService.initSnapshotAndRMEvents();
 
   // Perform a simulation
-  dsimService.simulate (lDemandGenerationMethod,
-                        lForecastingMethod);
+  dsimService.simulate (lNbOfRuns, lDemandGenerationMethod, lForecastingMethod);
 
   // DEBUG
   // Display the airlines stored in the database

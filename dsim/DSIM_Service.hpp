@@ -125,13 +125,17 @@ namespace DSIM {
     /**
      * Perform a simulation.
      *
-     * @param stdair::DemandGenerationMethod&
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
+     * @param const stdair::DemandGenerationMethod&
      *        States whether the demand generation must be performed
      *        following the method based on statistic orders.
      *        The alternative method, while more "intuitive", is also a
      *        sequential algorithm.
+     * @param const stdair::ForecastingMethod&
+     *        States which forecasting method should be used by the
+     *        revenue management (RMOL component).
      */
-    void simulate (const stdair::DemandGenerationMethod&,
+    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&,
                    const stdair::ForecastingMethod&);
     
     /**

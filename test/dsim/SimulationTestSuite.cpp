@@ -62,6 +62,14 @@ BOOST_AUTO_TEST_SUITE (master_test_suite)
  */
 BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
+  // Number of simulation runs to be performed
+  const DSIM::NbOfRuns_T lNbOfRuns = 1;
+
+  const stdair::DemandGenerationMethod lOrderStatDemandGenMethod =
+    stdair::DemandGenerationMethod::STA_ORD;
+  const stdair::ForecastingMethod lAdditiveForecastMethod =
+    stdair::ForecastingMethod::ADD_PK;
+
   // Start date
   stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
   
@@ -149,8 +157,9 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate (stdair::DemandGenerationMethod::STA_ORD,
-                                              stdair::ForecastingMethod::ADD_PK));
+  BOOST_CHECK_NO_THROW (dsimService.simulate (lNbOfRuns,
+                                              lOrderStatDemandGenMethod,
+                                              lAdditiveForecastMethod));
 
   // Close the log file
   logOutputFile.close();

@@ -489,7 +489,8 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  simulate (const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+  simulate (const NbOfRuns_T& iNbOfRuns,
+            const stdair::DemandGenerationMethod& iDemandGenerationMethod,
             const stdair::ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the DSim service context
@@ -516,17 +517,26 @@ namespace DSIM {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the booking to the dedicated command
-    stdair::BasChronometer lSimulationChronometer;
-    lSimulationChronometer.start();
-    Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
-                         lTRAVELCCM_Service, lSTDAIR_Service,
-                         iDemandGenerationMethod, iForecastingMethod);
-    const double lSimulationMeasure = lSimulationChronometer.elapsed();
+    for (NbOfRuns_T idx = 0; idx != iNbOfRuns; ++idx) {
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Simulation[" << idx << "] begins - "
+                        << lDSIM_ServiceContext.display());
 
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Simulation: " << lSimulationMeasure << " - "
-                      << lDSIM_ServiceContext.display());
+      // Delegate the booking to the dedicated command
+      stdair::BasChronometer lSimulationChronometer;
+      lSimulationChronometer.start();
+      Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
+                           lTRAVELCCM_Service, lSTDAIR_Service,
+                           iDemandGenerationMethod, iForecastingMethod);
+      const double lSimulationMeasure = lSimulationChronometer.elapsed();
+
+      // Reset the service (including the event queue) for the next run
+      lTRADEMGEN_Service.reset();
+
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure
+                        << " - " << lDSIM_ServiceContext.display());
+    }
   }
 
   // //////////////////////////////////////////////////////////////////////

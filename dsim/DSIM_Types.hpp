@@ -31,6 +31,9 @@ namespace DSIM {
    * Simulator ID (identifier of the simulator; not actually used for now).
    */
   typedef std::string SimulatorID_T;
+
+  /** Number of simulation runs. */
+  typedef unsigned int NbOfRuns_T;
   
   /**
    * (Smart) Pointer on the SimCRS service handler.
