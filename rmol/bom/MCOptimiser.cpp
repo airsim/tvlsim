@@ -297,8 +297,8 @@ namespace RMOL {
       assert (yj > yj1);
       // Sort the partial sum holder.
       std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
-      STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
-                        << " min = " << lPartialSumHolder.front());
+      // STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+      //                   << " min = " << lPartialSumHolder.front());
       K = lPartialSumHolder.size ();
       // Compute the optimal index lj = floor {[y(j)-y(j+1)]/y(j) . K}
       const double ljdouble = std::floor (K * (yj - yj1) / yj);
@@ -342,8 +342,8 @@ namespace RMOL {
     /** But if this value is too low it will be replaced by a fixed minimal value.
         This is a form of protection between partners.
      */
-    STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
-                      << " min = " << lPartialSumHolder.front());
+    // STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
+    //                   << " min = " << lPartialSumHolder.front());
     std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
     const stdair::Yield_T& yn = itCurrentYD->first;
     stdair::GeneratedDemandVector_T::iterator itLowerBound =
@@ -362,9 +362,20 @@ namespace RMOL {
       } else {
         lBidPriceVector.push_back (lMinBP);
       }
-    }
+    }    
+    // Updating the bid price values
     ioLegCabin.updatePreviousBidPrice();
     ioLegCabin.setCurrentBidPrice (lBidPriceVector.back());
+
+    // Compute and display the bid price variation after optimisation
+    const stdair::BidPrice_T lPreviousBP = ioLegCabin.getPreviousBidPrice();
+    const stdair::BidPrice_T lNewBP = ioLegCabin.getCurrentBidPrice();
+    // Check
+    assert (lPreviousBP != 0);
+    double lBidPriceVariation = 100*(lNewBP - lPreviousBP)/lPreviousBP;
+    STDAIR_LOG_DEBUG ("Bid price: previous value " << lPreviousBP
+                      << ", new value " << lNewBP
+                      << ", variation " << lBidPriceVariation << " %");
   }
   
 }

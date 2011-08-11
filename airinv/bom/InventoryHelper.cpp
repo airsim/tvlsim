@@ -123,29 +123,28 @@ namespace AIRINV {
       stdair::SegmentCabin* lSegmentCabin_ptr = *itCabin;
       assert (lSegmentCabin_ptr != NULL);
 
-      stdair::BidPriceVector_T lBPV = lSegmentCabin_ptr->getBidPriceVector();
-
-      // TODO: Enable when O&D forecast and optimisation process is ready
-      if (false) {
-        stdair::BidPriceVector_T lBPV;
-        stdair::LegCabinList_T lLegCabinList =
-          stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
-        assert (!lLegCabinList.empty());
-        if (lLegCabinList.size() > 1) {
-          stdair::BidPrice_T lBidPriceValue = 0;
-          for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
-               itLC != lLegCabinList.end(); ++itLC) {
-            const stdair::LegCabin* lLegCabin_ptr = *itLC;
-            const stdair::BidPriceVector_T& lLegCabinBPV = lLegCabin_ptr->getBidPriceVector();
-            assert(!lLegCabinBPV.empty());
-            lBidPriceValue += lLegCabinBPV.back();
-          }
-          lBPV.push_back(lBidPriceValue);
-        } else {
-          const stdair::LegCabin* lLegCabin_ptr = lLegCabinList.front();
-          lBPV = lLegCabin_ptr->getBidPriceVector();
+      stdair::BidPriceVector_T lBPV;
+      
+      
+      //stdair::BidPriceVector_T lBPV;
+      stdair::LegCabinList_T lLegCabinList =
+        stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
+      assert (!lLegCabinList.empty());
+      if (lLegCabinList.size() > 1) {
+        stdair::BidPrice_T lBidPriceValue = 0;
+        for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+             itLC != lLegCabinList.end(); ++itLC) {
+          const stdair::LegCabin* lLegCabin_ptr = *itLC;
+          const stdair::BidPriceVector_T& lLegCabinBPV = lLegCabin_ptr->getBidPriceVector();
+          assert(!lLegCabinBPV.empty());
+          lBidPriceValue += lLegCabinBPV.back();
         }
+        lBPV.push_back(lBidPriceValue);
+      } else {
+        const stdair::LegCabin* lLegCabin_ptr = lLegCabinList.front();
+        lBPV = lLegCabin_ptr->getBidPriceVector();
       }
+      
       
 
 

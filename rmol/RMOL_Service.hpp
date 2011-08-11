@@ -219,6 +219,17 @@ namespace RMOL {
                       const stdair::ClassCodeList_T&, const stdair::NbOfRequests_T&, const stdair::StdDevValue_T&,
                       const stdair::Yield_T&, stdair::AirportCodeList_T&, stdair::BomRoot&);
 
+    // O&D based forecast
+
+    void forecastOnD (const stdair::DateTime_T&);
+    
+    void forecastOnD (const stdair::DTD_T&, const stdair::YieldFeatures&,
+                      const TRADEMGEN::DemandStream&, stdair::BomRoot&);
+
+    void setOnDForecast (const stdair::AirlineClassList&, const stdair::NbOfRequests_T&,
+                         const stdair::StdDevValue_T&, const TRADEMGEN::DemandStream&,
+                         stdair::BomRoot&);
+
     // Single segment O&D
     void setOnDForecast (const stdair::AirlineCode_T&, const stdair::Date_T&, const stdair::AirportCode_T&,
                          const stdair::AirportCode_T&, const stdair::CabinCode_T&, const stdair::ClassCode_T&,
@@ -233,21 +244,32 @@ namespace RMOL {
     // Initialise (or re-initialise) the demand projections in all leg cabins
     void resetDemandInformation (const stdair::DateTime_T&);
 
-    // Projection of demand
-    void projectOnDDemandOntoLegCabins(const stdair::DateTime_T&);
+    /* Projection of demand */
 
-    void projectOnDDemandOntoLegCabinsUsingDA(const stdair::DateTime_T&);
+    // Static rule prorated yield
+    void projectOnDDemandOnLegCabins(const stdair::DateTime_T&);
+
+    // Displacement-adjusted yield
+    void projectOnDDemandOnLegCabinsUsingDA(const stdair::DateTime_T&);
 
     /** Optimiser */
+
+    // IBP using demand aggregation (Note: works with forecast(const stdair::DateTime_T&)).
     void optimiseBPWithDemandAggregation (const stdair::DateTime_T&);
 
+    // IBP using yield proration (Note: works with forecast(const stdair::DateTime_T&)).
     void optimiseBPWithYieldProration (const stdair::DateTime_T&);
 
+    // IBP using yield proration (Note: works with forecastOnD(const stdair::DateTime_T&))
     void optimiseUsingOnDForecast (const stdair::DateTime_T&);
 
-    void optimiseUsingDynamicIBP (const stdair::DateTime_T&);
+    // IBP using displacement-adjusted yield (Note: works with forecastOnD(const stdair::DateTime_T&))
+    void optimiseUsingCooperatedIBP (const stdair::DateTime_T&);
 
-    void optimiseUsingNetworkCohosting (const stdair::DateTime_T&);
+    // Advanced version of IBP using displacement-adjusted yield.
+    // Network optimisation instead of separate inventory optimisation.
+    // Note: works with forecastOnD(const stdair::DateTime_T&)
+    void optimiseUsingAdvancedCooperatedIBP (const stdair::DateTime_T&);
 
     // Communicate bid price to partners
     void communicateBidPrice (const stdair::DateTime_T&);
