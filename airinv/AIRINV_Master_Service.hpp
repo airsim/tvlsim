@@ -125,17 +125,11 @@ namespace AIRINV {
     /**
      * Build a sample BOM tree, and attach it to the BomRoot instance.
      *
-     * As for now, two sample BOM trees can be built.
-     * <ul>
-     *   <li>One BOM tree is based on two actual inventories (one for BA,
-     *     another for AF). Each inventory contains one flight. One of
-     *     those flights has two legs (and therefore three segments).</li>
-     *   <li>The other BOM tree is fake, as a hook for RMOL to work.</li>
-     * </ul>
-     *
-     * @param const CabinCapacity_T Capacity of the cabin for RMOL optimisation.
+     * The BOM tree is based on two actual inventories (one for BA,
+     * another for AF). Each inventory contains one flight. One of
+     * those flights has two legs (and therefore three segments).
      */
-    void buildSampleBom (const stdair::CabinCapacity_T iCabinCapacity = 0);
+    void buildSampleBom();
 
     /**
      * Compute the availability for the given travel solution.

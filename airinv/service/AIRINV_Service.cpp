@@ -286,7 +286,7 @@ namespace AIRINV {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Service::buildSampleBom(const stdair::CabinCapacity_T iCapacity) {
+  void AIRINV_Service::buildSampleBom() {
 
     // Retrieve the AirInv service context
     if (_airinvServiceContext == NULL) {
@@ -329,9 +329,12 @@ namespace AIRINV {
     lAIRRAC_Service.buildSampleBom();
 
     /**
-     * Let the revenue management (i.e., the RMOL component) build a leg-cabin.
+     * Let the revenue management (i.e., the RMOL component) complement the BOM.
+     *
+     * \note As of now, RMOL does not add anything to the sample BOM.
      */
-    lSTDAIR_Service.buildDummyInventory (iCapacity);
+    RMOL::RMOL_Service& lRMOL_Service= lAIRINV_ServiceContext.getRMOL_Service();
+    lRMOL_Service.buildSampleBom();
 
     /**
      * 3. Build the complementary objects/links for the current component (here,

@@ -246,8 +246,7 @@ namespace AIRINV {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Master_Service::
-  buildSampleBom (const stdair::CabinCapacity_T iCapacity) {
+  void AIRINV_Master_Service::buildSampleBom() {
 
     // Retrieve the AIRINV service context
     if (_airinvMasterServiceContext == NULL) {
