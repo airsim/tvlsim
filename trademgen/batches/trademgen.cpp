@@ -21,7 +21,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
-#include <stdair/basic/DateGenerationMethod.hpp>
+#include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
@@ -56,8 +56,11 @@ const stdair::Filename_T K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /** Default name and location for the (CSV) output file. */
 const stdair::Filename_T K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME ("request.csv");
 
+/** Default date-time request generation method: Poisson Process. */
+const stdair::DemandGenerationMethod K_TRADEMGEN_DEFAULT_DATE_GENERATION_METHOD (stdair::DemandGenerationMethod::POI_PRO);
+
 /** Default date-time request generation method name: 'P' for Poisson Process. */
-const char K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR ('P');
+const char K_TRADEMGEN_DEFAULT_DEMAND_GENERATION_METHOD_CHAR ('P');
 
 /** Default number of random draws to be generated (best if over 100). */
 const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
@@ -105,10 +108,10 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
                        stdair::Filename_T& ioInputFilename,
                        stdair::Filename_T& ioOutputFilename,
                        stdair::Filename_T& ioLogFilename,
-                       stdair::DateGenerationMethod& ioDateGenerationMethod) {
+                       stdair::DemandGenerationMethod& ioDemandGenerationMethod) {
 
   // Date-time request generation method as a single char (e.g., 'P' or 'S').
-  char lDateGenerationMethodChar;
+  char lDemandGenerationMethodChar;
 
   // Default for the built-in input
   ioIsBuiltin = K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT;
@@ -139,7 +142,7 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_TRADEMGEN_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
     ("dategeneration,G",
-     boost::program_options::value< char >(&lDateGenerationMethodChar)->default_value(K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR),
+     boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_TRADEMGEN_DEFAULT_DEMAND_GENERATION_METHOD_CHAR),
      "Method used to generate the date-time of the booking requests: Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ;
 
@@ -220,8 +223,8 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
   }
 
   if (vm.count ("dategeneration")) {
-    ioDateGenerationMethod = stdair::DateGenerationMethod (lDateGenerationMethodChar);
-    std::cout << "Date-time request generation method is: " << ioDateGenerationMethod.describe() << std::endl;
+    ioDemandGenerationMethod = stdair::DemandGenerationMethod (lDemandGenerationMethodChar);
+    std::cout << "Date-time request generation method is: " << ioDemandGenerationMethod.describe() << std::endl;
   }
 
   //
@@ -233,7 +236,8 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
 // /////////////////////////////////////////////////////////////////////////
 void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
                      const stdair::Filename_T& iOutputFilename,
-                     const NbOfRuns_T& iNbOfRuns) {
+                     const NbOfRuns_T& iNbOfRuns,
+                     stdair::DemandGenerationMethod& iDemandGenerationMethod) {
 
   // Open and clean the .csv output file
   std::ofstream output;
@@ -251,12 +255,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
   // Initialise the (Boost) progress display object
   boost::progress_display lProgressDisplay (lExpectedNbOfEventsToBeGenerated
                                             * iNbOfRuns);
-
-  // Choose the algorithm to generate booking requests dates.
-  stdair::DateGenerationMethod lDateGenerationMethod ('P');
-  stdair::DateGenerationMethod::EN_DateGenerationMethod lENDateGenerationMethod =
-    lDateGenerationMethod.getMethod();
-
+  
   for (NbOfRuns_T runIdx = 1; runIdx <= iNbOfRuns; ++runIdx) {
     // /////////////////////////////////////////////////////
     output << "Run number: " << runIdx << std::endl;
@@ -266,7 +265,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
        <br>Generate the first event for each demand stream.
     */
     const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTrademgenService.generateFirstRequests(lENDateGenerationMethod);
+      ioTrademgenService.generateFirstRequests(iDemandGenerationMethod);
 
     // DEBUG
     STDAIR_LOG_DEBUG ("[" << runIdx << "] Expected: "
@@ -310,7 +309,8 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
       const bool stillHavingRequestsToBeGenerated = ioTrademgenService.
         stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                           lProgressStatusSet,
-                                          lENDateGenerationMethod);
+                                          iDemandGenerationMethod);
+
 
       // DEBUG
       STDAIR_LOG_DEBUG (lProgressStatusSet.describe());
@@ -324,7 +324,7 @@ void generateDemand (TRADEMGEN::TRADEMGEN_Service& ioTrademgenService,
         
         stdair::BookingRequestPtr_T lNextRequest_ptr =
           ioTrademgenService.generateNextRequest (lDemandStreamKey,
-                                                  lENDateGenerationMethod);
+                                                  iDemandGenerationMethod);
         
         assert (lNextRequest_ptr != NULL);
 
@@ -397,12 +397,12 @@ int main (int argc, char* argv[]) {
   stdair::Filename_T lLogFilename;
   
   // Date-Generation method.
-  stdair::DateGenerationMethod lDateGenerationMethod(K_TRADEMGEN_DATE_GENERATION_METHOD_CHAR);
+  stdair::DemandGenerationMethod lDemandGenerationMethod (K_TRADEMGEN_DEFAULT_DEMAND_GENERATION_METHOD_CHAR);
 
   // Call the command-line option parser
   const int lOptionParserStatus = 
     readConfiguration (argc, argv, isBuiltin, lNbOfRuns, lInputFilename,
-                       lOutputFilename, lLogFilename, lDateGenerationMethod);
+                       lOutputFilename, lLogFilename, lDemandGenerationMethod);
 
   if (lOptionParserStatus == K_TRADEMGEN_EARLY_RETURN_STATUS) {
     return 0;
@@ -431,7 +431,7 @@ int main (int argc, char* argv[]) {
   }  
 
   // Calculate the expected number of events to be generated.
-  generateDemand (trademgenService, lOutputFilename, lNbOfRuns);
+  generateDemand (trademgenService, lOutputFilename, lNbOfRuns, lDemandGenerationMethod);
 
   // Close the Log outputFile
   logOutputFile.close();

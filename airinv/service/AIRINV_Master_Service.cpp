@@ -247,8 +247,7 @@ namespace AIRINV {
   
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
-  buildSampleBom (const bool isForRMOL,
-                  const stdair::CabinCapacity_T iCapacity) {
+  buildSampleBom (const stdair::CabinCapacity_T iCapacity) {
 
     // Retrieve the AIRINV service context
     if (_airinvMasterServiceContext == NULL) {
@@ -509,7 +508,7 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
   optimise (const stdair::RMEventStruct& iRMEvent,
-            const stdair::ForecastingMethod::EN_ForecastingMethod& iForecastingMethod) {
+            const stdair::ForecastingMethod& iForecastingMethod) {
 
     // Retrieve the AIRINV service context
     if (_airinvMasterServiceContext == NULL) {

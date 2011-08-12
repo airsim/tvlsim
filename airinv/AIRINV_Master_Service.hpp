@@ -133,11 +133,9 @@ namespace AIRINV {
      *   <li>The other BOM tree is fake, as a hook for RMOL to work.</li>
      * </ul>
      *
-     * @param const bool isForRMOL Whether the sample BOM tree is for RMOL.
      * @param const CabinCapacity_T Capacity of the cabin for RMOL optimisation.
      */
-    void buildSampleBom (const bool isForRMOL = false,
-                         const stdair::CabinCapacity_T iCabinCapacity = 0);
+    void buildSampleBom (const stdair::CabinCapacity_T iCabinCapacity = 0);
 
     /**
      * Compute the availability for the given travel solution.
@@ -164,7 +162,7 @@ namespace AIRINV {
      * Optimise (revenue management) an flight-date/network-date
      */
     void optimise (const stdair::RMEventStruct&,
-                   const stdair::ForecastingMethod::EN_ForecastingMethod&);    
+                   const stdair::ForecastingMethod&);    
 
 
   public:

@@ -162,11 +162,11 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   const bool DemandStream::
-  stillHavingRequestsToBeGenerated (const stdair::DateGenerationMethod& iDateGenerationMethod) const {
+  stillHavingRequestsToBeGenerated (const stdair::DemandGenerationMethod& iDemandGenerationMethod) const {
     
-    const stdair::DateGenerationMethod::EN_DateGenerationMethod& lENDateGenerationMethod =
-      iDateGenerationMethod.getMethod();
-    if (lENDateGenerationMethod == stdair::DateGenerationMethod::STA_ORD) {
+    const stdair::DemandGenerationMethod::EN_DemandGenerationMethod& lENDemandGenerationMethod =
+      iDemandGenerationMethod.getMethod();
+    if (lENDemandGenerationMethod == stdair::DemandGenerationMethod::STA_ORD) {
       bool hasStillHavingRequestsToBeGenerated = true;
       
       // Check whether enough requests have already been generated
@@ -509,7 +509,7 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   stdair::BookingRequestPtr_T DemandStream::
   generateNextRequest (stdair::RandomGeneration& ioGenerator,
-                       const stdair::DateGenerationMethod& iDateGenerationMethod) {
+                       const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
 
     // Origin
     const stdair::AirportCode_T& lOrigin = _key.getOrigin();
@@ -527,12 +527,12 @@ namespace TRADEMGEN {
     
     // Compute the request date time with the correct algorithm.
     stdair::DateTime_T lDateTimeThisRequest;
-    const stdair::DateGenerationMethod::EN_DateGenerationMethod& lENDateGenerationMethod =
-      iDateGenerationMethod.getMethod();
-    switch(lENDateGenerationMethod) {
-    case stdair::DateGenerationMethod::POI_PRO:
+    const stdair::DemandGenerationMethod::EN_DemandGenerationMethod& lENDemandGenerationMethod =
+      iDemandGenerationMethod.getMethod();
+    switch(lENDemandGenerationMethod) {
+    case stdair::DemandGenerationMethod::POI_PRO:
       lDateTimeThisRequest = generateTimeOfRequestPoissonProcess(); break;
-    case stdair::DateGenerationMethod::STA_ORD:
+    case stdair::DemandGenerationMethod::STA_ORD:
       lDateTimeThisRequest = generateTimeOfRequestStatisticsOrder(); break;
     default: assert (false); break;
     }
