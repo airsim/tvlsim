@@ -391,95 +391,102 @@ namespace RMOL {
   // ////////////////////////////////////////////////////////////////////
   bool RMOL_Service::optimise (stdair::FlightDate& ioFlightDate,
                                const stdair::DateTime_T& iRMEventTime,
-                               const stdair::ForecastingMethod& iForecastingMethod) {
+                               const stdair::ForecastingMethod& iForecastingMethod,
+                               const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
     
     STDAIR_LOG_DEBUG ("Forecast & Optimisation");
 
-    // TODO: make the choice of optimisation method systematic.
-
-    if (_previousForecastDate < iRMEventTime.date()) {
-
-      /***************************** Fake-O&D RM ***************************/
-      // 1. IBP using demand aggregation
-      /*
-      forecast (iRMEventTime); 
-      optimiseBPWithDemandAggregation (iRMEventTime);
-      */
-
-      // 2. IBP using yield proration
-      /*
-      forecast (iRMEventTime); 
-      optimiseBPWithYieldProration (iRMEventTime);
-      */
-
-      /***************************** O&D RM ***************************/
-      
-      // 3. IBP using yield proration
-      /*
-      forecastOnD (iRMEventTime);
-      resetDemandInformation (iRMEventTime);
-      projectOnDDemandOnLegCabins (iRMEventTime);
-      optimiseUsingOnDForecast (iRMEventTime);
-      communicateBidPrice (iRMEventTime);
-      */
-      
-      // 4. IBP using displacement-adjusted yield
-      /*
-      forecastOnD (iRMEventTime);
-      resetDemandInformation (iRMEventTime);
-      projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
-      optimiseUsingCooperatedIBP (iRMEventTime);
-      communicateBidPrice (iRMEventTime);
-      */
-
-      // 5. Advanced version of IBP using displacement-adjusted yield (network optimisation)
-      
-      forecastOnD (iRMEventTime);
-      resetDemandInformation (iRMEventTime);
-      projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
-      optimiseUsingAdvancedCooperatedIBP (iRMEventTime);
-      
-    }    
-    return false;
-
-    // // DEBUG
-    // STDAIR_LOG_DEBUG ("Forecast");
-
-    // // 1. Forecast
-    // bool isForecasted = false;
-    // const stdair::ForecastingMethod::EN_ForecastingMethod& lForecastingMethod =
-    //   iForecastingMethod.getMethod();
-    // switch (lForecastingMethod) {
-    // case stdair::ForecastingMethod::ADD_PK: {
-    //   isForecasted = Forecaster::forecastUsingAdditivePickUp (ioFlightDate,
-    //                                                           iRMEventTime);
-    //   break;
-    // }
-    // case stdair::ForecastingMethod::MUL_PK: {
-    //   isForecasted =
-    //     Forecaster::forecastUsingMultiplicativePickUp (ioFlightDate,
-    //                                                    iRMEventTime);
-    //   break;
-    // }
-    // default: {
-    //   assert (false);
-    //   break;
-    // }
-    // }
-                                 
-    // // DEBUG
-    // STDAIR_LOG_DEBUG ("Forecast successful: " << isForecasted);
-
-    // // 2. Optimisation
-    // if (isForecasted == true) {
-    //   // DEBUG
-    //   STDAIR_LOG_DEBUG ("Optimise");
-
-    //   Optimiser::optimise (ioFlightDate);
-    //   return true;
-    // }
+    const stdair::PartnershipTechnique::EN_PartnershipTechnique& lPartnershipTechnique =
+      iPartnershipTechnique.getTechnique();
     
+    switch (lPartnershipTechnique) {
+    case stdair::PartnershipTechnique::RAE_DA:
+    case stdair::PartnershipTechnique::IBP_DA:{
+      if (_previousForecastDate < iRMEventTime.date()) {
+        forecastOnD (iRMEventTime);
+        resetDemandInformation (iRMEventTime);
+        projectAggregatedDemandOnLegCabins (iRMEventTime);
+        optimiseOnD (iRMEventTime);
+        communicateBidPrice (iRMEventTime);
+      }
+      break;
+    }
+    case stdair::PartnershipTechnique::RAE_YP:
+    case stdair::PartnershipTechnique::IBP_YP:{
+      if (_previousForecastDate < iRMEventTime.date()) {
+        forecastOnD (iRMEventTime);
+        resetDemandInformation (iRMEventTime);
+        projectOnDDemandOnLegCabinsUsingYP (iRMEventTime);
+        optimiseOnD (iRMEventTime);
+        communicateBidPrice (iRMEventTime);
+      }
+      break;
+    }
+    case stdair::PartnershipTechnique::RMC:{
+      if (_previousForecastDate < iRMEventTime.date()) {
+        forecastOnD (iRMEventTime);
+        resetDemandInformation (iRMEventTime);
+        projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
+        optimiseOnDUsingRMCooperation (iRMEventTime);
+        communicateBidPrice (iRMEventTime);
+      }
+      break;
+    }
+    case stdair::PartnershipTechnique::A_RMC:{
+      if (_previousForecastDate < iRMEventTime.date()) {
+        forecastOnD (iRMEventTime);
+        resetDemandInformation (iRMEventTime);
+        projectOnDDemandOnLegCabinsUsingDA (iRMEventTime);
+        optimiseOnDUsingAdvancedRMCooperation (iRMEventTime);
+      }
+      break;
+    }      
+    case stdair::PartnershipTechnique::NONE:{
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Forecast");
+      
+      // 1. Forecast
+      bool isForecasted = false;
+      const stdair::ForecastingMethod::EN_ForecastingMethod& lForecastingMethod =
+        iForecastingMethod.getMethod();
+      switch (lForecastingMethod) {
+      case stdair::ForecastingMethod::ADD_PK: {
+        isForecasted = Forecaster::forecastUsingAdditivePickUp (ioFlightDate,
+                                                                iRMEventTime);
+        break;
+      }
+      case stdair::ForecastingMethod::MUL_PK: {
+        isForecasted =
+          Forecaster::forecastUsingMultiplicativePickUp (ioFlightDate,
+                                                         iRMEventTime);
+        break;
+      }
+      default: {
+        assert (false);
+        break;
+      }
+      }
+      
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Forecast successful: " << isForecasted);
+      
+      // 2. Optimisation
+      if (isForecasted == true) {
+        // DEBUG
+        STDAIR_LOG_DEBUG ("Optimise");
+        
+        Optimiser::optimise (ioFlightDate);
+        return true;
+      }
+      break;
+    }
+    default:{
+      assert (false);
+      break;
+    }
+    }
+    return false;  
 
   }
 
@@ -957,7 +964,7 @@ namespace RMOL {
 
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
-  optimiseBPWithDemandAggregation (const stdair::DateTime_T& iRMEventTime) {
+  optimiseUsingDemandAggregation (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
@@ -998,7 +1005,7 @@ namespace RMOL {
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
           STDAIR_LOG_DEBUG ("Optimisation with demand aggregation: " << lCurrentInv_ptr->getAirlineCode()
                             << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
-          Optimiser::optimiseBPWithDemandAggregation (*lCurrentFlightDate_ptr);
+          Optimiser::optimiseUsingDemandAggregation (*lCurrentFlightDate_ptr);
         }
       }
     }
@@ -1006,7 +1013,7 @@ namespace RMOL {
 
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
-  optimiseBPWithYieldProration (const stdair::DateTime_T& iRMEventTime) {
+  optimiseUsingYieldProration (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
@@ -1047,7 +1054,7 @@ namespace RMOL {
         if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
           STDAIR_LOG_DEBUG ("Optimisation with yield proration: " << lCurrentInv_ptr->getAirlineCode()
                             << " Departure " << lCurrentDepartureDate << " DTD " << lDTD);
-          Optimiser::optimiseBPWithYieldProration (*lCurrentFlightDate_ptr);
+          Optimiser::optimiseUsingYieldProration (*lCurrentFlightDate_ptr);
         }
       }
     }
@@ -1502,7 +1509,107 @@ namespace RMOL {
   }
 
   // ///////////////////////////////////////////////////////////////////
-  void RMOL_Service::projectOnDDemandOnLegCabins(const stdair::DateTime_T& iRMEventTime) {
+  void RMOL_Service::projectAggregatedDemandOnLegCabins(const stdair::DateTime_T& iRMEventTime) {
+
+    if (_rmolServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Rmol service "
+                                                    "has not been initialised");
+    }
+    assert (_rmolServiceContext != NULL);
+    RMOL_ServiceContext& lRMOL_ServiceContext = *_rmolServiceContext;
+    
+    // Retrieve the bom root
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lRMOL_ServiceContext.getSTDAIR_Service();
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
+
+    // Retrieve the date from the RM event
+    const stdair::Date_T lDate = iRMEventTime.date();
+
+    const stdair::InventoryList_T lInventoryList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    assert (!lInventoryList.empty());
+    for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
+         itInv != lInventoryList.end(); ++itInv) {
+      const stdair::Inventory* lInventory_ptr = *itInv;
+      assert (lInventory_ptr != NULL);
+      const stdair::OnDDateList_T lOnDDateList =
+        stdair::BomManager::getList<stdair::OnDDate> (*lInventory_ptr);
+      assert (!lOnDDateList.empty());
+      for (stdair::OnDDateList_T::const_iterator itOD = lOnDDateList.begin();
+           itOD != lOnDDateList.end(); ++itOD) {
+        stdair::OnDDate* lOnDDate_ptr = *itOD;
+        assert (lOnDDate_ptr != NULL);
+
+        const stdair::Date_T& lDepartureDate = lOnDDate_ptr->getDate();
+        stdair::DateOffset_T lDateOffset = lDepartureDate - lDate;
+        stdair::DTD_T lDTD = short (lDateOffset.days());
+      
+        stdair::DCPList_T::const_iterator itDCP =
+          std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+        // Check if the forecast for this O&D date needs to be projected.
+        if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
+
+          // Find all leg cabins and project the demand info.
+          const stdair::StringDemandStructMap_T& lStringDemandStructMap =
+            lOnDDate_ptr->getDemandInfoMap ();
+          for (stdair::StringDemandStructMap_T::const_iterator itStrDS = lStringDemandStructMap.begin();
+               itStrDS != lStringDemandStructMap.end(); ++itStrDS) {
+            std::string lCabinClassPath = itStrDS->first;
+            const stdair::DemandStruct& lDemandStruct = itStrDS->second;
+            const stdair::CabinClassPairList_T& lCabinClassPairList =
+              lOnDDate_ptr->getCabinClassPairList(lCabinClassPath);
+            const unsigned int lNbOfSegments = lOnDDate_ptr->getNbOfSegments();
+            // Sanity check
+            assert (lCabinClassPairList.size() == lNbOfSegments);
+            
+            const stdair::SegmentDateList_T lOnDSegmentDateList =
+              stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
+            // Sanity check
+            assert (lOnDSegmentDateList.size() == lNbOfSegments);
+            stdair::CabinClassPairList_T::const_iterator itCCP = lCabinClassPairList.begin();
+            stdair::SegmentDateList_T::const_iterator itSD = lOnDSegmentDateList.begin();
+            for (; itSD != lOnDSegmentDateList.end(); ++itCCP, ++itSD) {
+              const stdair::SegmentDate* lSegmentDate_ptr = *itSD;
+              assert (lSegmentDate_ptr != NULL);
+              // Only operated legs receive the demand information.
+              if (!lSegmentDate_ptr->isOtherAirlineOperating()) {
+                const stdair::CabinCode_T lCabinCode = itCCP->first;
+                const stdair::ClassCode_T lClassCode = itCCP->second;
+                const stdair::SegmentCabin* lSegmentCabin_ptr =
+                  stdair::BomManager::getObjectPtr<stdair::SegmentCabin> (*lSegmentDate_ptr,
+                                                                          lCabinCode);
+                assert (lSegmentCabin_ptr != NULL);
+                // Retrieve the booking class (level of aggregation of demand).
+                // The yield of the class is assigned to all types of demand for it.
+                const stdair::BookingClass* lBookingClass_ptr =
+                  stdair::BomManager::getObjectPtr<stdair::BookingClass> (*lSegmentCabin_ptr,
+                                                                          lClassCode);
+                assert (lBookingClass_ptr != NULL);
+                const stdair::LegCabinList_T lLegCabinList =
+                  stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
+                assert (!lLegCabinList.empty());
+                const int lNbOfLegs = lLegCabinList.size();
+                // Determine the yield (equally distributed over legs).
+                const stdair::Yield_T& lYield = lBookingClass_ptr->getYield()/lNbOfLegs;
+                const stdair::MeanValue_T& lMeanValue = lDemandStruct.getDemandMean();
+                const stdair::StdDevValue_T& lStdDevValue = lDemandStruct.getDemandStdDev();
+                for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
+                     itLC != lLegCabinList.end(); ++itLC) {
+                  stdair::LegCabin* lLegCabin_ptr = *itLC;
+                  assert (lLegCabin_ptr != NULL);
+                  lLegCabin_ptr->addDemandInformation (lYield, lMeanValue, lStdDevValue);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ///////////////////////////////////////////////////////////////////
+  void RMOL_Service::projectOnDDemandOnLegCabinsUsingYP(const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
@@ -1596,8 +1703,7 @@ namespace RMOL {
   }
 
   // ///////////////////////////////////////////////////////////////////
-  void RMOL_Service::
-  optimiseUsingOnDForecast (const stdair::DateTime_T& iRMEventTime) {
+  void RMOL_Service::optimiseOnD (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
@@ -1644,6 +1750,7 @@ namespace RMOL {
       }
     }    
   }
+
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::communicateBidPrice (const stdair::DateTime_T& iRMEventTime) {
 
@@ -1913,7 +2020,7 @@ namespace RMOL {
   }
 
   // ///////////////////////////////////////////////////////////////////
-  void RMOL_Service::optimiseUsingCooperatedIBP (const stdair::DateTime_T& iRMEventTime) {
+  void RMOL_Service::optimiseOnDUsingRMCooperation (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "
@@ -1970,7 +2077,7 @@ namespace RMOL {
 
    
   // ///////////////////////////////////////////////////////////////////
-  void RMOL_Service::optimiseUsingAdvancedCooperatedIBP (const stdair::DateTime_T& iRMEventTime) {
+  void RMOL_Service::optimiseOnDUsingAdvancedRMCooperation (const stdair::DateTime_T& iRMEventTime) {
 
     if (_rmolServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The Rmol service "

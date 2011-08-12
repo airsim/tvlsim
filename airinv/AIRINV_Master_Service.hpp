@@ -12,6 +12,7 @@
 #include <stdair/stdair_inventory_types.hpp>
 #include <stdair/stdair_maths_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/PartnershipTechnique.hpp>
 
 /// Forward declarations
 namespace stdair {
@@ -141,7 +142,8 @@ namespace AIRINV {
     /**
      * Compute the availability for the given travel solution.
      */
-    void calculateAvailability (stdair::TravelSolutionStruct&);
+    void calculateAvailability (stdair::TravelSolutionStruct&,
+                                const stdair::PartnershipTechnique&);
 
     /**
      * Register a booking.
@@ -163,7 +165,8 @@ namespace AIRINV {
      * Optimise (revenue management) an flight-date/network-date
      */
     void optimise (const stdair::RMEventStruct&,
-                   const stdair::ForecastingMethod&);    
+                   const stdair::ForecastingMethod&,
+                   const stdair::PartnershipTechnique&);    
 
 
   public:

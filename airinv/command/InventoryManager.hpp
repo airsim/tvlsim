@@ -9,6 +9,7 @@
 // STDAIR
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/bom/RMEventTypes.hpp>
+#include <stdair/basic/PartnershipTechnique.hpp>
 
 // Forward declarations
 namespace stdair {
@@ -50,14 +51,17 @@ namespace AIRINV {
     
     /** Compute the availability for the given travel solution. */
     static void calculateAvailability (const stdair::BomRoot&,
-                                       stdair::TravelSolutionStruct&);
+                                       stdair::TravelSolutionStruct&,
+                                       const stdair::PartnershipTechnique&);
     
     /** Compute the availability for each fare option using the AU's. */
     static void calculateAvailabilityByAU (stdair::TravelSolutionStruct&);
 
-    //MODIF
-    /** Compute the availability for each fare option using BP control. */
-    static void calculateAvailabilityByBP (stdair::TravelSolutionStruct&);
+    /** Compute the availability for each fare option using Revenue Availability Exchange. */
+    static void calculateAvailabilityByRAE (stdair::TravelSolutionStruct&);
+    
+    /** Compute the availability for each fare option using Interline Bid Price. */
+    static void calculateAvailabilityByIBP (stdair::TravelSolutionStruct&);
 
     /** Register a booking (segment sell). */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,

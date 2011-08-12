@@ -153,7 +153,7 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   void Optimiser::
-  optimiseBPWithDemandAggregation (stdair::SegmentCabin& ioSegmentCabin) {
+  optimiseUsingDemandAggregation (stdair::SegmentCabin& ioSegmentCabin) {
     // Retrieve the class list.
     const stdair::BookingClassList_T lBookingClassList =
       stdair::BomManager::getList<stdair::BookingClass> (ioSegmentCabin);
@@ -217,7 +217,7 @@ namespace RMOL {
 
  // ////////////////////////////////////////////////////////////////////
   void Optimiser::
-  optimiseBPWithDemandAggregation (stdair::FlightDate& ioFlightDate) {
+  optimiseUsingDemandAggregation (stdair::FlightDate& ioFlightDate) {
     const stdair::SegmentDateList_T& lSegmentDateList =
       stdair::BomManager::getList<stdair::SegmentDate> (ioFlightDate);
     for (stdair::SegmentDateList_T::const_iterator itSegmentDate =
@@ -235,14 +235,14 @@ namespace RMOL {
         assert (lCurrentSegmentCabin_ptr != NULL);
         STDAIR_LOG_DEBUG ("O&D " << lCurrentSegmentDate_ptr->getBoardingPoint()
                           << "-" << lCurrentSegmentDate_ptr->getOffPoint());
-        optimiseBPWithDemandAggregation (*lCurrentSegmentCabin_ptr);
+        optimiseUsingDemandAggregation (*lCurrentSegmentCabin_ptr);
       }
     }
   }
 
     // ////////////////////////////////////////////////////////////////////
   void Optimiser::
-  optimiseBPWithYieldProration (stdair::SegmentCabin& ioSegmentCabin) {
+  optimiseUsingYieldProration (stdair::SegmentCabin& ioSegmentCabin) {
 
     // TODO: aggregate demand for equal yields
     
@@ -336,7 +336,7 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   void Optimiser::
-  optimiseBPWithYieldProration (stdair::FlightDate& ioFlightDate) {
+  optimiseUsingYieldProration (stdair::FlightDate& ioFlightDate) {
     const stdair::SegmentDateList_T& lSegmentDateList =
       stdair::BomManager::getList<stdair::SegmentDate> (ioFlightDate);
     for (stdair::SegmentDateList_T::const_iterator itSegmentDate =
@@ -354,7 +354,7 @@ namespace RMOL {
         assert (lCurrentSegmentCabin_ptr != NULL);
         STDAIR_LOG_DEBUG ("O&D " << lCurrentSegmentDate_ptr->getBoardingPoint()
                           << "-" << lCurrentSegmentDate_ptr->getOffPoint());
-        optimiseBPWithYieldProration (*lCurrentSegmentCabin_ptr);
+        optimiseUsingYieldProration (*lCurrentSegmentCabin_ptr);
       }
     }
   }

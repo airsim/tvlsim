@@ -69,6 +69,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
     stdair::DemandGenerationMethod::STA_ORD;
   const stdair::ForecastingMethod lAdditiveForecastMethod =
     stdair::ForecastingMethod::ADD_PK;
+  const stdair::PartnershipTechnique lNoPartnershipMethod =
+    stdair::PartnershipTechnique::NONE;
 
   // Start date
   stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
@@ -160,7 +162,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
   BOOST_CHECK_NO_THROW (dsimService.simulate (lNbOfRuns,
                                               lOrderStatDemandGenMethod,
-                                              lAdditiveForecastMethod));
+                                              lAdditiveForecastMethod,
+                                              lNoPartnershipMethod));
 
   // Close the log file
   logOutputFile.close();

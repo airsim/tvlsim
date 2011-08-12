@@ -44,7 +44,12 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
   calculateAvailability (const stdair::BomRoot& iBomRoot,
-                         stdair::TravelSolutionStruct& ioTravelSolution) {
+                         stdair::TravelSolutionStruct& ioTravelSolution,
+                         const stdair::PartnershipTechnique& iPartnershipTechnique) {
+
+    const stdair::PartnershipTechnique::EN_PartnershipTechnique& lPartnershipTechnique =
+      iPartnershipTechnique.getTechnique();
+    
     // Browse the list of segments and get the availability for the
     // children classes.
     const stdair::SegmentPath_T& lSegmentPath =
@@ -58,20 +63,46 @@ namespace AIRINV {
         stdair::BomManager::getObject<stdair::Inventory>(iBomRoot,
                                                          lInvKey.toString());
 
-      // InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
-      //                                         ioTravelSolution);
+      switch (lPartnershipTechnique) {
 
-
-      InventoryHelper::getYieldAndBidPrice (lInventory, lSegmentKey,
-      					    ioTravelSolution);
+      case stdair::PartnershipTechnique::NONE:{
+        InventoryHelper::calculateAvailability (lInventory, lSegmentKey,
+                                                ioTravelSolution);
+        break;
+      }
+      default:{
+        InventoryHelper::getYieldAndBidPrice (lInventory, lSegmentKey,
+                                              ioTravelSolution);
+        break;
+      }
+      }
     }
-    // Compute the availabitliy for each fare option using the AU's.
-    // calculateAvailabilityByAU (ioTravelSolution);
 
-
-    // Compute the availability for each fare option using IBP
-    calculateAvailabilityByBP (ioTravelSolution);
-     
+    switch (lPartnershipTechnique) {
+    case stdair::PartnershipTechnique::NONE:{
+      // Compute the availabitliy for each fare option using the AU's.
+      calculateAvailabilityByAU (ioTravelSolution);
+      break;
+    }
+    case stdair::PartnershipTechnique::RAE_DA:
+    case stdair::PartnershipTechnique::RAE_YP:{ 
+      // 1. Compute the availability for each fare option using RAE
+      calculateAvailabilityByRAE (ioTravelSolution);
+      break;
+    }
+    case stdair::PartnershipTechnique::IBP_DA:
+    case stdair::PartnershipTechnique::IBP_YP:
+    case stdair::PartnershipTechnique::RMC:
+    case stdair::PartnershipTechnique::A_RMC:{
+      // 2. Compute the availability for each fare option using IBP
+      calculateAvailabilityByIBP (ioTravelSolution);
+      break;
+    }
+    default: {
+      assert (false);
+      break;
+    }
+    }
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -159,10 +190,99 @@ namespace AIRINV {
     }
   }
 
-  //MODIF
+
   // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
-  calculateAvailabilityByBP (stdair::TravelSolutionStruct& ioTravelSolution) {
+  calculateAvailabilityByRAE (stdair::TravelSolutionStruct& ioTravelSolution) {
+    
+    std::ostringstream oStr;
+    const stdair::SegmentPath_T& lSP = ioTravelSolution.getSegmentPath();
+    for (stdair::SegmentPath_T::const_iterator itSP = lSP.begin();
+	 itSP != lSP.end(); itSP++) {
+      oStr << *itSP << ";";
+    }
+
+    //Retrieve bid price vector and yield maps
+    const stdair::ClassYieldMapHolder_T& lClassYieldMapHolder =
+      ioTravelSolution.getClassYieldMapHolder();
+    const stdair::ClassBpvMapHolder_T& lClassBpvMapHolder =
+      ioTravelSolution.getClassBpvMapHolder();
+
+    //Retrieve the list of fare options and browse it
+    stdair::FareOptionList_T& lFOList = ioTravelSolution.getFareOptionListRef();
+    for (stdair::FareOptionList_T::iterator itFO = lFOList.begin();
+	 itFO != lFOList.end(); ++itFO) {
+
+      stdair::FareOptionStruct& lFO = *itFO;
+  
+      stdair::ClassYieldMapHolder_T::const_iterator itCYM = lClassYieldMapHolder.begin();
+      stdair::ClassBpvMapHolder_T::const_iterator itCBPM = lClassBpvMapHolder.begin();
+
+      const stdair::ClassList_StringList_T& lClassPath = lFO.getClassPath();
+
+      
+      //Sanity test
+      assert (lClassPath.size() == lClassYieldMapHolder.size() && lClassPath.size() ==
+	      lClassBpvMapHolder.size());
+
+      //Browse class path, class-yield maps, class-(bid price vector) maps.
+      //Each iteration corresponds to one segment.
+
+      std::ostringstream oCPStr;
+      for(stdair::ClassList_StringList_T::const_iterator itCL = lClassPath.begin();
+	  itCL != lClassPath.end(); ++itCL, ++itCYM, ++itCBPM) {
+
+	// Class path determination
+	if (itCL == lClassPath.begin()) {
+	  oCPStr << *itCL;
+	}
+	else {
+	  oCPStr << "-" << *itCL;
+	}
+
+	const stdair::ClassList_String_T& lCL = *itCL;
+	stdair::ClassCode_T lCC;
+	lCC.append (lCL, 0, 1);
+	const stdair::ClassYieldMap_T& lCYM = *itCYM;
+	const stdair::ClassBpvMap_T& lCBPM = *itCBPM;
+	stdair::ClassYieldMap_T::const_iterator itCCCYM = lCYM.find (lCC);
+	assert (itCCCYM != lCYM.end());
+	stdair::YieldValue_T lYield = itCCCYM->second;
+	stdair::ClassBpvMap_T::const_iterator itCCCBPM = lCBPM.find (lCC);
+	assert (itCCCBPM != lCBPM.end());
+	const stdair::BidPriceVector_T& lBidPriceVector = itCCCBPM->second;
+	// std::cout << " Bid price vector size = " << lBidPriceVector.size() << std::endl;
+        	
+	//Initialization of fare option availability
+	if (itCL == lClassPath.begin()) {
+	  lFO.setAvailability (lBidPriceVector.size());
+	}
+	// Availability update
+	if (lFO.getAvailability() > 0) {
+	  
+	  //Segment availability calculation
+	  stdair::BidPriceVector_T lReverseBPV (lBidPriceVector.size());
+	  std::reverse_copy (lBidPriceVector.begin(), lBidPriceVector.end(), lReverseBPV.begin());
+	  stdair::BidPriceVector_T::iterator up = std::upper_bound (lReverseBPV.begin(),
+								   lReverseBPV.end(), lYield);
+	  stdair::Availability_T lAvl = short (up - lReverseBPV.begin());
+          // Availability update
+	  lFO.setAvailability (std::min(lFO.getAvailability(), lAvl));
+     
+	}
+      }
+               
+      STDAIR_LOG_DEBUG ("Fare option " << lFO.describe() << ", "
+                        << "Availability " << lFO.getAvailability() << ", "
+                        << "Segment Path " << oStr.str() << ", ");
+
+    }
+  }
+
+  
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryManager::
+  calculateAvailabilityByIBP (stdair::TravelSolutionStruct& ioTravelSolution) {
     //Yield valuation coefficient for multi-segment travel solutions   
     double alpha = 1;
     std::ostringstream oStr;
@@ -244,6 +364,7 @@ namespace AIRINV {
 	  stdair::BidPriceVector_T::iterator up = std::upper_bound (lReverseBPV.begin(),
 								   lReverseBPV.end(), lYield);
 	  stdair::Availability_T lAvl = short (up - lReverseBPV.begin());
+          // Availability update
 	  lFO.setAvailability (std::min(lFO.getAvailability(), lAvl));
      
 	}

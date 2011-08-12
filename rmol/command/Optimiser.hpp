@@ -63,11 +63,11 @@ namespace RMOL {
     static void buildVirtualClassListForLegBasedOptimisation(stdair::LegCabin&);
 
     /** Optimiser */
-    static void optimiseBPWithDemandAggregation (stdair::SegmentCabin&);
-    static void optimiseBPWithDemandAggregation (stdair::FlightDate&);
+    static void optimiseUsingDemandAggregation (stdair::SegmentCabin&);
+    static void optimiseUsingDemandAggregation (stdair::FlightDate&);
 
-    static void optimiseBPWithYieldProration (stdair::SegmentCabin&);
-    static void optimiseBPWithYieldProration (stdair::FlightDate&);
+    static void optimiseUsingYieldProration (stdair::SegmentCabin&);
+    static void optimiseUsingYieldProration (stdair::FlightDate&);
 
     static double optimiseUsingOnDForecast (stdair::FlightDate&);
 
