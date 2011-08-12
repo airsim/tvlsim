@@ -16,6 +16,9 @@ namespace stdair {
 }
 
 namespace RMOL {
+  // Forward declarations.
+  struct HistoricalBookingHolder;
+  
   /** Class wrapping the principal unconstraining algorithms and 
       some accessory algorithms. */
   class Detruncator {
@@ -47,6 +50,11 @@ namespace RMOL {
      UnconstrainedDemandVector_T&, const stdair::DCP_T&,
      const stdair::NbOfSegments_T&);
 
+    /**
+     * Unconstrain the product-oriented booking figures for a given class ou
+     * Q-equivalent class. */
+    static void unconstrainUsingMultiplicativePickUp (HistoricalBookingHolder&);
+    
   private:
     /**
      * Unconstrain the product-oriented booking figures for a given class ou

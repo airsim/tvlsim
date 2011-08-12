@@ -79,18 +79,21 @@ namespace RMOL {
    const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
    const stdair::NbOfSegments_T& iNbOfUsableSegments,
    const stdair::BlockIndex_T& iBlockIdx) {
+    // TODO:
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
       iGuillotineBlock.getValueTypeIndexMap();
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -146,18 +149,21 @@ namespace RMOL {
    const stdair::BlockIndex_T& iBlockIdx,
    const stdair::SegmentCabin& iSegmentCabin,
    const stdair::Date_T& iCurrentDate) {
+    // TODO
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
       iGuillotineBlock.getValueTypeIndexMap();
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -211,13 +217,19 @@ namespace RMOL {
          itUD != ioUncDemVector.end(); ++itUD, ++idx) {
       *itUD += lHBHolder.getUnconstrainedDemand (idx);
       if (lDepDate > lRefDate) {
-        const stdair::DateOffset_T lDateOffset (7 *(iNbOfUsableSegments - idx) + 420);
+        const stdair::DateOffset_T lDateOffset (7 *(52 - idx) + 420);
         const stdair::Date_T lHDate = lDepDate - lDateOffset;
         STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
                                  << ";" << lDTD << ";" << iDCPBegin << ";"
                                  << iDCPEnd << ";"
                                  << boost::gregorian::to_iso_string (lHDate)
                                  <<";"<<lHBHolder.getUnconstrainedDemand (idx));
+        
+        STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
+                                 << ";" << lDTD << ";" << iDCPBegin << ";"
+                                 << iDCPEnd << ";"
+                                 << boost::gregorian::to_iso_string (lHDate)
+                                 <<";"<<lHBHolder.getHistoricalBooking (idx));
       }
     }
   }
@@ -271,18 +283,22 @@ namespace RMOL {
    UnconstrainedDemandVector_T& ioUnconstrainedDemandVector,
    const stdair::DCP_T& iFirstDCP, const stdair::BlockIndex_T& iValueIdx,
    const stdair::NbOfSegments_T& iNbOfSegments) {
+
+    //TODO
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfSegments > 53) lSegBegin = iNbOfSegments - 53;    
     
     // Retrieve the snapshots of the corresponding booking value from the
     // first DTD (usually 365) till the given iFirstDCP.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lRangeBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfSegments -1, iFirstDCP, stdair::DEFAULT_MAX_DTD);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfSegments -1, iFirstDCP, stdair::DEFAULT_MAX_DTD);
     
     // Sum the bookings from the first day till the given iFirstDCP in order to
     // get the supposing unconstrained demand for this period.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
       iGuillotineBlock.getValueTypeIndexMap();
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
-    for (int itSegment = 0; itSegment < iNbOfSegments; ++itSegment) {
+    for (int itSegment = 0; itSegment < iNbOfSegments-lSegBegin; ++itSegment) {
       for (int i = iFirstDCP; i <= stdair::DEFAULT_MAX_DTD; ++i) {
         stdair::NbOfRequests_T& lUncDemand =
           ioUnconstrainedDemandVector.at(itSegment);
@@ -352,11 +368,15 @@ namespace RMOL {
    const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
    const stdair::NbOfSegments_T& iNbOfUsableSegments,
    const stdair::BlockIndex_T& iBlockIdx) {
+    // TODO:
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 53) lSegBegin = iNbOfUsableSegments - 53;
+    
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
@@ -364,7 +384,7 @@ namespace RMOL {
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
     std::vector<short> lDataIndexList;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -406,7 +426,7 @@ namespace RMOL {
     STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up using EM");
     
     // Unconstrain the booking figures
-    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+    unconstrainUsingMultiplicativePickUp (lHBHolder);
 
     // Update the unconstrained demand vector.
     short i = 0;
@@ -429,11 +449,15 @@ namespace RMOL {
    const stdair::BlockIndex_T& iBlockIdx,
    const stdair::SegmentCabin& iSegmentCabin,
    const stdair::Date_T& iCurrentDate) {
+    // TODO:
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 53) lSegBegin = iNbOfUsableSegments - 53;
+    
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
@@ -441,7 +465,7 @@ namespace RMOL {
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
     std::vector<short> lDataIndexList;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -480,10 +504,10 @@ namespace RMOL {
     }
 
     // DEBUG
-    STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up using EM");
+    STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up");
     
     // Unconstrain the booking figures
-    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+    unconstrainUsingMultiplicativePickUp (lHBHolder);
 
     // Update the unconstrained demand vector.
     // LOG
@@ -503,12 +527,12 @@ namespace RMOL {
       stdair::NbOfRequests_T& lPastDemand = ioUncDemVector.at (lIdx);
       const stdair::NbOfRequests_T& lUncDemandFactorOfThisPeriod =
         lHBHolder.getUnconstrainedDemand (i);
+      const double lUncDemThisPeriod =
+        lPastDemand * lUncDemandFactorOfThisPeriod;
       lPastDemand *= (1+lUncDemandFactorOfThisPeriod);
       if (lDepDate > lRefDate) {
-        const stdair::DateOffset_T lDateOffset (7 *(iNbOfUsableSegments - lIdx) + 420);
+        const stdair::DateOffset_T lDateOffset (7 *(53 - lIdx) + 420);
         const stdair::Date_T lHDate = lDepDate - lDateOffset;
-        const double lUncDemThisPeriod =
-          lPastDemand * lUncDemandFactorOfThisPeriod;
         STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
                                  << ";" << lDTD << ";" << iDCPBegin << ";"
                                  << iDCPEnd << ";"
@@ -516,6 +540,52 @@ namespace RMOL {
                                  << ";" << lUncDemThisPeriod);
       }
     }
-  }  
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void Detruncator::
+  unconstrainUsingMultiplicativePickUp (HistoricalBookingHolder& ioHBHolder) {
+    // We use two loops in this algorithm. The first one is for calculating the
+    // average of unconstrained data. The second one is fore calculating the
+    // average of unconstrained data and the constrained data which are higher
+    // than the first average.
+    short lNbOfUsedData = ioHBHolder.getNbOfUncensoredData();
+    if (lNbOfUsedData > 0) {
+      double lSumOfValues = 0.0;
+      const short lNbOfData = ioHBHolder.getNbOfFlights();
+
+      // First loop
+      for (short i = 0; i < lNbOfData; ++i) {
+        if (ioHBHolder.getCensorshipFlag (i) == false) {
+          lSumOfValues += ioHBHolder.getHistoricalBooking (i);
+        }
+      }
+      double lFirstAverage = lSumOfValues / lNbOfUsedData;
+
+      // Second loop
+      for (short i = 0; i < lNbOfData; ++i) {
+        if (ioHBHolder.getCensorshipFlag (i) == true) {
+          const stdair::NbOfBookings_T& lBkgs =
+            ioHBHolder.getHistoricalBooking (i);
+          if (lBkgs >= lFirstAverage) {
+            lSumOfValues += lBkgs;
+            ++lNbOfUsedData;
+          }
+        }
+      }
+      double lSecondAverage = lSumOfValues / lNbOfUsedData;
+
+      // Last loop for updating the demand.
+      for (short i = 0; i < lNbOfData; ++i) {
+        if (ioHBHolder.getCensorshipFlag (i) == true) {
+          const stdair::NbOfBookings_T& lBkgs =
+            ioHBHolder.getHistoricalBooking (i);
+          if (lBkgs < lSecondAverage) {
+            ioHBHolder.setUnconstrainedDemand (lSecondAverage, i);
+          }
+        }
+      }      
+    }
+  }
 }
   

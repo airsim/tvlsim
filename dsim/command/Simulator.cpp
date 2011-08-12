@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <iomanip>
 // StdAir
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
@@ -213,7 +214,7 @@ namespace DSIM {
                itSegPath != lSegmentPath.end(); ++itSegPath) {
             oStr << *itSegPath <<  ";";
           }
-          STDAIR_LOG_NOTIFICATION (oStr.str() << lDTD);
+          STDAIR_LOG_NOTIFICATION (oStr.str() << std::setprecision(10) << lDTD);
         }
         else {
           // DEBUG

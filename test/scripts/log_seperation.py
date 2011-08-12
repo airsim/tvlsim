@@ -19,6 +19,8 @@ def print_dict (demand_dict):
         mean = mean/flights
         stddev = stddev - (flights * mean * mean)
         stddev += nb * nb
+        #if (date == "20101122"):
+        #    print date, dtd_list
         print date, dtd_list
         #print date, nb
     stddev = stddev / flights
@@ -44,7 +46,7 @@ def print_distrib (demand_dict):
     print mean, stddev
 
 #########################################################################
-def sum_period (demand_dict):
+def sum_period1 (demand_dict):
     demand_period_dict = {}
     for date, dtd_list in demand_dict.items():
         period_dtd = []
@@ -61,17 +63,17 @@ def sum_period (demand_dict):
                 period_dtd[3] += 1
             if (x > -34 and x <= -30):
                 period_dtd[4] += 1
-            if (x > -30 and x <= -27):
+            if (x > -30 and x <= -26):
                 period_dtd[5] += 1
-            if (x > -27 and x <= -23):
+            if (x > -26 and x <= -22):
                 period_dtd[6] += 1
-            if (x > -23 and x <= -20):
+            if (x > -22 and x <= -18):
                 period_dtd[7] += 1
-            if (x > -20 and x <= -16):
+            if (x > -18 and x <= -15):
                 period_dtd[8] += 1
-            if (x > -16 and x <= -13):
+            if (x > -15 and x <= -12):
                 period_dtd[9] += 1
-            if (x > -13 and x <= -9):
+            if (x > -12 and x <= -9):
                 period_dtd[10] += 1
             if (x > -9 and x <= -6):
                 period_dtd[11] += 1
@@ -87,23 +89,79 @@ def sum_period (demand_dict):
     return demand_period_dict
 
 #########################################################################
-def print_diff (dict1, dict2):
+def sum_period2 (demand_dict):
+    demand_period_dict = {}
+    for date, dtd_list in demand_dict.items():
+        period_dtd = []
+        for x in range(8):
+            period_dtd.append(0)
+        for x in dtd_list:
+            if (x > -62 and x <= -48):
+                period_dtd[0] += 1
+            if (x > -48 and x <= -34):
+                period_dtd[1] += 1
+            if (x > -34 and x <= -22):
+                period_dtd[2] += 1
+            if (x > -22 and x <= -15):
+                period_dtd[3] += 1
+            if (x > -15 and x <= -9):
+                period_dtd[4] += 1
+            if (x > -9 and x <= -4):
+                period_dtd[5] += 1
+            if (x > -4 and x <= -0):
+                period_dtd[6] += 1
+            if (x > -0 and x <= 1):
+                period_dtd[7] += 1
+        demand_period_dict[date]=period_dtd
+    return demand_period_dict
+
+#########################################################################
+def print_diff1 (dict1, dict2):
     diff_list=[]
+    diff_count=[]
     for x in range(16):
         diff_list.append(0.0)
-    for date, unc_dem_list in dict2.items():
-        dem_list = dict1[date]
+        diff_count.append(0)
+    for date, list2 in dict2.items():
+        list1 = dict1[date]
         for x in range(16):
-            if (dem_list[x] != 0):
-                diff_list[x]+=100*abs(unc_dem_list[x] - dem_list[x])/dem_list[x]
-                #diff_list[x]+=abs(unc_dem_list[x] - dem_list[x])
+            if (list1[x] != 0) and (list1[x] != list2[x]):
+                diff_list[x]+=100*abs(list2[x]-list1[x])/list1[x]
+                #diff_list[x]+=abs(list2[x] - list1[x])
+                diff_count[x] += 1
+                #if (x == 2):
+                #    print list1[x], list2[x], date
     for x in range(16):
-        diff_list[x] = round(diff_list[x]/len(dict2),3)
+        if (diff_count[x] > 0):
+            diff_list[x] = round(diff_list[x]/diff_count[x],3)
     print diff_list
+    #print diff_count
+
+#########################################################################
+def print_diff2 (dict1, dict2):
+    diff_list=[]
+    diff_count=[]
+    for x in range(8):
+        diff_list.append(0.0)
+        diff_count.append(0)
+    for date, list2 in dict2.items():
+        list1 = dict1[date]
+        for x in range(8):
+            if (list1[x] != 0) and (list1[x] != list2[x]):
+                diff_list[x]+=100*abs(list2[x]-list1[x])/list1[x]
+                #diff_list[x]+=abs(list2[x] - list1[x])
+                diff_count[x] += 1
+                #if (x == 6):
+                #    print list1[x], list2[x], date
+    for x in range(8):
+        if (diff_count[x] > 0):
+            diff_list[x] = round(diff_list[x]/diff_count[x],3)
+    print diff_list
+    #print diff_count
 
 #########################################################################
 def extract_date (fd):
-    month_dict = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'Mai':'05', 'Jun':'06', 'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
+    month_dict = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06', 'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
     fn, date = fd.split(',')
     y, m, d = date.split('-')
     output = ''
@@ -122,12 +180,19 @@ lines = input_file.readlines()
 
 demand_dict={}
 unc_demand_dict={}
+qbkg_dict={}
 bkg_dict={}
 for i in lines:
+    try:
+        headline, datedtd = i.split(': ')
+    except (ValueError):
+        print i
+
     headline, datedtd = i.split(': ')
+
     # RMOL
-    if (headline == "[N]../../../rmol/command/Forecaster.cpp:690") or \
-            (headline == "[N]../../../rmol/command/Detruncator.cpp:220"):
+    if (headline == "[N]../../../rmol/command/Forecaster.cpp:702") or \
+            (headline == "[N]../../../rmol/command/Detruncator.cpp:226"):
         fd, dtd, begin, end, hfd, dem = datedtd.split(';')
         try:
             unc_demand_dict[hfd]
@@ -137,9 +202,19 @@ for i in lines:
         dem_float = float (dem)
         dem_list.append (dem_float)
 
+    if (headline == "[N]../../../rmol/command/Detruncator.cpp:232"):
+        fd, dtd, begin, end, hfd, bkg = datedtd.split(';')
+        try:
+            qbkg_dict[hfd]
+        except (KeyError):
+            qbkg_dict[hfd] = []
+        bkg_list = qbkg_dict[hfd]
+        bkg_float = float (bkg)
+        bkg_list.append (bkg_float)
+
     # TRADEMGEN
-    if (headline == "[N]../../../trademgen/bom/DemandStream.cpp:380") or \
-            (headline == "[N]../../../trademgen/bom/DemandStream.cpp:274"):
+    if (headline == "[N]../../../trademgen/bom/DemandStream.cpp:383") or \
+            (headline == "[N]../../../trademgen/bom/DemandStream.cpp:277"):
         date, dtd = datedtd.split(';')
         try:
             demand_dict[date]
@@ -150,7 +225,7 @@ for i in lines:
         dtd_list.append (dtd_float)
         
     # BKGs
-    if (headline == "[N]../../../dsim/command/Simulator.cpp:215"):
+    if (headline == "[N]../../../dsim/command/Simulator.cpp:217"):
         c, fd, od, t, dtd = datedtd.split(';')
         date = extract_date (fd)
         try:
@@ -162,12 +237,13 @@ for i in lines:
         dtd_list.append (dtd_float)
 
 
-demand_period_dict = sum_period (demand_dict)
-bkg_period_dict = sum_period (bkg_dict)
+demand_period_dict = sum_period2 (demand_dict)
+bkg_period_dict = sum_period2 (bkg_dict)
 
 
-print_diff (demand_period_dict, unc_demand_dict)
-print_diff (demand_period_dict, bkg_period_dict)
+print_diff2 (demand_period_dict, unc_demand_dict)
+#print_diff2 (demand_period_dict, bkg_period_dict)
+print_diff2 (demand_period_dict, qbkg_dict)
     
 
 #print demand_period_dict
@@ -178,6 +254,7 @@ print_diff (demand_period_dict, bkg_period_dict)
 #print_dict (bkg_dict)
 #print_distrib (demand_dict)
 #print_distrib (bkg_dict)
-#print_dict (demand_period_dict)
+print_dict (demand_period_dict)
 #print_dict (bkg_period_dict)
+print_dict (qbkg_dict)
 #print_dict (unc_demand_dict)

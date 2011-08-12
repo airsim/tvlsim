@@ -85,8 +85,10 @@ namespace RMOL {
                                const stdair::DCPList_T& iDCPList,
                                const stdair::Date_T& iEventDate) {
     // Retrieve the number of departed similar segments.
-    const stdair::NbOfSegments_T lNbOfDepartedSegments =
+    stdair::NbOfSegments_T lNbOfDepartedSegments =
       Utilities::getNbOfDepartedSimilarSegments (ioSegmentCabin, iEventDate);
+    // TODO
+    if (lNbOfDepartedSegments > 52) lNbOfDepartedSegments = 52; 
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Nb of similar departed segments: "
@@ -311,10 +313,12 @@ namespace RMOL {
     // Retrieving the number of anterior similar segments.
     const stdair::GuillotineBlock& lGuillotineBlock =
       ioSegmentCabin.getGuillotineBlock();
-    const stdair::NbOfSegments_T lNbOfAnteriorSimilarSegments =
+    stdair::NbOfSegments_T lNbOfAnteriorSimilarSegments =
       GuillotineBlockHelper::
       getNbOfSegmentAlreadyPassedThisDTD (lGuillotineBlock, iSegmentDTD,
                                           iEventDate) - 1;
+    // TODO:
+    if (lNbOfAnteriorSimilarSegments > 52) lNbOfAnteriorSimilarSegments = 52;
       
     // DEBUG
     STDAIR_LOG_DEBUG ("Nb of anterior similar segments: "
@@ -337,16 +341,18 @@ namespace RMOL {
       const stdair::DCP_T& lFirstDCP = *itDCP;
       
       // Initialise the unconstrained demand for classes.
-      const stdair::NbOfSegments_T lNbOfUsableSegments =
+      stdair::NbOfSegments_T lNbOfUsableSegments =
         GuillotineBlockHelper::
         getNbOfSegmentAlreadyPassedThisDTD (lGuillotineBlock, lFirstDCP,
                                             iEventDate);
+      // TODO
+      unsigned short lSize;
+      if (lNbOfUsableSegments > 53) lSize = 53; 
       
       STDAIR_LOG_DEBUG ("Nb of usable similar segments: "
                         << lNbOfUsableSegments);
         
-      UnconstrainedDemandVector_T lQEquivalentDemandVector (lNbOfUsableSegments,
-                                                            0.0);
+      UnconstrainedDemandVector_T lQEquivalentDemandVector (lSize, 0.0);
       stdair::NbOfBookings_T lCurrentSegmentQEquivalentDemand = 0.0;
       BookingClassUnconstrainedDemandVectorMap_T lBkgClassUncDemVectorMap;
       BookingClassUnconstrainedDemandMap_T lCurrentSegmentBkgClassDemMap;
@@ -357,7 +363,7 @@ namespace RMOL {
         stdair::BookingClass* lBC_ptr = *itBC;
         assert (lBC_ptr != NULL);
 
-        UnconstrainedDemandVector_T lUncDemandVector (lNbOfUsableSegments, 0.0);
+        UnconstrainedDemandVector_T lUncDemandVector (lSize, 0.0);
         bool insertionSucceeded = lBkgClassUncDemVectorMap.
           insert (BookingClassUnconstrainedDemandVectorMap_T::
                   value_type (lBC_ptr, lUncDemandVector)).second;
@@ -517,11 +523,14 @@ namespace RMOL {
    const stdair::NbOfSegments_T& iNbOfUsableSegments,
    const stdair::BlockIndex_T& iBlockIdx,
    const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments) {
+    // TODO
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
@@ -529,7 +538,7 @@ namespace RMOL {
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
     std::vector<short> lDataIndexList;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -571,7 +580,7 @@ namespace RMOL {
     STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up using EM");
     
     // Unconstrain the booking figures
-    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+    Detruncator::unconstrainUsingMultiplicativePickUp (lHBHolder);
 
     // Update the unconstrained demand vector.
     short i = 0;
@@ -604,11 +613,14 @@ namespace RMOL {
    const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments,
    const stdair::SegmentCabin& iSegmentCabin,
    const stdair::Date_T& iCurrentDate) {
+    // TODO
+    stdair::NbOfSegments_T lSegBegin = 0;
+    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lAvlView =
-      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (0, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
+      iGuillotineBlock.getConstSegmentCabinDTDRangeAvailabilitySnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
     
     // Browse the list of segments and build the historical booking holder.
     const stdair::ValueTypeIndexMap_T& lVTIdxMap =
@@ -616,7 +628,7 @@ namespace RMOL {
     const unsigned int lNbOfValueTypes = lVTIdxMap.size();
     HistoricalBookingHolder lHBHolder;
     std::vector<short> lDataIndexList;
-    for (short i = 0; i < iNbOfUsableSegments; ++i) {
+    for (short i = 0; i < iNbOfUsableSegments-lSegBegin; ++i) {
       stdair::Flag_T lCensorshipFlag = false;
       stdair::NbOfBookings_T lNbOfHistoricalBkgs = 0.0;
       const short lNbOfDTDs = iDCPBegin - iDCPEnd + 1;
@@ -658,7 +670,7 @@ namespace RMOL {
     STDAIR_LOG_DEBUG ("Unconstrain by multiplicative pick-up using EM");
     
     // Unconstrain the booking figures
-    EMDetruncator::unconstrainUsingEMMethod (lHBHolder);
+    Detruncator::unconstrainUsingMultiplicativePickUp (lHBHolder);
 
     // Update the unconstrained demand vector.
     // LOG
@@ -681,7 +693,7 @@ namespace RMOL {
         lPastDemand * lUncDemandFactorOfThisPeriod;
       lPastDemand *= (1+lUncDemandFactorOfThisPeriod);
       if (lDepDate > lRefDate) {
-        const stdair::DateOffset_T lDateOffset (7 *(iNbOfUsableSegments - i) + 420);
+        const stdair::DateOffset_T lDateOffset (7 *(52 - i) + 420);
         const stdair::Date_T lHDate = lDepDate - lDateOffset;
         STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
                                  << ";" << lDTD << ";" << iDCPBegin << ";"

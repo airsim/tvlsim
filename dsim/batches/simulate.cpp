@@ -134,9 +134,9 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioYieldInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioDemandInputFilename,
+                       std::string& ioLogFilename,
                        stdair::ForecastingMethod& ioForecastingMethod,
-                       stdair::DateGenerationMethod& ioDateGenerationMethod
-                       std::string& ioLogFilename,  ,
+                       stdair::DateGenerationMethod& ioDateGenerationMethod,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
@@ -385,7 +385,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
   
   // End date
-  stdair::Date_T lEndDate (2012, boost::gregorian::Jun, 01);
+  stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;

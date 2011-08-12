@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <iomanip>
 // Boost
 #include <boost/make_shared.hpp>
 // StdAir
@@ -272,8 +273,8 @@ namespace TRADEMGEN {
       // Update the counter of requests generated so far.
       incrementGeneratedRequestsCounter();
 
-      const double lRefDateTimeThisRequest = lDateTimeThisRequest + double(1.0/3.0);
-      STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << lRefDateTimeThisRequest);
+      const double lRefDateTimeThisRequest = lDateTimeThisRequest + double(28800.001/86400.0);
+      STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << std::setprecision(10) << lRefDateTimeThisRequest);
     } else {
       
       // The current request is not in the given daily rate interval.
@@ -379,7 +380,7 @@ namespace TRADEMGEN {
     // NOTIFICATION
     double lRefNumberOfDaysBetweenDepartureAndThisRequest =
       lNumberOfDaysBetweenDepartureAndThisRequest + double(1.0/3.0);
-    STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << lRefNumberOfDaysBetweenDepartureAndThisRequest);
+    STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(_key.getPreferredDepartureDate()) << ";" << std::setprecision(10) << lRefNumberOfDaysBetweenDepartureAndThisRequest);
     
     return oDateTimeThisRequest;
   }
@@ -480,12 +481,12 @@ namespace TRADEMGEN {
                const stdair::Date_T& iDepartureDate,
                const stdair::DateTime_T& iDateTimeThisRequest,
                const stdair::DayDuration_T& iDurationOfStay) {
-    const stdair::Date_T lDateThisRequest = iDateTimeThisRequest.date ();
+    const stdair::Date_T lDateThisRequest = iDateTimeThisRequest.date();
     const stdair::DateOffset_T lAP = iDepartureDate - lDateThisRequest;
-    const stdair::DayDuration_T lAPInDays = lAP.days ();
+    const stdair::DayDuration_T lAPInDays = lAP.days();
 
-    stdair::RealNumber_T lProb =
-      1 - lAPInDays / DEFAULT_MAX_ADVANCE_PURCHASE;
+    stdair::RealNumber_T lProb = -lAPInDays;
+      //1 - lAPInDays / DEFAULT_MAX_ADVANCE_PURCHASE;
     if (lProb < 0.0) { lProb = 0.0; }
     stdair::RealNumber_T lFrat5Coef =
       _demandCharacteristics._frat5Pattern.getValue (lProb);
