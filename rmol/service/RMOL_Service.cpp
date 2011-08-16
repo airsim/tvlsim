@@ -33,6 +33,7 @@
 #include <stdair/bom/SegmentCabin.hpp>
 #include <stdair/bom/BookingClass.hpp>
 #include <stdair/bom/OnDDate.hpp>
+#include <stdair/basic/ContinuousAttributeLite.hpp>
 // RMOL
 #include <rmol/basic/BasConst_RMOL_Service.hpp>
 #include <rmol/factory/FacRmolServiceContext.hpp>
@@ -487,7 +488,6 @@ namespace RMOL {
     }
     }
     return false;  
-
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -1060,6 +1060,8 @@ namespace RMOL {
     }
   }
 
+  
+  
   // ////////////////////////////////////////////////////////////////////
   void RMOL_Service::forecastOnD (const stdair::DateTime_T& iRMEventTime) {
 
@@ -1075,53 +1077,136 @@ namespace RMOL {
       lRMOL_ServiceContext.getSTDAIR_Service();
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
-    // Retrieve the demand stream list
-    stdair::EventQueue& lEventQueue = lSTDAIR_Service.getEventQueue();    
-    const TRADEMGEN::DemandStreamList_T lDemandStreamList =
-      stdair::BomManager::getList<TRADEMGEN::DemandStream> (lEventQueue);
-
     // Retrieve the date from the RM event
     const stdair::Date_T lDate = iRMEventTime.date();
 
     _previousForecastDate = lDate;
 
-    // Browse the demand stream list
-    for (TRADEMGEN::DemandStreamList_T::const_iterator itDS = lDemandStreamList.begin();
-         itDS != lDemandStreamList.end(); ++itDS) {
-      TRADEMGEN::DemandStream* lDemandStream_ptr = *itDS;
-      assert (lDemandStream_ptr != NULL);
+    const stdair::InventoryList_T& lInventoryList =
+      stdair::BomManager::getList<stdair::Inventory> (lBomRoot);
+    assert (!lInventoryList.empty());
+    for (stdair::InventoryList_T::const_iterator itInv = lInventoryList.begin();
+         itInv != lInventoryList.end(); ++itInv) {
+      const stdair::Inventory* lInventory_ptr = *itInv;
+      assert (lInventory_ptr != NULL);
+      if (stdair::BomManager::hasList<stdair::OnDDate> (*lInventory_ptr)) {
+        const stdair::OnDDateList_T lOnDDateList =
+        stdair::BomManager::getList<stdair::OnDDate> (*lInventory_ptr);
 
-      const stdair::Date_T& lPreferredDepartureDate =
-        lDemandStream_ptr->getPreferredDepartureDate();
-      stdair::DateOffset_T lDateOffset = lPreferredDepartureDate - lDate;
-      stdair::DTD_T lDTD = short (lDateOffset.days());
-      
-      stdair::DCPList_T::const_iterator itDCP =
-        std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
-      if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {        
-
-        // Retrieve the yield features object associated to the demand
-        stdair::YieldFeatures* lYieldFeatures_ptr =
-          getYieldFeatures(*lDemandStream_ptr, lBomRoot);
-        
-        if (lYieldFeatures_ptr == NULL) {
-          const TRADEMGEN::DemandStreamKey& lDemandStreamKey =
-            lDemandStream_ptr->getKey();
-          STDAIR_LOG_ERROR ("Cannot find yield corresponding to the Demand"
-                            << " Stream: " << lDemandStreamKey.toString());
-          assert (false);
-        }        
-        forecastOnD (lDTD, *lYieldFeatures_ptr, *lDemandStream_ptr, lBomRoot);
+        for (stdair::OnDDateList_T::const_iterator itOD = lOnDDateList.begin();
+             itOD != lOnDDateList.end(); ++itOD) {
+          stdair::OnDDate* lOnDDate_ptr = *itOD;
+          assert (lOnDDate_ptr != NULL);
+          
+          const stdair::Date_T& lDepartureDate = lOnDDate_ptr->getDate();
+          stdair::DateOffset_T lDateOffset = lDepartureDate - lDate;
+          stdair::DTD_T lDTD = short (lDateOffset.days());
+          
+          stdair::DCPList_T::const_iterator itDCP =
+            std::find (stdair::DEFAULT_DCP_LIST.begin(), stdair::DEFAULT_DCP_LIST.end(), lDTD);
+          // Check if the forecast for this O&D date needs to be forecasted.
+          if (itDCP != stdair::DEFAULT_DCP_LIST.end()) {
+            // Retrieve the total forecast map.
+            const stdair::CabinForecastMap_T& lTotalForecastMap = lOnDDate_ptr->getTotalForecastMap();
+            
+            // Browse the map and make a forecast for every cabin.
+            for (stdair::CabinForecastMap_T::const_iterator itCF = lTotalForecastMap.begin();
+                 itCF != lTotalForecastMap.end(); ++itCF) {
+              const stdair::CabinCode_T lCabinCode = itCF->first;
+              stdair::YieldFeatures* lYieldFeatures_ptr =
+                getYieldFeatures(*lOnDDate_ptr, lCabinCode, lBomRoot);
+              if (lYieldFeatures_ptr == NULL) {
+                STDAIR_LOG_ERROR ("Cannot find yield corresponding to the O&D date"
+                                  << lOnDDate_ptr->toString() << " Cabin " << lCabinCode);
+                assert (false);
+              }
+              forecastOnD (*lYieldFeatures_ptr, *lOnDDate_ptr, lCabinCode, lDTD, lBomRoot);
+            }
+          }
+        }
       }
-      
-    }
+    }    
   }
 
   // ///////////////////////////////////////////////////////////////////
+  stdair::YieldFeatures* RMOL_Service::
+  getYieldFeatures(const stdair::OnDDate& iOnDDate,
+                   const stdair::CabinCode_T& iCabinCode,
+                   stdair::BomRoot& iBomRoot) {
+
+    const stdair::AirportCode_T& lOrigin = iOnDDate.getOrigin();
+    const stdair::AirportCode_T& lDestination = iOnDDate.getDestination();
+
+    const stdair::Date_T& lDepartureDate = iOnDDate.getDate();
+    
+    // Build the airport pair key out of O&D and get the airport pair object
+    const stdair::AirportPairKey lAirportPairKey(lOrigin, lDestination);
+    stdair::AirportPair* lAirportPair_ptr = stdair::BomManager::
+      getObjectPtr<stdair::AirportPair> (iBomRoot,
+                                         lAirportPairKey.toString());
+    if (lAirportPair_ptr == NULL) {
+      STDAIR_LOG_ERROR ("Cannot find yield corresponding to the airport "
+                        << "pair: " << lAirportPairKey.toString());
+      assert (false);
+    }  
+
+    // Retrieve the corresponding date period to lDepartureDate.
+    const stdair::DatePeriodList_T lDatePeriodList =
+      stdair::BomManager::getList<stdair::DatePeriod> (*lAirportPair_ptr);
+    for (stdair::DatePeriodList_T::const_iterator itDatePeriod =
+           lDatePeriodList.begin();
+         itDatePeriod != lDatePeriodList.end(); ++itDatePeriod) {
+      const stdair::DatePeriod* lDatePeriod_ptr = *itDatePeriod;
+      assert (lDatePeriod_ptr != NULL);
+      
+      const bool isDepartureDateValid =
+        lDatePeriod_ptr->isDepartureDateValid (lDepartureDate);
+      
+      if (isDepartureDateValid == true) {
+        // Retrieve the PoS-Channel.
+        // TODO: Use POS and Channel from demand instead of default
+        const stdair::PosChannelKey lPosChannelKey (stdair::DEFAULT_POS,
+                                                    stdair::DEFAULT_CHANNEL);
+        stdair::PosChannel* lPosChannel_ptr = stdair::BomManager::
+          getObjectPtr<stdair::PosChannel> (*lDatePeriod_ptr,
+                                            lPosChannelKey.toString());
+        if (lPosChannel_ptr == NULL) {
+          STDAIR_LOG_ERROR ("Cannot find yield corresponding to the PoS-"
+                            << "Channel: " << lPosChannelKey.toString());
+          assert (false);
+        }
+        // Retrieve the yield features.
+        const stdair::TimePeriodList_T lTimePeriodList = stdair::
+          BomManager::getList<stdair::TimePeriod> (*lPosChannel_ptr);
+        for (stdair::TimePeriodList_T::const_iterator itTimePeriod =
+               lTimePeriodList.begin();
+             itTimePeriod != lTimePeriodList.end(); ++itTimePeriod) {
+          const stdair::TimePeriod* lTimePeriod_ptr = *itTimePeriod;
+          assert (lTimePeriod_ptr != NULL);
+          
+          // TODO: Use trip type from demand instead of default value.
+          const stdair::YieldFeaturesKey lYieldFeaturesKey (stdair::TRIP_TYPE_ONE_WAY,
+                                                            iCabinCode);
+          stdair::YieldFeatures* oYieldFeatures_ptr = stdair::BomManager::
+            getObjectPtr<stdair::YieldFeatures>(*lTimePeriod_ptr,
+                                                lYieldFeaturesKey.toString());
+          if (oYieldFeatures_ptr != NULL) {
+            return oYieldFeatures_ptr;
+          }
+        }
+      }
+    }
+    return NULL;
+    
+  }
+
+  
+  // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
-  forecastOnD (const stdair::DTD_T& iDTD,
-               const stdair::YieldFeatures& iYieldFeatures,
-               const TRADEMGEN::DemandStream& iDemandStream,
+  forecastOnD (const stdair::YieldFeatures& iYieldFeatures,
+               stdair::OnDDate& iOnDDate,
+               const stdair::CabinCode_T& iCabinCode,
+               const stdair::DTD_T& iDTD,
                stdair::BomRoot& iBomRoot) {
 
     const stdair::AirlineClassListList_T lAirlineClassListList = stdair::BomManager::
@@ -1150,13 +1235,14 @@ namespace RMOL {
     stdair::ProportionFactor_T lPreviousProportionFactor = 0;
 
     // Retrieve the minimal willingness to pay associated to the demand
-    const TRADEMGEN::DemandCharacteristics& lDemandCharacteristics =
-      iDemandStream.getDemandCharacteristics();
-    const stdair::WTP_T& lMinWTP = lDemandCharacteristics.getMinWTP();
+    const stdair::ForecastStruct& lTotalForecast =
+      iOnDDate.getTotalForecast (iCabinCode);
+    const stdair::WTP_T& lMinWTP = lTotalForecast.getMinWTP();
    
     // Retrieve the remaining percentage of booking requests
-    const TRADEMGEN::ContinuousFloatDuration_T& lArrivalPattern =
-     lDemandCharacteristics.getArrivalPattern();
+    const stdair::ContinuousAttributeLite<stdair::FloatDuration_T>
+      lArrivalPattern (stdair::DEFAULT_DTD_PROB_MAP);
+     
     STDAIR_LOG_DEBUG (lArrivalPattern.displayCumulativeDistribution());
     const stdair::Probability_T lRemainingProportion =
       lArrivalPattern.getRemainingProportion(-float(iDTD));
@@ -1164,10 +1250,10 @@ namespace RMOL {
     
 
     // Compute the characteristics (mean and std dev) of the total forecast demand to come
-    const stdair::NbOfRequests_T& lMeanNumberOfRequests =
-      lRemainingProportion*iDemandStream.getMeanNumberOfRequests();
-    const stdair::StdDevValue_T& lStdDevNumberOfRequests =
-      lRemainingProportion*iDemandStream.getStdDevNumberOfRequests();
+    const stdair::MeanValue_T& lRemainingMeanValue =
+      lRemainingProportion*lTotalForecast.getForecastMean();
+    const stdair::StdDevValue_T& lRemainingStdDevValue =
+      lRemainingProportion*lTotalForecast.getForecastStdDev();
 
     // Retrieve the frat5 coef corresponding to the input dtd
     stdair::DTDFratMap_T::const_iterator itDFC = stdair::DEFAULT_DTD_FRAT5COEF_MAP.find(iDTD);
@@ -1178,8 +1264,8 @@ namespace RMOL {
     stdair::RealNumber_T lFrat5Coef = stdair::DEFAULT_DTD_FRAT5COEF_MAP.at(iDTD);
 
     STDAIR_LOG_DEBUG ("Remaining proportion " << lRemainingProportion << " Total "
-                      << iDemandStream.getMeanNumberOfRequests() << " StdDev "
-                      << iDemandStream.getStdDevNumberOfRequests() <<"Frat5 Coef "
+                      << lTotalForecast.getForecastMean() << " StdDev "
+                      << lTotalForecast.getForecastStdDev() <<"Frat5 Coef "
                       << lFrat5Coef);
 
     std::ostringstream oStr;
@@ -1203,7 +1289,7 @@ namespace RMOL {
     // Sanity check
     assert (lAirlineClassListList.size() == lProportionFactorList.size());
 
-    STDAIR_LOG_DEBUG ("Forecast for " << iDemandStream.describeKey()
+    STDAIR_LOG_DEBUG ("Forecast for " << iOnDDate.describeKey()
                       << " " << iDTD << " days to departure");
 
     // store the forecast demand to come characteristics in the booking classes
@@ -1212,10 +1298,10 @@ namespace RMOL {
     for (; itACL != lAirlineClassListList.end(); ++itACL, ++itPF) {
       const stdair::AirlineClassList* lAirlineClassList_ptr = *itACL;
       const stdair::ProportionFactor_T& lProportionFactor = *itPF;
-      stdair::NbOfRequests_T lNumberOfRequests = lProportionFactor*lMeanNumberOfRequests;
-      stdair::StdDevValue_T lStdDevValue = lProportionFactor*lStdDevNumberOfRequests;
-      setOnDForecast(*lAirlineClassList_ptr, lNumberOfRequests, lStdDevValue,
-                  iDemandStream, iBomRoot);
+      stdair::MeanValue_T lMeanValue = lProportionFactor*lRemainingMeanValue;
+      stdair::StdDevValue_T lStdDevValue = lProportionFactor*lRemainingStdDevValue;
+      setOnDForecast(*lAirlineClassList_ptr, lMeanValue, lStdDevValue,
+                     iOnDDate, iCabinCode, iBomRoot);
     }  
     
   }
@@ -1223,17 +1309,16 @@ namespace RMOL {
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
   setOnDForecast (const stdair::AirlineClassList& iAirlineClassList,
-                  const stdair::NbOfRequests_T& iNumberOfRequests,
+                  const stdair::MeanValue_T& iMeanValue,
                   const stdair::StdDevValue_T& iStdDevValue,
-                  const TRADEMGEN::DemandStream& iDemandStream,
+                  stdair::OnDDate& iOnDDate,
+                  const stdair::CabinCode_T& iCabinCode,
                   stdair::BomRoot& iBomRoot) {
     
-    const stdair::AirportCode_T& lOrigin = iDemandStream.getOrigin();
-    const stdair::AirportCode_T& lDestination = iDemandStream.getDestination();
+    const stdair::AirportCode_T& lOrigin = iOnDDate.getOrigin();
+    const stdair::AirportCode_T& lDestination = iOnDDate.getDestination();
 
-    const stdair::Date_T& lPreferredDepartureDate =
-      iDemandStream.getPreferredDepartureDate();
-    const stdair::CabinCode_T& lPreferredCabin = iDemandStream.getPreferredCabin();
+    const stdair::Date_T& lDepartureDate = iOnDDate.getDate();
 
     const stdair::AirlineCodeList_T& lAirlineCodeList =
       iAirlineClassList.getAirlineCodeList();
@@ -1261,9 +1346,9 @@ namespace RMOL {
       stdair::AirlineCode_T lAirlineCode = lAirlineCodeList.front();
       stdair::ClassCode_T lClassCode = lClassCodeList.front();
       stdair::Yield_T lYield = iAirlineClassList.getYield();
-      setOnDForecast(lAirlineCode, lPreferredDepartureDate, lOrigin,
-                     lDestination, lPreferredCabin, lClassCode,
-                     iNumberOfRequests, iStdDevValue, lYield, iBomRoot);      
+      setOnDForecast(lAirlineCode, lDepartureDate, lOrigin,
+                     lDestination, iCabinCode, lClassCode,
+                     iMeanValue, iStdDevValue, lYield, iBomRoot);      
     } else {
       // Store the forecast information in the case of a multiple segment
       
@@ -1271,9 +1356,9 @@ namespace RMOL {
       for (stdair::AirlineCodeList_T::const_iterator itAC = lAirlineCodeList.begin();
            itAC != lAirlineCodeList.end(); ++itAC) {
         const stdair::AirlineCode_T& lAirlineCode = *itAC;
-        setOnDForecast(lAirlineCodeList, lAirlineCode, lPreferredDepartureDate, lOrigin,
-                       lDestination, lPreferredCabin, lClassCodeList,
-                       iNumberOfRequests, iStdDevValue, lYield, iBomRoot);
+        setOnDForecast(lAirlineCodeList, lAirlineCode, lDepartureDate, lOrigin,
+                       lDestination, iCabinCode, lClassCodeList,
+                       iMeanValue, iStdDevValue, lYield, iBomRoot);
       }      
     }
   }
@@ -1281,10 +1366,10 @@ namespace RMOL {
   // ///////////////////////////////////////////////////////////////////
   void RMOL_Service::
   setOnDForecast (const stdair::AirlineCode_T& iAirlineCode,
-                  const stdair::Date_T& iPreferredDepartureDate,
+                  const stdair::Date_T& iDepartureDate,
                   const stdair::AirportCode_T& iOrigin,
                   const stdair::AirportCode_T& iDestination,
-                  const stdair::CabinCode_T& iPreferredCabin,
+                  const stdair::CabinCode_T& iCabinCode,
                   const stdair::ClassCode_T& iClassCode,
                   const stdair::MeanValue_T& iMeanValue,
                   const stdair::StdDevValue_T& iStdDevValue,
@@ -1315,13 +1400,12 @@ namespace RMOL {
       const stdair::SegmentDateList_T& lSegmentDateList =
         stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
       // Check if the the O&D date is the one we are looking for
-      if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
+      if (lDepartureDate == iDepartureDate && lOrigin == iOrigin &&
           lDestination == iDestination && lSegmentDateList.size() == 1) {       
-        stdair::CabinClassPair_T lCabinClassPair (iPreferredCabin, iClassCode);
+        stdair::CabinClassPair_T lCabinClassPair (iCabinCode, iClassCode);
         stdair::CabinClassPairList_T lCabinClassPairList;
         lCabinClassPairList.push_back(lCabinClassPair);
-        stdair::DemandStruct lDemandStruct (iYield, iMeanValue, iStdDevValue);
-        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, lDemandStruct);
+        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, iYield, iMeanValue, iStdDevValue);
         lFoundOnDDate = true;
         STDAIR_LOG_DEBUG (iAirlineCode << " Class " << iClassCode << " Mean " << iMeanValue
                           << " Std Dev " << iStdDevValue);
@@ -1330,7 +1414,7 @@ namespace RMOL {
     }
 
     if (!lFoundOnDDate) {
-      STDAIR_LOG_ERROR ("Cannot find class " << iClassCode << " in cabin " << iPreferredCabin
+      STDAIR_LOG_ERROR ("Cannot find class " << iClassCode << " in cabin " << iCabinCode
                         << " for the segment " << iOrigin << "-" << iDestination << " with"
                         << " the airline " << iAirlineCode);
       assert(false);
@@ -1341,10 +1425,10 @@ namespace RMOL {
   void RMOL_Service::
   setOnDForecast (const stdair::AirlineCodeList_T& iAirlineCodeList,
                   const stdair::AirlineCode_T& iAirlineCode,
-                  const stdair::Date_T& iPreferredDepartureDate,
+                  const stdair::Date_T& iDepartureDate,
                   const stdair::AirportCode_T& iOrigin,
                   const stdair::AirportCode_T& iDestination,
-                  const stdair::CabinCode_T& iPreferredCabin,
+                  const stdair::CabinCode_T& iCabinCode,
                   const stdair::ClassCodeList_T& iClassCodeList,
                   const stdair::MeanValue_T& iMeanValue,
                   const stdair::StdDevValue_T& iStdDevValue,
@@ -1376,7 +1460,7 @@ namespace RMOL {
         stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);
       // Check if the O&D date might be the one we are looking for.
       // There still is a test to go through to see if the combination of airlines is right.
-      if (lDepartureDate == iPreferredDepartureDate && lOrigin == iOrigin &&
+      if (lDepartureDate == iDepartureDate && lOrigin == iOrigin &&
           lDestination == iDestination && lSegmentDateList.size() == iAirlineCodeList.size()) {
         const stdair::SegmentDateList_T& lSegmentDateList =
           stdair::BomManager::getList<stdair::SegmentDate> (*lOnDDate_ptr);        
@@ -1404,11 +1488,10 @@ namespace RMOL {
         for (stdair::ClassCodeList_T::const_iterator itCC = iClassCodeList.begin();
              itCC != iClassCodeList.end(); ++itCC) {
           const stdair::ClassCode_T lClassCode = *itCC;
-          stdair::CabinClassPair_T lCabinClassPair (iPreferredCabin, lClassCode);
+          stdair::CabinClassPair_T lCabinClassPair (iCabinCode, lClassCode);
           lCabinClassPairList.push_back(lCabinClassPair);
         }
-        stdair::DemandStruct lDemandStruct (iYield, iMeanValue, iStdDevValue);
-        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, lDemandStruct);
+        lOnDDate_ptr->setDemandInformation(lCabinClassPairList, iYield, iMeanValue, iStdDevValue);
         lFoundOnDDate = true;
         std::ostringstream oACStr;
         for (stdair::AirlineCodeList_T::const_iterator itAC = iAirlineCodeList.begin();
@@ -1438,7 +1521,7 @@ namespace RMOL {
     }
     if (!lFoundOnDDate) {
       STDAIR_LOG_ERROR ("Cannot find the required multi-segment O&D date:  "
-                        << iOrigin << "-" << iDestination << " " << iPreferredDepartureDate);
+                        << iOrigin << "-" << iDestination << " " << iDepartureDate);
       assert(false);
     }
   }

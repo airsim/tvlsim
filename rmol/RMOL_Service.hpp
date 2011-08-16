@@ -26,6 +26,7 @@ namespace stdair {
   class AirlineClassList;
   class YieldFeatures;
   class Inventory;
+  class OnDDate;
 }
 
 namespace TRADEMGEN {
@@ -181,7 +182,7 @@ namespace RMOL {
     void forecast (const stdair::DateTime_T&);
     
     stdair::YieldFeatures* getYieldFeatures(const TRADEMGEN::DemandStream&,
-                                          stdair::BomRoot&);
+                                            stdair::BomRoot&);
     
     void forecast (const stdair::DTD_T&, const stdair::YieldFeatures&,
                    const TRADEMGEN::DemandStream&, stdair::BomRoot&);
@@ -204,12 +205,16 @@ namespace RMOL {
     // O&D based forecast
 
     void forecastOnD (const stdair::DateTime_T&);
-    
-    void forecastOnD (const stdair::DTD_T&, const stdair::YieldFeatures&,
-                      const TRADEMGEN::DemandStream&, stdair::BomRoot&);
 
-    void setOnDForecast (const stdair::AirlineClassList&, const stdair::NbOfRequests_T&,
-                         const stdair::StdDevValue_T&, const TRADEMGEN::DemandStream&,
+    stdair::YieldFeatures* getYieldFeatures(const stdair::OnDDate&, const stdair::CabinCode_T&,
+                                            stdair::BomRoot&);
+    
+    void forecastOnD (const stdair::YieldFeatures&, stdair::OnDDate&,
+                      const stdair::CabinCode_T&, const stdair::DTD_T&, 
+                      stdair::BomRoot&);
+
+    void setOnDForecast (const stdair::AirlineClassList&, const stdair::MeanValue_T&,
+                         const stdair::StdDevValue_T&, stdair::OnDDate&, const stdair::CabinCode_T&,
                          stdair::BomRoot&);
 
     // Single segment O&D
