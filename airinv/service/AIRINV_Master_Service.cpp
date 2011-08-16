@@ -8,6 +8,7 @@
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/EventType.hpp>
+#include <stdair/bom/BomKeyManager.hpp> 
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
@@ -123,7 +124,7 @@ namespace AIRINV {
   addStdAirService (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
                     const bool iOwnStdairService) {
 
-    // Retrieve the AirInv service context
+    // Retrieve the AirInv Master service context
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
@@ -171,7 +172,7 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::initSlaveAirinvService() {
 
-    // Retrieve the AIRINV Master service context.
+    // Retrieve the AirInv Master service context
     assert (_airinvMasterServiceContext != NULL);
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
@@ -200,7 +201,8 @@ namespace AIRINV {
   // ////////////////////////////////////////////////////////////////////
   void AIRINV_Master_Service::
   parseAndLoad (const stdair::Filename_T& iInventoryInputFilename) {
-    // Retrieve the AIRINV service context
+
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -225,7 +227,7 @@ namespace AIRINV {
                 const stdair::Filename_T& iODInputFilename,
                 const stdair::Filename_T& iYieldInputFilename) {
     
-    // Retrieve the AirInv service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -246,10 +248,9 @@ namespace AIRINV {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void AIRINV_Master_Service::
-  buildSampleBom (const stdair::CabinCapacity_T iCapacity) {
+  void AIRINV_Master_Service::buildSampleBom() {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -303,7 +304,7 @@ namespace AIRINV {
               const stdair::FlightNumber_T& iFlightNumber,
               const stdair::Date_T& iDepartureDate) const {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -313,8 +314,8 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from
-    // the (AIRINV) service context
+    // Retrieve the slave AirInv (slave) service object from
+    // the (AirInv master) service context
     AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
 
@@ -324,9 +325,60 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  std::string AIRINV_Master_Service::
+  list (const stdair::AirlineCode_T& iAirlineCode,
+        const stdair::FlightNumber_T& iFlightNumber) const {
+    std::ostringstream oFlightListStr;
+
+    // Retrieve the AirInv Master service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+  
+    // Retrieve the slave AirInv (slave) service object from
+    // the (AirInv master) service context
+    AIRINV_Service& lAIRINV_Service =
+      lAIRINV_Master_ServiceContext.getAIRINV_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lAIRINV_Service.list (iAirlineCode, iFlightNumber);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
+  bool AIRINV_Master_Service::
+  check (const stdair::AirlineCode_T& iAirlineCode,
+         const stdair::FlightNumber_T& iFlightNumber,
+         const stdair::Date_T& iDepartureDate) const {
+    std::ostringstream oFlightListStr;
+
+    // Retrieve the AirInv Master service context
+    if (_airinvMasterServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
+                                                    "has not been initialised");
+    }
+    assert (_airinvMasterServiceContext != NULL);
+
+    AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
+      *_airinvMasterServiceContext;
+  
+    // Retrieve the slave AirInv (slave) service object from
+    // the (AirInv master) service context
+    AIRINV_Service& lAIRINV_Service =
+      lAIRINV_Master_ServiceContext.getAIRINV_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lAIRINV_Service.check (iAirlineCode, iFlightNumber, iDepartureDate);
+  }
+  
+  // ////////////////////////////////////////////////////////////////////
   std::string AIRINV_Master_Service::csvDisplay() const {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -351,7 +403,7 @@ namespace AIRINV {
               const stdair::FlightNumber_T& iFlightNumber,
               const stdair::Date_T& iDepartureDate) const {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -376,7 +428,7 @@ namespace AIRINV {
   initSnapshotAndRMEvents (const stdair::Date_T& iStartDate,
                            const stdair::Date_T& iEndDate) {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -397,8 +449,8 @@ namespace AIRINV {
     // Initialise the snapshot events
     InventoryManager::initSnapshotEvents (iStartDate, iEndDate, lQueue);
 
-    // Browse the list of inventories and itinialise the RM events of each
-    // inventory.
+    // \todo Browse the list of inventories and itinialise the RM events of
+    //       each inventory.
   
     // Retrieve the slave AIRINV service object from the (AIRINV)
     // service context
@@ -414,7 +466,7 @@ namespace AIRINV {
   void AIRINV_Master_Service::
   calculateAvailability (stdair::TravelSolutionStruct& ioTravelSolution) {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -446,7 +498,7 @@ namespace AIRINV {
                                     const stdair::ClassCode_T& iClassCode,
                                     const stdair::PartySize_T& iPartySize) {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -456,7 +508,11 @@ namespace AIRINV {
     AIRINV_Master_ServiceContext& lAIRINV_Master_ServiceContext =
       *_airinvMasterServiceContext;
   
-    // Retrieve the slave AIRINV service object from the (AIRINV)
+    // Retrieve the corresponding inventory key
+    // const stdair::InventoryKey& lInventoryKey =
+    // stdair::BomKeyManager::extractInventoryKey (iSegmentDateKey);
+
+    // Retrieve the slave AirInv service object from the (AirInv Master)
     // service context
     AIRINV_Service& lAIRINV_Service =
       lAIRINV_Master_ServiceContext.getAIRINV_Service();
@@ -483,7 +539,7 @@ namespace AIRINV {
   void AIRINV_Master_Service::
   takeSnapshots (const stdair::SnapshotStruct& iSnapshot) {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -500,7 +556,7 @@ namespace AIRINV {
 
     // Retrieve  the snapshot time and the airline code.
     const stdair::DateTime_T& lSnapshotTime = iSnapshot.getSnapshotTime();
-    const stdair::AirlineCode_T lAirlineCode = iSnapshot.getAirlineCode();
+    const stdair::AirlineCode_T& lAirlineCode = iSnapshot.getAirlineCode();
 
     lAIRINV_Service.takeSnapshots (lAirlineCode, lSnapshotTime);
   }
@@ -510,7 +566,7 @@ namespace AIRINV {
   optimise (const stdair::RMEventStruct& iRMEvent,
             const stdair::ForecastingMethod& iForecastingMethod) {
 
-    // Retrieve the AIRINV service context
+    // Retrieve the AirInv Master service context
     if (_airinvMasterServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The AirInvMaster service "
                                                     "has not been initialised");
@@ -527,8 +583,8 @@ namespace AIRINV {
 
     // Retrieve  the snapshot time and the airline code.
     const stdair::DateTime_T& lRMEventTime = iRMEvent.getRMEventTime();
-    const stdair::AirlineCode_T lAirlineCode = iRMEvent.getAirlineCode();
-    const stdair::KeyDescription_T lFDDescription =
+    const stdair::AirlineCode_T& lAirlineCode = iRMEvent.getAirlineCode();
+    const stdair::KeyDescription_T& lFDDescription =
       iRMEvent.getFlightDateDescription();
 
     lAIRINV_Service.optimise (lAirlineCode, lFDDescription, lRMEventTime,

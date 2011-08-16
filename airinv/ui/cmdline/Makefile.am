@@ -16,5 +16,6 @@ CLEANFILES = ${bin_PROGRAMS:%=%.log} \
 airinv_SOURCES = $(airinv_cmdline_h_sources) $(airinv_cmdline_cc_sources)
 airinv_CXXFLAGS = $(READLINE_CFLAGS) $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
 airinv_LDADD =
-airinv_LDFLAGS = $(READLINE_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(STDAIR_LIBS) \
+airinv_LDFLAGS = $(READLINE_LIBS) $(BOOST_REGEX_LIB) \
+	$(BOOST_PROGRAM_OPTIONS_LIB) $(STDAIR_LIBS) \
 	$(top_builddir)/airinv/core/libairinv.la

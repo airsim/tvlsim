@@ -20,40 +20,63 @@
 #include <airinv/config/airinv-paths.hpp>
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_AIRINV_DEFAULT_LOG_FILENAME ("parseInventory.log");
 
-/** Default name and location for the (CSV) input files. */
+/**
+ * Default name and location for the (CSV) input files.
+ */
 const std::string K_AIRINV_DEFAULT_INVENTORY_FILENAME (STDAIR_SAMPLE_DIR
                                                        "/invdump01.csv");
-/** Default name and location for the (CSV) input files. */
+/**
+ * Default name and location for the (CSV) input files.
+ */
 const std::string K_AIRINV_DEFAULT_SCHEDULE_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/schedule01.csv");
-/** Default name and location for the (CSV) input files. */
-const std::string K_AIRINV_DEFAULT_OND_FILENAME (STDAIR_SAMPLE_DIR "/ond01.csv");
+/**
+ * Default name and location for the (CSV) input files.
+ */
+const std::string K_AIRINV_DEFAULT_OND_FILENAME (STDAIR_SAMPLE_DIR
+                                                 "/ond01.csv");
 
-/** Default name and location for the (CSV) input files. */
-const std::string K_AIRINV_DEFAULT_YIELD_FILENAME (STDAIR_SAMPLE_DIR "/yield01.csv");
+/**
+ * Default name and location for the (CSV) input files.
+ */
+const std::string K_AIRINV_DEFAULT_YIELD_FILENAME (STDAIR_SAMPLE_DIR
+                                                   "/yieldstore01.csv");
 
-/** Default segment-date key on which the sale should be made. */
+/**
+ * Default segment-date key on which the sale should be made.
+ */
 const std::string K_AIRINV_DEFAULT_SEGMENT_DATE_KEY ("SV,5,2010-03-11,KBP,JFK");
 
-/** Default class code for which the sale should be made. */
+/**
+ * Default class code for which the sale should be made.
+ */
 const stdair::ClassCode_T K_AIRINV_DEFAULT_CLASS_CODE ("Y");
 
-/** Default party size for the sale. */
+/**
+ * Default party size for the sale.
+ */
 const stdair::PartySize_T K_AIRINV_DEFAULT_PARTY_SIZE (2);
 
-/** Default for the input type. It can be either built-in or provided by an
-    input file. That latter must then be given with the -i option. */
+/**
+ * Default for the input type. It can be either built-in or provided by an
+ * input file. That latter must then be given with the -i option.
+ */
 const bool K_AIRINV_DEFAULT_BUILT_IN_INPUT = false;
 
-/** Default for the input type. The BOM tree can be built from either an
-    inventory dump or from a schedule file (and, potentially, an O&D list). */
+/**
+ * Default for the input type. The BOM tree can be built from either an
+ * inventory dump or from a schedule file (and, potentially, an O&D list).
+ */
 const bool K_AIRINV_DEFAULT_FOR_SCHEDULE = false;
 
-/** Early return status (so that it can be differentiated from an
-    error). */
+/**
+ * Early return status (so that it can be differentiated from an error).
+ */
 const int K_AIRINV_EARLY_RETURN_STATUS = 99;
 
 // ///////// Parsing of Options & Configuration /////////
@@ -64,7 +87,9 @@ template<class T> std::ostream& operator<< (std::ostream& os,
   return os;
 }
 
-/** Read and parse the command line options. */
+/**
+ * Read and parse the command line options.
+ */
 int readConfiguration (int argc, char* argv[],
                        bool& ioIsBuiltin, bool& ioIsForSchedule,
                        stdair::Filename_T& ioInventoryFilename,
@@ -99,16 +124,16 @@ int readConfiguration (int argc, char* argv[],
      "The BOM tree should be built from a schedule file (instead of from an inventory dump)")
     ("inventory,i",
      boost::program_options::value< std::string >(&ioInventoryFilename)->default_value(K_AIRINV_DEFAULT_INVENTORY_FILENAME),
-     "(CVS) input file for the inventory")
+     "(CSV) input file for the inventory")
     ("schedule,s",
      boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_AIRINV_DEFAULT_SCHEDULE_FILENAME),
-     "(CVS) input file for the schedule")
+     "(CSV) input file for the schedule")
     ("ond,o",
      boost::program_options::value< std::string >(&ioODInputFilename)->default_value(K_AIRINV_DEFAULT_OND_FILENAME),
-     "(CVS) input file for the O&D")
+     "(CSV) input file for the O&D")
     ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_AIRINV_DEFAULT_YIELD_FILENAME),
-     "(CVS) input file for the yield")
+     "(CSV) input file for the yield")
     ("segment_date_key,k",
      boost::program_options::value< std::string >(&ioSegmentDateKey)->default_value(K_AIRINV_DEFAULT_SEGMENT_DATE_KEY),
      "Segment-date key")
@@ -278,7 +303,7 @@ int main (int argc, char* argv[]) {
   AIRINV::AIRINV_Master_Service airinvService (lLogParams);
 
   // DEBUG
-  STDAIR_LOG_DEBUG ("Welcome to airinv");
+  STDAIR_LOG_DEBUG ("Welcome to AirInv");
 
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
