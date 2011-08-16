@@ -45,7 +45,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -61,7 +62,7 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -78,7 +79,8 @@ namespace DSIM {
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -94,7 +96,7 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -110,7 +112,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
@@ -122,7 +125,7 @@ namespace DSIM {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -238,7 +241,8 @@ namespace DSIM {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initTRADEMGENService() {
+  void DSIM_Service::
+  initTRADEMGENService (const stdair::RandomSeed_T& iRandomSeed) {
 
     // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
@@ -256,7 +260,8 @@ namespace DSIM {
      *       no longer referenced (e.g., at the end of the process).
      */
     TRADEMGEN::TRADEMGEN_ServicePtr_T lTRADEMGEN_Service_ptr = 
-      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr);
+      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
+                                                        iRandomSeed);
     
     // Store the TRADEMGEN service object within the (DSim) service context
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service_ptr);
@@ -291,6 +296,10 @@ namespace DSIM {
   void DSIM_Service::initDsimService() {
     // Do nothing at this stage. A sample BOM tree may be built by
     // calling the buildSampleBom() method
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::reinitServices() {
   }
 
   // ////////////////////////////////////////////////////////////////////

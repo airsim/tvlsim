@@ -110,8 +110,11 @@ namespace TRADEMGEN {
     /**
      * Main constructor.
      */
+    TRADEMGEN_ServiceContext (const stdair::RandomSeed_T&);
+    /**
+     * Default constructor (not to be used).
+     */
     TRADEMGEN_ServiceContext();
-    TRADEMGEN_ServiceContext (const std::string& iServiceName);
     /**
      * Copy constructor (not to be used).
      */

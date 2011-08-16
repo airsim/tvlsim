@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_demand_types.hpp>
+#include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/bom/BookingRequestTypes.hpp>
@@ -50,8 +51,10 @@ namespace TRADEMGEN {
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::BasDBParams& Parameters for the database access.
+     * @param const stdair::RandomSeed_T& Seed for the random generation.
      */
-    TRADEMGEN_Service (const stdair::BasLogParams&, const stdair::BasDBParams&);
+    TRADEMGEN_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
+                       const stdair::RandomSeed_T&);
 
     /**
      * Constructor.
@@ -63,8 +66,9 @@ namespace TRADEMGEN {
      * can be directed onto that stream.
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
+     * @param const stdair::RandomSeed_T& Seed for the random generation.
      */
-    TRADEMGEN_Service (const stdair::BasLogParams&);
+    TRADEMGEN_Service (const stdair::BasLogParams&, const stdair::RandomSeed_T&);
 
     /**
      * Constructor.
@@ -80,8 +84,9 @@ namespace TRADEMGEN {
      * initialised by another library service such as DSIM_Service).
      *
      * @param stdair::STDAIR_ServicePtr_T Handler on the STDAIR_Service.
+     * @param const stdair::RandomSeed_T& Seed for the random generation.
      */
-    TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T);
+    TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T, const stdair::RandomSeed_T&);
     
     /**
      * Parse the demand input file.
@@ -396,10 +401,12 @@ namespace TRADEMGEN {
                            const bool iOwnStdairService);
     
     /**
-     * Initialise the (TRADEMGEN) service context (i.e., the
+     * Initialise the (TraDemGen) service context (i.e., the
      * TRADEMGEN_ServiceContext object).
+     *
+     * @param const stdair::RandomSeed_T& Seed for the random generation.
      */
-    void initServiceContext();
+    void initServiceContext (const stdair::RandomSeed_T&);
 
     /**
      * Initialise.

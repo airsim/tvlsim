@@ -14,12 +14,12 @@ namespace TRADEMGEN {
   FacTRADEMGENServiceContext* FacTRADEMGENServiceContext::_instance = NULL;
 
   // //////////////////////////////////////////////////////////////////////
-  FacTRADEMGENServiceContext::~FacTRADEMGENServiceContext () {
+  FacTRADEMGENServiceContext::~FacTRADEMGENServiceContext() {
     _instance = NULL;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  FacTRADEMGENServiceContext& FacTRADEMGENServiceContext::instance () {
+  FacTRADEMGENServiceContext& FacTRADEMGENServiceContext::instance() {
 
     if (_instance == NULL) {
       _instance = new FacTRADEMGENServiceContext();
@@ -31,10 +31,11 @@ namespace TRADEMGEN {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  TRADEMGEN_ServiceContext& FacTRADEMGENServiceContext::create () {
+  TRADEMGEN_ServiceContext& FacTRADEMGENServiceContext::
+  create (const stdair::RandomSeed_T& iRandomSeed) {
     TRADEMGEN_ServiceContext* aServiceContext_ptr = NULL;
 
-    aServiceContext_ptr = new TRADEMGEN_ServiceContext ();
+    aServiceContext_ptr = new TRADEMGEN_ServiceContext (iRandomSeed);
     assert (aServiceContext_ptr != NULL);
 
     // The new object is added to the Bom pool
