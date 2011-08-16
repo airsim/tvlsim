@@ -109,6 +109,11 @@ macro (set_project_options _build_doc)
     endif ()
   endforeach (_path_type)
 
+  # Define STDAIR_SAMPLE_DIR if the project is STDAIR
+  if ("${PROJECT_NAME}" STREQUAL "stdair")
+    set (STDAIR_SAMPLE_DIR ${INSTALL_SAMPLE_DIR})
+  endif ("${PROJECT_NAME}" STREQUAL "stdair")
+
   ##
   # Basic documentation (i.e., AUTHORS, NEWS, README, INSTALL)
   set (DOC_INSTALL_FILE INSTALL)
@@ -378,7 +383,7 @@ macro (get_boost)
   set (Boost_USE_MULTITHREADED ON)
   set (Boost_USE_STATIC_RUNTIME OFF)
   set (BOOST_REQUIRED_COMPONENTS
-    program_options date_time iostreams serialization filesystem 
+    regex program_options date_time iostreams serialization filesystem 
     unit_test_framework python)
 
   # The first check is for the required components.
@@ -395,18 +400,19 @@ macro (get_boost)
 
     # Update the list of dependencies for the project
     list (APPEND PROJ_DEP_LIBS_FOR_LIB
-      ${Boost_IOSTREAMS_LIBRARY} ${Boost_SERIALIZATION_LIBRARY}
-      ${Boost_FILESYSTEM_LIBRARY} ${Boost_DATE_TIME_LIBRARY}
-      ${Boost_PYTHON_LIBRARY})
-    list (APPEND PROJ_DEP_LIBS_FOR_BIN ${Boost_PROGRAM_OPTIONS_LIBRARY})
+      ${Boost_REGEX_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} 
+	  ${Boost_SERIALIZATION_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
+	  ${Boost_DATE_TIME_LIBRARY} ${Boost_PYTHON_LIBRARY})
+    list (APPEND PROJ_DEP_LIBS_FOR_BIN
+	  ${Boost_REGEX_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY})
     list (APPEND PROJ_DEP_LIBS_FOR_TST ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
     # For display purposes
     set (BOOST_REQUIRED_LIBS
-      ${Boost_IOSTREAMS_LIBRARY} ${Boost_SERIALIZATION_LIBRARY}
-      ${Boost_FILESYSTEM_LIBRARY} ${Boost_DATE_TIME_LIBRARY}
-      ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-      ${Boost_PYTHON_LIBRARY})
+      ${Boost_REGEX_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} 
+	  ${Boost_SERIALIZATION_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
+	  ${Boost_DATE_TIME_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY}
+	  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} ${Boost_PYTHON_LIBRARY})
   endif (Boost_FOUND)
 
 endmacro (get_boost)
@@ -600,7 +606,8 @@ macro (set_install_directories)
   set (pkgdatadir    ${datarootdir}/${PACKAGE})
   set (sampledir     ${STDAIR_SAMPLE_DIR})
   set (docdir        ${datarootdir}/doc/${PACKAGE}-${PACKAGE_VERSION})
-  set (htmldir       ${docdir})
+  set (htmldir       ${docdir}/html)
+  set (pdfdir        ${htmldir})
   set (mandir        ${datarootdir}/man)
   set (infodir       ${datarootdir}/info)
   set (pkgincludedir ${includedir}/stdair)
