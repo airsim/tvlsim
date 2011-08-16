@@ -3,7 +3,6 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <cassert>
-#include <iostream>
 #include <sstream>
 #include <cmath>
 #include <iomanip>

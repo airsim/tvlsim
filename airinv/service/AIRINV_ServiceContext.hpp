@@ -35,6 +35,13 @@ namespace AIRINV {
   private:
     // ///////////////// Getters ///////////////////
     /**
+     * Get the airline code (inventory key).
+     */
+    stdair::AirlineCode_T getAirlineCode() const {
+      return _airlineCode;
+    }
+
+    /**
      * Get the pointer on the STDAIR service handler.
      */
     stdair::STDAIR_ServicePtr_T getSTDAIR_ServicePtr() const {
@@ -73,7 +80,15 @@ namespace AIRINV {
     }
     
 
+  private:
     // ///////////////// Setters ///////////////////
+    /**
+     * Set the airline code (inventory key).
+     */
+    void setAirlineCode (const stdair::AirlineCode_T& iAirlineCode) {
+      _airlineCode = iAirlineCode;
+    }
+
     /**
      * Set the pointer on the STDAIR service handler.
      */
@@ -121,6 +136,10 @@ namespace AIRINV {
     /**
      * Main constructor.
      */
+    AIRINV_ServiceContext (const stdair::AirlineCode_T&);
+    /**
+     * Default constructor (not to be used).
+     */
     AIRINV_ServiceContext();
     /**
      * Copy constructor (not to be used).
@@ -159,6 +178,14 @@ namespace AIRINV {
      * Standart Airline Yield service Handler.
      */
     AIRRAC::AIRRAC_ServicePtr_T _airracService;
+
+  private:
+    // //////////// Attributes ////////////
+    /**
+     * Airline code (inventory key) for which that instance of AirInv service
+     * is operating.
+     */
+    stdair::AirlineCode_T _airlineCode;
   };
 
 }

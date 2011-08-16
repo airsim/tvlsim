@@ -26,7 +26,7 @@
 #ifndef SREADLINE_H
 #define SREADLINE_H
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -428,9 +428,9 @@ namespace swift {
      *
      * @param Limit History size
      */
-    SReadline (const size_t Limit = DefaultHistoryLimit) : 
-      HistoryLimit (Limit), HistoryFileName (""), 
-      OriginalCompletion (rl_attempted_completion_function) {
+    SReadline (const size_t Limit = DefaultHistoryLimit)
+      : HistoryLimit (Limit), HistoryFileName (""), 
+        OriginalCompletion (rl_attempted_completion_function) {
       rl_startup_hook = StartupHook;
       rl_attempted_completion_function = UserCompletion;
       using_history();
@@ -443,16 +443,14 @@ namespace swift {
      * @param historyFileName File name to load history from
      * @param Limit History size
      */
-    SReadline( const std::string &  historyFileName,
-               const size_t  Limit = DefaultHistoryLimit ) :
-      HistoryLimit( Limit ),
-      HistoryFileName( historyFileName ),
-      OriginalCompletion( rl_attempted_completion_function )
-    {
+    SReadline (const std::string&  historyFileName,
+               const size_t Limit = DefaultHistoryLimit)
+      : HistoryLimit (Limit), HistoryFileName (historyFileName),
+        OriginalCompletion (rl_attempted_completion_function) {
       rl_startup_hook = StartupHook;
       rl_attempted_completion_function = UserCompletion;
       using_history();
-      LoadHistory( HistoryFileName );
+      LoadHistory (HistoryFileName);
     }
 
     /**
