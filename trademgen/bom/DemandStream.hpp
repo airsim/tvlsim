@@ -243,14 +243,15 @@ namespace TRADEMGEN {
      * Generate the next request.
      *
      * @param stdair::RandomGeneration Random generator.
-     * @param const stdair::DemandGenerationMethod::EN_DemandGenerationMethod Method
-     * used to generate the date time of the next booking request: statistic
-     * order or poisson process.
+     * @param const stdair::DemandGenerationMethod::EN_DemandGenerationMethod
+     *        Method used to generate the date time of the next
+     *        booking request: statistic order or poisson process.
      * @return stdair::BookingRequestPtr_T Next request to be simulate.
      *
      */
-    stdair::BookingRequestPtr_T generateNextRequest (stdair::RandomGeneration&,
-                                                     const stdair::DemandGenerationMethod&);
+    stdair::BookingRequestPtr_T
+    generateNextRequest (stdair::RandomGeneration&,
+                         const stdair::DemandGenerationMethod&);
 
     /** Reset all the contexts of the demand stream. */
     void reset (stdair::BaseGenerator_T& ioSharedGenerator);

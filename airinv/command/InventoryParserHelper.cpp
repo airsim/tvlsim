@@ -452,15 +452,18 @@ namespace AIRINV {
       // ///////////////////
       // If this is not the first segment-cabin of the segment-date,
       // the already parsed segment-cabin must be added to the segment-date.
-      if (_flightDate._itSegmentCabin._itFareFamily._classList.empty() == false) {
-        _flightDate._itSegmentCabin._itFareFamily._classList.push_back (_flightDate._itBookingClass);
-        _flightDate._itSegmentCabin._fareFamilies.push_back (_flightDate._itSegmentCabin._itFareFamily);
-        _flightDate._itSegment._cabinList.push_back (_flightDate._itSegmentCabin);
+      if (_flightDate._itSegmentCabin._itFareFamily._classList.empty() == false){
+        _flightDate._itSegmentCabin._itFareFamily._classList.
+          push_back (_flightDate._itBookingClass);
+        _flightDate._itSegmentCabin._fareFamilies.
+          push_back (_flightDate._itSegmentCabin._itFareFamily);
+        _flightDate._itSegment._cabinList.
+          push_back (_flightDate._itSegmentCabin);
       }
 
       // (Re-)initialise the booking-class branch of the tree
-      _flightDate._itSegmentCabin._itFareFamily._classList.clear();
       _flightDate._itSegmentCabin._fareFamilies.clear();
+      _flightDate._itSegmentCabin._itFareFamily._classList.clear();
       _flightDate._itBookingClass._classCode = "";
 
       
@@ -491,7 +494,8 @@ namespace AIRINV {
       // If this is not the first booking-class of the segment-cabin,
       // the already parsed booking-class must be added to the segment-cabin.
       if (_flightDate._itBookingClass._classCode != "") {
-        _flightDate._itSegmentCabin._itFareFamily._classList.push_back (_flightDate._itBookingClass);
+        _flightDate._itSegmentCabin._itFareFamily._classList.
+          push_back (_flightDate._itBookingClass);
       }
 
       // ///////////////////
@@ -613,7 +617,8 @@ namespace AIRINV {
     }
     
     // //////////////////////////////////////////////////////////////////
-    storeNbOfPendingGroupBkgs::storeNbOfPendingGroupBkgs(FlightDateStruct& ioFlightDate)
+    storeNbOfPendingGroupBkgs::
+    storeNbOfPendingGroupBkgs (FlightDateStruct& ioFlightDate)
       : ParserSemanticAction (ioFlightDate) {
     }
     
@@ -657,7 +662,8 @@ namespace AIRINV {
     }
     
     // //////////////////////////////////////////////////////////////////
-    storeClassAvailability::storeClassAvailability (FlightDateStruct& ioFlightDate)
+    storeClassAvailability::
+    storeClassAvailability (FlightDateStruct& ioFlightDate)
       : ParserSemanticAction (ioFlightDate) {
     }
     
@@ -668,7 +674,8 @@ namespace AIRINV {
     }
     
     // //////////////////////////////////////////////////////////////////
-    storeSegmentAvailability::storeSegmentAvailability (FlightDateStruct& ioFlightDate)
+    storeSegmentAvailability::
+    storeSegmentAvailability (FlightDateStruct& ioFlightDate)
       : ParserSemanticAction (ioFlightDate) {
     }
     
@@ -679,7 +686,8 @@ namespace AIRINV {
     }
     
     // //////////////////////////////////////////////////////////////////
-    storeRevenueAvailability::storeRevenueAvailability (FlightDateStruct& ioFlightDate)
+    storeRevenueAvailability::
+    storeRevenueAvailability (FlightDateStruct& ioFlightDate)
       : ParserSemanticAction (ioFlightDate) {
     }
     
@@ -717,7 +725,17 @@ namespace AIRINV {
       // when a list of classes is parsed, it means that the full segment
       // cabin details have already been parsed as well: the segment cabin
       // can thus be added to the segment.
-      _flightDate._itSegmentCabin._fareFamilies.push_back (_flightDate._itSegmentCabin._itFareFamily);
+      _flightDate._itSegmentCabin._itFareFamily._classList.
+        push_back (_flightDate._itBookingClass);
+      _flightDate._itSegmentCabin._fareFamilies.
+        push_back (_flightDate._itSegmentCabin._itFareFamily);
+      _flightDate._itSegment._cabinList.push_back (_flightDate._itSegmentCabin);
+
+      // As that's the beginning of a new segment-cabin,
+      // (re-)initialise the segment-cabin branch of the tree
+      _flightDate._itSegmentCabin._itFareFamily._classList.clear();
+      _flightDate._itSegmentCabin._fareFamilies.clear();
+      _flightDate._itBookingClass._classCode = "";
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -737,18 +755,12 @@ namespace AIRINV {
       // The segment-date section is now over. It means that the
       // already parsed segment-date must be added to the flight-date.
       if (_flightDate._itSegment._cabinList.empty() == false) {
-        _flightDate._itSegmentCabin._itFareFamily._classList.push_back (_flightDate._itBookingClass);
-        _flightDate._itSegmentCabin._fareFamilies.push_back (_flightDate._itSegmentCabin._itFareFamily);
-        _flightDate._itSegment._cabinList.push_back (_flightDate._itSegmentCabin);
         _flightDate._segmentList.push_back (_flightDate._itSegment);
       }
 
-      // As that's the beginning of a new segment-date,
+      // As that's the beginning of a new flight-date,
       // (re-)initialise the segment-cabin branch of the tree
       _flightDate._itSegment._cabinList.clear();
-      _flightDate._itSegmentCabin._itFareFamily._classList.clear();
-      _flightDate._itSegmentCabin._fareFamilies.clear();
-      _flightDate._itBookingClass._classCode = "";
       
 
       // ///////////////////
@@ -757,10 +769,11 @@ namespace AIRINV {
         //STDAIR_LOG_DEBUG ("FlightDate #" << _nbOfFlights
         //                  << ": " << _flightDate.describe());
         //}
-      
+
       // Build the FlightDate BOM objects
       InventoryBuilder::buildInventory (_bomRoot, _flightDate);
 
+      //
       ++_nbOfFlights;
     }
 
@@ -912,7 +925,7 @@ namespace AIRINV {
       leg_list = +( '/' >> leg )
         ;
       
-      leg = leg_key >> ';' >> leg_details >> full_leg_cabin_details
+      leg = leg_key >> ';' >> leg_details >> leg_cabin_list
         ;
 	 
       leg_key = (airport_p)[storeLegBoardingPoint(self._flightDate)]
@@ -925,7 +938,7 @@ namespace AIRINV {
         >> ';' >> time[storeOffTime(self._flightDate)]
         ;
 
-      full_leg_cabin_details = +( ';' >> leg_cabin_details >> !bucket_list )
+      leg_cabin_list = +( ';' >> leg_cabin_details >> !bucket_list )
         ;
         
       leg_cabin_details = (cabin_code_p)[storeLegCabinCode(self._flightDate)]
@@ -1039,7 +1052,7 @@ namespace AIRINV {
       BOOST_SPIRIT_DEBUG_NODE (leg);
       BOOST_SPIRIT_DEBUG_NODE (leg_key);
       BOOST_SPIRIT_DEBUG_NODE (leg_details);
-      BOOST_SPIRIT_DEBUG_NODE (full_leg_cabin_details);
+      BOOST_SPIRIT_DEBUG_NODE (leg_cabin_list);
       BOOST_SPIRIT_DEBUG_NODE (leg_cabin_details);
       BOOST_SPIRIT_DEBUG_NODE (bucket_list);
       BOOST_SPIRIT_DEBUG_NODE (bucket_details);
@@ -1079,8 +1092,7 @@ namespace AIRINV {
 
   // //////////////////////////////////////////////////////////////////////
   InventoryFileParser::
-  InventoryFileParser (stdair::BomRoot& ioBomRoot,
-                    const std::string& iFilename)
+  InventoryFileParser (stdair::BomRoot& ioBomRoot, const std::string& iFilename)
     : _filename (iFilename), _bomRoot (ioBomRoot),
       _nbOfFlights (0) {
     init();

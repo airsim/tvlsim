@@ -466,7 +466,7 @@ namespace AIRINV {
           flight_date_end, flight_key, airline_code, flight_number,
           flight_type_code, flight_visibility_code,
           date, leg_list, leg, leg_key, leg_details,
-          full_leg_cabin_details, leg_cabin_details,
+          leg_cabin_list, leg_cabin_details,
           bucket_list, bucket_details,
           time, segment_list, segment, segment_key, full_segment_cabin_details,
           segment_cabin_list, segment_cabin_key, segment_cabin_details,

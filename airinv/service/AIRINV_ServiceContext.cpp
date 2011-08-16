@@ -11,12 +11,19 @@
 namespace AIRINV {
 
   // //////////////////////////////////////////////////////////////////////
-  AIRINV_ServiceContext::AIRINV_ServiceContext() : _ownStdairService (false) {
+  AIRINV_ServiceContext::AIRINV_ServiceContext()
+    : _ownStdairService (false), _airlineCode (DEFAULT_AIRLINE_CODE) {
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  AIRINV_ServiceContext::
+  AIRINV_ServiceContext (const stdair::AirlineCode_T& iAirlineCode)
+    : _ownStdairService (false), _airlineCode (iAirlineCode) {
   }
 
   // //////////////////////////////////////////////////////////////////////
   AIRINV_ServiceContext::AIRINV_ServiceContext (const AIRINV_ServiceContext&)
-    : _ownStdairService (false) {
+    : _ownStdairService (false), _airlineCode (DEFAULT_AIRLINE_CODE) {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -26,8 +33,8 @@ namespace AIRINV {
   // //////////////////////////////////////////////////////////////////////
   const std::string AIRINV_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
-    oStr << "AIRINV_ServiceContext -- Owns StdAir service: "
-         << _ownStdairService;
+    oStr << "AIRINV_ServiceContext[" << _airlineCode
+         << "] -- Owns StdAir service: " << _ownStdairService;
     return oStr.str();
   }
 
