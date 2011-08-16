@@ -10,7 +10,6 @@
 #include <boost/program_options.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/basic/DateGenerationMethod.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>

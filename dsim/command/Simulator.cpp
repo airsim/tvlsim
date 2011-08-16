@@ -135,7 +135,7 @@ namespace DSIM {
       const bool stillHavingRequestsToBeGenerated =
         ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
                                                               ioPSS,
-                                                              iDateGenerationMethod);
+                                                              iDemandGenerationMethod);
 
       // DEBUG
       // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
@@ -199,8 +199,16 @@ namespace DSIM {
           const stdair::PartySize_T lPartySize = std::floor (lPartySizeDouble);
         
           // Delegate the sell to the corresponding SimCRS service
-          ioSIMCRS_Service.sell (*lChosenTS_ptr, lPartySize);
-
+          bool saleSucceedful =
+            ioSIMCRS_Service.sell (*lChosenTS_ptr, lPartySize);
+          
+          // If the sale succeeded, generate the potential cancellation event.
+          if (saleSucceedful == true) {
+            ioTRADEMGEN_Service.generateCancellation (*lChosenTS_ptr,
+                                                      lPartySize, lReqTime,
+                                                      lDepDate);
+          }
+          
           // LOG
           const stdair::DateTime_T lDepartureDateTime =
             boost::posix_time::ptime (lDepDate, boost::posix_time::hours (0));

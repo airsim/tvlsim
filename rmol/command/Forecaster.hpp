@@ -65,6 +65,7 @@ namespace RMOL {
                                                   const stdair::DCP_T&,
                                                   const stdair::DCP_T&,
                                                   const stdair::Date_T&,
+                                                  const stdair::NbOfSegments_T&,
                                                   const stdair::NbOfSegments_T&);
     
     /**
@@ -76,6 +77,7 @@ namespace RMOL {
                                                   const stdair::DCP_T&,
                                                   const stdair::NbOfSegments_T&,
                                                   const stdair::BlockIndex_T&,
+                                                  const stdair::NbOfSegments_T&,
                                                   const stdair::NbOfSegments_T&);
     
     /**
@@ -87,6 +89,7 @@ namespace RMOL {
                                                   const stdair::DCP_T&,
                                                   const stdair::NbOfSegments_T&,
                                                   const stdair::BlockIndex_T&,
+                                                  const stdair::NbOfSegments_T&,
                                                   const stdair::NbOfSegments_T&,
                                                   const stdair::SegmentCabin&,
                                                   const stdair::Date_T&);

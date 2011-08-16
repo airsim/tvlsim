@@ -317,8 +317,14 @@ namespace RMOL {
       GuillotineBlockHelper::
       getNbOfSegmentAlreadyPassedThisDTD (lGuillotineBlock, iSegmentDTD,
                                           iEventDate) - 1;
+    // Retrieve the number of departed similar segments.
+    stdair::NbOfSegments_T lNbOfDepartedSegments =
+      Utilities::getNbOfDepartedSimilarSegments (ioSegmentCabin, iEventDate);
     // TODO:
-    if (lNbOfAnteriorSimilarSegments > 52) lNbOfAnteriorSimilarSegments = 52;
+    if (lNbOfDepartedSegments > 52) {
+      lNbOfAnteriorSimilarSegments =
+        lNbOfAnteriorSimilarSegments  - lNbOfDepartedSegments + 52;
+    }
       
     // DEBUG
     STDAIR_LOG_DEBUG ("Nb of anterior similar segments: "
@@ -346,8 +352,10 @@ namespace RMOL {
         getNbOfSegmentAlreadyPassedThisDTD (lGuillotineBlock, lFirstDCP,
                                             iEventDate);
       // TODO
-      unsigned short lSize;
-      if (lNbOfUsableSegments > 53) lSize = 53; 
+      unsigned short lSize = lNbOfUsableSegments;
+      if (lNbOfDepartedSegments > 52) {
+        lSize = lNbOfUsableSegments - lNbOfDepartedSegments + 52;
+      }
       
       STDAIR_LOG_DEBUG ("Nb of usable similar segments: "
                         << lNbOfUsableSegments);
@@ -378,7 +386,8 @@ namespace RMOL {
         retrieveUnconstrainedDemandForFirstDCP (ioSegmentCabin,
                                                 lBkgClassUncDemVectorMap,
                                                 lQEquivalentDemandVector,
-                                                lFirstDCP, lNbOfUsableSegments);
+                                                lFirstDCP, lNbOfUsableSegments,
+                                                lSize);
 
       // Unconstrain the booking figures.
       stdair::DCPList_T::const_iterator itNextDCP = itDCP; ++itNextDCP;
@@ -393,7 +402,8 @@ namespace RMOL {
                                                 lBkgClassUncDemVectorMap,
                                                 lQEquivalentDemandVector,
                                                 lCurrentDCP-1, lNextDCP,
-                                                iEventDate);
+                                                iEventDate,
+                                                lNbOfDepartedSegments);
         ++itNextDCP; ++itDCP;
       }
 
@@ -422,7 +432,8 @@ namespace RMOL {
                                            lBkgClassUncDemVectorMap,
                                            lQEquivalentDemandVector,
                                            lCurrentDCP-1, lNextDCP, iEventDate,
-                                           lNbOfAnteriorSimilarSegments);
+                                           lNbOfAnteriorSimilarSegments,
+                                           lNbOfDepartedSegments);
       }
 
       // Update the remaining demand for all classes
@@ -462,7 +473,8 @@ namespace RMOL {
    UnconstrainedDemandVector_T& ioQEquivalentDemandVector,
    const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
    const stdair::Date_T& iCurrentDate,
-   const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments) {
+   const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments,
+   const stdair::NbOfSegments_T& iNbOfDepartedSegments) {
 
     // Retrieve the guillotine block.
     const stdair::GuillotineBlock& lGuillotineBlock =
@@ -494,7 +506,8 @@ namespace RMOL {
         forecastUsingMultiplicativePickUp (lGuillotineBlock, lUncDemVector,
                                            iDCPBegin, iDCPEnd,
                                            lNbOfUsableSegments, lBlockIdx,
-                                           iNbOfAnteriorSimilarSegments);
+                                           iNbOfAnteriorSimilarSegments,
+                                           iNbOfDepartedSegments);
       }
       
       // Unconstrain the Q-equivalent bookings.
@@ -511,6 +524,7 @@ namespace RMOL {
                                          iDCPBegin, iDCPEnd,
                                          lNbOfUsableSegments, lCabinIdx,
                                          iNbOfAnteriorSimilarSegments,
+                                         iNbOfDepartedSegments,
                                          iSegmentCabin, iCurrentDate);
     }
   }
@@ -522,10 +536,13 @@ namespace RMOL {
    const stdair::DCP_T& iDCPBegin, const stdair::DCP_T& iDCPEnd,
    const stdair::NbOfSegments_T& iNbOfUsableSegments,
    const stdair::BlockIndex_T& iBlockIdx,
-   const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments) {
+   const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments,
+   const stdair::NbOfSegments_T& iNbOfDepartedSegments) {
     // TODO
     stdair::NbOfSegments_T lSegBegin = 0;
-    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
+    if (iNbOfDepartedSegments > 52) {
+      lSegBegin = iNbOfDepartedSegments - 52;
+    }
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
       iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);
@@ -611,11 +628,14 @@ namespace RMOL {
    const stdair::NbOfSegments_T& iNbOfUsableSegments,
    const stdair::BlockIndex_T& iBlockIdx,
    const stdair::NbOfSegments_T& iNbOfAnteriorSimilarSegments,
+   const stdair::NbOfSegments_T& iNbOfDepartedSegments,
    const stdair::SegmentCabin& iSegmentCabin,
    const stdair::Date_T& iCurrentDate) {
     // TODO
     stdair::NbOfSegments_T lSegBegin = 0;
-    if (iNbOfUsableSegments > 52) lSegBegin = iNbOfUsableSegments - 52;
+    if (iNbOfDepartedSegments > 52) {
+      lSegBegin = iNbOfDepartedSegments - 52;
+    }
     // Retrieve the gross daily booking and availability snapshots.
     stdair::ConstSegmentCabinDTDRangeSnapshotView_T lBookingView =
       iGuillotineBlock.getConstSegmentCabinDTDRangeProductAndPriceOrientedBookingSnapshotView (lSegBegin, iNbOfUsableSegments -1, iDCPEnd, iDCPBegin);

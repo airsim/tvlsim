@@ -191,7 +191,7 @@ for i in lines:
     headline, datedtd = i.split(': ')
 
     # RMOL
-    if (headline == "[N]../../../rmol/command/Forecaster.cpp:702") or \
+    if (headline == "[N]../../../rmol/command/Forecaster.cpp:722") or \
             (headline == "[N]../../../rmol/command/Detruncator.cpp:226"):
         fd, dtd, begin, end, hfd, dem = datedtd.split(';')
         try:
@@ -225,7 +225,7 @@ for i in lines:
         dtd_list.append (dtd_float)
         
     # BKGs
-    if (headline == "[N]../../../dsim/command/Simulator.cpp:217"):
+    if (headline == "[N]../../../dsim/command/Simulator.cpp:225"):
         c, fd, od, t, dtd = datedtd.split(';')
         date = extract_date (fd)
         try:
@@ -243,7 +243,7 @@ bkg_period_dict = sum_period2 (bkg_dict)
 
 print_diff2 (demand_period_dict, unc_demand_dict)
 #print_diff2 (demand_period_dict, bkg_period_dict)
-print_diff2 (demand_period_dict, qbkg_dict)
+#print_diff2 (demand_period_dict, qbkg_dict)
     
 
 #print demand_period_dict
@@ -254,7 +254,7 @@ print_diff2 (demand_period_dict, qbkg_dict)
 #print_dict (bkg_dict)
 #print_distrib (demand_dict)
 #print_distrib (bkg_dict)
-print_dict (demand_period_dict)
+#print_dict (demand_period_dict)
 #print_dict (bkg_period_dict)
-print_dict (qbkg_dict)
+#print_dict (qbkg_dict)
 #print_dict (unc_demand_dict)

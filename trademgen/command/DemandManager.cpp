@@ -9,6 +9,8 @@
 #include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/EventQueue.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/CancellationStruct.hpp>
 #include <stdair/factory/FacBom.hpp>
 #include <stdair/factory/FacBomManager.hpp>
 #include <stdair/service/Logger.hpp>
@@ -420,5 +422,15 @@ namespace TRADEMGEN {
      */
     ioEventQueue.reset();
   }
+  
 
+  // ////////////////////////////////////////////////////////////////////
+  bool DemandManager::
+  generateCancellation (stdair::EventQueue& ioEventQueue,
+                        const stdair::TravelSolutionStruct& iTravelSolution,
+                        const stdair::PartySize_T& iPartySize,
+                        const stdair::DateTime_T& iRequestTime,
+                        const stdair::Date_T& iDepartureDate) {
+    return true;
+  }
 }

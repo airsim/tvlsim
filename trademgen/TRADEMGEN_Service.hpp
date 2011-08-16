@@ -22,6 +22,7 @@ namespace stdair {
   struct DemandCharacteristics;
   struct DemandDistribution;
   struct EventStruct;
+  struct TravelSolutionStruct;
 }
 
 namespace TRADEMGEN {
@@ -327,6 +328,14 @@ namespace TRADEMGEN {
      * For now, that method states whether the event queue is empty.
      */
     bool isQueueDone() const;
+
+    /**
+     * Generate the potential cancellation event.
+     */
+    bool generateCancellation (const stdair::TravelSolutionStruct&,
+                               const stdair::PartySize_T&,
+                               const stdair::DateTime_T&,
+                               const stdair::Date_T&) const;
 
     /**
      * Reset the context of the demand streams for another demand generation
