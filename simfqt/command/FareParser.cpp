@@ -24,7 +24,7 @@ namespace SIMFQT {
     if (doesExistAndIsReadable == false) {
       STDAIR_LOG_ERROR ("The fare input file, '" << iFilename
                         << "', can not be retrieved on the file-system");
-      throw FareInputFileNotFoundException ("The demand file '" + iFilename
+      throw FareInputFileNotFoundException ("The fare input file '" + iFilename
                                             + "' does not exist or can not "
                                             "be read");
     }
