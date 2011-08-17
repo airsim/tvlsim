@@ -12,6 +12,7 @@
 #include <boost/program_options.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 // TraDemGen
@@ -24,21 +25,37 @@ typedef std::vector<std::string> WordList_T;
 
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_TRADEMGEN_DEFAULT_LOG_FILENAME ("trademgen_with_db.log");
 
-/** Default name and location for the (CSV) input file. */
+/**
+ * Default name and location for the (CSV) input file.
+ */
 const std::string K_TRADEMGEN_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/demand01.csv");
 
-/** Default for the input type. It can be either built-in or provided by an
-    input file. That latter must then be given with the -i option. */
+/**
+ * Default for the input type. It can be either built-in or provided by an
+ * input file. That latter must then be given with the -i option.
+ */
 const bool K_TRADEMGEN_DEFAULT_BUILT_IN_INPUT = false;
 
-/** Default query string. */
+/**
+ * Default random generation seed (e.g., 120765987).
+ */
+const stdair::RandomSeed_T K_TRADEMGEN_DEFAULT_RANDOM_SEED =
+  stdair::DEFAULT_RANDOM_SEED;
+
+/**
+ * Default query string.
+ */
 const std::string K_TRADEMGEN_DEFAULT_QUERY_STRING ("my good old query");
 
-/** Default parameters for the database connection. */
+/**
+ * Default parameters for the database connection.
+ */
 const std::string K_TRADEMGEN_DEFAULT_DB_USER ("dsim");
 const std::string K_TRADEMGEN_DEFAULT_DB_PASSWD ("dsim");
 const std::string K_TRADEMGEN_DEFAULT_DB_DBNAME ("sim_dsim");
@@ -98,7 +115,8 @@ template<class T> std::ostream& operator<< (std::ostream& os,
 const int K_TRADEMGEN_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
-int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin, 
+int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
+                       stdair::RandomSeed_T& ioRandomSeed, 
                        std::string& ioQueryString,
                        stdair::Filename_T& ioInputFilename,
                        std::string& ioLogFilename,
@@ -131,6 +149,9 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
   config.add_options()
     ("builtin,b",
      "The sample BOM tree can be either built-in or parsed from an input file. That latter must then be given with the -i/--input option")
+    ("seed,s",
+     boost::program_options::value<stdair::RandomSeed_T>(&ioRandomSeed)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_SEED),
+     "Seed for the random generation")
     ("input,i",
      boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_TRADEMGEN_DEFAULT_INPUT_FILENAME),
      "(CVS) input file for the demand distributions")
@@ -253,6 +274,9 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
     std::cout << "SQL database name is: " << ioDBDBName << std::endl;
   }
 
+  //
+  std::cout << "The random generation seed is: " << ioRandomSeed << std::endl;
+
   ioQueryString = createStringFromWordList (lWordList);
   std::cout << "The query string is: " << ioQueryString << std::endl;
   
@@ -265,6 +289,9 @@ int main (int argc, char* argv[]) {
 
   // State whether the BOM tree should be built-in or parsed from an input file
   bool isBuiltin;
+
+  // Random generation seed
+  stdair::RandomSeed_T lRandomSeed;
 
   // Query
   std::string lQuery;
@@ -287,7 +314,7 @@ int main (int argc, char* argv[]) {
   
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, isBuiltin, lQuery,
+    readConfiguration (argc, argv, isBuiltin, lRandomSeed, lQuery,
                        lInputFilename, lLogFilename,
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
@@ -309,7 +336,8 @@ int main (int argc, char* argv[]) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
 
   // Initialise the TraDemGen service object
-  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams);
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lDBParams,
+                                                 lRandomSeed);
 
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {

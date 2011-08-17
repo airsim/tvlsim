@@ -45,7 +45,8 @@ namespace TRADEMGEN {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  TRADEMGEN_Service::TRADEMGEN_Service (const stdair::BasLogParams& iLogParams)
+  TRADEMGEN_Service::TRADEMGEN_Service (const stdair::BasLogParams& iLogParams,
+                                        const stdair::RandomSeed_T& iRandomSeed)
     : _trademgenServiceContext (NULL) {
     
     // Initialise the STDAIR service handler
@@ -53,7 +54,7 @@ namespace TRADEMGEN {
       initStdAirService (iLogParams);
     
     // Initialise the service context
-    initServiceContext();
+    initServiceContext (iRandomSeed);
 
     // Add the StdAir service context to the TRADEMGEN service context
     // \note TRADEMGEN owns the STDAIR service resources here.
@@ -66,7 +67,8 @@ namespace TRADEMGEN {
 
   // //////////////////////////////////////////////////////////////////////
   TRADEMGEN_Service::TRADEMGEN_Service (const stdair::BasLogParams& iLogParams,
-                                        const stdair::BasDBParams& iDBParams)
+                                        const stdair::BasDBParams& iDBParams,
+                                        const stdair::RandomSeed_T& iRandomSeed)
     : _trademgenServiceContext (NULL) {
     
     // Initialise the STDAIR service handler
@@ -74,7 +76,7 @@ namespace TRADEMGEN {
       initStdAirService (iLogParams, iDBParams);
     
     // Initialise the service context
-    initServiceContext();
+    initServiceContext (iRandomSeed);
 
     // Add the StdAir service context to the TRADEMGEN service context
     // \note TRADEMGEN owns the STDAIR service resources here.
@@ -87,11 +89,12 @@ namespace TRADEMGEN {
 
   // ////////////////////////////////////////////////////////////////////
   TRADEMGEN_Service::
-  TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr)
+  TRADEMGEN_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+                     const stdair::RandomSeed_T& iRandomSeed)
     : _trademgenServiceContext (NULL) {
 
     // Initialise the service context
-    initServiceContext();
+    initServiceContext (iRandomSeed);
 
     // Add the StdAir service context to the TRADEMGEN service context
     // \note TraDemGen does not own the STDAIR service resources here.
@@ -116,10 +119,11 @@ namespace TRADEMGEN {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void TRADEMGEN_Service::initServiceContext() {
+  void TRADEMGEN_Service::
+  initServiceContext (const stdair::RandomSeed_T& iRandomSeed) {
     // Initialise the service context
     TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext = 
-      FacTRADEMGENServiceContext::instance().create();
+      FacTRADEMGENServiceContext::instance().create (iRandomSeed);
     _trademgenServiceContext = &lTRADEMGEN_ServiceContext;
   }
 
