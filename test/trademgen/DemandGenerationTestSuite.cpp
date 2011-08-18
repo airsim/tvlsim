@@ -17,6 +17,7 @@
 #include <boost/test/unit_test.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
@@ -71,7 +72,10 @@ BOOST_AUTO_TEST_SUITE (master_test_suite)
  */
 BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
 
-  // Input file name
+  // Seed for the random generation
+  const stdair::RandomSeed_T lRandomSeed = stdair::DEFAULT_RANDOM_SEED;  
+
+// Input file name
   const stdair::Filename_T lInputFilename (STDAIR_SAMPLE_DIR "/demand01.csv");
 
   // Check that the file path given as input corresponds to an actual file
@@ -92,7 +96,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
   
   // Initialise the TraDemGen service object
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams);
+  TRADEMGEN::TRADEMGEN_Service trademgenService (lLogParams, lRandomSeed);
 
   // Create the DemandStream objects, and insert them within the BOM tree
   BOOST_CHECK_NO_THROW (trademgenService.parseAndLoad (lInputFilename));
@@ -138,7 +142,8 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
                        << std::floor (lExpectedNbOfEventsToBeGenerated)
                        << "). Reference value: " << lRefExpectedNbOfEvents);
 
-  const bool lGenerateDemandWithStatisticOrder = true;
+  // Generate the date time of the requests with the statistic order method.
+  stdair::DemandGenerationMethod lDemandGenerationMethod (stdair::DemandGenerationMethod::STA_ORD);
 
   /**
    * Initialisation step.
@@ -150,7 +155,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
    *       the same (and equal to 40).
    */
   const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-    trademgenService.generateFirstRequests(lGenerateDemandWithStatisticOrder);
+    trademgenService.generateFirstRequests(lDemandGenerationMethod);
 
   // DEBUG
   STDAIR_LOG_DEBUG ("Expected number of events: "
@@ -226,7 +231,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
     // Assess whether more events should be generated for that demand stream
     const bool stillHavingRequestsToBeGenerated = trademgenService.
       stillHavingRequestsToBeGenerated (lDemandStreamKey, lPPS,
-                                        lGenerateDemandWithStatisticOrder);
+                                        lDemandGenerationMethod);
 
     /**
        The first time an event is popped from the queue for that demand stream,
@@ -265,7 +270,7 @@ BOOST_AUTO_TEST_CASE (trademgen_simple_simulation_test) {
     if (stillHavingRequestsToBeGenerated == true) {
       const stdair::BookingRequestPtr_T lNextRequest_ptr =
         trademgenService.generateNextRequest (lDemandStreamKey,
-                                              lGenerateDemandWithStatisticOrder);
+                                              lDemandGenerationMethod);
       assert (lNextRequest_ptr != NULL);
 
       /**
