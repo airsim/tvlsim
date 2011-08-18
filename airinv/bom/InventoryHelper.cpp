@@ -25,10 +25,10 @@ namespace AIRINV {
 
   // ////////////////////////////////////////////////////////////////////
   void InventoryHelper::fillFromRouting (const stdair::Inventory& iInventory) {
-    const stdair::FlightDateList_T& lFlightDateList =
-      stdair::BomManager::getList<stdair::FlightDate> (iInventory);
 
     // Browse the list of flight-dates and update each flight-date.
+    const stdair::FlightDateList_T& lFlightDateList =
+      stdair::BomManager::getList<stdair::FlightDate> (iInventory);
     for (stdair::FlightDateList_T::const_iterator itFlightDate =
            lFlightDateList.begin();
          itFlightDate != lFlightDateList.end(); ++itFlightDate) {
@@ -36,6 +36,38 @@ namespace AIRINV {
       assert (lCurrentFlightDate_ptr != NULL);
       FlightDateHelper::fillFromRouting (*lCurrentFlightDate_ptr);
     }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryHelper::
+  recalculateAvailabilities (stdair::Inventory& ioInventory) {
+    // Browse the list of flight-dates and update each flight-date.
+    const stdair::FlightDateList_T& lFlightDateList =
+      stdair::BomManager::getList<stdair::FlightDate> (ioInventory);
+    for (stdair::FlightDateList_T::const_iterator itFlightDate =
+           lFlightDateList.begin();
+         itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+      stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+      assert (lCurrentFlightDate_ptr != NULL);
+      FlightDateHelper::recalculateAvailabilities (*lCurrentFlightDate_ptr);
+    }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  void InventoryHelper::reset (stdair::Inventory& ioInventory) {
+    // 1. Empty all the flight-dates
+    const stdair::FlightDateList_T& lFlightDateList =
+      stdair::BomManager::getList<stdair::FlightDate> (ioInventory);
+    for (stdair::FlightDateList_T::const_iterator itFlightDate =
+           lFlightDateList.begin();
+         itFlightDate != lFlightDateList.end(); ++itFlightDate) {
+      stdair::FlightDate* lCurrentFlightDate_ptr = *itFlightDate;
+      assert (lCurrentFlightDate_ptr != NULL);
+      FlightDateHelper::reset (*lCurrentFlightDate_ptr);
+    }
+
+    // 2. Re-calculate the availabilities
+    recalculateAvailabilities (ioInventory);
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -49,6 +81,7 @@ namespace AIRINV {
 
     // DEBUG
     STDAIR_LOG_DEBUG (iFullSegmentDateKey);
+
     //
     stdair::SegmentDate* lSegmentDate_ptr =
       stdair::BomRetriever::retrieveSegmentDateFromLongKey(iInventory,
