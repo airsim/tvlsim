@@ -375,7 +375,7 @@ namespace AIRINV {
           if (lMaxBidPrice < lBidPriceVector.back()) {lMaxBidPrice = lBidPriceVector.back();}
 	}
 	else {
-	  lTotalBidPrice = std::numeric_limits<double>::max();
+	  lTotalBidPrice = std::numeric_limits<stdair::BidPrice_T>::max();
 	}
 
 	// Total yield calculation

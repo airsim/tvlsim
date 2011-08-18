@@ -91,7 +91,7 @@ namespace AIRINV {
     ioTravelSolution.addClassAvailabilityMap (lClassAvailabilityMap);
   }
 
-  //MODIF
+  
   // ////////////////////////////////////////////////////////////////////
   void InventoryHelper::
   getYieldAndBidPrice (const stdair::Inventory& iInventory, 
@@ -101,9 +101,9 @@ namespace AIRINV {
     // Create the map of class/availability for the given segment date.
     // stdair::ClassAvailabilityMap_T lClassAvailabilityMap;
     
-    stdair::ClassYieldMap_T lClassYieldMap; //MODIF
+    stdair::ClassYieldMap_T lClassYieldMap; 
 
-    stdair::ClassBpvMap_T lClassBpvMap; //MODIF
+    stdair::ClassBpvMap_T lClassBpvMap; 
  
     // DEBUG
     STDAIR_LOG_DEBUG (iFullSegmentDateKey);
@@ -131,15 +131,24 @@ namespace AIRINV {
         stdair::BomManager::getList<stdair::LegCabin> (*lSegmentCabin_ptr);
       assert (!lLegCabinList.empty());
       if (lLegCabinList.size() > 1) {
+        // Compute the sum of bid prices and return a vector containing that value.
         stdair::BidPrice_T lBidPriceValue = 0;
         for (stdair::LegCabinList_T::const_iterator itLC = lLegCabinList.begin();
              itLC != lLegCabinList.end(); ++itLC) {
           const stdair::LegCabin* lLegCabin_ptr = *itLC;
           const stdair::BidPriceVector_T& lLegCabinBPV = lLegCabin_ptr->getBidPriceVector();
-          assert(!lLegCabinBPV.empty());
-          lBidPriceValue += lLegCabinBPV.back();
+          if (!lLegCabinBPV.empty()) {
+            lBidPriceValue += lLegCabinBPV.back();
+          } else {
+            // If the remaining capacity is zero (empty bid price vector) on one of the legs,
+            // then the remaining capacity of the segment is also zero (return an empty bid price).
+            lBidPriceValue = std::numeric_limits<stdair::BidPrice_T>::max();
+            break;
+          }
         }
-        lBPV.push_back(lBidPriceValue);
+        if (lBidPriceValue < std::numeric_limits<stdair::BidPrice_T>::max()) {
+          lBPV.push_back(lBidPriceValue);
+        }
       } else {
         const stdair::LegCabin* lLegCabin_ptr = lLegCabinList.front();
         lBPV = lLegCabin_ptr->getBidPriceVector();
