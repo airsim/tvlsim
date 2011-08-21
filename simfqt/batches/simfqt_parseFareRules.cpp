@@ -26,7 +26,7 @@ typedef std::vector<std::string> WordList_T;
 
 // //////// Constants //////
 /** Default name and location for the log file. */
-const std::string K_SIMFQT_DEFAULT_LOG_FILENAME ("simfqt.log");
+const std::string K_SIMFQT_DEFAULT_LOG_FILENAME ("simfqt_parseFareRules.log");
 
 /** Default name and location for the (CSV) input file. */
 const std::string K_SIMFQT_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
@@ -70,7 +70,7 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
      "The sample BOM tree can be either built-in or parsed from an input file. That latter must then be given with the -f/--fare option")
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_SIMFQT_DEFAULT_FARE_INPUT_FILENAME),
-     "(CVS) input file for the fare rules")
+     "(CSV) input file for the fare rules")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_SIMFQT_DEFAULT_LOG_FILENAME),
      "Filename for the logs")
