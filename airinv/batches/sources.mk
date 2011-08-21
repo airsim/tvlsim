@@ -1,3 +1,4 @@
 #
 airinv_batches_h_sources =
-airinv_batches_cc_sources = $(top_srcdir)/airinv/batches/parseInventory.cpp
+airinv_batches_cc_sources = \
+	$(top_srcdir)/airinv/batches/airinv_parseInventory.cpp
