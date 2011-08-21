@@ -21,12 +21,27 @@
 #include <travelccm/config/travelccm-paths.hpp>
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_TRAVELCCM_DEFAULT_LOG_FILENAME ("travelccm.log");
 
-/** Default name and location for the (CSV) input file. */
+/**
+ * Default name and location for the (CSV) input file.
+ */
 const std::string K_TRAVELCCM_DEFAULT_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/ccm_01.csv");
+
+/**
+ * Default for the input type. It can be either built-in or provided by an
+ * input file. That latter must then be given with the -i option.
+ */
+const bool K_TRAVELCCM_DEFAULT_BUILT_IN_INPUT = false;
+
+/**
+ * Early return status (so that it can be differentiated from an error).
+ */
+const int K_TRAVELCCM_EARLY_RETURN_STATUS = 99;
 
 
 // ///////// Parsing of Options & Configuration /////////
@@ -37,13 +52,15 @@ template<class T> std::ostream& operator<< (std::ostream& os,
   return os;
 }
 
-/** Early return status (so that it can be differentiated from an error). */
-const int K_TRAVELCCM_EARLY_RETURN_STATUS = 99;
-
-/** Read and parse the command line options. */
-int readConfiguration (int argc, char* argv[], std::string& lInputFilename,
-                       std::string& lLogFilename) {
+/**
+ * Read and parse the command line options.
+ */
+int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
+                       stdair::Filename_T& lInputFilename,
+                       stdair::Filename_T& lLogFilename) {
   
+  // Default for the built-in input
+  ioIsBuiltin = K_TRAVELCCM_DEFAULT_BUILT_IN_INPUT;
     
   // Declare a group of options that will be allowed only on command line
   boost::program_options::options_description generic ("Generic options");
@@ -56,9 +73,11 @@ int readConfiguration (int argc, char* argv[], std::string& lInputFilename,
   // line and in config file
   boost::program_options::options_description config ("Configuration");
   config.add_options()
+    ("builtin,b",
+     "The sample BOM tree can be either built-in or parsed from an input file. That latter must then be given with the -i/--input option")
     ("input,i",
      boost::program_options::value< std::string >(&lInputFilename)->default_value(K_TRAVELCCM_DEFAULT_INPUT_FILENAME),
-     "(CVS) input file for customer choice")
+     "(CSV) input file for the customer choice rule sets")
     ("log,l",
      boost::program_options::value< std::string >(&lLogFilename)->default_value(K_TRAVELCCM_DEFAULT_LOG_FILENAME),
      "Filename for the logs")
@@ -109,9 +128,25 @@ int readConfiguration (int argc, char* argv[], std::string& lInputFilename,
     return K_TRAVELCCM_EARLY_RETURN_STATUS;
   }
 
-  if (vm.count ("input")) {
-    lInputFilename = vm["input"].as< std::string >();
-    std::cout << "Input filename is: " << lInputFilename << std::endl;
+  if (vm.count ("builtin")) {
+    ioIsBuiltin = true;
+  }
+  const std::string isBuiltinStr = (ioIsBuiltin == true)?"yes":"no";
+  std::cout << "The BOM should be built-in? " << isBuiltinStr << std::endl;
+
+  if (ioIsBuiltin == false) {
+
+    // The BOM tree should be built from parsing a customer-choice rule file
+    if (vm.count ("input")) {
+      lInputFilename = vm["input"].as< std::string >();
+      std::cout << "Input filename is: " << lInputFilename << std::endl;
+
+    } else {
+      // The built-in option is not selected. However, no demand input file
+      // is specified
+      std::cerr << "Either one among the -b/--builtin and -i/--input "
+                << "options must be specified" << std::endl;
+    }
   }
 
   if (vm.count ("log")) {
@@ -126,15 +161,18 @@ int readConfiguration (int argc, char* argv[], std::string& lInputFilename,
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
     
+  // State whether the BOM tree should be built-in or parsed from an input file
+  bool isBuiltin;
+
   // Input file name
-  std::string lInputFilename;
+  stdair::Filename_T lInputFilename;
   
   // Output log File
-  std::string lLogFilename;
+  stdair::Filename_T lLogFilename;
   
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, lInputFilename, lLogFilename);
+    readConfiguration (argc, argv, isBuiltin, lInputFilename, lLogFilename);
   
   if (lOptionParserStatus == K_TRAVELCCM_EARLY_RETURN_STATUS) {
     return 0;
@@ -154,6 +192,22 @@ int main (int argc, char* argv[]) {
 
   // DEBUG
   STDAIR_LOG_DEBUG ("Welcome to TravelCCM");
+
+  // Check wether or not a (CSV) input file should be read
+  if (isBuiltin == true) {
+    // Create a sample Customer-Choice rule object, and insert it
+    // within the BOM tree
+    travelccmService.buildSampleBom();
+
+  } else {
+    /**
+     * Create the Customer-Choice rule objects, and insert them within
+     * the BOM tree.
+     *
+     * \note For now, there is no input file parser.
+     */
+    // travelccmService.parseAndLoad (lInputFilename);
+  }  
 
   // Build a list of travel solutions
   const stdair::BookingRequestStruct& lBookingRequest =
@@ -189,12 +243,12 @@ int main (int argc, char* argv[]) {
   // Close the Log outputFile
   logOutputFile.close();
 
-  /*
-    Note: as that program is not intended to be run on a server in
-    production, it is better not to catch the exceptions. When it
-    happens (that an exception is throwned), that way we get the
-    call stack.
-  */
+  /**
+   * Note: as that program is not intended to be run on a server in
+   * production, it is better not to catch the exceptions. When it
+   * happens (that an exception is throwned), that way we get the
+   * call stack.
+   */
 
   return 0;	
 }
