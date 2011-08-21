@@ -110,15 +110,15 @@ int readConfiguration (int argc, char* argv[],
      "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the -i/--input option must be specified as well")
     ("input,i",
      boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_AIRSCHED_DEFAULT_INPUT_FILENAME),
-     "(CVS) input file for the demand distributions")
+     "(CSV) input file specifying the schedule (flight-period) entries")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_AIRSCHED_DEFAULT_LOG_FILENAME),
      "Filename for the logs")
     ("read_booking_request,r",
-     "A booking request is given as a command-line option. That latter must then be given with the -b/--bkg_req option")
-    ("bkg_req,b",
+     "Indicates that a booking request is given as a command-line option. That latter must then be given with the -b/--bkg_req option")
+    ("bkg_req,q",
      boost::program_options::value< WordList_T >(&lWordList)->multitoken(),
-     "Booking request word list (e.g. NCE BKK NCE 2007-04-21 2007-04-21 10:00:00 C 1 DF RO 5 NONE 10:0:0 2000.0 20.0), which sould be located at the end of the command line (otherwise, the other options would be interpreted as part of that booking request word list)")
+     "Booking request word list (e.g. 'NCE BKK NCE 2007-04-21 2007-04-21 10:00:00 C 1 DF RO 5 NONE 10:0:0 2000.0 20.0'), which should be located at the end of the command line (otherwise, the other options would be interpreted as part of that booking request word list)")
     ;
 
   // Hidden options, will be allowed both on command line and
