@@ -2,6 +2,7 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // STL
+#include <cassert>
 #include <sstream>
 // Boost.Serialization
 #include <boost/archive/text_iarchive.hpp>
@@ -73,5 +74,16 @@ namespace AIRSCHED {
      */
     ioArchive & _destination;
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  // Explicit template instantiation
+  namespace ba = boost::archive;
+  template
+  void OriginDestinationSetKey::serialize<ba::text_oarchive> (ba::text_oarchive&,
+                                                              unsigned int);
+  template
+  void OriginDestinationSetKey::serialize<ba::text_iarchive> (ba::text_iarchive&,
+                                                              unsigned int);
+  // ////////////////////////////////////////////////////////////////////
 
 }
