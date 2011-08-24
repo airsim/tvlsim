@@ -11,11 +11,15 @@
 // Boost (Extended STL)
 #include <boost/program_options.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/regex.hpp>
 // StdAir
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/stdair_date_time_types.hpp>
+#include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/command/CmdBomManager.hpp>
 // Stdair GNU Readline Wrapper
 #include <stdair/ui/cmdline/SReadline.hpp>
 // Simfqt
@@ -55,7 +59,10 @@ struct Command_T {
   typedef enum {
     NOP = 0,
     QUIT,
+    HELP,
+    LIST,
     DISPLAY,
+    PRICE,
     LAST_VALUE
   } Type_T;
 };
@@ -181,7 +188,9 @@ void initReadline (swift::SReadline& ioInputReader) {
   // - "identifiers"
   // - special identifier %file - means to perform a file name completion
   Completers.push_back ("help");
-  Completers.push_back ("display");
+  Completers.push_back ("list");
+  Completers.push_back ("display %airport_code %airport_code %departure_date");
+  Completers.push_back ("price");
   Completers.push_back ("quit");
 
   
@@ -191,20 +200,35 @@ void initReadline (swift::SReadline& ioInputReader) {
 }
 
 // //////////////////////////////////////////////////////////////////
-Command_T::Type_T extractCommand (const TokenList_T& iTokenList) {
+Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
   Command_T::Type_T oCommandType = Command_T::LAST_VALUE;
 
   // Interpret the user input
-  if (iTokenList.empty() == false) {
-    TokenList_T::const_iterator itTok = iTokenList.begin();
-    const std::string& lCommand (*itTok);
+  if (ioTokenList.empty() == false) {
+    TokenList_T::iterator itTok = ioTokenList.begin();
+    std::string& lCommand (*itTok);
+    boost::algorithm::to_lower (lCommand);
     
-    if (lCommand == "display") {
+    if (lCommand == "help") {
+      oCommandType = Command_T::HELP;
+
+    } else if (lCommand == "list") {
+      oCommandType = Command_T::LIST;
+
+    } else if (lCommand == "display") {
       oCommandType = Command_T::DISPLAY;
+
+    } else if (lCommand == "price") {
+      oCommandType = Command_T::PRICE;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
+
     }
+
+    // Remove the first token (the command), as the corresponding information
+    // has been extracted in the form of the returned command type enumeration
+    ioTokenList.erase (itTok);
 
   } else {
     oCommandType = Command_T::NOP;
@@ -218,48 +242,220 @@ void parseFlightDateKey (const TokenList_T& iTokenList,
                          stdair::AirportCode_T& ioOrigin,
                          stdair::AirportCode_T& ioDestination,
                          stdair::Date_T& ioDepartureDate) {
+
+  //
+  const std::string kMonthStr[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+  //
+  unsigned short ioDepartureDateYear = ioDepartureDate.year();
+  unsigned short ioDepartureDateMonth = ioDepartureDate.month();
+  std::string ioDepartureDateMonthStr = kMonthStr[ioDepartureDateMonth-1];
+  unsigned short ioDepartureDateDay = ioDepartureDate.day();
+  
   // Interpret the user input
   if (iTokenList.empty() == false) {
-    TokenList_T::const_iterator itTok = iTokenList.begin();
-    const std::string& lCommand (*itTok);
-    assert (lCommand == "display");
-
+    
     // Read the origin
-    ++itTok;
-    if (itTok != iTokenList.end()) {
+    TokenList_T::const_iterator itTok = iTokenList.begin();
+    if (itTok->empty() == false) {
       ioOrigin = *itTok;
-
-    } else {
-      return;
+      boost::algorithm::to_upper (ioOrigin);
     }
 
     // Read the destination
     ++itTok;
     if (itTok != iTokenList.end()) {
-      ioDestination = *itTok;
-
+      
+      if (itTok->empty() == false) {
+      ioDestination  = *itTok;
+      boost::algorithm::to_upper (ioDestination);
+      }
+      
     } else {
       return;
     }
 
-    // Read the departure date
+    // Read the year for the departure date
     ++itTok;
     if (itTok != iTokenList.end()) {
-      try {
+      if (itTok->empty() == false) {
+        try {
 
-      ioDepartureDate = boost::gregorian::from_simple_string (*itTok);
+          ioDepartureDateYear = boost::lexical_cast<unsigned short> (*itTok);
+          if (ioDepartureDateYear < 100) {
+            ioDepartureDateYear += 2000;
+          }
 
-      } catch (boost::bad_lexical_cast& eCast) {
-        std::cerr << "The flight departure date ('" << *itTok
-                  << "') cannot be understood. The default value ("
-                  << ioDepartureDate << ") is kept. " << std::endl;
-        return;
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The year of the flight departure date ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioDepartureDateYear << ") is kept. " << std::endl;
+          return;
+        }
       }
 
     } else {
       return;
     }
+
+    // Read the month for the departure date
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          const boost::regex lMonthRegex ("^(\\d{1,2})$");
+          const bool isMonthANumber = regex_match (*itTok, lMonthRegex);
+        
+          if (isMonthANumber == true) {
+            const unsigned short lMonth =
+              boost::lexical_cast<unsigned short> (*itTok);
+            if (lMonth > 12) {
+              throw boost::bad_lexical_cast();
+            }
+            ioDepartureDateMonthStr = kMonthStr[lMonth-1];
+
+          } else {
+            const std::string lMonthStr (*itTok);
+            if (lMonthStr.size() < 3) {
+              throw boost::bad_lexical_cast();
+            }
+            std::string lMonthStr1 (lMonthStr.substr (0, 1));
+            boost::algorithm::to_upper (lMonthStr1);
+            std::string lMonthStr23 (lMonthStr.substr (1, 2));
+            boost::algorithm::to_lower (lMonthStr23);
+            ioDepartureDateMonthStr = lMonthStr1 + lMonthStr23;
+          }
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The month of the flight departure date ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioDepartureDateMonthStr << ") is kept. " << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+
+    // Read the day for the departure date
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          ioDepartureDateDay = boost::lexical_cast<unsigned short> (*itTok);
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The day of the flight departure date ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioDepartureDateDay << ") is kept. " << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+
+    // Re-compose the departure date
+    std::ostringstream lDepartureDateStr;
+    lDepartureDateStr << ioDepartureDateYear << "-" << ioDepartureDateMonthStr
+                      << "-" << ioDepartureDateDay;
+
+    try {
+
+      ioDepartureDate =
+        boost::gregorian::from_simple_string (lDepartureDateStr.str());
+
+    } catch (boost::gregorian::bad_month& eCast) {
+      std::cerr << "The flight departure date ('" << lDepartureDateStr.str()
+                << "') cannot be understood. The default value ("
+                << ioDepartureDate << ") is kept. " << std::endl;
+      return;
+    }
+
   }
+}
+
+// /////////////////////////////////////////////////////////
+std::string toString (const TokenList_T& iTokenList) {
+  std::ostringstream oStr;
+
+  // Re-create the string with all the tokens, trimmed by read-line
+  unsigned short idx = 0;
+  for (TokenList_T::const_iterator itTok = iTokenList.begin();
+       itTok != iTokenList.end(); ++itTok, ++idx) {
+    if (idx != 0) {
+      oStr << " ";
+    }
+    oStr << *itTok;
+  }
+
+  return oStr.str();
+}
+
+// /////////////////////////////////////////////////////////
+TokenList_T extractTokenList (const TokenList_T& iTokenList,
+                              const std::string& iRegularExpression) {
+  TokenList_T oTokenList;
+
+  // Re-create the string with all the tokens (which had been trimmed
+  // by read-line)
+  const std::string lFullLine = toString (iTokenList);
+
+  // See the caller for the regular expression
+  boost::regex expression (iRegularExpression);
+  
+  std::string::const_iterator start = lFullLine.begin();
+  std::string::const_iterator end = lFullLine.end();
+
+  boost::match_results<std::string::const_iterator> what;
+  boost::match_flag_type flags = boost::match_default | boost::format_sed; 
+  regex_search (start, end, what, expression, flags);
+  
+  // Put the matched strings in the list of tokens to be returned back
+  // to the caller
+  const unsigned short lMatchSetSize = what.size();
+  for (unsigned short matchIdx = 1; matchIdx != lMatchSetSize; ++matchIdx) {
+    const std::string lMatchedString (std::string (what[matchIdx].first,
+                                                   what[matchIdx].second));
+    //if (lMatchedString.empty() == false) {
+    oTokenList.push_back (lMatchedString);
+    //}
+  }
+
+  // DEBUG
+  // std::cout << "After (token list): " << oTokenList << std::endl;
+
+  return oTokenList;
+}    
+
+// /////////////////////////////////////////////////////////
+TokenList_T extractTokenListForOriDestDate (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   line:            airport_code airport_code year month day
+   *   airport_code:    word (alpha{3})
+   *   airport_code:    word (alpha{3})
+   *   year:            number (digit{2,4})
+   *   month:           (number (digit{1,2}) | word (alpha{3}))
+   *   day:             number (digit{1,2})
+   */
+  const std::string lRegEx("^([[:alpha:]]{3})?"
+                           "[[:space:]]*[-|/|,]?[[:space:]]*([[:alpha:]]{3})?"
+                           "[[:space:]]*[-|/]*[[:space:]]*"
+                           "([[:digit:]]{2,4})*[[:space:]]*[-|/][[:space:]]*"
+                           "([[:alpha:]]{3}|[[:digit:]]{1,2})*[[:space:]]*[-|/][[:space:]]*"
+                           "([[:digit:]]{1,2})*?$");
+
+  //
+  const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
+  return oTokenList;
 }
 
 // ///////// M A I N ////////////
@@ -276,6 +472,11 @@ int main (int argc, char* argv[]) {
   const unsigned int lHistorySize (100);
   const std::string lHistoryFilename ("fareDisplay.hist");
   const std::string lHistoryBackupFilename ("fareDisplay.hist.bak");
+
+  // Default parameters for the interactive session
+  stdair::AirportCode_T lInteractiveOrigin;
+  stdair::AirportCode_T lInteractiveDestination;
+  stdair::Date_T lInteractiveDepartureDate;
 
   // Output log File
   stdair::Filename_T lLogFilename;
@@ -303,15 +504,11 @@ int main (int argc, char* argv[]) {
 
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
-
     // Build the sample BOM tree (filled with fares) for Simfqt
     simfqtService.buildSampleBom();
-
   } else {
-    
     // Build the BOM tree from parsing a fare file
     simfqtService.parseAndLoad (lFareInputFilename);
-
   }
 
   // DEBUG: Display the whole BOM tree
@@ -330,70 +527,217 @@ int main (int argc, char* argv[]) {
   // Now we can ask user for a line
   std::string lUserInput;
   bool EndOfInput (false);
+  Command_T::Type_T lCommandType (Command_T::NOP);
   
-  while (lUserInput != "quit" && EndOfInput == false) {
+  while (lCommandType != Command_T::QUIT && EndOfInput == false) {
+
+    stdair::TravelSolutionList_T lInteractiveTravelSolutionList;
+    stdair::TravelSolutionStruct lInteractiveTravelSolution;
+
+    // Update the default booking request
+    // If there is an input file, we want CRS booking request (defined in stdair).
+    // If not, we want the default booking request.
+    const bool isCRSBookingRequest = !isBuiltin;
+    const stdair::BookingRequestStruct& lInteractiveBookingRequest =
+      simfqtService.buildBookingRequest (isCRSBookingRequest);
+
+    // Update the default parameters for the following interactive session
+    if (isBuiltin == true) {
+      lInteractiveOrigin = "LHR";
+      lInteractiveDestination = "SYD";
+      lInteractiveDepartureDate = stdair::Date_T(2011,06,10);
+      simfqtService.buildSampleTravelSolutions (lInteractiveTravelSolutionList);
+    } else {
+      lInteractiveOrigin = "SIN";
+      lInteractiveDestination = "BKK";
+      lInteractiveDepartureDate = stdair::Date_T(2010,01,30);
+      //
+      const std::string lBA9_SegmentDateKey ("SQ, 970, 2010-01-30, SIN, BKK, 07:10");
+
+      // Add the segment date key to the travel solution
+      lInteractiveTravelSolution.addSegment (lBA9_SegmentDateKey);
+
+      // Add the travel solution to the list
+      lInteractiveTravelSolutionList.push_back (lInteractiveTravelSolution);
+    }
+    
+    // Prompt
+    std::ostringstream oPromptStr;
+    oPromptStr << "simfqt "
+               << "> ";
     // The last parameter could be ommited
-    TokenList_T lTokenList;
-    lUserInput = lReader.GetLine ("fareQuote> ", lTokenList, EndOfInput);
+    TokenList_T lTokenListByReadline;
+    lUserInput = lReader.GetLine (oPromptStr.str(), lTokenListByReadline,
+                                  EndOfInput);
 
     // The history could be saved to an arbitrary file at any time
     lReader.SaveHistory (lHistoryBackupFilename);
 
     if (EndOfInput) {
-      // DEBUG
-      STDAIR_LOG_DEBUG ("End of the session. Exiting.");
-      std::cout << "End of the session. Exiting." << std::endl;
-
+      std::cout << std::endl;
       break;
     }
 
     // Interpret the user input
-    const Command_T::Type_T lCommandType = extractCommand (lTokenList);
+    lCommandType = extractCommand (lTokenListByReadline);
+    
     switch (lCommandType) {
-    case Command_T::DISPLAY: {
-      stdair::AirportCode_T lOrigin ("SIN");
-      stdair::AirportCode_T lDestination ("BKK");
-      stdair::Date_T lDate (2010, 01, 15);
-      parseFlightDateKey (lTokenList, lOrigin, lDestination, lDate);
 
-      // DEBUG: Display the fare rule
-      const std::string& lCSVFlightDateDump =
-        simfqtService.csvDisplay (lOrigin, lDestination, lDate);
-      std::cout << lCSVFlightDateDump << std::endl;
-      STDAIR_LOG_DEBUG (lCSVFlightDateDump);
-
+      // ////////////////////////////// Help ////////////////////////
+    case Command_T::HELP: {
+      std::cout << std::endl;
+      std::cout << "Commands: " << std::endl;
+      std::cout << " help" << "\t\t" << "Display this help" << std::endl;
+      std::cout << " quit" << "\t\t" << "Quit the application" << std::endl;
+      std::cout << " list" << "\t\t"
+                << "List all the fare rule O&Ds and the corresponding date ranges" << std::endl;
+      std::cout << " display" << "\t"
+                << "Display all fare rules for an O&D and a departure date. \n" << "\t\t"
+                << "If no O&D and no departure date specified, default values are used: \n"<< "\t\t"
+                << "    'display " <<  lInteractiveOrigin << " " << lInteractiveDestination
+                << " " << lInteractiveDepartureDate << "'"<< std::endl;
+      std::cout << " price" << "\t\t"
+                << "Price a travel solution" << std::endl;
+      std::cout << std::endl;
       break;
     }
-
-    case Command_T::NOP: {
-      break;
-    }
- 
+      
+      // ////////////////////////////// Quit ////////////////////////
     case Command_T::QUIT: {
       break;
     }
 
+      // ////////////////////////////// List /////////////////////////
+    case Command_T::LIST: {
+      
+      //
+      const std::string& lAirportPairDateListStr =
+        simfqtService.list ();
+
+      if (lAirportPairDateListStr.empty() == false) {
+        std::cout << lAirportPairDateListStr << std::endl;
+        STDAIR_LOG_DEBUG (lAirportPairDateListStr);
+
+      } else {
+        assert (isBuiltin == false);
+        std::cerr << "There is no result for airport pairs and date ranges."
+                  << "Make sure your input file is not empty."
+                  << std::endl;
+      }
+
+      break;
+    }
+
+      // ////////////////////////////// Display /////////////////////////
+    case Command_T::DISPLAY: {
+
+      //
+      TokenList_T lTokenList =
+        extractTokenListForOriDestDate (lTokenListByReadline);
+
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightDateKey (lTokenList, lInteractiveOrigin,
+                          lInteractiveDestination, lInteractiveDepartureDate);
+
+      // Check whether the selected airportpair-date is valid
+      const bool isAirportPairDateValid =
+        simfqtService.check (lInteractiveOrigin, lInteractiveDestination,
+                             lInteractiveDepartureDate);
+
+      if (isAirportPairDateValid == false) {
+        std::ostringstream oFDKStr;
+        oFDKStr << "The airport pair/departure date: "
+                << lInteractiveOrigin << ", " << lInteractiveDestination
+                << " / " << lInteractiveDepartureDate
+                << " does not correpond to any fare rule.\n"
+                << "Make sure it exists with the 'list' command.";
+        std::cout << oFDKStr.str() << std::endl;
+        STDAIR_LOG_ERROR (oFDKStr.str());
+
+        break;
+      }
+      
+      //
+      std::cout << "List of fare rules for "
+                << lInteractiveOrigin << "-"
+                << lInteractiveDestination << "/"
+                << lInteractiveDepartureDate 
+                << std::endl;
+
+      const std::string& lFareRuleListStr =
+        simfqtService.csvDisplay (lInteractiveOrigin,
+                                  lInteractiveDestination,
+                                  lInteractiveDepartureDate);
+
+      if (lFareRuleListStr.empty() == false) {
+        std::cout << lFareRuleListStr << std::endl;
+        STDAIR_LOG_DEBUG (lFareRuleListStr);
+
+      } else {
+        std::cerr << "There is no result for "
+                  << lInteractiveOrigin << "-"
+                  << lInteractiveDestination << "/"
+                  << lInteractiveDepartureDate
+                  << ". Just type the list command without any parameter "
+                  << "to see all the departure-dates for all the O&D"
+                  << std::endl;
+      }
+
+      break;
+    }
+      
+      // ////////////////////////////// Price ////////////////////////
+    case Command_T::PRICE: {
+
+      if (lInteractiveTravelSolutionList.size() < 1) {
+        std::cerr << "There is no travel solution to fare quote."
+                  << std::endl;
+        break;
+      }
+      lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
+
+      std::cout << "Booking request: << "
+                << lInteractiveBookingRequest.display()  << " >>"
+                << "\nTravel Solution: << "
+                << lInteractiveTravelSolution.display() << " >>"
+                << "\n********** \n"
+                << "Fare quote"
+                << "\n**********"
+                << std::endl;
+
+      // FareQuote the sample list of travel solutions
+      simfqtService.quotePrices (lInteractiveBookingRequest,
+                                 lInteractiveTravelSolutionList);
+
+      lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
+
+      std::cout << "Travel Solution: << "
+                << lInteractiveTravelSolution.display() << " >>\n"
+                << std::endl;
+
+      break;
+    }
+      
+      // /////////////////////////// Default / No value ///////////////////////
+    case Command_T::NOP: {
+      break;
+    } 
     case Command_T::LAST_VALUE:
     default: {
       // DEBUG
       std::ostringstream oStr;
-      oStr << "That command is not yet understood: '" << lUserInput << "' => ";
-
-      unsigned short idx (0);
-      for (TokenList_T::const_iterator itTok = lTokenList.begin();
-           itTok != lTokenList.end(); ++itTok, ++idx) {
-        if (idx != 0) {
-          oStr << ", ";
-        }
-        const std::string& lToken = *itTok;
-        oStr << lToken;
-      }
+      oStr << "That command is not yet understood: '" << lUserInput << "'";
 
       STDAIR_LOG_DEBUG (oStr.str());
       std::cout << oStr.str() << std::endl;
     }
     }
   }
+
+  // DEBUG
+  STDAIR_LOG_DEBUG ("End of the session. Exiting.");
+  std::cout << "End of the session. Exiting." << std::endl;
 
   // Close the Log outputFile
   logOutputFile.close();
