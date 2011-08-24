@@ -228,7 +228,7 @@ namespace SIMFQT {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  stdair::BookingRequestStruct SIMFQT_Service::buildBookingRequest() {
+  stdair::BookingRequestStruct SIMFQT_Service::buildBookingRequest(const bool isForCRS) {
 
     // Retrieve the SIMFQT service context
     if (_simfqtServiceContext == NULL) {
@@ -245,7 +245,7 @@ namespace SIMFQT {
 
     // Delegate the BOM building to the dedicated service
     stdair::BookingRequestStruct oBookingRequest =
-      lSTDAIR_Service.buildSampleBookingRequest ();
+      lSTDAIR_Service.buildSampleBookingRequest (isForCRS);
 
     return oBookingRequest;
   }
@@ -342,6 +342,48 @@ namespace SIMFQT {
     // Delegate the BOM display to the dedicated service
     return lSTDAIR_Service.csvDisplay (iOrigin, iDestination,
                                        iDepartureDate);
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  std::string SIMFQT_Service::list() const {
+
+    // Retrieve the SIMFQT service context
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Simfqt service "
+                                                    "has not been initialised");
+    }
+    assert (_simfqtServiceContext != NULL);
+
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+  
+    // Retrieve the STDAIR service object from the (SIMFQT) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lSTDAIR_Service.listAirportPairDateRange ();
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  bool SIMFQT_Service::
+  check (const stdair::AirportCode_T& iOrigin,
+         const stdair::AirportCode_T& iDestination,
+         const stdair::Date_T& iDepartureDate) const {
+    std::ostringstream oFlightListStr;
+
+    if (_simfqtServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The Simfqt service "
+                                                    "has not been initialised");
+    }
+    assert (_simfqtServiceContext != NULL);
+    SIMFQT_ServiceContext& lSIMFQT_ServiceContext = *_simfqtServiceContext;
+
+    // Retrieve the STDAIR service object from the (SIMFQT) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lSIMFQT_ServiceContext.getSTDAIR_Service();
+
+    // Delegate the BOM display to the dedicated service
+    return lSTDAIR_Service.check (iOrigin, iDestination, iDepartureDate);
   }
 
   // ////////////////////////////////////////////////////////////////////

@@ -107,13 +107,13 @@ namespace SIMFQT {
      */
     void buildSampleBom();
 
-	/**
-	 * Build a BookingRequest structure (for test purposes).
-	 *
-	 * @return stdair::BookingRequestStruct The created BookingRequest
-	 *         structure.
-	 */ 
-    stdair::BookingRequestStruct buildBookingRequest();
+    /**
+     * Build a BookingRequest structure (for test purposes).
+     *
+     * @return stdair::BookingRequestStruct The created BookingRequest
+     *         structure.
+     */ 
+    stdair::BookingRequestStruct buildBookingRequest(const bool isForCRS = false);
 
     /**
      * Build a sample list of travel solutions.
@@ -182,6 +182,32 @@ namespace SIMFQT {
     std::string csvDisplay (const stdair::AirportCode_T& ioOrigin,
                             const stdair::AirportCode_T& ioDestination,
                             const stdair::Date_T& ioDepartureDate) const;
+
+    /**
+     * Display (dump in the returned string) the airport pairs
+     * and the corresponding departure dates of the fare rules stored
+     * in the BOM tree.
+     *
+     * @return std::string Output string in which the airport pairs and
+     * departure dates are logged/dumped.
+     */
+    std::string list() const;
+
+    /**
+     * Check whether the given couple airportpair-date is a valid one.
+     *
+     * @param const stdair::AirportCode_T& Origin airport of the fare
+     *        rule to check.
+     * @param const stdair::AirportCode_T& Destination airport of the
+     *        fare rule to check.
+     * @param const stdair::Date_T& Departure date of the fare rule
+     *        to check. 
+     * @return bool Whether or not the given airportpair-date couple
+     *        is a valid one.
+     */
+    bool check (const stdair::AirportCode_T& ioOrigin,
+                const stdair::AirportCode_T& ioDestination,
+                const stdair::Date_T& ioDepartureDate) const;
     
   private:
     // /////// Construction and Destruction helper methods ///////
