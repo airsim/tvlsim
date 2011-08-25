@@ -120,6 +120,10 @@ namespace TRADEMGEN {
      *  <li>Change fee: 20; Non refundable; Saturday night stay</li>
      * </ul>
      */
+    static void buildSampleBomStd (stdair::EventQueue&, stdair::RandomGeneration&,
+                                const POSProbabilityMass_T&);
+
+    // Demand sample bom for partnerships study.
     static void buildSampleBom (stdair::EventQueue&, stdair::RandomGeneration&,
                                 const POSProbabilityMass_T&);
 

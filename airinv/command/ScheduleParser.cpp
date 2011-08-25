@@ -43,6 +43,10 @@ namespace AIRINV {
     // Build the similar flight-date sets and the corresponding guillotine
     // blocks.
     InventoryManager::buildSimilarSegmentCabinSets (ioBomRoot);
+
+    // Bid price vector initialisation
+    InventoryManager::setDefaultBidPriceVector (ioBomRoot);
+
   }
 
 }

@@ -580,7 +580,8 @@ namespace SIMCRS {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
-  calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList) {
+  calculateAvailability (stdair::TravelSolutionList_T& ioTravelSolutionList,
+                         const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
     // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
@@ -603,7 +604,8 @@ namespace SIMCRS {
     lAvlChronometer.start();
 
     DistributionManager::calculateAvailability (lAIRINV_Master_Service,
-                                                ioTravelSolutionList);
+                                                ioTravelSolutionList,
+                                                iPartnershipTechnique);
     
     // DEBUG
     const double lAvlMeasure = lAvlChronometer.elapsed();
@@ -645,6 +647,8 @@ namespace SIMCRS {
     STDAIR_LOG_DEBUG ("Made a sell of " << iPartySize
                       << " persons on the following travel solution: "
                       << iTravelSolution.describe()
+		      << " with the chosen fare option: "
+		      << iTravelSolution.getChosenFareOption().describe()
                       << ". Successful? " << hasSaleBeenSuccessful);
       
     // DEBUG
@@ -717,7 +721,8 @@ namespace SIMCRS {
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::
   optimise (const stdair::RMEventStruct& iRMEvent,
-            const stdair::ForecastingMethod& iForecastingMethod) {
+            const stdair::ForecastingMethod& iForecastingMethod,
+            const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
     // Retrieve the SimCRS service context
     if (_simcrsServiceContext == NULL) {
@@ -731,6 +736,6 @@ namespace SIMCRS {
     AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
       lSIMCRS_ServiceContext.getAIRINV_Service();
 
-    lAIRINV_Master_Service.optimise (iRMEvent, iForecastingMethod);
+    lAIRINV_Master_Service.optimise (iRMEvent, iForecastingMethod, iPartnershipTechnique);
   }
 }

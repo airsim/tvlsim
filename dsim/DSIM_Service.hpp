@@ -11,6 +11,7 @@
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
+#include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
@@ -157,9 +158,12 @@ namespace DSIM {
      * @param const stdair::ForecastingMethod&
      *        States which forecasting method should be used by the
      *        revenue management (RMOL component).
+     * @param const stdair::PartnershipTechnique&
+     *        States which partnership technique should be used by both
+     *        the revenue management (RMOL) and inventory control (AirInv).
      */
     void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&,
-                   const stdair::ForecastingMethod&);
+                   const stdair::ForecastingMethod&, const stdair::PartnershipTechnique&);
     
     /**
      * Display the list of airlines.

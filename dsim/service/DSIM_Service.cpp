@@ -551,7 +551,8 @@ namespace DSIM {
   void DSIM_Service::
   simulate (const NbOfRuns_T& iNbOfRuns,
             const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-            const stdair::ForecastingMethod& iForecastingMethod) {
+            const stdair::ForecastingMethod& iForecastingMethod,
+            const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -587,7 +588,7 @@ namespace DSIM {
       lSimulationChronometer.start();
       Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                            lTRAVELCCM_Service, lSTDAIR_Service,
-                           iDemandGenerationMethod, iForecastingMethod);
+                           iDemandGenerationMethod, iForecastingMethod, iPartnershipTechnique);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
       // Reset the service (including the event queue) for the next run

@@ -39,7 +39,8 @@ namespace DSIM {
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
                             const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-                            const stdair::ForecastingMethod& iForecastingMethod) {
+                            const stdair::ForecastingMethod& iForecastingMethod,
+                            const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation is starting");
@@ -90,14 +91,16 @@ namespace DSIM {
                                                            ioTRAVELCCM_Service,
                                                            lEventStruct,
                                                            lPSS,
-                                                           iDemandGenerationMethod); break;
+                                                           iDemandGenerationMethod,
+                                                           iPartnershipTechnique); break;
       case stdair::EventType::CX: playCancellation (ioSIMCRS_Service,
                                                     lEventStruct); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
                                                lEventStruct,
-                                               iForecastingMethod); break;
+                                               iForecastingMethod,
+                                               iPartnershipTechnique); break;
       default: assert (false); break;
       }
 
@@ -116,7 +119,8 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
+                      const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+                      const stdair::PartnershipTechnique& iPartnershipTechnique) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -182,11 +186,11 @@ namespace DSIM {
         ioSIMCRS_Service.calculateSegmentPathList (lPoppedRequest);
       
       if (lTravelSolutionList.empty() == false) {
+        // Get the availability for each travel solution.
+        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
+        
         // Get the fare quote for each travel solution.
         ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
-        
-        // Get the availability for each travel solution.
-        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList);
         
         // Get a travel solution choice.
         const stdair::TravelSolutionStruct* lChosenTS_ptr =
@@ -273,13 +277,14 @@ namespace DSIM {
   void Simulator::
   playRMEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
                const stdair::EventStruct& iEventStruct,
-               const stdair::ForecastingMethod& iForecastingMethod) {
+               const stdair::ForecastingMethod& iForecastingMethod,
+               const stdair::PartnershipTechnique& iPartnershipTechnique) {
     // Retrieve the RM event struct from the event.
     const stdair::RMEventStruct lRMEvent = iEventStruct.getRMEvent();
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
-    ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod);
+    ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod, iPartnershipTechnique);
   }
 }

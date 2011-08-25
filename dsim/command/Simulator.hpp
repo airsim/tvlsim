@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
+#include <stdair/basic/PartnershipTechnique.hpp>
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
 
@@ -37,7 +38,8 @@ namespace DSIM {
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
                          const stdair::DemandGenerationMethod&,
-                         const stdair::ForecastingMethod&);
+                         const stdair::ForecastingMethod&,
+                         const stdair::PartnershipTechnique&);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
@@ -45,7 +47,8 @@ namespace DSIM {
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
                                     stdair::ProgressStatusSet&,
-                                    const stdair::DemandGenerationMethod&);
+                                    const stdair::DemandGenerationMethod&,
+                                    const stdair::PartnershipTechnique&);
 
     /** Play a cancellation event. */
     static void playCancellation (SIMCRS::SIMCRS_Service&,
@@ -58,7 +61,7 @@ namespace DSIM {
 
     /** Play a RM event. */
     static void playRMEvent (SIMCRS::SIMCRS_Service&, const stdair::EventStruct&,
-                             const stdair::ForecastingMethod&);
+                             const stdair::ForecastingMethod&, const stdair::PartnershipTechnique&);
 
   private:
     /** Constructors. */

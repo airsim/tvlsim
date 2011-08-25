@@ -70,6 +70,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Method for the forecast (here, additive pick-up)
   const stdair::ForecastingMethod lAdditiveForecastMethod =
     stdair::ForecastingMethod::ADD_PK;
+  const stdair::PartnershipTechnique lNoPartnershipMethod =
+    stdair::PartnershipTechnique::NONE;
 
   // Start date
   const stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
@@ -150,6 +152,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
                                        "sim_dsim");
+  
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
                                   lRandomSeed);
 
@@ -167,7 +170,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
   BOOST_CHECK_NO_THROW (dsimService.simulate (lNbOfRuns,
                                               lOrderStatDemandGenMethod,
-                                              lAdditiveForecastMethod));
+                                              lAdditiveForecastMethod,
+                                              lNoPartnershipMethod));
 
   // Close the log file
   logOutputFile.close();

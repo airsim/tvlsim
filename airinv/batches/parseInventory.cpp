@@ -312,7 +312,8 @@ int main (int argc, char* argv[]) {
     airinvService.buildSampleBom();
 
     // Define a specific segment-date key for the sample BOM tree
-    lSegmentDateKey = "BA,9,2011-06-10,LHR,SYD";
+    //lSegmentDateKey = "BA,9,2011-06-10,LHR,SYD";
+    lSegmentDateKey = "SQ,11,2010-02-08,SIN,BKK";
 
   } else {
     if (isForSchedule == true) {

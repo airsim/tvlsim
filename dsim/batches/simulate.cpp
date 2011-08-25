@@ -15,6 +15,7 @@
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
+#include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
@@ -77,6 +78,11 @@ const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
  * Default demand generation method name: 'S' for Statistics Order.
  */
 const char K_DSIM_DEMAND_GENERATION_METHOD_CHAR ('S');
+
+/**
+ * Default partnership technique name: 'N' for None ().
+ */
+const char K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR ('N');
 
 /**
  * Default random generation seed (e.g., 120765987).
@@ -174,6 +180,7 @@ int readConfiguration (int argc, char* argv[],
                        std::string& ioLogFilename,
                        stdair::ForecastingMethod& ioForecastingMethod,
                        stdair::DemandGenerationMethod& ioDemandGenerationMethod,
+                       stdair::PartnershipTechnique& ioPartnershipTechnique,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
@@ -182,6 +189,8 @@ int readConfiguration (int argc, char* argv[],
   char lForecastingMethodChar;
   // Demand generation method as a single char (e.g., 'P' or 'S').
   char lDemandGenerationMethodChar;
+  // Partnership technique as a single char (e.g., 'r' or 'C').
+  char lPartnershipTechniqueChar;
 
   // Default for the built-in input
   ioIsBuiltin = K_DSIM_DEFAULT_BUILT_IN_INPUT;
@@ -238,6 +247,9 @@ int readConfiguration (int argc, char* argv[],
     ("demandgeneration,G",
      boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_DSIM_DEMAND_GENERATION_METHOD_CHAR),
      "Method used to generate the demand (i.e., booking requests): Poisson Process (e.g., P) or Statistics Order (e.g., S)")
+    ("partnership,T",
+     boost::program_options::value< char >(&lPartnershipTechniqueChar)->default_value(K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR),
+     "Technique used in a partnership (defines both revenue management and inventory control methods): None (N), Revenue Availability Exchange using Demand Aggregation (r), Revenue Availability Exchange using Yield Proration (R), Interline Bid Price using Demand Aggregation (i), Interline Bid Price using Yield Proration (I), Interline Bid Price using Yield Proration without protection (U), Revenue Management Cooperation (C) or Advanced Revenue Management Cooperation (A)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -387,6 +399,13 @@ int readConfiguration (int argc, char* argv[],
               << ioDemandGenerationMethod.describe() << std::endl;
   }
 
+  if (vm.count ("partnership")) {
+    ioPartnershipTechnique =
+      stdair::PartnershipTechnique (lPartnershipTechniqueChar);
+    std::cout << "Partnership technique is: "
+              << ioPartnershipTechnique.describe() << std::endl;
+  }
+
   //
   std::cout << "The random generation seed is: " << ioRandomSeed << std::endl;
 
@@ -444,7 +463,7 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2008, boost::gregorian::Jan, 01);
+  stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
   stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);
@@ -475,6 +494,9 @@ int main (int argc, char* argv[]) {
   stdair::DemandGenerationMethod
     lDemandGenerationMethod (K_DSIM_DEMAND_GENERATION_METHOD_CHAR);
 
+  // Partnership technique.
+  stdair::PartnershipTechnique lPartnershipTechnique(K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR);
+
   // SQL database parameters
   std::string lDBUser;
   std::string lDBPasswd;
@@ -488,7 +510,7 @@ int main (int argc, char* argv[]) {
                        lScheduleInputFilename, lOnDInputFilename,
                        lYieldInputFilename, lFareInputFilename,
                        lDemandInputFilename, lLogFilename,
-                       lForecastingMethod, lDemandGenerationMethod, 
+                       lForecastingMethod, lDemandGenerationMethod, lPartnershipTechnique, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
@@ -527,7 +549,7 @@ int main (int argc, char* argv[]) {
   dsimService.initSnapshotAndRMEvents();
 
   // Perform a simulation
-  dsimService.simulate (lNbOfRuns, lDemandGenerationMethod, lForecastingMethod);
+  dsimService.simulate (lNbOfRuns, lDemandGenerationMethod, lForecastingMethod, lPartnershipTechnique);
 
   
   // DEBUG
