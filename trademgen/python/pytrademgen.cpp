@@ -93,6 +93,7 @@ namespace TRADEMGEN {
     
     /** Wrapper around the search use case. */
     bool init (const std::string& iLogFilepath,
+               const stdair::RandomSeed_T& iRandomSeed,
                const stdair::Filename_T& iDemandInputFilename,
                const std::string& iDBUser, const std::string& iDBPasswd,
                const std::string& iDBHost, const std::string& iDBPort,
@@ -125,7 +126,8 @@ namespace TRADEMGEN {
         // Initialise the context
         stdair::BasDBParams lDBParams (iDBUser, iDBPasswd, iDBHost, iDBPort,
                                        iDBDBName);
-        _trademgenService = new TRADEMGEN_Service (lLogParams, lDBParams);
+        _trademgenService = new TRADEMGEN_Service (lLogParams, lDBParams,
+                                                   iRandomSeed);
         assert (_trademgenService != NULL);
 
         // Create the DemandStream objects, and insert them within the BOM tree

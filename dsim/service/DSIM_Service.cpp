@@ -14,6 +14,7 @@
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
+#include <stdair/service/FacSupervisor.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/service/DBSessionManager.hpp>
 #include <stdair/STDAIR_Service.hpp>
@@ -45,7 +46,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -61,7 +63,7 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -78,7 +80,8 @@ namespace DSIM {
   DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
                               const stdair::BasDBParams& iDBParams,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -94,7 +97,7 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -110,7 +113,8 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
                               const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate)
+                              const stdair::Date_T& iEndDate,
+                              const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
@@ -122,7 +126,7 @@ namespace DSIM {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService();
+    initTRADEMGENService (iRandomSeed);
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -238,7 +242,8 @@ namespace DSIM {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initTRADEMGENService() {
+  void DSIM_Service::
+  initTRADEMGENService (const stdair::RandomSeed_T& iRandomSeed) {
 
     // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
@@ -256,7 +261,8 @@ namespace DSIM {
      *       no longer referenced (e.g., at the end of the process).
      */
     TRADEMGEN::TRADEMGEN_ServicePtr_T lTRADEMGEN_Service_ptr = 
-      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr);
+      boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
+                                                        iRandomSeed);
     
     // Store the TRADEMGEN service object within the (DSim) service context
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service_ptr);
@@ -293,6 +299,58 @@ namespace DSIM {
     // calling the buildSampleBom() method
   }
 
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::reinitServices() {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the DSim service context and whether it owns the Stdair
+    // service
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    const bool doesOwnStdairService =
+      lDSIM_ServiceContext.getOwnStdairServiceFlag();
+
+    /**
+     * 1. Have StdAir, only when it is owned by the current component
+     *    (here, DSim), delete all the BOM objects, leaving alive only
+     *    the service objects (e.g., service contexts), log and
+     *    database services.
+     */
+    if (doesOwnStdairService == true) {
+      // Retrieve the StdAir service object from the (DSim) service context
+      /*
+      stdair::STDAIR_Service& lSTDAIR_Service =
+        lDSIM_ServiceContext.getSTDAIR_Service();
+      */
+
+      //
+      //lSTDAIR_Service.cleanBomLayer();
+    }
+
+    /**
+     * Then, re-initialise the components.
+     */
+
+    /**
+     * Let the distribution component (and sub-components) re-load its BOM tree.
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+    lSIMCRS_Service.reinitServices();
+     */
+
+    /**
+     * Let the demand generation component re-load its BOM tree.
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service();
+    lTRADEMGEN_Service.reinitServices();
+     */
+  }
+
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::
   parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
@@ -301,7 +359,7 @@ namespace DSIM {
                 const stdair::Filename_T& iFareInputFilename,
                 const stdair::Filename_T& iDemandInputFilename) {
 
-    // Retrieve the Dsim service context
+    // Retrieve the DSim service context
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     
@@ -313,7 +371,9 @@ namespace DSIM {
     lSIMCRS_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
                                   iYieldInputFilename, iFareInputFilename);
 
-    // Parse the demand input file.
+    /**
+     * Let the demand generation component parse its input file.
+     */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service();
     lTRADEMGEN_Service.parseAndLoad (iDemandInputFilename);
@@ -335,7 +395,7 @@ namespace DSIM {
     const bool doesOwnStdairService =
       lDSIM_ServiceContext.getOwnStdairServiceFlag();
 
-    // Retrieve the StdAir service object from the (SimCRS) service context
+    // Retrieve the StdAir service object from the (DSim) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 

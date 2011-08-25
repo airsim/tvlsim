@@ -7,6 +7,7 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
+#include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
@@ -47,11 +48,14 @@ namespace DSIM {
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
      * @param const stdair::BasDBParams& Parameters for the database access.
-     * @param const CRSCode_T& Code of the owner of the distribution system.
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation.
+     * @param const stdair::RandomSeed_T& Seed for the random generation used
+     *        by the demand generation component (TraDemGen).
      */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                   const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
 
     /**
      * Constructor.
@@ -66,10 +70,13 @@ namespace DSIM {
      * that log outputs can be directed onto that stream.
      *
      * @param const stdair::BasLogParams& Parameters for the output log stream.
-     * @param const CRSCode_T& Code of the owner of the distribution system.
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation.
+     * @param const stdair::RandomSeed_T& Seed for the random generation used
+     *        by the demand generation component (TraDemGen).
      */
     DSIM_Service (const stdair::BasLogParams&, const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
 
     /**
      * Constructor.
@@ -85,11 +92,13 @@ namespace DSIM {
      * there is currently no other known library service using/calling DSim).
      *
      * @param stdair::STDAIR_ServicePtr_T Reference on the STDAIR service.
-     * @param const stdiar::Date_T& Parameters for the start date.
-     * @param const stdiar::Date_T& Parameters for the end date.
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation.
+     * @param const stdair::RandomSeed_T& Seed for the random generation used
+     *        by the demand generation component (TraDemGen).
      */
     DSIM_Service (stdair::STDAIR_ServicePtr_T, const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
 
     /**
      * Parse the schedule, O&D, fare and yield input files.
@@ -115,6 +124,12 @@ namespace DSIM {
     void initSnapshotAndRMEvents();
 
     /**
+     * Re-initialise the simulation service, as well as all the other
+     * component services (e.g., SimCRS, TraDemGen, TravelCCM).
+     */
+    void reinitServices();
+
+    /**
      * Destructor.
      */
     ~DSIM_Service();
@@ -124,6 +139,14 @@ namespace DSIM {
     // /////////// Business Methods /////////////
     /**
      * Perform a simulation.
+     *
+     * \note Currently, the multi-run piece of functionality does not work
+     *       properly. Indeed, only the demand generation service context
+     *       is resetted correctly; the inventories, schedules, etc, are not
+     *       resetted at all. Achieving a fully working multi-run simulation
+     *       framework will require some significant work. In the meantime,
+     *       a work around is to launch in a row several mono-run simulations,
+     *       with a distinct random generation seed for every simulation run.
      *
      * @param const NbOfRuns_T& Number of simulation runs to be performed.
      * @param const stdair::DemandGenerationMethod&
@@ -279,8 +302,11 @@ namespace DSIM {
 
     /**
      * Initialise the TraDemGen service (including the log service).
+     *
+     * @param const stdair::RandomSeed_T& Seed for the random generation used
+     *        by the demand generation component (TraDemGen).
      */
-    void initTRADEMGENService();
+    void initTRADEMGENService (const stdair::RandomSeed_T&);
 
     /**
      * Initialise the TravelCCM service (including the log service).

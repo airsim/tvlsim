@@ -16,6 +16,7 @@
 #include <boost/test/unit_test.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
@@ -62,19 +63,25 @@ BOOST_AUTO_TEST_SUITE (master_test_suite)
  */
 BOOST_AUTO_TEST_CASE (simple_simulation_test) {
 
-  // Number of simulation runs to be performed
-  const DSIM::NbOfRuns_T lNbOfRuns = 1;
-
+  // Method for the demand generation (here, statistics order)
   const stdair::DemandGenerationMethod lOrderStatDemandGenMethod =
     stdair::DemandGenerationMethod::STA_ORD;
+
+  // Method for the forecast (here, additive pick-up)
   const stdair::ForecastingMethod lAdditiveForecastMethod =
     stdair::ForecastingMethod::ADD_PK;
 
   // Start date
-  stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
+  const stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Jan, 01);
+  const stdair::Date_T lEndDate (2011, boost::gregorian::Jan, 01);
+
+  // Random generation seed
+  const stdair::RandomSeed_T lRandomSeed (stdair::DEFAULT_RANDOM_SEED);
+  
+  // Number of simulation runs to be performed
+  const DSIM::NbOfRuns_T lNbOfRuns (1);
 
   // Demand input file name
   const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
@@ -143,7 +150,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
                                        "sim_dsim");
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
+                                  lRandomSeed);
 
   // Build the BOM tree from parsing input files
   BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,

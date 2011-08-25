@@ -577,7 +577,9 @@ namespace SIMFQT {
                         << lSegmentDateKey.toString());
       throw FlightDateNotFoundException ("No available fare rule for the "
                                          "flight date "
-                                         + lFlightDateKey.toString());
+                                         + lFlightDateKey.toString()
+                                         + " and to the Origin-Destination pair: "
+                                         + lSegmentDateKey.toString());
     }
     // If no fare rule has a corresponding pos channel, the pricing is not possible,
     // throw an exception.
@@ -591,7 +593,11 @@ namespace SIMFQT {
                         << lAirportPairKey.toString());
       throw PosOrChannelNotFoundException ("No available fare rule for the "
                                            "point of sale " + lPointOfSale
-                                           + " and the channel " + lChannel);
+                                           + ", the channel " + lChannel
+                                           + ", the flight date "
+                                           + lFlightDateKey.toString()
+                                           + " and the Origin-Destination pair: "
+                                           + lAirportPairKey.toString());
     }
     // If no fare rule has a corresponding time range, the pricing is not possible,
     // throw an exception.

@@ -10,7 +10,7 @@
 #include <boost/program_options.hpp>
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
-#include <stdair/basic/ForecastingMethod.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
@@ -21,34 +21,50 @@
 #include <dsim/config/dsim-paths.hpp>
 
 // //////// Type definitions ///////
-/** Number of runs to be performed by the simulation. */
+/**
+ * Number of runs to be performed by the simulation.
+ */
 typedef unsigned int NbOfRuns_T;
 
-/** List of workds for a query. */
+/**
+ * List of workds for a query.
+ */
 typedef std::vector<std::string> WordList_T;
 
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_DSIM_DEFAULT_LOG_FILENAME ("simulate.log");
 
-/** Default name and location for the (CSV) schedule input file. */
+/**
+ * Default name and location for the (CSV) schedule input file.
+ */
 const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                           "/rds01/schedule.csv");
 
-/** Default name and location for the (CSV) O&D input file. */
+/**
+ * Default name and location for the (CSV) O&D input file.
+ */
 const std::string K_DSIM_DEFAULT_OND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                      "/ond01.csv");
 
-/** Default name and location for the (CSV) yield input file. */
+/**
+ * Default name and location for the (CSV) yield input file.
+ */
 const std::string K_DSIM_DEFAULT_YIELD_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/rds01/yield.csv");
     
-/** Default name and location for the (CSV) fare input file. */
+/**
+ * Default name and location for the (CSV) fare input file.
+ */
 const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                       "/rds01/fare.csv");
 
-/** Default name and location for the (CSV) demand input file. */
+/**
+ * Default name and location for the (CSV) demand input file.
+ */
 const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                         "/rds01/demand.csv");
 
@@ -63,6 +79,12 @@ const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
 const char K_DSIM_DEMAND_GENERATION_METHOD_CHAR ('S');
 
 /**
+ * Default random generation seed (e.g., 120765987).
+ */
+const stdair::RandomSeed_T K_TRADEMGEN_DEFAULT_RANDOM_SEED =
+  stdair::DEFAULT_RANDOM_SEED;
+
+/**
  * Default number of random draws to be generated (best if over 100).
  */
 const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
@@ -74,10 +96,14 @@ const NbOfRuns_T K_TRADEMGEN_DEFAULT_RANDOM_DRAWS = 1;
  */
 const bool K_DSIM_DEFAULT_BUILT_IN_INPUT = false;
 
-/** Default query string. */
+/**
+ * Default query string.
+ */
 const std::string K_DSIM_DEFAULT_QUERY_STRING ("my good old query");
 
-/** Default name and location for the Xapian database. */
+/**
+ * Default name and location for the Xapian database.
+ */
 const std::string K_DSIM_DEFAULT_DB_USER ("dsim");
 const std::string K_DSIM_DEFAULT_DB_PASSWD ("dsim");
 const std::string K_DSIM_DEFAULT_DB_DBNAME ("sim_dsim");
@@ -138,8 +164,8 @@ const int K_DSIM_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[], 
-                       bool& ioIsBuiltin, NbOfRuns_T& ioRandomRuns,
-                       std::string& ioQueryString,
+                       bool& ioIsBuiltin, stdair::RandomSeed_T& ioRandomSeed,
+                       NbOfRuns_T& ioRandomRuns, std::string& ioQueryString,
                        stdair::Filename_T& ioScheduleInputFilename,
                        stdair::Filename_T& ioOnDInputFilename,
                        stdair::Filename_T& ioYieldInputFilename,
@@ -182,30 +208,33 @@ int readConfiguration (int argc, char* argv[],
   config.add_options()
     ("builtin,b",
      "The sample BOM tree can be either built-in or parsed from input files. In that latter case, the input files must be specified as well (e.g., -d/--demand, -s/--schedule,  -o/--ond, -f/--fare, -y/--yield)")
+    ("seed,S",
+     boost::program_options::value<stdair::RandomSeed_T>(&ioRandomSeed)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_SEED),
+     "Seed for the random generation")
     ("runs,r",
      boost::program_options::value<NbOfRuns_T>(&ioRandomRuns)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_DRAWS),
      "Number of simulation runs")
     ("schedule,s",
      boost::program_options::value< std::string >(&ioScheduleInputFilename)->default_value(K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME),
-     "(CVS) input file for the schedules")
+     "(CSV) input file for the schedules")
     ("ond,o",
      boost::program_options::value< std::string >(&ioOnDInputFilename)->default_value(K_DSIM_DEFAULT_OND_INPUT_FILENAME),
-     "(CVS) input file for the O&D definitions")
+     "(CSV) input file for the O&D definitions")
     ("yield,y",
      boost::program_options::value< std::string >(&ioYieldInputFilename)->default_value(K_DSIM_DEFAULT_YIELD_INPUT_FILENAME),
-     "(CVS) input file for the yields")
+     "(CSV) input file for the yields")
     ("fare,f",
      boost::program_options::value< std::string >(&ioFareInputFilename)->default_value(K_DSIM_DEFAULT_FARE_INPUT_FILENAME),
-     "(CVS) input file for the fares")
+     "(CSV) input file for the fares")
     ("demand,d",
      boost::program_options::value< std::string >(&ioDemandInputFilename)->default_value(K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME),
-     "(CVS) input file for the demand distributions")
+     "(CSV) input file for the demand distributions")
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
     ("forecast,F",
      boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
-     "Method used to forecast demand: AdditivePickUp (e.g., A) or MultiplicativePickUp (e.g., M)")
+     "Method used to forecast demand: Additive Pick-Up (e.g., A) or Multiplicative Pick-Up (e.g., M)")
     ("demandgeneration,G",
      boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_DSIM_DEMAND_GENERATION_METHOD_CHAR),
      "Method used to generate the demand (i.e., booking requests): Poisson Process (e.g., P) or Statistics Order (e.g., S)")
@@ -221,7 +250,7 @@ int readConfiguration (int argc, char* argv[],
     ("port,P",
      boost::program_options::value< std::string >(&ioDBPort)->default_value(K_DSIM_DEFAULT_DB_PORT),
      "SQL database port (e.g., 3306)")
-    ("dbname,m",
+    ("dbname,n",
      boost::program_options::value< std::string >(&ioDBDBName)->default_value(K_DSIM_DEFAULT_DB_DBNAME),
      "SQL database name (e.g., dsim)")
     ("query,q",
@@ -344,11 +373,13 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "Log filename is: " << ioLogFilename << std::endl;
   }
 
+  //
   if (vm.count ("forecast")) {
     ioForecastingMethod = stdair::ForecastingMethod (lForecastingMethodChar);
     std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
   }
 
+  //
   if (vm.count ("demandgeneration")) {
     ioDemandGenerationMethod =
       stdair::DemandGenerationMethod (lDemandGenerationMethodChar);
@@ -357,9 +388,13 @@ int readConfiguration (int argc, char* argv[],
   }
 
   //
+  std::cout << "The random generation seed is: " << ioRandomSeed << std::endl;
+
+  //
   std::cout << "The number of simulation runs is: " << ioRandomRuns
             << std::endl;
 
+  //
   if (vm.count ("user")) {
     ioDBUser = vm["user"].as< std::string >();
     std::cout << "SQL database user name is: " << ioDBUser << std::endl;
@@ -385,6 +420,7 @@ int readConfiguration (int argc, char* argv[],
     std::cout << "SQL database name is: " << ioDBDBName << std::endl;
   }
 
+  //
   ioQueryString = createStringFromWordList (lWordList);
   std::cout << "The query string is: " << ioQueryString << std::endl;
   
@@ -397,6 +433,9 @@ int main (int argc, char* argv[]) {
   // State whether the BOM tree should be built-in or parsed from an
   // input file
   bool isBuiltin;
+
+  // Random generation seed
+  stdair::RandomSeed_T lRandomSeed;
 
   // Number of simulation runs to be performed
   NbOfRuns_T lNbOfRuns;
@@ -429,10 +468,12 @@ int main (int argc, char* argv[]) {
   std::string lLogFilename;
 
   // Forecasting method.
-  stdair::ForecastingMethod lForecastingMethod(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
+  stdair::ForecastingMethod
+    lForecastingMethod (K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
 
   // Demand generation method.
-  stdair::DemandGenerationMethod lDemandGenerationMethod(K_DSIM_DEMAND_GENERATION_METHOD_CHAR);
+  stdair::DemandGenerationMethod
+    lDemandGenerationMethod (K_DSIM_DEMAND_GENERATION_METHOD_CHAR);
 
   // SQL database parameters
   std::string lDBUser;
@@ -443,7 +484,7 @@ int main (int argc, char* argv[]) {
                        
   // Call the command-line option parser
   const int lOptionParserStatus = 
-    readConfiguration (argc, argv, isBuiltin, lNbOfRuns, lQuery,
+    readConfiguration (argc, argv, isBuiltin, lRandomSeed, lNbOfRuns, lQuery,
                        lScheduleInputFilename, lOnDInputFilename,
                        lYieldInputFilename, lFareInputFilename,
                        lDemandInputFilename, lLogFilename,
@@ -465,9 +506,9 @@ int main (int argc, char* argv[]) {
   logOutputFile.clear();
 
   // Initialise the simulation context
-  const stdair::BasLogParams lLogParams (stdair::LOG::NOTIFICATION,
-                                         logOutputFile);
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate);
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
+                                  lRandomSeed);
 
   // Check wether or not (CSV) input files should be read
   if (isBuiltin == true) {
