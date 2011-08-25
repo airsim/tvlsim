@@ -19,6 +19,7 @@
 namespace stdair {
   class EventQueue;
   struct ProgressStatusSet;
+  struct TravelSolutionStruct;
 }
 
 namespace TRADEMGEN {
@@ -259,6 +260,16 @@ namespace TRADEMGEN {
      *   of requests generation.
      */
     static void reset (stdair::EventQueue&, stdair::BaseGenerator_T&);
+
+    /**
+     * Generate the potential cancellation event.
+     */
+    static bool generateCancellation (stdair::EventQueue&,
+                                      stdair::RandomGeneration&,
+                                      const stdair::TravelSolutionStruct&,
+                                      const stdair::PartySize_T&,
+                                      const stdair::DateTime_T&,
+                                      const stdair::Date_T&);
   };
 
 }

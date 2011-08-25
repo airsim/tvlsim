@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <iomanip>
 // StdAir
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
@@ -13,6 +14,7 @@
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
+#include <stdair/bom/CancellationStruct.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
@@ -45,8 +47,8 @@ namespace DSIM {
 
     // Retrieve the expected (mean value of the) number of events to be
     // generated
-    const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
+    //const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+      //ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
 
     /**
        Initialisation step.
@@ -59,9 +61,9 @@ namespace DSIM {
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
   
     // DEBUG
-    STDAIR_LOG_DEBUG ("Expected number of events: "
-                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
-                      << lActualNbOfEventsToBeGenerated);
+    //STDAIR_LOG_DEBUG ("Expected number of events: "
+      //                << lExpectedNbOfEventsToBeGenerated << ", actual: "
+        //              << lActualNbOfEventsToBeGenerated);
   
     /**
        Main loop.
@@ -91,6 +93,8 @@ namespace DSIM {
                                                            lPSS,
                                                            iDemandGenerationMethod,
                                                            iPartnershipTechnique); break;
+      case stdair::EventType::CX: playCancellation (ioSIMCRS_Service,
+                                                    lEventStruct); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -121,29 +125,34 @@ namespace DSIM {
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
 
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Poped booking request: '" << lPoppedRequest.describe()
-                      << "'.");
+    // Check if the request if valid
+    const stdair::Date_T& lDepDate = lPoppedRequest.getPreferedDepartureDate();
+    const stdair::DateTime_T& lReqTime = lPoppedRequest.getRequestDateTime();
+    const stdair::Date_T& lRegDate = lReqTime.date();
+    if (lDepDate > lRegDate) {
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Poped booking request: '" << lPoppedRequest.describe()
+                        << "'.");
 
-    // Retrieve the corresponding demand stream
-    const stdair::DemandGeneratorKey_T& lDemandStreamKey =
-      lPoppedRequest.getDemandGeneratorKey();
+      // Retrieve the corresponding demand stream
+      const stdair::DemandGeneratorKey_T& lDemandStreamKey =
+        lPoppedRequest.getDemandGeneratorKey();
+      
+      // Assess whether more events should be generated for that demand stream
+      const bool stillHavingRequestsToBeGenerated =
+        ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
+                                                              ioPSS,
+                                                              iDemandGenerationMethod);
 
-    // Assess whether more events should be generated for that demand stream
-    const bool stillHavingRequestsToBeGenerated =
-      ioTRADEMGEN_Service.stillHavingRequestsToBeGenerated (lDemandStreamKey,
-                                                            ioPSS,
-                                                            iDemandGenerationMethod);
-
-    // DEBUG
-    // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
-    //                   << "Still generate events for that demand stream? "
-    //                   << stillHavingRequestsToBeGenerated);
-    STDAIR_LOG_DEBUG ("Progress status" << ioPSS.describe());
-
-    // If there are still events to be generated for that demand stream,
-    // generate and add them to the event queue
-    if (stillHavingRequestsToBeGenerated) {
+      // DEBUG
+      // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
+      //                   << "Still generate events for that demand stream? "
+      //                   << stillHavingRequestsToBeGenerated);
+      STDAIR_LOG_DEBUG ("Progress status" << ioPSS.describe());
+      
+      // If there are still events to be generated for that demand stream,
+      // generate and add them to the event queue
+      if (stillHavingRequestsToBeGenerated) {
       stdair::BookingRequestPtr_T lNextRequest_ptr =
         ioTRADEMGEN_Service.generateNextRequest (lDemandStreamKey,
                                                  iDemandGenerationMethod);
@@ -153,62 +162,102 @@ namespace DSIM {
       const stdair::Duration_T lDuration =
         lNextRequest_ptr->getRequestDateTime()
         - lPoppedRequest.getRequestDateTime();
-      if (lDuration.total_milliseconds() < 0) {
-        STDAIR_LOG_ERROR ("[" << lDemandStreamKey
-                          << "] The date-time of the generated event ("
-                          << lNextRequest_ptr->getRequestDateTime()
-                          << ") is lower than the date-time "
-                          << "of the current event ("
-                          << lPoppedRequest.getRequestDateTime() << ")");
-        assert (false);
+        if (lDuration.total_milliseconds() < 0) {
+          STDAIR_LOG_NOTIFICATION ("[" << lDemandStreamKey
+                                   << "] The date-time of the generated event ("
+                                   << lNextRequest_ptr->getRequestDateTime()
+                                   << ") is lower than the date-time "
+                                   << "of the current event ("
+                                   << lPoppedRequest.getRequestDateTime()
+                                   << ")");
+          assert (false);
+        }
+
+        // DEBUG
+        // STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
+        //                   << lNextRequest_ptr->describe()
+        //                   << "'. Is queue done? "
+        //                   << ioTRADEMGEN_Service.isQueueDone());
       }
 
-      // DEBUG
-      // STDAIR_LOG_DEBUG ("[" << lDemandStreamKey << "] Added request: '"
-      //                   << lNextRequest_ptr->describe()
-      //                   << "'. Is queue done? "
-      //                   << ioTRADEMGEN_Service.isQueueDone());
-    }
-
-    // Retrieve a list of travel solutions corresponding the given
-    // booking request.
-    stdair::TravelSolutionList_T lTravelSolutionList =
-      ioSIMCRS_Service.calculateSegmentPathList (lPoppedRequest);
-    
-    if (lTravelSolutionList.empty() == false) {
-      // Get the fare quote for each travel solution.
-      ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
+      // Retrieve a list of travel solutions corresponding the given
+      // booking request.
+      stdair::TravelSolutionList_T lTravelSolutionList =
+        ioSIMCRS_Service.calculateSegmentPathList (lPoppedRequest);
       
-      // Get the availability for each travel solution.
-      ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
-
-      // Get a travel solution choice.
-      const stdair::TravelSolutionStruct* lChosenTS_ptr =
-        ioTRAVELCCM_Service.chooseTravelSolution (lTravelSolutionList,
-                                                  lPoppedRequest);
-      if (lChosenTS_ptr != NULL) {
-        // DEBUG
-        STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS_ptr->describe());
+      if (lTravelSolutionList.empty() == false) {
+        // Get the availability for each travel solution.
+        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
         
-        // Retrieve and convert the party size
-        const stdair::NbOfSeats_T& lPartySizeDouble =
-          lPoppedRequest.getPartySize();
-        const stdair::PartySize_T lPartySize = std::floor (lPartySizeDouble);
+        // Get the fare quote for each travel solution.
+        ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
         
-        // Delegate the sell to the corresponding SimCRS service
-        ioSIMCRS_Service.sell (*lChosenTS_ptr, lPartySize);
-      }
-      else {
+        // Get a travel solution choice.
+        const stdair::TravelSolutionStruct* lChosenTS_ptr =
+          ioTRAVELCCM_Service.chooseTravelSolution (lTravelSolutionList,
+                                                    lPoppedRequest);
+        if (lChosenTS_ptr != NULL) {
+          // DEBUG
+          STDAIR_LOG_DEBUG ("Chosen TS: " << lChosenTS_ptr->describe());
+          
+          // Retrieve and convert the party size
+          const stdair::NbOfSeats_T& lPartySizeDouble =
+            lPoppedRequest.getPartySize();
+          const stdair::PartySize_T lPartySize = std::floor (lPartySizeDouble);
+        
+          // Delegate the sell to the corresponding SimCRS service
+          bool saleSucceedful =
+            ioSIMCRS_Service.sell (*lChosenTS_ptr, lPartySize);
+          
+          // If the sale succeeded, generate the potential cancellation event.
+          if (saleSucceedful == true) {
+            ioTRADEMGEN_Service.generateCancellation (*lChosenTS_ptr,
+                                                      lPartySize, lReqTime,
+                                                      lDepDate);
+          }
+          
+          // LOG
+          const stdair::DateTime_T lDepartureDateTime =
+            boost::posix_time::ptime (lDepDate, boost::posix_time::hours (0));
+          const stdair::Duration_T lDTDRequest = lReqTime - lDepartureDateTime;
+          const double lDTD = double(lDTDRequest.total_seconds()) / 86400.0;
+          std::ostringstream oStr;
+          const stdair::SegmentPath_T& lSegmentPath =
+            lChosenTS_ptr->getSegmentPath();
+          for (stdair::SegmentPath_T::const_iterator itSegPath =
+                 lSegmentPath.begin();
+               itSegPath != lSegmentPath.end(); ++itSegPath) {
+            oStr << *itSegPath <<  ";";
+          }
+          STDAIR_LOG_NOTIFICATION (oStr.str() << std::setprecision(10) << lDTD);
+        }
+        else {
+          // DEBUG
+          STDAIR_LOG_DEBUG ("There is no chosen travel solution "
+                            <<"for this request: "<< lPoppedRequest.describe());
+        }
+      } else {
         // DEBUG
-        STDAIR_LOG_DEBUG ("There is no chosen travel solution"
-                          <<"for this request: " << lPoppedRequest.describe());
+        STDAIR_LOG_DEBUG ("No travel solution has been found for: "
+                          << lPoppedRequest);
       }
-    } else {
-      // DEBUG
-      STDAIR_LOG_DEBUG ("No travel solution has been found for: "
-                        << lPoppedRequest);
     }
   }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void Simulator::
+  playCancellation (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+                    const stdair::EventStruct& iEventStruct) {
+    // Retrieve the cancellation struct from the event.
+    const stdair::CancellationStruct lCancellationStruct =
+      iEventStruct.getCancellation();
+
+    // DEBUG
+    // STDAIR_LOG_DEBUG ("Play cancellation: "<<lCancellationStruct.describe());
+
+    ioSIMCRS_Service.playCancellation (lCancellationStruct);
+  }
+  
   
   // ////////////////////////////////////////////////////////////////////
   void Simulator::

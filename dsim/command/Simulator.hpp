@@ -50,6 +50,10 @@ namespace DSIM {
                                     const stdair::DemandGenerationMethod&,
                                     const stdair::PartnershipTechnique&);
 
+    /** Play a cancellation event. */
+    static void playCancellation (SIMCRS::SIMCRS_Service&,
+                                  const stdair::EventStruct&);
+                                  
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
                                    const stdair::EventStruct&);

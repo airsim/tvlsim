@@ -46,4 +46,16 @@ namespace RMOL {
     return oCurve;
   };
 
+  /** Defaut data collection point list. */
+  const stdair::DCPList_T DEFAULT_DCP_LIST = DefaultDCPList::init();
+  stdair::DCPList_T DefaultDCPList::init() {
+    stdair::DCPList_T oDCPList;
+    oDCPList.push_back (63); oDCPList.push_back (49);
+    oDCPList.push_back (35); oDCPList.push_back (23); 
+    oDCPList.push_back (16); oDCPList.push_back (10);
+    oDCPList.push_back (5);  oDCPList.push_back (1);
+    oDCPList.push_back (0);
+    return oDCPList;
+  }
+
 }

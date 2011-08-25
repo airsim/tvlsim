@@ -177,7 +177,7 @@ int readConfiguration (int argc, char* argv[],
                        stdair::Filename_T& ioYieldInputFilename,
                        stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioDemandInputFilename,
-                       std::string& ioLogFilename,  
+                       std::string& ioLogFilename,
                        stdair::ForecastingMethod& ioForecastingMethod,
                        stdair::DemandGenerationMethod& ioDemandGenerationMethod,
                        stdair::PartnershipTechnique& ioPartnershipTechnique,
@@ -373,7 +373,6 @@ int readConfiguration (int argc, char* argv[],
       ioDemandInputFilename = vm["demand"].as< std::string >();
       std::cout << "Demand input filename is: " << ioDemandInputFilename
                 << std::endl;
-
     } else {
       // The built-in option is not selected. However, no schedule input file
       // is specified
@@ -467,7 +466,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2011, boost::gregorian::Mar, 01);
+  stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -552,6 +551,7 @@ int main (int argc, char* argv[]) {
   // Perform a simulation
   dsimService.simulate (lNbOfRuns, lDemandGenerationMethod, lForecastingMethod, lPartnershipTechnique);
 
+  
   // DEBUG
   // Display the airlines stored in the database
   dsimService.displayAirlineListFromDB();

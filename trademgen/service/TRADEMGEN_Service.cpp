@@ -551,6 +551,34 @@ namespace TRADEMGEN {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  bool TRADEMGEN_Service::
+  generateCancellation (const stdair::TravelSolutionStruct& iTravelSolution,
+                        const stdair::PartySize_T& iPartySize,
+                        const stdair::DateTime_T& iRequestTime,
+                        const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the TraDemGen service context
+    assert (_trademgenServiceContext != NULL);
+    TRADEMGEN_ServiceContext& lTRADEMGEN_ServiceContext =
+      *_trademgenServiceContext;
+    
+    // Retrieve the random generator
+    stdair::RandomGeneration& lGenerator =
+      lTRADEMGEN_ServiceContext.getUniformGenerator();
+
+    // Retrieve the StdAir service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lTRADEMGEN_ServiceContext.getSTDAIR_Service();
+
+    // Retrieve the event queue object instance
+    stdair::EventQueue& lQueue = lSTDAIR_Service.getEventQueue();
+
+    return DemandManager::generateCancellation (lQueue, lGenerator,
+                                                iTravelSolution, iPartySize,
+                                                iRequestTime, iDepartureDate);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void TRADEMGEN_Service::reset() const {
 
     // Retrieve the TraDemGen service context

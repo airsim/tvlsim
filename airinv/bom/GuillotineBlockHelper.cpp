@@ -45,7 +45,7 @@ namespace AIRINV {
         stdair::BomManager::getParent<stdair::SegmentDate> (*lSC_ptr);
       const stdair::Date_T& lDepartureDate = lSegmentDate.getBoardingDate();
       const stdair::DateOffset_T lDateOffset = lDepartureDate - lSnapshotDate;
-      const stdair::DTD_T lDTD = lDateOffset.days();
+      const stdair::DTD_T lDTD = lDateOffset.days() + 1;
       
       if (lDTD >= 0 && lDTD <= stdair::DEFAULT_MAX_DTD) {
         SegmentCabinHelper::updateAvailabilities (*lSC_ptr);
@@ -108,6 +108,13 @@ namespace AIRINV {
         lBookingClass_ptr->getNbOfCancellations();
       lAvailabilityView[lIdx] =
         lBookingClass_ptr->getSegmentAvailability();
+      // STDAIR_LOG_NOTIFICATION ("Taking snapshot for "
+      //                          << iSegmentCabin.describeKey() << ", "
+      //                          << lBookingClass_ptr->describeKey()
+      //                          << ", DTD: " << iDTD << ", nb of bookings: "
+      //                          << lBookingClass_ptr->getNbOfBookings()
+      //                          << ", nb of cancellations: "
+      //                          << lBookingClass_ptr->getNbOfCancellations())
     }
   }
 
@@ -165,10 +172,7 @@ namespace AIRINV {
     }
 
     // Retrieve the FRAT5 coefficient and compute the sell-up coef.
-    FRAT5Curve_T::const_iterator itFRAT5 =
-      DEFAULT_PICKUP_FRAT5_CURVE.lower_bound (iDTD);
-    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.end());
-    const double lFRAT5Coef = itFRAT5->second;
+    const double lFRAT5Coef = getFRAT5Coefficient (iDTD);
     const double lSellUpCoef = -log(0.5) / (lFRAT5Coef - 1); 
     
     // Browse the booking class list
@@ -190,13 +194,20 @@ namespace AIRINV {
       const stdair::NbOfCancellations_T lCx =
         lRangeCancellationView[lIdx][0] - lRangeCancellationView[lIdx][1];
       const stdair::NbOfBookings_T lGrossBkgs = lNetBkgs + lCx;
-
+      
       // If there is a lower class available, these gross bookings
       // will be considered product-oriented. Otherwise, they will be
       // considered price-oriented
-      if (noLowerClassAvl == false) {
-        lProductAndPriceOrientedBookingView[lIdx] = lGrossBkgs;
-      } else {
+      // if (noLowerClassAvl == false) {
+      //   lProductAndPriceOrientedBookingView[lIdx] = lGrossBkgs;
+
+      //   if (lGrossBkgs > 0.0) {
+      //     STDAIR_LOG_NOTIFICATION (iDTD << ";"
+      //                              <<lBookingClass_ptr->describeKey() << ";"
+      //                              <<lNetBkgs << ";" << lCx << ";"
+      //                              << lGrossBkgs);
+      //   }
+      // } else {
         // Convert the bookings to Q-equivalent bookings.
         const stdair::NbOfBookings_T lQEquiBkgs =
           lGrossBkgs / exp ((1.0 - lYield/lLowestYield) * lSellUpCoef);
@@ -205,7 +216,32 @@ namespace AIRINV {
         if (lBookingClass_ptr->getSegmentAvailability() >= 1.0) {
           noLowerClassAvl = false;
         }
-      }
+        //}
     }
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  double GuillotineBlockHelper::getFRAT5Coefficient (const stdair::DTD_T& iDTD){
+    FRAT5Curve_T::const_iterator itFRAT5 =
+      DEFAULT_PICKUP_FRAT5_CURVE.lower_bound (iDTD);
+    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.end());
+
+    if (itFRAT5 == DEFAULT_PICKUP_FRAT5_CURVE.begin()) {
+      return itFRAT5->second;
+    }
+    
+    assert (itFRAT5 != DEFAULT_PICKUP_FRAT5_CURVE.begin());
+    FRAT5Curve_T::const_iterator itNextFRAT5 = itFRAT5; --itNextFRAT5;
+
+    const stdair::DTD_T& lPrevDTD = itFRAT5->first;
+    const stdair::DTD_T& lNextDTD = itNextFRAT5->first;
+    const double& lPrevFRAT5 = itFRAT5->second;
+    const double& lNextFRAT5 = itNextFRAT5->second;
+    assert (lPrevDTD > lNextDTD);
+
+    double oFRAT5 = lPrevFRAT5
+      + (iDTD - lNextDTD) * (lNextFRAT5 - lPrevFRAT5) / (lPrevDTD - lNextDTD);
+
+    return oFRAT5;
   }
 }

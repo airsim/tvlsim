@@ -37,6 +37,8 @@ namespace AIRINV {
     (stdair::GuillotineBlock&, const stdair::DTD_T&,
      const stdair::SegmentCabin&, const stdair::BlockNumber_T);
 
+    /** Retrieve the FRAT5 coefficient given the DTD. */
+    static double getFRAT5Coefficient (const stdair::DTD_T&);
   };
 
 }

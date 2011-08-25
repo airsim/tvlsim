@@ -12,7 +12,8 @@ namespace TRADEMGEN {
 
   // //////////// Type definitions /////////////////
   /** Dictionary key. */
-  typedef unsigned short DictionaryKey_T;
+  //typedef unsigned short DictionaryKey_T;
+  typedef stdair::Probability_T DictionaryKey_T;
   
   /**
    * @brief Class wrapper of dictionary business methods.
