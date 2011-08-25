@@ -23,7 +23,7 @@ module_library_add_standard (".;basic;bom;factory;command;service" airrac rmol)
 #  * If specified, the name to be given to the executable. If no such name
 #    is given as parameter, the executable is given the name of the current
 #    module.
-module_binary_add (batches parseInventory)
+module_binary_add (batches airinv_parseInventory)
 module_binary_add (ui/cmdline airinv)
 
 ##

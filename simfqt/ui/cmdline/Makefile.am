@@ -4,7 +4,7 @@ include $(srcdir)/sources.mk
 
 ##
 # Binaries (command-line interactive programs)
-bin_PROGRAMS = fareQuote
+bin_PROGRAMS = simfqt
 
 ##
 MAINTAINERCLEANFILES = Makefile.in
@@ -13,8 +13,8 @@ CLEANFILES = ${bin_PROGRAMS:%=%.log} \
 
 ##
 #
-fareQuote_SOURCES = $(simfqt_cmdline_h_sources) $(simfqt_cmdline_cc_sources)
-fareQuote_CXXFLAGS = $(READLINE_CFLAGS) $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
-fareQuote_LDADD =
-fareQuote_LDFLAGS = $(READLINE_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(STDAIR_LIBS) \
+simfqt_SOURCES = $(simfqt_cmdline_h_sources) $(simfqt_cmdline_cc_sources)
+simfqt_CXXFLAGS = $(READLINE_CFLAGS) $(BOOST_CFLAGS) $(STDAIR_CFLAGS)
+simfqt_LDADD =
+simfqt_LDFLAGS = $(READLINE_LIBS) $(BOOST_PROGRAM_OPTIONS_LIB) $(STDAIR_LIBS) \
 	$(top_builddir)/simfqt/core/libsimfqt.la

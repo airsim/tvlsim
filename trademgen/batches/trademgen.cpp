@@ -168,18 +168,18 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
     ("draws,d",
      boost::program_options::value<NbOfRuns_T>(&ioRandomRuns)->default_value(K_TRADEMGEN_DEFAULT_RANDOM_DRAWS), 
      "Number of runs for the demand generations")
-    ("input,i",
-     boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_TRADEMGEN_DEFAULT_INPUT_FILENAME),
-     "(CVS) input file for the demand distributions")
-    ("output,o",
-     boost::program_options::value< std::string >(&ioOutputFilename)->default_value(K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME),
-     "(CVS) output file for the generated requests")
-    ("log,l",
-     boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_TRADEMGEN_DEFAULT_LOG_FILENAME),
-     "Filepath for the logs")
     ("demandgeneration,G",
      boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_TRADEMGEN_DEFAULT_DEMAND_GENERATION_METHOD_CHAR),
      "Method used to generate the demand (i.e., the booking requests): Poisson Process (P) or Order Statistics (S)")
+    ("input,i",
+     boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_TRADEMGEN_DEFAULT_INPUT_FILENAME),
+     "(CSV) input file for the demand distributions")
+    ("output,o",
+     boost::program_options::value< std::string >(&ioOutputFilename)->default_value(K_TRADEMGEN_DEFAULT_OUTPUT_FILENAME),
+     "(CSV) output file for the generated requests")
+    ("log,l",
+     boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_TRADEMGEN_DEFAULT_LOG_FILENAME),
+     "Filepath for the logs")
     ;
 
   // Hidden options, will be allowed both on command line and

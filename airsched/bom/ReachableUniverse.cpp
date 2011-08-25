@@ -62,5 +62,16 @@ namespace AIRSCHED {
     ioArchive & _key;
   }
 
+  // ////////////////////////////////////////////////////////////////////
+  // Explicit template instantiation
+  namespace ba = boost::archive;
+  template
+  void ReachableUniverse::serialize<ba::text_oarchive> (ba::text_oarchive&,
+                                                        unsigned int);
+  template
+  void ReachableUniverse::serialize<ba::text_iarchive> (ba::text_iarchive&,
+                                                        unsigned int);
+  // ////////////////////////////////////////////////////////////////////
+
 }
 

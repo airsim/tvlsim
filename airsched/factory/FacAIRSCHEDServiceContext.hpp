@@ -31,7 +31,7 @@ namespace AIRSCHED {
      * Destructor.
      *
      * The Destruction put the _instance to NULL in order to be clean
-     * for the next FacSimfqtServiceContext::instance().
+     * for the next FacAIRSCHEDServiceContext::instance().
      */
     ~FacAIRSCHEDServiceContext();
 
