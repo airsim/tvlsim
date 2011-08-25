@@ -14,6 +14,7 @@
 #include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
+#include <stdair/bom/CancellationStruct.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
@@ -45,8 +46,8 @@ namespace DSIM {
 
     // Retrieve the expected (mean value of the) number of events to be
     // generated
-    const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
+    //const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+      //ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
 
     /**
        Initialisation step.
@@ -59,9 +60,9 @@ namespace DSIM {
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
   
     // DEBUG
-    STDAIR_LOG_DEBUG ("Expected number of events: "
-                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
-                      << lActualNbOfEventsToBeGenerated);
+    //STDAIR_LOG_DEBUG ("Expected number of events: "
+      //                << lExpectedNbOfEventsToBeGenerated << ", actual: "
+        //              << lActualNbOfEventsToBeGenerated);
   
     /**
        Main loop.
@@ -90,6 +91,8 @@ namespace DSIM {
                                                            lEventStruct,
                                                            lPSS,
                                                            iDemandGenerationMethod); break;
+      case stdair::EventType::CX: playCancellation (ioSIMCRS_Service,
+                                                    lEventStruct); break;
       case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
                                                            lEventStruct); break;
       case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
@@ -140,7 +143,7 @@ namespace DSIM {
       // DEBUG
       // STDAIR_LOG_DEBUG ("=> [" << lDemandStreamKey << "] is now processed. "
       //                   << "Still generate events for that demand stream? "
-    //                   << stillHavingRequestsToBeGenerated);
+      //                   << stillHavingRequestsToBeGenerated);
       STDAIR_LOG_DEBUG ("Progress status" << ioPSS.describe());
       
       // If there are still events to be generated for that demand stream,
@@ -236,6 +239,21 @@ namespace DSIM {
       }
     }
   }
+  
+  // ////////////////////////////////////////////////////////////////////
+  void Simulator::
+  playCancellation (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+                    const stdair::EventStruct& iEventStruct) {
+    // Retrieve the cancellation struct from the event.
+    const stdair::CancellationStruct lCancellationStruct =
+      iEventStruct.getCancellation();
+
+    // DEBUG
+    // STDAIR_LOG_DEBUG ("Play cancellation: "<<lCancellationStruct.describe());
+
+    ioSIMCRS_Service.playCancellation (lCancellationStruct);
+  }
+  
   
   // ////////////////////////////////////////////////////////////////////
   void Simulator::

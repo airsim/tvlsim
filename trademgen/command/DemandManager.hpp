@@ -261,6 +261,7 @@ namespace TRADEMGEN {
      * Generate the potential cancellation event.
      */
     static bool generateCancellation (stdair::EventQueue&,
+                                      stdair::RandomGeneration&,
                                       const stdair::TravelSolutionStruct&,
                                       const stdair::PartySize_T&,
                                       const stdair::DateTime_T&,

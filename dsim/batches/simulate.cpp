@@ -405,7 +405,7 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
+  stdair::Date_T lStartDate (2008, boost::gregorian::Jan, 01);
   
   // End date
   stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);

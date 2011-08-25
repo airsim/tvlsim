@@ -17,6 +17,7 @@ namespace stdair {
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
+  struct CancellationStruct;
   struct SnapshotStruct;
   struct RMEventStruct;
 }
@@ -145,6 +146,11 @@ namespace SIMCRS {
      * Take inventory snapshots.
      */
     void takeSnapshots (const stdair::SnapshotStruct&);
+
+    /**
+     * Play cancellation.
+     */
+    bool playCancellation (const stdair::CancellationStruct&);
     
     /**
      * Optimise (revenue management) an flight-date/network-date

@@ -14,6 +14,7 @@
 #include <stdair/bom/BomManager.hpp> 
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
+#include <stdair/bom/CancellationStruct.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/Inventory.hpp>
 #include <stdair/service/Logger.hpp>
@@ -654,6 +655,47 @@ namespace SIMCRS {
     return hasSaleBeenSuccessful;
   }
 
+  
+  // ////////////////////////////////////////////////////////////////////
+  bool SIMCRS_Service::
+  playCancellation (const stdair::CancellationStruct& iCancellation) {
+    bool hasCancellationBeenSuccessful = false;
+
+    // Retrieve the SimCRS service context
+    if (_simcrsServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The SimCRS service has "
+                                                    "not been initialised");
+    }
+    assert (_simcrsServiceContext != NULL);
+    
+    SIMCRS_ServiceContext& lSIMCRS_ServiceContext = *_simcrsServiceContext;
+
+    // Retrieve the CRS code
+    //const CRSCode_T& lCRSCode = lSIMCRS_ServiceContext.getCRSCode();
+
+    // Retrieve the AIRINV Master service.
+    AIRINV::AIRINV_Master_Service& lAIRINV_Master_Service =
+      lSIMCRS_ServiceContext.getAIRINV_Service();
+    
+    // Delegate the booking to the dedicated command
+    stdair::BasChronometer lCancellationChronometer;
+    lCancellationChronometer.start();
+
+    hasCancellationBeenSuccessful =
+      DistributionManager::playCancellation (lAIRINV_Master_Service,
+                                             iCancellation);
+                                             
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Made a cancellation of " << iCancellation.describe());
+      
+    // DEBUG
+    const double lCancellationMeasure = lCancellationChronometer.elapsed();
+    STDAIR_LOG_DEBUG ("Booking cancellation: " << lCancellationMeasure << " - "
+                      << lSIMCRS_ServiceContext.display());
+
+    return hasCancellationBeenSuccessful;
+  }
+  
   // ////////////////////////////////////////////////////////////////////
   void SIMCRS_Service::takeSnapshots (const stdair::SnapshotStruct& iSnapshot) {
 

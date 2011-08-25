@@ -59,6 +59,10 @@ namespace AIRINV {
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
 
+    /** Register a cancellation. */
+    static bool cancel (stdair::Inventory&, const std::string& iSegmentDateKey,
+                        const stdair::ClassCode_T&, const stdair::PartySize_T&);
+
     /** Take inventory snapshots. */
     static void takeSnapshots (const stdair::Inventory&,
                                const stdair::DateTime_T&);

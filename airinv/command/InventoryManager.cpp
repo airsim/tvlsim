@@ -148,6 +148,17 @@ namespace AIRINV {
   }
 
   // ////////////////////////////////////////////////////////////////////
+  bool InventoryManager::cancel (stdair::Inventory& ioInventory,
+                                 const std::string& iSegmentDateKey,
+                                 const stdair::ClassCode_T& iClassCode,
+                                 const stdair::PartySize_T& iPartySize) {
+    
+    // Make the sale within the inventory.
+    return InventoryHelper::cancel (ioInventory, iSegmentDateKey,
+                                    iClassCode, iPartySize);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
   void InventoryManager::
   updateBookingControls (stdair::FlightDate& ioFlightDate) {
 

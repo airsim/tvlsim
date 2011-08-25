@@ -62,8 +62,8 @@ namespace RMOL {
     // Initialise bid price vector with the first element (index 0) equal to
     // the highest yield.
     stdair::BidPriceVector_T& lBPV = ioLegCabin.getEmptyBidPriceVector();
-    const stdair::Yield_T& y1 = lFirstVC.getYield ();
-    lBPV.push_back (y1);
+    //const stdair::Yield_T& y1 = lFirstVC.getYield ();
+    //lBPV.push_back (y1);
     stdair::UnsignedIndex_T idx = 1;    
     
     for (; itNextVC != lVCList.end(); ++itCurrentVC, ++itNextVC) {

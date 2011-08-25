@@ -34,6 +34,10 @@ namespace AIRINV {
     /** Make a sale with the given travel solution. */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,
                       const stdair::ClassCode_T&, const stdair::PartySize_T&);
+    
+    /** Make a cancellation. */
+    static bool cancel (stdair::Inventory&, const std::string& iSegmentDateKey,
+                        const stdair::ClassCode_T&, const stdair::PartySize_T&);
 
     /** Take inventory snapshots. */
     static void takeSnapshots (const stdair::Inventory&,

@@ -15,6 +15,7 @@
 // Forward declarations
 namespace stdair {
   struct TravelSolutionStruct;
+  struct CancellationStruct;
 }
 
 namespace AIRINV {
@@ -37,6 +38,10 @@ namespace SIMCRS {
     static bool sell (AIRINV::AIRINV_Master_Service&,
                       const stdair::TravelSolutionStruct&,
                       const stdair::NbOfSeats_T&);
+
+    /** Register a cancellation. */
+    static bool playCancellation (AIRINV::AIRINV_Master_Service&,
+                                  const stdair::CancellationStruct&);
 
   private:
     /** Constructors. */

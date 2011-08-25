@@ -47,6 +47,10 @@ namespace DSIM {
                                     stdair::ProgressStatusSet&,
                                     const stdair::DemandGenerationMethod&);
 
+    /** Play a cancellation event. */
+    static void playCancellation (SIMCRS::SIMCRS_Service&,
+                                  const stdair::EventStruct&);
+                                  
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
                                    const stdair::EventStruct&);

@@ -36,6 +36,7 @@ namespace RMOL {
                                const stdair::DateTime_T& iEventTime) {
     // Build the offset dates.
     const stdair::Date_T& lEventDate = iEventTime.date();
+    stdair::Date_T lRefDate (2012, boost::gregorian::Jan, 01);
     
     // 
     bool isSucceeded = true;
@@ -54,8 +55,13 @@ namespace RMOL {
       // Build remaining DCP's for the segment-date.
       // TODO: treat the case where the segment departure is not the
       // same as the flight-date departure.
-      const stdair::DCPList_T lDCPList =
-        Utilities::buildRemainingDCPList (lSegmentDTD);
+      stdair::DCPList_T lDCPList;
+
+      if (lEventDate < lRefDate) {
+        lDCPList = Utilities::buildRemainingDCPList (lSegmentDTD);
+      } else {
+        lDCPList = Utilities::buildRemainingDCPList2 (lSegmentDTD);
+      }      
       
       //
       const stdair::SegmentCabinList_T& lSCList =
@@ -711,6 +717,8 @@ namespace RMOL {
         lHBHolder.getUnconstrainedDemand (i);
       const double lUncDemThisPeriod =
         lPastDemand * lUncDemandFactorOfThisPeriod;
+      const double lQEBkgThisPeriod =
+        lPastDemand * lHBHolder.getHistoricalBooking (i);
       lPastDemand *= (1+lUncDemandFactorOfThisPeriod);
       if (lDepDate > lRefDate) {
         const stdair::DateOffset_T lDateOffset (7 *(52 - i) + 420);
@@ -720,6 +728,11 @@ namespace RMOL {
                                  << iDCPEnd << ";"
                                  << boost::gregorian::to_iso_string (lHDate)
                                  << ";" << lUncDemThisPeriod);
+        STDAIR_LOG_NOTIFICATION (boost::gregorian::to_iso_string(lDepDate)
+                                 << ";" << lDTD << ";" << iDCPBegin << ";"
+                                 << iDCPEnd << ";"
+                                 << boost::gregorian::to_iso_string (lHDate)
+                                 << ";" << lQEBkgThisPeriod);
       }
     }
 

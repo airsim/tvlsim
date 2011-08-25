@@ -427,10 +427,76 @@ namespace TRADEMGEN {
   // ////////////////////////////////////////////////////////////////////
   bool DemandManager::
   generateCancellation (stdair::EventQueue& ioEventQueue,
+                        stdair::RandomGeneration& ioGenerator,
                         const stdair::TravelSolutionStruct& iTravelSolution,
                         const stdair::PartySize_T& iPartySize,
                         const stdair::DateTime_T& iRequestTime,
                         const stdair::Date_T& iDepartureDate) {
+
+    // Draw a random number to decide if we generate a
+    // cancellation. For instance, the probability will be hardcoded.
+    // The cancellation time will be generated uniformly.
+    double lRandomNumber = ioGenerator();
+   
+    if (lRandomNumber >= 0.5) {
+      return false;
+    }
+    lRandomNumber /= 0.5;
+
+    // Hardcode the latest cancellation time.
+    const stdair::Time_T lMidNight =
+      boost::posix_time::hours (0);
+    const stdair::DateTime_T lDepartureDateTime =
+      boost::posix_time::ptime (iDepartureDate, lMidNight);
+
+    // Time to departure.
+    const stdair::Duration_T lTimeToDeparture = lDepartureDateTime-iRequestTime;
+
+    // Cancellation time to departure
+    const long lTimeToDepartureInSeconds = lTimeToDeparture.total_seconds();
+    const long lCancellationTimeToDepartureInSeconds =
+      static_cast<long> (lTimeToDepartureInSeconds * lRandomNumber);
+    const stdair::Duration_T lCancellationTimeToDeparture (0, 0, lCancellationTimeToDepartureInSeconds);
+    
+    // Cancellation time
+    const stdair::DateTime_T lCancellationTime =
+      lDepartureDateTime - lCancellationTimeToDeparture;
+
+    // Retrieve the segment path
+    const stdair::SegmentPath_T lSegmentPath = iTravelSolution.getSegmentPath();
+    
+    // Hardcoded class path
+    const stdair::FareOptionStruct& lChosenFareOption =
+      iTravelSolution.getChosenFareOption ();
+    const stdair::ClassList_StringList_T& lClassPath =
+      lChosenFareOption.getClassPath();
+    std::ostringstream oStr;
+    for (stdair::ClassList_StringList_T::const_iterator itClassList =
+           lClassPath.begin(); itClassList != lClassPath.end(); ++itClassList) {
+      const stdair::ClassList_String_T& lClassList = *itClassList;
+      assert (lClassList.size() > 0);
+      oStr << lClassList.at(0); 
+    }
+    const stdair::ClassList_String_T lClassList_String = oStr.str();
+
+    // Create the cancellation.
+    stdair::CancellationPtr_T lCancellation_ptr =
+      stdair::CancellationPtr_T
+      (new stdair::CancellationStruct (lSegmentPath, lClassList_String,
+                                       iPartySize, lCancellationTime));
+
+    // Create an event structure
+    stdair::EventStruct lEventStruct (stdair::EventType::CX, lCancellation_ptr);
+
+    /**
+       \note When adding an event in the event queue, the event can be
+       altered. That happens when an event already exists, in the
+       event queue, with exactly the same date-time stamp. In that
+       case, the date-time stamp is altered for the newly added event,
+       so that the unicity on the date-time stamp can be guaranteed.
+    */
+    ioEventQueue.addEvent (lEventStruct);
+    
     return true;
   }
 }

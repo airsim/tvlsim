@@ -143,6 +143,62 @@ namespace AIRINV {
     }
 
     return hasSaleBeenSuccessful;
+  }  
+
+  // ////////////////////////////////////////////////////////////////////
+  bool InventoryHelper::cancel (stdair::Inventory& ioInventory, 
+                              const std::string& iFullSegmentDateKey,
+                              const stdair::ClassCode_T& iClassCode,
+                              const stdair::PartySize_T& iPartySize) {
+    bool hasCancellationBeenSuccessful = false;
+
+    // DEBUG
+    STDAIR_LOG_DEBUG ("Full key: '" << iFullSegmentDateKey
+                      << "', " << iClassCode);
+
+    //
+    stdair::BookingClass* lBookingClass_ptr =
+      stdair::BomRetriever::retrieveBookingClassFromLongKey(ioInventory,
+                                                            iFullSegmentDateKey,
+                                                            iClassCode);
+
+    // DEBUG
+    const std::string hasFoundBookingClassStr =
+      (lBookingClass_ptr != NULL)?"Yes":"No";
+    STDAIR_LOG_DEBUG ("Found booking class? " << hasFoundBookingClassStr);
+
+    if (lBookingClass_ptr != NULL) {
+      // Register the cancellation in the class.
+      lBookingClass_ptr->cancel (iPartySize);
+
+      //
+      stdair::FareFamily& lFareFamily =
+        stdair::BomManager::getParent<stdair::FareFamily> (*lBookingClass_ptr);
+
+      //
+      stdair::SegmentCabin& lSegmentCabin =
+        stdair::BomManager::getParent<stdair::SegmentCabin> (lFareFamily);
+
+      //
+      stdair::SegmentDate& lSegmentDate =
+        stdair::BomManager::getParent<stdair::SegmentDate,
+                                      stdair::SegmentCabin> (lSegmentCabin);
+
+      //
+      stdair::FlightDate& lFlightDate =
+        stdair::BomManager::getParent<stdair::FlightDate,
+                                      stdair::SegmentDate> (lSegmentDate);
+      
+      // Update the commited space of the segment-cabins and the leg-cabins.
+      SegmentCabinHelper::updateFromReservation (lFlightDate, lSegmentCabin,
+                                                 -iPartySize);
+      
+      // STDAIR_LOG_NOTIFICATION (lFlightDate.getDepartureDate()
+      //                          << ";" << iClassCode);
+      hasCancellationBeenSuccessful = true;
+    }
+
+    return hasCancellationBeenSuccessful;
   }
 
   // ////////////////////////////////////////////////////////////////////

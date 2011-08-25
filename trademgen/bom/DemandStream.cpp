@@ -339,6 +339,9 @@ namespace TRADEMGEN {
     //    (1 - y)^(1/(n - k + 1)).
     const stdair::Probability_T& lVariate = _requestDateTimeRandomGenerator();
     double lFactor = std::pow (1.0 - lVariate, lRemainingRate);
+    if (lFactor >= 1.0 - 1e-6){
+      lFactor = 1.0 - 1e-6;
+    }
 
     // 6) Apply the whole formula above to calculate the cumulative probability
     //    of the new request.
@@ -550,8 +553,8 @@ namespace TRADEMGEN {
     // Value of time
     const stdair::PriceValue_T lValueOfTime = generateValueOfTime();
     // WTP
-    const stdair::WTP_T lWTP = generateWTP (ioGenerator, lPreferredDepartureDate,
-                                            lDateTimeThisRequest, lStayDuration);
+    const stdair::WTP_T lWTP = generateWTP (ioGenerator,lPreferredDepartureDate,
+                                            lDateTimeThisRequest,lStayDuration);
 
     // TODO 1: understand why the following form does not work, knowing
     // that:

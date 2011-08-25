@@ -148,6 +148,18 @@ namespace AIRINV {
                const stdair::PartySize_T&);
 
     /**
+     * Register a cancellation.
+     *
+     * @param const std::string& Key for the segment on which the cancellation
+     *        is made
+     * @param const stdair::ClassCode_T& Class code where the sale is made
+     * @param const stdair::PartySize_T& Party size
+     * @return bool Whether or not the sale was successfull
+     */
+    bool cancel (const std::string& iSegmentDateKey, const stdair::ClassCode_T&,
+                 const stdair::PartySize_T&);
+
+    /**
      * Take inventory snapshots.
      */
     void takeSnapshots (const stdair::AirlineCode_T&,
