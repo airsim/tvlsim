@@ -361,7 +361,8 @@ namespace RMOL {
 
   // ////////////////////////////////////////////////////////////////////
   double Optimiser::
-  optimiseUsingOnDForecast (stdair::FlightDate& ioFlightDate) {
+  optimiseUsingOnDForecast (stdair::FlightDate& ioFlightDate,
+                            const bool& iReduceFluctuations) {
     double lMaxBPVariation = 0.0;
     // Check if the flight date holds a list of leg dates.
     // If so, retieve it and optimise the cabins.
@@ -382,7 +383,7 @@ namespace RMOL {
              itLC != lLCList.end(); ++itLC) {
           stdair::LegCabin* lLC_ptr = *itLC;
           assert (lLC_ptr != NULL);
-          MCOptimiser::optimisationByMCIntegration (*lLC_ptr);
+          MCOptimiser::optimisationByMCIntegration (*lLC_ptr, iReduceFluctuations);
           const stdair::BidPrice_T& lCurrentBidPrice = lLC_ptr->getCurrentBidPrice();
           const stdair::BidPrice_T& lPreviousBidPrice = lLC_ptr->getPreviousBidPrice();
           assert (lPreviousBidPrice != 0);

@@ -249,7 +249,7 @@ int readConfiguration (int argc, char* argv[],
      "Method used to generate the demand (i.e., booking requests): Poisson Process (e.g., P) or Statistics Order (e.g., S)")
     ("partnership,T",
      boost::program_options::value< char >(&lPartnershipTechniqueChar)->default_value(K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR),
-     "Technique used in a partnership (defines both revenue management and inventory control methods): None (N), Revenue Availability Exchange using Demand Aggregation (r), Revenue Availability Exchange using Yield Proration (R), Interline Bid Price using Demand Aggregation (i), Interline Bid Price using Yield Proration (I), Revenue Management Cooperation (C) or Advanced Revenue Management Cooperation (A)")
+     "Technique used in a partnership (defines both revenue management and inventory control methods): None (N), Revenue Availability Exchange using Demand Aggregation (r), Revenue Availability Exchange using Yield Proration (R), Interline Bid Price using Demand Aggregation (i), Interline Bid Price using Yield Proration (I), Interline Bid Price using Yield Proration without protection (U), Revenue Management Cooperation (C) or Advanced Revenue Management Cooperation (A)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")

@@ -523,8 +523,8 @@ namespace TRADEMGEN {
     // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
     
     // Distribution for the number of requests
-    const stdair::MeanValue_T lSINBKKDemandMean (25.0);
-    const stdair::StdDevValue_T lSINBKKDemandStdDev (2.0);
+    const stdair::MeanValue_T lSINBKKDemandMean (60.0);
+    const stdair::StdDevValue_T lSINBKKDemandStdDev (4.0);
     const DemandDistribution lSINBKKDemandDistribution (lSINBKKDemandMean, lSINBKKDemandStdDev);
     
     // Seed
@@ -589,8 +589,8 @@ namespace TRADEMGEN {
     // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
     
     // Distribution for the number of requests
-    const stdair::MeanValue_T lBKKHKGDemandMean (25.0);
-    const stdair::StdDevValue_T lBKKHKGDemandStdDev (2.0);
+    const stdair::MeanValue_T lBKKHKGDemandMean (60.0);
+    const stdair::StdDevValue_T lBKKHKGDemandStdDev (4.0);
     const DemandDistribution lBKKHKGDemandDistribution (lBKKHKGDemandMean, lBKKHKGDemandStdDev);
     
     // Seed
@@ -653,8 +653,8 @@ namespace TRADEMGEN {
     // STDAIR_LOG_DEBUG ("Demand stream key: " << lDemandStreamKey.describe());
     
     // Distribution for the number of requests
-    const stdair::MeanValue_T lSINHKGDemandMean (35.0);
-    const stdair::StdDevValue_T lSINHKGDemandStdDev (3.0);
+    const stdair::MeanValue_T lSINHKGDemandMean (60.0);
+    const stdair::StdDevValue_T lSINHKGDemandStdDev (4.0);
     const DemandDistribution lSINHKGDemandDistribution (lSINHKGDemandMean, lSINHKGDemandStdDev);
     
     // Seed

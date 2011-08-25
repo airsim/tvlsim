@@ -225,6 +225,8 @@ namespace RMOL {
     // Initialise (or re-initialise) the demand projections in all leg cabins
     void resetDemandInformation (const stdair::DateTime_T&);
 
+    void resetDemandInformation (const stdair::DateTime_T&, const stdair::Inventory&);
+
     /* Projection of demand */
 
     // Aggregated demand at booking class level.
@@ -235,6 +237,11 @@ namespace RMOL {
 
     // Displacement-adjusted yield
     void projectOnDDemandOnLegCabinsUsingDA(const stdair::DateTime_T&);
+
+    // Dynamic yield proration (PF = BP_i/BP_{total}, where BP_{total} = sum(BP_i))
+    void projectOnDDemandOnLegCabinsUsingDYP(const stdair::DateTime_T&);
+
+    void projectOnDDemandOnLegCabinsUsingDYP(const stdair::DateTime_T&, const stdair::Inventory&);
 
     /** Optimiser */
 
@@ -254,9 +261,9 @@ namespace RMOL {
     // Network optimisation instead of separate inventory optimisation.    
     void optimiseOnDUsingAdvancedRMCooperation (const stdair::DateTime_T&);
 
-    // Communicate bid price to partners
-    void communicateBidPrice (const stdair::DateTime_T&);
-    void communicateBidPrice (const stdair::FlightDate&, stdair::BomRoot&);
+    // Update bid priceand send to partners
+    void updateBidPrice (const stdair::DateTime_T&);
+    void updateBidPrice (const stdair::FlightDate&, stdair::BomRoot&);
 
   public:
     // //////////////// Export support methods /////////////////

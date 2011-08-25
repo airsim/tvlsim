@@ -60,8 +60,19 @@ namespace AIRINV {
     /** Compute the availability for each fare option using Revenue Availability Exchange. */
     static void calculateAvailabilityByRAE (stdair::TravelSolutionStruct&);
     
-    /** Compute the availability for each fare option using Interline Bid Price. */
+    /**
+     * Compute the availability for each fare option using Interline Bid Price.
+     * BP_(total) = sum (BP_i), where BP_i is the bid price of partner i.
+     */
     static void calculateAvailabilityByIBP (stdair::TravelSolutionStruct&);
+
+    /**
+     * Compute the availability for each fare option using the protective Interline Bid Price.
+     * BP_(total) = max (BP_i/PF_i), where PF_i is the yield proration factor for partner i.
+     * For now, it assumes that yield is equally divided between partners: PF_i = 1/{number of partners}.
+     * This guaranties individual minimum revenue (it protects from partner's bid price fluctuation).
+     */
+    static void calculateAvailabilityByProtectiveIBP (stdair::TravelSolutionStruct&);
 
     /** Register a booking (segment sell). */
     static bool sell (stdair::Inventory&, const std::string& iSegmentDateKey,

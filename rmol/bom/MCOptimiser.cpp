@@ -268,26 +268,37 @@ namespace RMOL {
 
   // /////////////////////////////////////////////////////////////////////////
   void MCOptimiser::
-  optimisationByMCIntegration (stdair::LegCabin& ioLegCabin) {
+  optimisationByMCIntegration (stdair::LegCabin& ioLegCabin,
+                               const bool& iReduceFluctuations) {
     // Number of MC samples
     unsigned int K = 100000;
 
     const stdair::YieldDemandMap_T& lYieldDemandMap = ioLegCabin.getYieldDemandMap();
     assert (!lYieldDemandMap.empty());
 
+    std::ostringstream oStr;
+    oStr << "Yield list ";
+    for (stdair::YieldDemandMap_T::const_iterator itYD = lYieldDemandMap.begin();
+         itYD != lYieldDemandMap.end(); ++itYD) {
+      const stdair::Yield_T& y = itYD->first;
+      oStr << y << " ";
+    }
+
+    STDAIR_LOG_DEBUG (oStr.str());
+
     stdair::BidPriceVector_T& lBidPriceVector = ioLegCabin.getEmptyBidPriceVector();
     const stdair::Availability_T& lAvailabilityPool = ioLegCabin.getAvailabilityPool();
-    const stdair::BidPrice_T& lMinBP = lYieldDemandMap.begin()->first;
+    // Initialise the minimal bid price to 1.0 (just to avoid problems of division by zero).
+    const stdair::BidPrice_T& lMinBP = 1.0;
 
     stdair::YieldDemandMap_T::const_reverse_iterator itCurrentYD = lYieldDemandMap.rbegin();
     stdair::YieldDemandMap_T::const_reverse_iterator itNextYD = itCurrentYD; ++itNextYD;
     
-    // Initialise the first element of the bid price vector with the highest yield
-    lBidPriceVector.push_back(itCurrentYD->first);
     // Initialise the partial sum holder
     stdair::MeanStdDevPair_T lMeanStdDevPair = itCurrentYD->second;
     stdair::GeneratedDemandVector_T lPartialSumHolder =
       generateDemandVector(lMeanStdDevPair.first, lMeanStdDevPair.second, K);
+    
     stdair::UnsignedIndex_T idx = 1;
     for (; itNextYD!=lYieldDemandMap.rend(); ++itCurrentYD, ++itNextYD) {
       const stdair::Yield_T& yj = itCurrentYD->first;
@@ -344,38 +355,52 @@ namespace RMOL {
      */
     // STDAIR_LOG_DEBUG ("Partial sums : max = " << lPartialSumHolder.back()
     //                   << " min = " << lPartialSumHolder.front());
+    
     std::sort (lPartialSumHolder.begin(), lPartialSumHolder.end());
     const stdair::Yield_T& yn = itCurrentYD->first;
     stdair::GeneratedDemandVector_T::iterator itLowerBound =
       lPartialSumHolder.begin();
     K = lPartialSumHolder.size();
+    
     bool lMinBPReached = false;
     for (; idx <= lAvailabilityPool; ++idx) {
       itLowerBound =
         std::lower_bound (itLowerBound, lPartialSumHolder.end(), idx);
+      
       if (!lMinBPReached) {
         const stdair::UnsignedIndex_T pos =
           itLowerBound - lPartialSumHolder.begin();      
         stdair::BidPrice_T lBP = yn * (K - pos) / K;
-        if (lBP < lMinBP) {lBP = lMinBP; lMinBPReached = true;}
+        
+        if (lBP < lMinBP) {
+          lBP = lMinBP; lMinBPReached = true;
+        }       
+        
         lBidPriceVector.push_back (lBP);
-      } else {
+        
+      } else {        
         lBidPriceVector.push_back (lMinBP);
-      }
-    }    
+      }      
+      
+    }
+    
     // Updating the bid price values
     ioLegCabin.updatePreviousBidPrice();
     ioLegCabin.setCurrentBidPrice (lBidPriceVector.back());
 
     // Compute and display the bid price variation after optimisation
     const stdair::BidPrice_T lPreviousBP = ioLegCabin.getPreviousBidPrice();
-    const stdair::BidPrice_T lNewBP = ioLegCabin.getCurrentBidPrice();
+    stdair::BidPrice_T lNewBP = ioLegCabin.getCurrentBidPrice();
     // Check
     assert (lPreviousBP != 0);
-    double lBidPriceVariation = 100*(lNewBP - lPreviousBP)/lPreviousBP;
+    stdair::BidPrice_T lBidPriceDelta = lNewBP - lPreviousBP;
+        
+    double lBidPriceVariation = 100*lBidPriceDelta/lPreviousBP;
+    
     STDAIR_LOG_DEBUG ("Bid price: previous value " << lPreviousBP
                       << ", new value " << lNewBP
-                      << ", variation " << lBidPriceVariation << " %");
+                      << ", variation " << lBidPriceVariation << " %"
+                      <<", BPV size " << lBidPriceVector.size());
   }
   
 }

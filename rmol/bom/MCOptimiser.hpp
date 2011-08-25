@@ -44,7 +44,7 @@ namespace RMOL {
                                                                  const stdair::StdDevValue_T&,
                                                                  const unsigned int&);
 
-    static void optimisationByMCIntegration (stdair::LegCabin&);
+    static void optimisationByMCIntegration (stdair::LegCabin&, const bool&);
     
   };
 }
