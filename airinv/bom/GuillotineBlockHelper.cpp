@@ -108,13 +108,6 @@ namespace AIRINV {
         lBookingClass_ptr->getNbOfCancellations();
       lAvailabilityView[lIdx] =
         lBookingClass_ptr->getSegmentAvailability();
-      // STDAIR_LOG_NOTIFICATION ("Taking snapshot for "
-      //                          << iSegmentCabin.describeKey() << ", "
-      //                          << lBookingClass_ptr->describeKey()
-      //                          << ", DTD: " << iDTD << ", nb of bookings: "
-      //                          << lBookingClass_ptr->getNbOfBookings()
-      //                          << ", nb of cancellations: "
-      //                          << lBookingClass_ptr->getNbOfCancellations())
     }
   }
 
@@ -198,25 +191,18 @@ namespace AIRINV {
       // If there is a lower class available, these gross bookings
       // will be considered product-oriented. Otherwise, they will be
       // considered price-oriented
-      // if (noLowerClassAvl == false) {
-      //   lProductAndPriceOrientedBookingView[lIdx] = lGrossBkgs;
-
-      //   if (lGrossBkgs > 0.0) {
-      //     STDAIR_LOG_NOTIFICATION (iDTD << ";"
-      //                              <<lBookingClass_ptr->describeKey() << ";"
-      //                              <<lNetBkgs << ";" << lCx << ";"
-      //                              << lGrossBkgs);
-      //   }
-      // } else {
+      if (noLowerClassAvl == false) {
+        lProductAndPriceOrientedBookingView[lIdx] = lGrossBkgs;
+      } else {
         // Convert the bookings to Q-equivalent bookings.
         const stdair::NbOfBookings_T lQEquiBkgs =
           lGrossBkgs / exp ((1.0 - lYield/lLowestYield) * lSellUpCoef);
         lProductAndPriceOrientedBookingView[lCabinIdx] += lQEquiBkgs;
-
+        
         if (lBookingClass_ptr->getSegmentAvailability() >= 1.0) {
           noLowerClassAvl = false;
         }
-        //}
+      }
     }
   }
 
