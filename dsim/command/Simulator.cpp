@@ -54,8 +54,8 @@ namespace DSIM {
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
+    //const stdair::Count_T& lActualNbOfEventsToBeGenerated =
+    //  ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
 
     // Initialise the (Boost) progress display object
     // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
