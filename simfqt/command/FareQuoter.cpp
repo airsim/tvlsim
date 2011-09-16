@@ -573,12 +573,12 @@ namespace SIMFQT {
         lFirstSPParsedKey.getSegmentKey();
       STDAIR_LOG_ERROR ("No available fare rule corresponding to the "
                         "flight date " << lFlightDateKey.toString()
-                        << " and to the Origin-Destination pair: "
+                        << " and the Origin-Destination pair: "
                         << lSegmentDateKey.toString());
       throw FlightDateNotFoundException ("No available fare rule for the "
                                          "flight date "
                                          + lFlightDateKey.toString()
-                                         + " and to the Origin-Destination pair: "
+                                         + " and the Origin-Destination pair: "
                                          + lSegmentDateKey.toString());
     }
     // If no fare rule has a corresponding pos channel, the pricing is not possible,
