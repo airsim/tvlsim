@@ -14,24 +14,37 @@
 #include <boost/regex.hpp>
 // StdAir
 #include <stdair/basic/BasLogParams.hpp>
+#include <stdair/basic/BasConst_BomDisplay.hpp>
 #include <stdair/basic/BasDBParams.hpp>
+#include <stdair/basic/BasConst_DefaultObject.hpp>
+#include <stdair/basic/BasConst_Inventory.hpp>
+#include <stdair/basic/BasConst_Request.hpp>
 #include <stdair/service/Logger.hpp>
+#include <stdair/stdair_exceptions.hpp>
+#include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/ParsedKey.hpp>
+#include <stdair/bom/BomKeyManager.hpp>
 #include <stdair/command/CmdBomManager.hpp>
 // Stdair GNU Readline Wrapper
 #include <stdair/ui/cmdline/SReadline.hpp>
 // Simfqt
 #include <simfqt/SIMFQT_Service.hpp>
+#include <simfqt/SIMFQT_Types.hpp>
 #include <simfqt/config/simfqt-paths.hpp>
 
 
 // //////// Constants //////
-/** Default name and location for the log file. */
+/**
+ * Default name and location for the log file.
+ */
 const std::string K_SIMFQT_DEFAULT_LOG_FILENAME ("simfqt.log");
 
-/** Default name and location for the (CSV) input file. */
+/**
+ * Default name and location for the (CSV) input file.
+ */
 const std::string K_SIMFQT_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                         "/fare01.csv");
 
@@ -75,7 +88,9 @@ template<class T> std::ostream& operator<< (std::ostream& os,
   return os;
 }
 
-/** Read and parse the command line options. */
+/**
+ * Read and parse the command line options.
+ */
 int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin, 
                        stdair::Filename_T& ioFareInputFilename,
                        std::string& ioLogFilename) {
@@ -129,7 +144,7 @@ int readConfiguration (int argc, char* argv[], bool& ioIsBuiltin,
     store (boost::program_options::command_line_parser (argc, argv).
            options (cmdline_options).positional(p).run(), vm);
 
-  std::ifstream ifs ("fareQuote.cfg");
+  std::ifstream ifs ("simfqt.cfg");
   boost::program_options::store (parse_config_file (ifs, config_file_options),
                                  vm);
   boost::program_options::notify (vm); if (vm.count ("help")) {
@@ -190,10 +205,9 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("help");
   Completers.push_back ("list");
   Completers.push_back ("display %airport_code %airport_code %departure_date");
-  Completers.push_back ("price");
+  Completers.push_back ("price %airline_code %flight_number %departure_date %airport_code %airport_code %departure_time %booking_date %booking_time %POS %channel% %trip_type %stay_duration");
   Completers.push_back ("quit");
 
-  
   // Now register the completers.
   // Actually it is possible to re-register another set at any time
   ioInputReader.RegisterCompletions (Completers);
@@ -238,147 +252,450 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
 }
 
 // //////////////////////////////////////////////////////////////////
+// Re-compose a date using three strings: the year, the month and the
+// day. Return true if a correct date has been computed, false if not.
+bool retrieveDate (std::string iYearString,
+                   std::string iMonthString,
+                   std::string iDayString,
+                   stdair::Date_T& ioDate) {
+  
+  const std::string kMonthStr[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  
+  // Check the year.
+  unsigned short lDateYear;
+  try {
+
+    lDateYear = boost::lexical_cast<unsigned short> (iYearString);
+    if (lDateYear < 100) {
+      lDateYear += 2000;
+    }
+      
+  } catch (boost::bad_lexical_cast& eCast) {
+    std::cerr << "The year ('" << iYearString
+              << "') cannot be understood." << std::endl;
+    return false;
+  }
+
+  // Check the month.
+  std::string lDateMonthStr;
+  try {
+
+    const boost::regex lMonthRegex ("^(\\d{1,2})$");
+    const bool isMonthANumber = regex_match (iMonthString, lMonthRegex);
+
+    if (isMonthANumber == true) {
+      const unsigned short lMonth =
+        boost::lexical_cast<unsigned short> (iMonthString);
+      if (lMonth > 12) {
+        throw boost::bad_lexical_cast();
+      }
+      if (lMonth != 0) {
+        lDateMonthStr = kMonthStr[lMonth-1];
+      } else {
+        std::cerr << "The month ('" << iMonthString
+              << "') cannot be understood." << std::endl;
+        return false;
+      }
+      
+    } else {
+      if (iMonthString.size() < 3) {
+        throw boost::bad_lexical_cast();
+      }
+      std::string lMonthStr1 (iMonthString.substr (0, 1));
+      boost::algorithm::to_upper (lMonthStr1);
+      std::string lMonthStr23 (iMonthString.substr (1, 2));
+      boost::algorithm::to_lower (lMonthStr23);
+      lDateMonthStr = lMonthStr1 + lMonthStr23;
+    }
+
+  } catch (boost::bad_lexical_cast& eCast) {
+    std::cerr << "The month ('" << iMonthString
+              << "') cannot be understood." << std::endl;
+    return false;
+  }
+
+  // Check the day.
+  unsigned short lDateDay;
+  try {
+
+    lDateDay = boost::lexical_cast<unsigned short> (iDayString);
+
+  } catch (boost::bad_lexical_cast& eCast) {
+    std::cerr << "The day ('" << iDayString
+              << "') cannot be understood." << std::endl;
+    return false;
+  }
+
+  // Re-compose the date.
+  std::ostringstream lDateStr;
+  lDateStr << lDateYear << "-" << lDateMonthStr
+           << "-" << lDateDay;
+  try {
+
+    ioDate =
+      boost::gregorian::from_simple_string (lDateStr.str());
+
+  } catch (boost::gregorian::bad_month& eCast) {
+    std::cerr << "The month of the date ('" << lDateStr.str()
+              << "') cannot be understood." << std::endl;
+    return false;
+  } catch (boost::gregorian::bad_day_of_month& eCast) {
+    std::cerr << "The date ('" << lDateStr.str()
+              << "') is not correct: the day of month does not exist."
+              << std::endl;
+    return false;
+  } catch (boost::gregorian::bad_year& eCast) {
+    std::cerr << "The year ('" << lDateStr.str()
+              << "') is not correct."
+              << std::endl;
+    return false;
+  }
+  
+  return true;
+}
+
+// //////////////////////////////////////////////////////////////////
+// Re-compose a time using two strings: the hour and the minute.
+// Return true if a correct time has been computed, false if not.
+bool retrieveTime (std::string iHourString,
+                   std::string iMinuteString,
+                   stdair::Duration_T& oTime) {
+
+  // Check the hour
+  unsigned short lTimeHour;
+  try {
+
+    lTimeHour = boost::lexical_cast<unsigned short> (iHourString);
+      
+  } catch (boost::bad_lexical_cast& eCast) {
+    std::cerr << "The hour of the time ('" << iHourString
+              << "') cannot be understood." << std::endl;
+    return false;
+  }
+  
+  // Check the minutes
+  unsigned short lTimeMinute;
+  try {
+        
+    lTimeMinute = boost::lexical_cast<unsigned short> (iMinuteString);
+    
+  } catch (boost::bad_lexical_cast& eCast) {
+    std::cerr << "The minute of the time ('" << iMinuteString
+              << "') cannot be understood." << std::endl;
+    return false;
+  }
+
+
+  // Re-compose the time
+  std::ostringstream lTimeStr;
+  lTimeStr << lTimeHour << ":" << lTimeMinute;
+  oTime =
+    boost::posix_time::duration_from_string (lTimeStr.str());
+
+  return true;
+}
+
+// //////////////////////////////////////////////////////////////////
+// Analyze the tokens of the 'price' command in order to construct
+// a travel solution list and a booking request.
+const stdair::BookingRequestStruct parseTravelSolutionAndBookingRequestKey
+(const TokenList_T& iTokenList,
+ stdair::TravelSolutionList_T& ioInteractiveTravelSolutionList,
+ const stdair::BookingRequestStruct& ioBookingRequestStruct) {
+
+  TokenList_T::const_iterator itTok = iTokenList.begin();
+  
+  if (itTok->empty() == true) {
+    
+    std::cerr << "Wrong list of parameters. "
+              << "The default booking request and travel solution list are kept."
+              << std::endl;
+    return ioBookingRequestStruct;
+    
+    
+  } else {
+    // Parameters corresponding to the tokens.
+    // Each parameter correponds to one token except the dates
+    // (three tokens) and the times (two tokens). 
+    stdair::AirlineCode_T lAirlineCode;
+    stdair::FlightNumber_T lflightNumber;
+    stdair::Date_T lDepartureDate;
+    stdair::Duration_T lDepartureTime;
+    stdair::AirportCode_T lOriginAirport;
+    stdair::AirportCode_T lDestinationAirport;
+    stdair::Date_T lRequestDate;
+    stdair::Duration_T lRequestTime;
+    stdair::CityCode_T lPOS;
+    stdair::ChannelLabel_T lChannel;
+    stdair::TripType_T lTripType;
+    unsigned short lStayDuration;
+
+    // Read the airline code.
+    lAirlineCode = *itTok;
+    boost::algorithm::to_upper (lAirlineCode);
+
+    // Read the flight-number  .
+    ++itTok;
+    if (itTok->empty() == false) {
+      try {
+
+        lflightNumber = boost::lexical_cast<stdair::FlightNumber_T> (*itTok);
+
+      } catch (boost::bad_lexical_cast& eCast) {
+        std::cerr << "The flight number ('" << *itTok
+                  << "') cannot be understood."
+                  << std::endl;
+        return ioBookingRequestStruct;
+      }
+    }
+    
+    // Read the departure date.
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lDepartureYearString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lDepartureMonthString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lDepartureDayString = *itTok;
+    const bool IsDepartureDateReadable =
+      retrieveDate (lDepartureYearString, lDepartureMonthString,
+                    lDepartureDayString, lDepartureDate);
+    
+    if (IsDepartureDateReadable == false) {
+      std::cerr << "The default booking request and travel solution list are kept."
+                << std::endl;
+      return ioBookingRequestStruct;
+    }
+
+    // Read the origin.
+    ++itTok;
+    if (itTok->empty() == false) {
+      lOriginAirport = *itTok;
+      boost::algorithm::to_upper (lOriginAirport);
+    } 
+
+    // Read the destination.
+    ++itTok;
+    if (itTok->empty() == false) {
+      lDestinationAirport = *itTok;
+      boost::algorithm::to_upper (lDestinationAirport);
+    }
+
+    // Read the departure time.
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lDepartureHourString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lDepartureMinuteString = *itTok;
+    const bool IsDepartureTimeReadable =
+      retrieveTime (lDepartureHourString, lDepartureMinuteString,
+                    lDepartureTime);
+    
+    if (IsDepartureTimeReadable == false) {
+      std::cerr << "The default booking request and travel solution list are kept."
+                << std::endl;
+      return ioBookingRequestStruct;
+    }
+
+    // Read the request date.
+    ++itTok;
+    if (itTok->empty() == true) {
+        return ioBookingRequestStruct;
+    }
+    const std::string lRequestYearString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lRequestMonthString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lRequestDayString = *itTok;
+    const bool IsRequestDateReadable =
+      retrieveDate (lRequestYearString, lRequestMonthString,
+                    lRequestDayString, lRequestDate);
+    
+    if (IsRequestDateReadable == false) {
+      std::cerr << "The default booking request and travel solution list are kept."
+                << std::endl;
+      return ioBookingRequestStruct;
+    }
+
+    // Read the request time.
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lRequestHourString = *itTok;
+    ++itTok;
+    if (itTok->empty() == true) {
+      return ioBookingRequestStruct;
+    }
+    const std::string lRequestMinuteString = *itTok;
+    const bool IsRequestTimeReadable =
+      retrieveTime (lRequestHourString, lRequestMinuteString,
+                    lRequestTime);
+    
+    if (IsRequestTimeReadable == false) {
+      std::cerr << "The default booking request and travel solution list are kept."
+                << std::endl;
+      return ioBookingRequestStruct;
+    }
+    
+    // Read the POS.
+    ++itTok;
+    if (itTok->empty() == false) {
+      lPOS = *itTok;
+      boost::algorithm::to_upper (lPOS);
+    }
+
+    // Read the channel.
+    ++itTok;
+    if (itTok->empty() == false) {
+      lChannel = *itTok;
+      boost::algorithm::to_upper (lChannel);
+    }
+
+    // Read the trip type.
+    ++itTok;
+    if (itTok->empty() == false) {
+      lTripType = *itTok;
+      boost::algorithm::to_upper (lTripType);
+    }
+
+    // Read the stay duration.
+    ++itTok;
+    if (itTok->empty() == false) {
+      try {
+
+        lStayDuration = boost::lexical_cast<unsigned short> (*itTok);
+
+      } catch (boost::bad_lexical_cast& eCast) {
+        std::cerr << "The stay duration ('" << *itTok
+                  << "') cannot be understood." << std::endl;
+        return ioBookingRequestStruct;
+      }
+    }  
+
+    // At this step we know that all the parameters designed to construct
+    // the travel solution and the booking request are correct.
+
+    // Empty the travel solution list to store a new travel solution.
+    ioInteractiveTravelSolutionList.pop_front();
+    // Construct the new travel solution. 
+    stdair::TravelSolutionStruct lTravelSolution;
+    std::ostringstream oStr;
+    oStr << lAirlineCode
+         << stdair::DEFAULT_KEY_FLD_DELIMITER
+         << lflightNumber
+         << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER
+         << lDepartureDate
+         << stdair::DEFAULT_KEY_FLD_DELIMITER
+         << lOriginAirport
+         << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER
+         << lDestinationAirport
+         << stdair::DEFAULT_KEY_FLD_DELIMITER
+         << lDepartureTime;
+    lTravelSolution.addSegment (oStr.str());
+    ioInteractiveTravelSolutionList.push_front(lTravelSolution);
+
+    // Construct the new booking request.
+    stdair::DateTime_T lRequestDateTime (lRequestDate, lRequestTime);
+    const stdair::BookingRequestStruct &lBookingRequestStruct =
+      stdair::BookingRequestStruct(lOriginAirport,
+                                   lDestinationAirport,
+                                   lPOS,
+                                   lDepartureDate,
+                                   lRequestDateTime,
+                                   stdair::CABIN_ECO,
+                                   stdair::DEFAULT_PARTY_SIZE,
+                                   lChannel,
+                                   lTripType,
+                                   lStayDuration,
+                                   stdair::FREQUENT_FLYER_MEMBER,
+                                   lDepartureTime,
+                                   stdair::DEFAULT_WTP,
+                                   stdair::DEFAULT_VALUE_OF_TIME);
+
+    return lBookingRequestStruct;
+  }
+}
+
+// //////////////////////////////////////////////////////////////////
+// Analyze the tokens of the 'display' command in order to retrieve
+// an airport pair and a departure date.
 void parseFlightDateKey (const TokenList_T& iTokenList,
                          stdair::AirportCode_T& ioOrigin,
                          stdair::AirportCode_T& ioDestination,
                          stdair::Date_T& ioDepartureDate) {
 
-  //
-  const std::string kMonthStr[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-  //
-  unsigned short ioDepartureDateYear = ioDepartureDate.year();
-  unsigned short ioDepartureDateMonth = ioDepartureDate.month();
-  std::string ioDepartureDateMonthStr = kMonthStr[ioDepartureDateMonth-1];
-  unsigned short ioDepartureDateDay = ioDepartureDate.day();
+  TokenList_T::const_iterator itTok = iTokenList.begin();
   
-  // Interpret the user input
-  if (iTokenList.empty() == false) {
-    
-    // Read the origin
-    TokenList_T::const_iterator itTok = iTokenList.begin();
-    if (itTok->empty() == false) {
-      ioOrigin = *itTok;
-      boost::algorithm::to_upper (ioOrigin);
-    }
+  // Interpret the user input.
+  if (itTok->empty() == true) {
 
-    // Read the destination
+    std::cerr << "Wrong parameters specified. Default paramaters '" 
+              << ioOrigin << "-" << ioDestination
+              << "/" << ioDepartureDate
+              << "' are kept."
+             << std::endl;
+
+  } else {
+    
+    // Read the origin.
+    ioOrigin = *itTok;
+    boost::algorithm::to_upper (ioOrigin);
+
+    // Read the destination.
     ++itTok;
-    if (itTok != iTokenList.end()) {
-      
-      if (itTok->empty() == false) {
+    if (itTok->empty() == false) {
       ioDestination  = *itTok;
       boost::algorithm::to_upper (ioDestination);
-      }
-      
-    } else {
-      return;
     }
 
-    // Read the year for the departure date
+    // Read the departure date.
     ++itTok;
-    if (itTok != iTokenList.end()) {
-      if (itTok->empty() == false) {
-        try {
-
-          ioDepartureDateYear = boost::lexical_cast<unsigned short> (*itTok);
-          if (ioDepartureDateYear < 100) {
-            ioDepartureDateYear += 2000;
-          }
-
-        } catch (boost::bad_lexical_cast& eCast) {
-          std::cerr << "The year of the flight departure date ('" << *itTok
-                    << "') cannot be understood. The default value ("
-                    << ioDepartureDateYear << ") is kept. " << std::endl;
-          return;
-        }
-      }
-
-    } else {
+    if (itTok->empty() == true) {
       return;
     }
-
-    // Read the month for the departure date
+    std::string lYearString = *itTok;
     ++itTok;
-    if (itTok != iTokenList.end()) {
-
-      if (itTok->empty() == false) {
-        try {
-
-          const boost::regex lMonthRegex ("^(\\d{1,2})$");
-          const bool isMonthANumber = regex_match (*itTok, lMonthRegex);
-        
-          if (isMonthANumber == true) {
-            const unsigned short lMonth =
-              boost::lexical_cast<unsigned short> (*itTok);
-            if (lMonth > 12) {
-              throw boost::bad_lexical_cast();
-            }
-            ioDepartureDateMonthStr = kMonthStr[lMonth-1];
-
-          } else {
-            const std::string lMonthStr (*itTok);
-            if (lMonthStr.size() < 3) {
-              throw boost::bad_lexical_cast();
-            }
-            std::string lMonthStr1 (lMonthStr.substr (0, 1));
-            boost::algorithm::to_upper (lMonthStr1);
-            std::string lMonthStr23 (lMonthStr.substr (1, 2));
-            boost::algorithm::to_lower (lMonthStr23);
-            ioDepartureDateMonthStr = lMonthStr1 + lMonthStr23;
-          }
-
-        } catch (boost::bad_lexical_cast& eCast) {
-          std::cerr << "The month of the flight departure date ('" << *itTok
-                    << "') cannot be understood. The default value ("
-                    << ioDepartureDateMonthStr << ") is kept. " << std::endl;
-          return;
-        }
-      }
-
-    } else {
+    if (itTok->empty() == true) {
       return;
     }
-
-    // Read the day for the departure date
+    std::string lMonthString = *itTok;
     ++itTok;
-    if (itTok != iTokenList.end()) {
-
-      if (itTok->empty() == false) {
-        try {
-
-          ioDepartureDateDay = boost::lexical_cast<unsigned short> (*itTok);
-
-        } catch (boost::bad_lexical_cast& eCast) {
-          std::cerr << "The day of the flight departure date ('" << *itTok
-                    << "') cannot be understood. The default value ("
-                    << ioDepartureDateDay << ") is kept. " << std::endl;
-          return;
-        }
-      }
-
-    } else {
+    if (itTok->empty() == true) {
       return;
     }
-
-    // Re-compose the departure date
-    std::ostringstream lDepartureDateStr;
-    lDepartureDateStr << ioDepartureDateYear << "-" << ioDepartureDateMonthStr
-                      << "-" << ioDepartureDateDay;
-
-    try {
-
-      ioDepartureDate =
-        boost::gregorian::from_simple_string (lDepartureDateStr.str());
-
-    } catch (boost::gregorian::bad_month& eCast) {
-      std::cerr << "The flight departure date ('" << lDepartureDateStr.str()
-                << "') cannot be understood. The default value ("
-                << ioDepartureDate << ") is kept. " << std::endl;
+    std::string lDayString = *itTok;
+    const bool IsDepartureDateReadable =
+      retrieveDate (lYearString, lMonthString, lDayString,
+                    ioDepartureDate);
+    if (IsDepartureDateReadable == false) {
+      std::cerr << "Default paramaters '" 
+                << ioOrigin << "-" << ioDestination
+                << "/" << ioDepartureDate
+                << "' are kept." 
+                << std::endl;
       return;
     }
-
   }
 }
 
@@ -433,9 +750,57 @@ TokenList_T extractTokenList (const TokenList_T& iTokenList,
   // std::cout << "After (token list): " << oTokenList << std::endl;
 
   return oTokenList;
-}    
+}
 
 // /////////////////////////////////////////////////////////
+// Parse the token list of the 'price' command.
+TokenList_T extractTokenListForTSAndBR (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   line:            airline_code flight_number departure_date airport_code airport_code departure_time booking_date booking_time POS channel trip_type stay_duration
+   *   airline_code:    word (alpha{2,3})
+   *   flight_number:   number (digit{1,4})
+   *   departure date:  year[/- ]?month[/- ]?day
+   *   year:            number (digit{2,4})
+   *   month:           (number (digit{1,2}) | word (alpha{3}))
+   *   day:             number (digit{1,2})
+   *   departure time:  hour[:]?minute
+   *   hour:            number (digit{1,2})
+   *   minute:          number (digit{1,2})
+   *   airport_code:    word (alpha{3})
+   *   airport_code:    word (alpha{3})
+   *   booking date:    year[/- ]?month[/- ]?day
+   *   booking time:    hour[:]?minute
+   *   POS:             word (alpha{3})
+   *   channel:         word (alpha{2})
+   *   trip type:       word (alpha{2})
+   *   stay duration    number (digit{1})
+   */
+  const std::string lRegEx("^([[:alpha:]]{2,3})"
+                           "[[:space:]]+([[:digit:]]{1,4})"
+                           "[/ ]*"
+                           "[[:space:]]+([[:digit:]]{2,4})[/-]?"
+                           "[[:space:]]*([[:alpha:]]{3}|[[:digit:]]{1,2})[/-]?"
+                           "[[:space:]]*([[:digit:]]{1,2})[[:space:]]*"
+                           "[[:space:]]+([[:alpha:]]{3})"
+                           "[[:space:]]+([[:alpha:]]{3})"
+                           "[[:space:]]+([[:digit:]]{1,2})[:]?([[:digit:]]{1,2})"
+                           "[[:space:]]+([[:digit:]]{2,4})[/-]?"
+                           "[[:space:]]*([[:alpha:]]{3}|[[:digit:]]{1,2})[/-]?"
+                           "[[:space:]]*([[:digit:]]{1,2})"
+                           "[[:space:]]+([[:digit:]]{1,2})[:]?([[:digit:]]{1,2})"
+                           "[[:space:]]+([[:alpha:]]{3})"
+                           "[[:space:]]+([[:alpha:]]{2})"
+                           "[[:space:]]+([[:alpha:]]{2})"
+                           "[[:space:]]+([[:digit:]]{1})$");
+
+  //
+  const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
+  return oTokenList;
+} 
+
+// /////////////////////////////////////////////////////////
+// Parse the token list of the 'display' command.
 TokenList_T extractTokenListForOriDestDate (const TokenList_T& iTokenList) {
   /**
    * Expected format:
@@ -446,12 +811,15 @@ TokenList_T extractTokenListForOriDestDate (const TokenList_T& iTokenList) {
    *   month:           (number (digit{1,2}) | word (alpha{3}))
    *   day:             number (digit{1,2})
    */
-  const std::string lRegEx("^([[:alpha:]]{3})?"
-                           "[[:space:]]*[-|/|,]?[[:space:]]*([[:alpha:]]{3})?"
-                           "[[:space:]]*[-|/]*[[:space:]]*"
-                           "([[:digit:]]{2,4})*[[:space:]]*[-|/][[:space:]]*"
-                           "([[:alpha:]]{3}|[[:digit:]]{1,2})*[[:space:]]*[-|/][[:space:]]*"
-                           "([[:digit:]]{1,2})*?$");
+  const std::string lRegEx("^([[:alpha:]]{3})"
+                           "[[:space:]]*[/-]?"
+                           "[[:space:]]*([[:alpha:]]{3})"
+                           "[[:space:]]*[/-]?"
+                           "[[:space:]]*([[:digit:]]{2,4})"
+                           "[[:space:]]*[/-]?"
+                           "[[:space:]]*([[:alpha:]]{3}|[[:digit:]]{1,2})"
+                           "[[:space:]]*[/-]?"
+                           "[[:space:]]*([[:digit:]]{1,2})$");
 
   //
   const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
@@ -470,8 +838,8 @@ int main (int argc, char* argv[]) {
 
   // Readline history
   const unsigned int lHistorySize (100);
-  const std::string lHistoryFilename ("fareDisplay.hist");
-  const std::string lHistoryBackupFilename ("fareDisplay.hist.bak");
+  const std::string lHistoryFilename ("simfqt.hist");
+  const std::string lHistoryBackupFilename ("simfqt.hist.bak");
 
   // Default parameters for the interactive session
   stdair::AirportCode_T lInteractiveOrigin;
@@ -500,7 +868,7 @@ int main (int argc, char* argv[]) {
   SIMFQT::SIMFQT_Service simfqtService (lLogParams);
 
   // DEBUG
-  STDAIR_LOG_DEBUG ("Welcome to fareQuote display");
+  STDAIR_LOG_DEBUG ("Welcome to SimFQT display");
 
   // Check wether or not a (CSV) input file should be read
   if (isBuiltin == true) {
@@ -534,14 +902,14 @@ int main (int argc, char* argv[]) {
     stdair::TravelSolutionList_T lInteractiveTravelSolutionList;
     stdair::TravelSolutionStruct lInteractiveTravelSolution;
 
-    // Update the default booking request
-    // If there is an input file, we want CRS booking request (defined in stdair).
+    // Update the default booking request.
+    // If there is an input file, we want the CRS booking request (defined in stdair).
     // If not, we want the default booking request.
     const bool isCRSBookingRequest = !isBuiltin;
     const stdair::BookingRequestStruct& lInteractiveBookingRequest =
       simfqtService.buildBookingRequest (isCRSBookingRequest);
 
-    // Update the default parameters for the following interactive session
+    // Update the default parameters for the following interactive session.
     if (isBuiltin == true) {
       lInteractiveOrigin = "LHR";
       lInteractiveDestination = "SYD";
@@ -553,24 +921,24 @@ int main (int argc, char* argv[]) {
       lInteractiveDepartureDate = stdair::Date_T(2010,01,30);
       //
       const std::string lBA9_SegmentDateKey ("SQ, 970, 2010-01-30, SIN, BKK, 07:10");
-
-      // Add the segment date key to the travel solution
+      
+      // Add the segment date key to the travel solution.
       lInteractiveTravelSolution.addSegment (lBA9_SegmentDateKey);
 
       // Add the travel solution to the list
       lInteractiveTravelSolutionList.push_back (lInteractiveTravelSolution);
     }
     
-    // Prompt
+    // Prompt.
     std::ostringstream oPromptStr;
     oPromptStr << "simfqt "
                << "> ";
-    // The last parameter could be ommited
+    // The last parameter could be ommited.
     TokenList_T lTokenListByReadline;
     lUserInput = lReader.GetLine (oPromptStr.str(), lTokenListByReadline,
                                   EndOfInput);
 
-    // The history could be saved to an arbitrary file at any time
+    // The history could be saved to an arbitrary file at any time.
     lReader.SaveHistory (lHistoryBackupFilename);
 
     if (EndOfInput) {
@@ -578,14 +946,32 @@ int main (int argc, char* argv[]) {
       break;
     }
 
-    // Interpret the user input
+    // Interpret the user input.
     lCommandType = extractCommand (lTokenListByReadline);
     
     switch (lCommandType) {
 
       // ////////////////////////////// Help ////////////////////////
     case Command_T::HELP: {
+      // Search for information to display default parameters lists.
+      // Get the first travel solution.
+      stdair::TravelSolutionStruct& lTravelSolutionStruct =
+        lInteractiveTravelSolutionList.front();  
+      // Get the segment-path of the first travel solution.
+      const stdair::SegmentPath_T& lSegmentPath =
+        lTravelSolutionStruct.getSegmentPath();  
+      // Get the first segment of the first travel solution.
+      const std::string& lSegmentDateKey = lSegmentPath.front();
+      // Get the parsed key of the first segment of the first travel solution.
+      const stdair::ParsedKey& lParsedKey =
+        stdair::BomKeyManager::extractKeys (lSegmentDateKey);
+      // Get the request date time
+      const stdair::DateTime_T& lRequestDateTime =
+        lInteractiveBookingRequest.getRequestDateTime();
+      const stdair::Time_T lRequestTime =
+        lRequestDateTime.time_of_day();
       std::cout << std::endl;
+      // Display help.
       std::cout << "Commands: " << std::endl;
       std::cout << " help" << "\t\t" << "Display this help" << std::endl;
       std::cout << " quit" << "\t\t" << "Quit the application" << std::endl;
@@ -593,11 +979,26 @@ int main (int argc, char* argv[]) {
                 << "List all the fare rule O&Ds and the corresponding date ranges" << std::endl;
       std::cout << " display" << "\t"
                 << "Display all fare rules for an O&D and a departure date. \n" << "\t\t"
-                << "If no O&D and no departure date specified, default values are used: \n"<< "\t\t"
-                << "    'display " <<  lInteractiveOrigin << " " << lInteractiveDestination
-                << " " << lInteractiveDepartureDate << "'"<< std::endl;
+                << "If no parameters specified or wrong list of parameters, default values are used: \n"<< "\t\t"
+                << "      display " <<  lInteractiveOrigin << " "
+                << lInteractiveDestination << " "
+                << lInteractiveDepartureDate << std::endl;
       std::cout << " price" << "\t\t"
-                << "Price a travel solution" << std::endl;
+                << "Price the travel solution corresponding to a booking request. \n" << "\t\t"
+                << "If no parameters specified or wrong list of parameters, default value are used: \n" << "\t\t"
+                << "      price "
+                << lParsedKey._airlineCode << " "
+                << lParsedKey._flightNumber << " "
+                << lParsedKey._departureDate << " "
+                << lParsedKey._boardingPoint << " "
+                << lParsedKey._offPoint << " "
+                << lParsedKey._boardingTime << " "
+                << lRequestDateTime.date() << " "
+                << lRequestTime.hours() << ":" << lRequestTime.minutes() << " " 
+                << lInteractiveBookingRequest.getPOS() << " "
+                << lInteractiveBookingRequest.getBookingChannel() << " " 
+                << lInteractiveBookingRequest.getTripType() << " "
+                << lInteractiveBookingRequest.getStayDuration() << std::endl;
       std::cout << std::endl;
       break;
     }
@@ -610,7 +1011,8 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// List /////////////////////////
     case Command_T::LIST: {
       
-      //
+      // Get the list of all airport pairs and date ranges for which
+      // there are fares available.
       const std::string& lAirportPairDateListStr =
         simfqtService.list ();
 
@@ -619,7 +1021,6 @@ int main (int argc, char* argv[]) {
         STDAIR_LOG_DEBUG (lAirportPairDateListStr);
 
       } else {
-        assert (isBuiltin == false);
         std::cerr << "There is no result for airport pairs and date ranges."
                   << "Make sure your input file is not empty."
                   << std::endl;
@@ -631,16 +1032,31 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// Display /////////////////////////
     case Command_T::DISPLAY: {
 
-      //
-      TokenList_T lTokenList =
-        extractTokenListForOriDestDate (lTokenListByReadline);
+      // If no parameters are entered by the user, keep default ones.
+      if (lTokenListByReadline.empty() == true) {
 
-      // Parse the parameters given by the user, giving default values
-      // in case the user does not specify some (or all) of them
-      parseFlightDateKey (lTokenList, lInteractiveOrigin,
-                          lInteractiveDestination, lInteractiveDepartureDate);
+        std::cout << "No parameters specified. Default paramaters '" 
+                  << lInteractiveOrigin << "-" << lInteractiveDestination
+                  << "/" << lInteractiveDepartureDate
+                  << "' are kept."
+                  << std::endl;
 
-      // Check whether the selected airportpair-date is valid
+      } else {
+
+        // Find the best match corresponding to the given parameters.
+        TokenList_T lTokenList =
+          extractTokenListForOriDestDate (lTokenListByReadline);
+        
+        // Parse the best match, and give default values in case the
+        // user does not specify all the parameters or does not
+        // specify some of them correctly.
+        parseFlightDateKey (lTokenList, lInteractiveOrigin,
+                            lInteractiveDestination, lInteractiveDepartureDate);
+        
+      }
+
+      // Check whether the selected airportpair-date is valid:
+      // i.e. if there are corresponding fare rules.
       const bool isAirportPairDateValid =
         simfqtService.check (lInteractiveOrigin, lInteractiveDestination,
                              lInteractiveDepartureDate);
@@ -648,8 +1064,8 @@ int main (int argc, char* argv[]) {
       if (isAirportPairDateValid == false) {
         std::ostringstream oFDKStr;
         oFDKStr << "The airport pair/departure date: "
-                << lInteractiveOrigin << ", " << lInteractiveDestination
-                << " / " << lInteractiveDepartureDate
+                << lInteractiveOrigin << "-" << lInteractiveDestination
+                << "/" << lInteractiveDepartureDate
                 << " does not correpond to any fare rule.\n"
                 << "Make sure it exists with the 'list' command.";
         std::cout << oFDKStr.str() << std::endl;
@@ -658,7 +1074,7 @@ int main (int argc, char* argv[]) {
         break;
       }
       
-      //
+      // Display the list of corresponding fare rules.
       std::cout << "List of fare rules for "
                 << lInteractiveOrigin << "-"
                 << lInteractiveDestination << "/"
@@ -670,19 +1086,9 @@ int main (int argc, char* argv[]) {
                                   lInteractiveDestination,
                                   lInteractiveDepartureDate);
 
-      if (lFareRuleListStr.empty() == false) {
-        std::cout << lFareRuleListStr << std::endl;
-        STDAIR_LOG_DEBUG (lFareRuleListStr);
-
-      } else {
-        std::cerr << "There is no result for "
-                  << lInteractiveOrigin << "-"
-                  << lInteractiveDestination << "/"
-                  << lInteractiveDepartureDate
-                  << ". Just type the list command without any parameter "
-                  << "to see all the departure-dates for all the O&D"
-                  << std::endl;
-      }
+      assert (lFareRuleListStr.empty() == false);
+      std::cout << lFareRuleListStr << std::endl;
+      STDAIR_LOG_DEBUG (lFareRuleListStr);
 
       break;
     }
@@ -690,28 +1096,75 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// Price ////////////////////////
     case Command_T::PRICE: {
 
-      if (lInteractiveTravelSolutionList.size() < 1) {
-        std::cerr << "There is no travel solution to fare quote."
-                  << std::endl;
-        break;
-      }
-      lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
+      // If no parameters are entered by the user, keep default ones.
+      if (lTokenListByReadline.empty() == true) {
 
-      std::cout << "Booking request: << "
-                << lInteractiveBookingRequest.display()  << " >>"
-                << "\nTravel Solution: << "
-                << lInteractiveTravelSolution.display() << " >>"
-                << "\n********** \n"
-                << "Fare quote"
-                << "\n**********"
+        lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
+        
+        std::cout << "No parameters specified. Default booking request and default travel solution list are kept.\n"
+                  << "Booking request: << "
+                  << lInteractiveBookingRequest.display()  << " >>"
+                  << "\nTravel Solution: << "
+                  << lInteractiveTravelSolution.display() << " >>"
+                  << "\n********** \n"
+                  << "Fare quote"
+                  << "\n**********"
                 << std::endl;
+        
+        // Try to fareQuote the sample list of travel solutions.
+        try {
+        simfqtService.quotePrices (lInteractiveBookingRequest,
+                                   lInteractiveTravelSolutionList);
+        } catch (stdair::ObjectNotFoundException& E) {
+          std::cerr << "The given travel solution corresponding to the given booking request can not be priced.\n"
+                    << E.what()
+                    << std::endl;
+          break;
+        }
+      } else {
+      
+        // Find the best match corresponding to the given parameters.
+        TokenList_T lTokenList =
+          extractTokenListForTSAndBR (lTokenListByReadline);
 
-      // FareQuote the sample list of travel solutions
-      simfqtService.quotePrices (lInteractiveBookingRequest,
-                                 lInteractiveTravelSolutionList);
+        // Parse the best match, and give default values in case the
+        // user does not specify all the parameters or does not
+        // specify some of them correctly.
+        stdair::BookingRequestStruct lFinalBookingRequest
+          = parseTravelSolutionAndBookingRequestKey (lTokenList,
+                                                     lInteractiveTravelSolutionList,
+                                                     lInteractiveBookingRequest);
 
+        
+        assert (lInteractiveTravelSolutionList.size() >= 1);
+        lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
+
+        // Display the booking request and the first travel solution
+        // before pricing.
+        std::cout << "Booking request: << "
+                  << lFinalBookingRequest.display()  << " >>"
+                  << "\nTravel Solution: << "
+                  << lInteractiveTravelSolution.display() << " >>"
+                  << "\n********** \n"
+                  << "Fare quote"
+                  << "\n**********"
+                << std::endl;
+        
+        // Try to fareQuote the sample list of travel solutions.
+        try {
+          simfqtService.quotePrices (lFinalBookingRequest,
+                                     lInteractiveTravelSolutionList);
+        } catch (stdair::ObjectNotFoundException& E) {
+          std::cerr << "The given travel solution corresponding to the given booking request can not be priced.\n"
+                    << E.what()
+                    << std::endl;
+          break;
+        }
+      }
+
+      // Display the first travel solution after pricing:
+      // one or more fare option have been added.
       lInteractiveTravelSolution = lInteractiveTravelSolutionList.front();
-
       std::cout << "Travel Solution: << "
                 << lInteractiveTravelSolution.display() << " >>\n"
                 << std::endl;
@@ -727,7 +1180,8 @@ int main (int argc, char* argv[]) {
     default: {
       // DEBUG
       std::ostringstream oStr;
-      oStr << "That command is not yet understood: '" << lUserInput << "'";
+      oStr << "The '" << lUserInput << "' command is not yet understood.\n"
+           << "Type help to have more information." << std::endl;
 
       STDAIR_LOG_DEBUG (oStr.str());
       std::cout << oStr.str() << std::endl;
