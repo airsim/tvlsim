@@ -8,6 +8,8 @@
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // SimLFS
 #include <simlfs/SIMLFS_Types.hpp>
 
@@ -47,13 +49,13 @@ namespace SIMLFS {
      * @param const stdair::BasDBParams& Parameters for the database access.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input yield file.
      */
     SIMLFS_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                     const stdair::Filename_T& iScheduleInputFilename,
                     const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
+                    const SIMFQT::FareFilePath& iFareInputFilepath,
                     const stdair::Filename_T& iYieldInputFilename);
 
     /**
@@ -69,13 +71,13 @@ namespace SIMLFS {
      * @param const stdair::Date_T& Date for the beginning of analysis.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input yield file.
      */
     SIMLFS_Service (const stdair::BasLogParams&,
                     const stdair::Filename_T& iScheduleInputFilename,
                     const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
+                    const SIMFQT::FareFilePath& iFareInputFilepath,
                     const stdair::Filename_T& iYieldInputFilename);
 
     /**
@@ -94,13 +96,13 @@ namespace SIMLFS {
      * @param const stdair::Date_T& Date for the beginning of analysis.
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input yield file.
      */
     SIMLFS_Service (stdair::STDAIR_ServicePtr_T,
                     const stdair::Filename_T& iScheduleInputFilename,
                     const stdair::Filename_T& iODInputFilename,
-                    const stdair::Filename_T& iFareInputFilename,
+                    const SIMFQT::FareFilePath& iFareInputFilepath,
                     const stdair::Filename_T& iYieldInputFilename);
 
     /** Destructor. */
@@ -174,12 +176,12 @@ namespace SIMLFS {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input yield file.
      */
     void init (const stdair::Filename_T& iScheduleInputFilename,
                const stdair::Filename_T& iODInputFilename,
-               const stdair::Filename_T& iFareInputFilename,
+               const SIMFQT::FareFilePath& iFareInputFilepath,
                const stdair::Filename_T& iYieldInputFilename);
 
     /**
@@ -187,7 +189,7 @@ namespace SIMLFS {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      */
-    void initSIMFQTService (const stdair::Filename_T& iFareInputFilename);
+    void initSIMFQTService (const SIMFQT::FareFilePath& iFareInputFilepath);
 
     /**
      * Initialise the AIRINV Master service with the given schedule file.
