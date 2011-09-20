@@ -32,7 +32,6 @@
 #include <stdair/ui/cmdline/SReadline.hpp>
 // Simfqt
 #include <simfqt/SIMFQT_Service.hpp>
-#include <simfqt/SIMFQT_Types.hpp>
 #include <simfqt/config/simfqt-paths.hpp>
 
 
@@ -876,7 +875,8 @@ int main (int argc, char* argv[]) {
     simfqtService.buildSampleBom();
   } else {
     // Build the BOM tree from parsing a fare file
-    simfqtService.parseAndLoad (lFareInputFilename);
+    SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+    simfqtService.parseAndLoad (lFareFilePath);
   }
 
   // DEBUG: Display the whole BOM tree

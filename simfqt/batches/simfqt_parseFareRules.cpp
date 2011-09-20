@@ -201,7 +201,8 @@ int main (int argc, char* argv[]) {
   } else {
     
     // Build the BOM tree from parsing a fare file
-    simfqtService.parseAndLoad (lFareInputFilename);
+    SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+    simfqtService.parseAndLoad (lFareFilePath);
 
   }
 
