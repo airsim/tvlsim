@@ -17,6 +17,8 @@
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/service/Logger.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/config/dsim-paths.hpp>
@@ -540,8 +542,9 @@ int main (int argc, char* argv[]) {
 
   } else {
     // Build the BOM tree from parsing input files
+    SIMFQT::FareFilePath lFareFilePath (lFareInputFilename); 
     dsimService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
-                              lYieldInputFilename, lFareInputFilename,
+                              lYieldInputFilename, lFareFilePath,
                               lDemandInputFilename);
   }
 
