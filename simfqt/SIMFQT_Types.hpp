@@ -11,6 +11,7 @@
 #include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
+#include <stdair/stdair_file.hpp>
 
 namespace SIMFQT {
 
@@ -121,7 +122,19 @@ namespace SIMFQT {
    */
   class QuotingException : public stdair::RootException {
   };
-
+  
+  // ///////// Files ///////////
+  /**
+   * Fare input file.
+   */
+  class FareFilePath : public stdair::InputFilePath {
+  public:
+    /**
+     * Constructor.
+     */
+    explicit FareFilePath (const stdair::Filename_T& iFilename)
+      : stdair::InputFilePath (iFilename) {}
+  };
 
   // //////// Type definitions specific to SimFQT /////////
   /**

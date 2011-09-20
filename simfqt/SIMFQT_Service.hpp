@@ -82,9 +82,9 @@ namespace SIMFQT {
      * The CSV file, describing the fare rule for the
      * simulator, is parsed and instantiated in memory accordingly.
      *
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const FareFilePath& Filename of the input fare file.
      */
-    void parseAndLoad (const stdair::Filename_T& iFareInputFilename);
+    void parseAndLoad (const FareFilePath& iFareFilename);
 
     /**
      * Destructor.
@@ -274,9 +274,9 @@ namespace SIMFQT {
      * The CSV file, describing the airline fares for the
      * simulator, is parsed and the inventories are generated accordingly.
      *
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const FareFilePath& Filename of the input fare file.
      */
-    void initSimfqtService (const stdair::Filename_T& iFareInputFilename); 
+    void initSimfqtService (const FareFilePath& iFareFilename); 
 
     /**
      * Finaliser.

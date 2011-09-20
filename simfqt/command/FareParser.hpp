@@ -9,6 +9,8 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/command/CmdAbstract.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 
 // Forward declarations.
 namespace stdair {
@@ -22,10 +24,10 @@ namespace SIMFQT {
   public:
     /** Parses the CSV file describing the fares for the
         simulator, and generates the fare bom tree accordingly.
-        @param const stdair::Filename_T& The file-name of the CSV-formatted 
+        @param const FareFilePath& The file-name of the CSV-formatted 
         fare input file.
         @param stdair::BomRoot& Root of the BOM tree. */
-    static void fareRuleGeneration (const stdair::Filename_T&, stdair::BomRoot&);
+    static void fareRuleGeneration (const FareFilePath&, stdair::BomRoot&);
   };
 }
 #endif // __SIMFQT_CMD_FAREPARSER_HPP

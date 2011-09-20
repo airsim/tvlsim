@@ -9,7 +9,6 @@
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/service/Logger.hpp>
 // SIMFQT
-#include <simfqt/SIMFQT_Types.hpp>
 #include <simfqt/bom/FareRuleStruct.hpp>
 
 namespace SIMFQT {

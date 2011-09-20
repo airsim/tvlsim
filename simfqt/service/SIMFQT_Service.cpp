@@ -168,7 +168,7 @@ namespace SIMFQT {
 
   // ////////////////////////////////////////////////////////////////////
   void SIMFQT_Service::
-  parseAndLoad (const stdair::Filename_T& iInventoryInputFilename) {
+  parseAndLoad (const FareFilePath& iFareFilename) {
 
     // Retrieve the BOM root object.
     assert (_simfqtServiceContext != NULL);
@@ -178,7 +178,7 @@ namespace SIMFQT {
     stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
     
     // Initialise the airline inventories
-    FareParser::fareRuleGeneration (iInventoryInputFilename, lBomRoot);
+    FareParser::fareRuleGeneration (iFareFilename, lBomRoot);
   }
  
   // ////////////////////////////////////////////////////////////////////
