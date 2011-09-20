@@ -23,6 +23,8 @@
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 #include <dsim/DSIM_Service.hpp>
@@ -157,10 +159,11 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lRandomSeed);
 
   // Build the BOM tree from parsing input files
+  SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
   BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,
                                                   lOnDInputFilename,
                                                   lYieldInputFilename, 
-                                                  lFareInputFilename,
+                                                  lFareFilePath,
                                                   lDemandInputFilename));
 
   // Initialise the snapshot and RM events
