@@ -288,7 +288,7 @@ namespace SIMCRS {
   parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                 const stdair::Filename_T& iODInputFilename,
                 const stdair::Filename_T& iYieldInputFilename,
-                const stdair::Filename_T& iFareInputFilename) {
+                const SIMFQT::FareFilePath& iFareInputFilepath) {
 
     // Retrieve the SimCRS service context
     assert (_simcrsServiceContext != NULL);
@@ -319,7 +319,7 @@ namespace SIMCRS {
      */
     SIMFQT::SIMFQT_Service& lSIMFQT_Service =
       lSIMCRS_ServiceContext.getSIMFQT_Service();
-    lSIMFQT_Service.parseAndLoad (iFareInputFilename);
+    lSIMFQT_Service.parseAndLoad (iFareInputFilepath);
   }
   
   // ////////////////////////////////////////////////////////////////////

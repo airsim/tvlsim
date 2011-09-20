@@ -12,6 +12,8 @@
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Service.hpp>
 #include <simcrs/config/simcrs-paths.hpp>
@@ -332,8 +334,9 @@ int main (int argc, char* argv[]) {
 
   } else {
     // Build the BOM tree from parsing input files
+    SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
     simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
-                                lYieldInputFilename, lFareInputFilename);
+                                lYieldInputFilename, lFareFilePath);
   }
 
   // TODO (issue #37707): instead of building a sample, read the parameters

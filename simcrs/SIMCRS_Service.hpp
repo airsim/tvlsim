@@ -10,6 +10,8 @@
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Types.hpp>
 
@@ -96,12 +98,12 @@ namespace SIMCRS {
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
      * @param const stdair::Filename_T& Filename of the input yield file.
-     * @param const stdair::Filename_T& Filename of the input fare file.
+     * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      */
     void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                        const stdair::Filename_T& iODInputFilename,
                        const stdair::Filename_T& iYieldInputFilename,
-                       const stdair::Filename_T& iFareInputFilename);
+                       const SIMFQT::FareFilePath& iFareInputFilepath);
 
     /**
      * Initialise the snapshot and RM events for the inventories.
