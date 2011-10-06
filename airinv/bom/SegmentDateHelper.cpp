@@ -21,9 +21,15 @@ namespace AIRINV {
      * retrieve the operating segment and call the fillFromRouting
      * method on it.
      */
-    if (ioSegmentDate.isOtherAirlineOperating()) {
-      stdair::SegmentDate* lOperatingSegmentDate_ptr =
-        ioSegmentDate.getOperatingSegmentDate();
+    const bool isOtherAirlineOperating = ioSegmentDate.isOtherAirlineOperating();
+    if (isOtherAirlineOperating == true) { 
+      const bool hasListSegmentDate =
+        stdair::BomManager::hasList<stdair::SegmentDate> (ioSegmentDate);
+      assert (hasListSegmentDate == true);
+      const stdair::SegmentDateList_T& lOperatingSDList =
+        stdair::BomManager::getList<stdair::SegmentDate> (ioSegmentDate);
+      assert (lOperatingSDList.size() == 1);
+      stdair::SegmentDate* lOperatingSegmentDate_ptr = *lOperatingSDList.begin();
       assert (lOperatingSegmentDate_ptr != NULL);
       fillFromRouting (*lOperatingSegmentDate_ptr);
       return;

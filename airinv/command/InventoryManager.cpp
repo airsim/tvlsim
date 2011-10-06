@@ -598,7 +598,8 @@ namespace AIRINV {
             stdair::LegCabin* lCurrentLegCabin_ptr = *itLegCabin;
             assert (lCurrentLegCabin_ptr != NULL);
             stdair::CabinCapacity_T lCabinCapacity = lCurrentLegCabin_ptr->getPhysicalCapacity();
-            stdair::BidPriceVector_T& lBPV = lCurrentLegCabin_ptr->getEmptyBidPriceVector();
+            lCurrentLegCabin_ptr->emptyBidPriceVector();
+            stdair::BidPriceVector_T& lBPV = lCurrentLegCabin_ptr->getBidPriceVector();
             //for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400 + 300/sqrt(k+1));}
             for (stdair::CabinCapacity_T k = 0;k!=lCabinCapacity;k++) {lBPV.push_back(400);}
             lCurrentLegCabin_ptr->setPreviousBidPrice(lBPV.back());
@@ -706,18 +707,22 @@ namespace AIRINV {
        * retrieve the operating segment and call the createDirectAcces
        * method on its parent (flight date).
        */
-      bool lCurrentSegmentIsOperatedByPartner =
+      const bool lCurrentSegmentIsOperatedByPartner =
         lCurrentSegmentDate_ptr->isOtherAirlineOperating();
-      if (lCurrentSegmentIsOperatedByPartner){
-        // First get the operating segment date.
-        stdair::SegmentDate* lOperatingSegmentDate_ptr =
-          lCurrentSegmentDate_ptr->getOperatingSegmentDate();
+      if (lCurrentSegmentIsOperatedByPartner == true){
+        const bool hasListSegmentDate =
+          stdair::BomManager::hasList<stdair::SegmentDate> (*lCurrentSegmentDate_ptr);
+        assert (hasListSegmentDate == true);
+        const stdair::SegmentDateList_T& lOperatingSDList =
+          stdair::BomManager::getList<stdair::SegmentDate> (*lCurrentSegmentDate_ptr);
+        assert (lOperatingSDList.size() == 1);
+        // Get the operating segment date.
+        stdair::SegmentDate* lOperatingSegmentDate_ptr = *lOperatingSDList.begin();
         assert (lOperatingSegmentDate_ptr != NULL);
         // Then get the (parent) flight date and create direct access.
         stdair::FlightDate* lOperatingFlightDate_ptr =
           stdair::BomManager::getParentPtr<stdair::FlightDate>(*lOperatingSegmentDate_ptr);
         assert (lOperatingFlightDate_ptr != NULL);
-                
         createDirectAccesses (*lOperatingFlightDate_ptr);
       } else {
 
