@@ -159,10 +159,11 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lRandomSeed);
 
   // Build the BOM tree from parsing input files
-  SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+  const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+  const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
   BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,
                                                   lOnDInputFilename,
-                                                  lYieldInputFilename, 
+                                                  lYieldFilePath ,
                                                   lFareFilePath,
                                                   lDemandInputFilename));
 
