@@ -287,7 +287,7 @@ namespace SIMCRS {
   void SIMCRS_Service::
   parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                 const stdair::Filename_T& iODInputFilename,
-                const stdair::Filename_T& iYieldInputFilename,
+                const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath) {
 
     // Retrieve the SimCRS service context
@@ -312,7 +312,7 @@ namespace SIMCRS {
     AIRINV::AIRINV_Master_Service& lAIRINV_Service =
       lSIMCRS_ServiceContext.getAIRINV_Service();
     lAIRINV_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
-                                  iYieldInputFilename);
+                                  iYieldInputFilepath);
 
     /**
      * Let the pricing component to build the fare rule structures.

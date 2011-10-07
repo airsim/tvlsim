@@ -334,9 +334,10 @@ int main (int argc, char* argv[]) {
 
   } else {
     // Build the BOM tree from parsing input files
-    SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+    const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+    const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
     simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
-                                lYieldInputFilename, lFareFilePath);
+                                lYieldFilePath, lFareFilePath);
   }
 
   // TODO (issue #37707): instead of building a sample, read the parameters
