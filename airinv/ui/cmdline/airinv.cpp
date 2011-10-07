@@ -767,8 +767,9 @@ int main (int argc, char* argv[]) {
   } else {
     if (isForSchedule == true) {
       // Build the BOM tree from parsing a schedule file (and O&D list)
+      AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
       airinvService.parseAndLoad (lScheduleInputFilename, lODInputFilename,
-                                  lYieldInputFilename);
+                                  lYieldFilePath);
 
       // Update the default parameters for the following interactive session
       lInteractiveAirlineCode = "SQ";

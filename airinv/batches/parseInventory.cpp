@@ -318,8 +318,9 @@ int main (int argc, char* argv[]) {
   } else {
     if (isForSchedule == true) {
       // Build the BOM tree from parsing a schedule file (and O&D list)
+      AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
       airinvService.parseAndLoad (lScheduleInputFilename, lODInputFilename,
-                                  lYieldInputFilename);
+                                  lYieldFilePath);
 
       if (lSegmentDateKey == K_AIRINV_DEFAULT_SEGMENT_DATE_KEY) {
         // Define a specific segment-date key for the schedule-based inventory

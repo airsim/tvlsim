@@ -13,6 +13,9 @@
 #include <stdair/stdair_maths_types.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
+// AirRAC
+#include <airrac/AIRRAC_Types.hpp>
+
 
 /// Forward declarations
 namespace stdair {
@@ -104,11 +107,11 @@ namespace AIRINV {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
+     * @param const AIRRAC::YieldFilePath& Filename of the input yield file.
      */
     void parseAndLoad (const stdair::Filename_T& iScheduleFilename,
                        const stdair::Filename_T& iODInputFilename,
-                       const stdair::Filename_T& iYieldInputFilename);
+                       const AIRRAC::YieldFilePath& iYieldFilename);
 
     /**
      * Destructor.

@@ -265,7 +265,7 @@ namespace AIRINV {
   void AIRINV_Service::
   parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                 const stdair::Filename_T& iODInputFilename,
-                const stdair::Filename_T& iYieldInputFilename) {
+                const AIRRAC::YieldFilePath& iYieldFilename) {
 
     // Retrieve the BOM root object.
     assert (_airinvServiceContext != NULL);
@@ -280,7 +280,7 @@ namespace AIRINV {
     // Parse the yield structures.
     AIRRAC::AIRRAC_Service& lAIRRAC_Service =
       lAIRINV_ServiceContext.getAIRRAC_Service();
-    lAIRRAC_Service.parseAndLoad (iYieldInputFilename);
+    lAIRRAC_Service.parseAndLoad (iYieldFilename);
 
     // Update yield values for booking classes and O&D.
     lAIRRAC_Service.updateYields();
