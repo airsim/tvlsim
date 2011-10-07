@@ -355,7 +355,7 @@ namespace DSIM {
   void DSIM_Service::
   parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                 const stdair::Filename_T& iODInputFilename,
-                const stdair::Filename_T& iYieldInputFilename,
+                const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath,
                 const stdair::Filename_T& iDemandInputFilename) {
 
@@ -369,7 +369,7 @@ namespace DSIM {
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
     lSIMCRS_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
-                                  iYieldInputFilename, iFareInputFilepath);
+                                  iYieldInputFilepath, iFareInputFilepath);
 
     /**
      * Let the demand generation component parse its input file.

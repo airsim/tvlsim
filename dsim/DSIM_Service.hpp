@@ -13,6 +13,8 @@
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
+// AIRRAC
+#include <airrac/AIRRAC_Types.hpp>
 // SimFQT
 #include <simfqt/SIMFQT_Types.hpp>
 // Dsim
@@ -111,15 +113,15 @@ namespace DSIM {
      *
      * @param const stdair::Filename_T& Filename of the input schedule file.
      * @param const stdair::Filename_T& Filename of the input O&D file.
-     * @param const stdair::Filename_T& Filename of the input yield file.
+     * @param const AIRRAC::YieldFilePath& Filename of the input yield file.
      * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const stdair::Filename_T& Filename of the input demand file.
      */
     void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
                        const stdair::Filename_T& iODInputFilename,
-                       const stdair::Filename_T& iYieldInputFilename,
+                       const AIRRAC::YieldFilePath& iYieldInputFilepath,
                        const SIMFQT::FareFilePath& iFareInputFilepath,
-                       const stdair::Filename_T& iDemandInputFilenames);
+                       const stdair::Filename_T& iDemandInputFilename);
 
     /**
      * Initialise the snapshot and RM events for the inventories.
