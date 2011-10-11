@@ -22,14 +22,9 @@ namespace AIRINV {
      * method on it.
      */
     const bool isOtherAirlineOperating = ioSegmentDate.isOtherAirlineOperating();
-    if (isOtherAirlineOperating == true) { 
-      const bool hasListSegmentDate =
-        stdair::BomManager::hasList<stdair::SegmentDate> (ioSegmentDate);
-      assert (hasListSegmentDate == true);
-      const stdair::SegmentDateList_T& lOperatingSDList =
-        stdair::BomManager::getList<stdair::SegmentDate> (ioSegmentDate);
-      assert (lOperatingSDList.size() == 1);
-      stdair::SegmentDate* lOperatingSegmentDate_ptr = *lOperatingSDList.begin();
+    if (isOtherAirlineOperating == true) {
+      stdair::SegmentDate* lOperatingSegmentDate_ptr =
+        ioSegmentDate.getOperatingSegmentDate ();
       assert (lOperatingSegmentDate_ptr != NULL);
       fillFromRouting (*lOperatingSegmentDate_ptr);
       return;
