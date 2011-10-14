@@ -707,13 +707,9 @@ namespace AIRINV {
        * retrieve the operating segment and call the createDirectAcces
        * method on its parent (flight date).
        */
-      const bool lCurrentSegmentIsOperatedByPartner =
-        lCurrentSegmentDate_ptr->isOtherAirlineOperating();
-      if (lCurrentSegmentIsOperatedByPartner == true) {
-        // Get the operating segment date.
-        const stdair::SegmentDate* lOperatingSegmentDate_ptr =
-          lCurrentSegmentDate_ptr->getOperatingSegmentDate ();
-        assert (lOperatingSegmentDate_ptr != NULL);
+      const stdair::SegmentDate* lOperatingSegmentDate_ptr =
+        lCurrentSegmentDate_ptr->getOperatingSegmentDate ();
+      if (lOperatingSegmentDate_ptr != NULL) {
         // Then get the (parent) flight date and create direct access.
         stdair::FlightDate* lOperatingFlightDate_ptr =
           stdair::BomManager::getParentPtr<stdair::FlightDate>(*lOperatingSegmentDate_ptr);
