@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Welcome to AirInv</title>
+<link type="text/css" href="libs/jQueryUI/css/redmond/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="libs/jQueryUI/js/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="libs/jQueryUI/js/jquery-ui-1.8.13.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="libs/extJS/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="libs/extJS/resources/css/grid.css" />
+<script type="text/javascript" src="libs/extJS/bootstrap.js"></script>
+<script type="text/javascript" src="libs/extJS/ext-all-debug.js"></script>
+<script type="text/javascript" src="libs/Highcharts/highcharts.js"></script>
+<script type="text/javascript" src="libs/Highcharts//modules/exporting.js"></script>
+<script type="text/javascript" src="js/airinv-grid.js"></script>
+<script type="text/javascript" src="js/airinvbean.js"></script>
+<script type="text/javascript" src="js/bidprice-chart.js"></script>
+<script type="text/javascript" src="js/bookingarrival-chart.js"></script>
+<!--Hardcoded JSON-->
+<!--<script type="text/javascript" src="sample/datasample.js"></script>-->
+</head>
+<body>
+<div id="container" style="width:1200px; margin: 0 auto;" >
+	<div id="header" style="background-image:url(assets/images/airsimheader2.png); width:1200px; height:245px">
+		<div align="left" style="vertical-align:bottom; padding-left:10px">
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>Company Code:
+				<input id="tbCompanyCode" type="text" value="SV" />
+				Flight Number:
+				<input id="tbFlightNumber" type="text" value="5"/>
+				Date:
+				<input type="text" id="datepicker" value="2010-Mar-11" />
+				<!--<button id="btnFetch"  onClick="fetch()">Fetch !</button>-->
+				<input name="input" type="submit" value="Fetch!" onclick="fetch()"/>
+			</p>
+		</div>
+	</div>
+	<div align="center" style="padding-left:0px; padding-top:20px; padding-bottom:20px">
+		<table width="100%" border="0" cellpadding="0" align="center" style="padding-left:0px">
+			<tr align="center">
+				<td align="right"><p align="left">&nbsp;</p>
+					<p align="left">&nbsp;</p></td>
+				<td align="right" style="padding-left:0px;"><div id="flights-GridDisplay" style="padding-left:0px;"></div></td>
+				<td align="left"><div id="legs-GridDisplay"></div></td>
+			</tr>
+		</table>
+		<div id="tabs" >
+			<ul>
+				<li><a href="#tabs-2">Inventory</a></li>
+				<li><a href="#tabs-1">Bid-Price Vectors</a></li>
+				<!--<li><a href="#tabs-3">Schedule</a></li>-->
+				<li><a href="#tabs-4">Bkg Pattern</a></li>
+				<li><a href="#tabs-5">DCS Counters</a></li>
+				<li><a href="#tabs-6">Bkg Origin</a></li>
+				<li><a href="#tabs-7">Nesting Structure</a></li>
+				<li><a href="#tabs-8">Nego Space</a></li>
+				<li><a href="#tabs-9">Published N/AVS</a></li>
+			</ul>
+			<div id="tabs-1" style="padding:6px">
+				<div id="bidpricechartcontainer" align="center" style="size:95%"></div>
+			</div>
+			<div id="tabs-2" style="padding:1px; height:auto; width:auto">
+				<div style="width:100%; height:100%;">
+					<div id="subclasses-GridDisplay" style="padding:6px; height:auto; width:auto;"></div>
+				</div>
+			</div>
+			<!--<div id="tabs-3"><img src="assets/images/SQ_Network_2009_Jan.png" width="927" height="600" /></div>-->
+			<div id="tabs-4" style="padding:6px; height:420px; width:1100px">
+				<div id="bookingarrivalchartcontainer" align="center" style="size:95%"></div>
+				<p>&nbsp;</p>
+			</div>
+			<div id="tabs-5"></div>
+			<div id="tabs-6"></div>
+			<div id="tabs-7"></div>
+			<div id="tabs-8"></div>
+			<div id="tabs-9"></div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+
+//Datepicker + Date format
+	$(function() 
+	{
+		$( "#datepicker" ).datepicker({
+										changeMonth: true,
+										changeYear: true,
+										showButtonPanel: true,
+										numberOfMonths: 2,
+										dateFormat: "yy-M-d",
+									  });
+	});
+	
+	$(function() 
+	{
+		$( "button, input:submit, a", ".demo" ).button();
+		$( "a", ".demo" ).click(function() { return false; });
+	});
+
+
+	function fetch()
+	{
+		var companyCode=document.getElementById('tbCompanyCode').value;
+		var flightNumber=document.getElementById('tbFlightNumber').value;
+		var date=document.getElementById('datepicker').value;
+		//In js/airinvgrid
+		//processRequest();
+		queryBuild(companyCode, flightNumber, date)
+		
+	}
+	
+	$(function() {
+		$( "#tabs" ).tabs();
+	});
+</script>
+</html>

@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <script src="http://simile.mit.edu/timeline/api/timeline-api.js" type="text/javascript"></script>
+    <script>
+var tl;
+function onLoad() {
+
+  var eventSource = new Timeline.DefaultEventSource();
+  //Generate 50 random events up to 20 days in the past or the future
+  for(var i=0;i<50;i++) {
+      var dateEvent = new Date();
+      dateEvent.setTime(dateEvent.getTime() + ((Math.floor(Math.random()*41) – 20) * 24 * 60 * 60 * 1000));
+      var evt = new Timeline.DefaultEventSource.Event(
+
+         dateEvent, //start
+
+         dateEvent, //end
+
+         dateEvent, //latestStart
+
+         dateEvent, //earliestEnd
+
+         true, //instant
+
+         “Event ” + i, //text
+
+         “Description for Event ” + i //description
+
+      );
+      eventSource.add(evt);
+  }
+  //create the timeline
+  var bandInfos = [
+    Timeline.createBandInfo({
+        trackGap:       0.2,
+        width:          "70%", 
+        intervalUnit:   Timeline.DateTime.DAY, 
+        intervalPixels: 50,
+        eventSource: eventSource
+    }),
+    Timeline.createBandInfo({
+        showEventText:  false,
+        trackHeight:    0.5,
+        trackGap:       0.2,
+        width:          "30%", 
+        intervalUnit:   Timeline.DateTime.MONTH, 
+        intervalPixels: 150,
+        eventSource: eventSource
+    })
+  ];
+  bandInfos[1].syncWith = 0;
+  bandInfos[1].highlight = true;
+  tl = Timeline.create(document.getElementById(“my-timeline”), bandInfos);
+
+}
+
+var resizeTimerID = null;
+function onResize() {
+    if (resizeTimerID == null) {
+        resizeTimerID = window.setTimeout(function() {
+            resizeTimerID = null;
+            tl.layout();
+        }, 500);
+    }
+}
+    </script>
+  </head>
+  <body onload=”onLoad();” onresize=”onResize();”>
+     <h1>Creating Events Manually in a SIMILE Timiline</h1>
+     <div id=”my-timeline” style=”height: 150px; border: 1px solid #aaa”></div>
+  </body>
+</html>
