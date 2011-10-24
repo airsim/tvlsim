@@ -149,29 +149,35 @@ namespace AIRINV {
         if (lBidPriceValue < std::numeric_limits<stdair::BidPrice_T>::max()) {
           lBPV.push_back(lBidPriceValue);
         }
+
       } else {
         const stdair::LegCabin* lLegCabin_ptr = lLegCabinList.front();
         lBPV = lLegCabin_ptr->getBidPriceVector();
       }
       
       
-
-
       // const stdair::CabinCapacity_T& lCabinCapacity = lSegmentCabin_ptr->getCapacity();
       // const stdair::CommittedSpace_T& lCommittedSpace = lSegmentCabin_ptr->getCommittedSpace();
       // assert (lCabinCapacity - lCommittedSpace > 0);
       // lBPV.resize(lCabinCapacity - lCommittedSpace);
 
-      const stdair::Availability_T& lAvailabilityPool = lSegmentCabin_ptr->getAvailabilityPool();
+      const stdair::Availability_T& lAvailabilityPool =
+        lSegmentCabin_ptr->getAvailabilityPool();
       //assert (lAvailabilityPool > 0);
+
       if (lAvailabilityPool < lBPV.size()) {
         lBPV.resize(lAvailabilityPool);
       }
 
+      
+      //
+      ioTravelSolution.addBidPriceVector (lBPV);
 
-
-      ioTravelSolution.addBidPriceVector(lBPV);
-      const stdair::BidPriceVector_T& lBpvRef = ioTravelSolution.getBidPriceVectorHolder().back();
+      const stdair::BidPriceVectorHolder_T& lBidPriceVectorHolder =
+        ioTravelSolution.getBidPriceVectorHolder();
+      const stdair::BidPriceVectorHolder_T::const_reverse_iterator itBPV =
+        lBidPriceVectorHolder.rbegin();
+      const stdair::BidPriceVector_T& lBpvRef = *itBPV;
  
       const stdair::FareFamilyList_T& lFFList =
         stdair::BomManager::getList<stdair::FareFamily> (*lSegmentCabin_ptr);
@@ -190,35 +196,40 @@ namespace AIRINV {
           const stdair::ClassCode_T& lClassCode = lBC_ptr->getClassCode();
 
 	  const stdair::YieldValue_T lYld = lBC_ptr->getYield() ;  
-	  const bool insertYieldMapSuccessful = lClassYieldMap.insert (stdair::ClassYieldMap_T::value_type (lClassCode,lYld)).second;
+	  const bool insertYieldMapSuccessful = lClassYieldMap.
+            insert (stdair::ClassYieldMap_T::value_type (lClassCode,
+                                                         lYld)).second;
 	  assert (insertYieldMapSuccessful == true);
 
-	  const bool insertBpvMapSuccessful = lClassBpvMap.insert (stdair::ClassBpvMap_T::value_type (lClassCode, lBpvRef)).second;
+	  const bool insertBpvMapSuccessful = lClassBpvMap.
+            insert (stdair::ClassBpvMap_T::value_type (lClassCode,
+                                                       &lBpvRef)).second;
 	  assert (insertBpvMapSuccessful == true);
           
           // DEBUG
           // STDAIR_LOG_DEBUG ("Class: " << lClassCode
           //                   << ", " << "Yield: " << lYld << ", "
           //                   << "Bid price: " << lBpvRef.back() << ", "
-	  // 		    << "Remaining capacity: " << lCabinCapacity - lCommittedSpace);
+	  // 		       << "Remaining capacity: "
+          //                   << lCabinCapacity - lCommittedSpace);
   
-
+          //
 	  stdair::BidPrice_T lBpvVal = std::numeric_limits<double>::max();
-	  if (lBpvRef.size() > 0) {
+	  if (lBpvRef.empty() == false) {
 	    lBpvVal = lBpvRef.back();
 	  }
+
 	  //lBpvVal = boost::lexical_cast<std::string> (lBpvRef.back());
           STDAIR_LOG_DEBUG ("Class: " << lClassCode
                             << ", " << "Yield: " << lYld << ", "
                             << "Bid price: " << lBpvVal << ", "
-	  		    << "Remaining capacity: " << lAvailabilityPool << " "
-			    << "Segment date: " << iFullSegmentDateKey);
-
-
+	  		    << "Remaining capacity: " << lAvailabilityPool
+			    << " Segment date: " << iFullSegmentDateKey);
         }
       }
     }
 
+    //
     ioTravelSolution.addClassYieldMap (lClassYieldMap);
     ioTravelSolution.addClassBpvMap (lClassBpvMap);
   }
