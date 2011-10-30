@@ -14,7 +14,7 @@ module_set_name (dsim)
 #    the header files of the root directory are to be published.
 #  * A list of additional dependency on inter-module library targets.
 module_library_add_standard (".;basic;bom;factory;command;service"
-  trademgen simcrs travelccm)
+  trademgen travelccm simcrs)
 
 ##
 # Building and installation of the executables/binaries.
