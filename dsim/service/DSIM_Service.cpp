@@ -6,7 +6,11 @@
 // Boost
 #include <boost/make_shared.hpp>
 // SOCI
+#if defined(SOCI_HEADERS_BURIED)
 #include <soci/core/soci.h>
+#else // SOCI_HEADERS_BURIED
+#include <soci/soci.h>
+#endif // SOCI_HEADERS_BURIED
 // StdAir
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/bom/BomManager.hpp>
