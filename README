@@ -51,7 +51,7 @@ http://sourceforge.net/project/showfiles.php?group_id=267805
 
 To customise the following to your environment, you can alter the path
 to the installation directory:
-export INSTALL_BASEDIR=${INSTALL_BASEDIR}
+export INSTALL_BASEDIR=/home/user/dev/deliveries
 export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
 
 Then, as usual:
