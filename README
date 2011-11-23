@@ -59,14 +59,14 @@ Then, as usual:
   mkdir build && cd build
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
-   -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
-   -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
-   -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
+   -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
+   -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
+   -DWITH_AIRSCHED_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
    -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airrac-stable \
    -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/rmol-stable \
-   -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
-   -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
-   -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON .. \
+   -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
+   -DWITH_SIMFQT_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON \
    ${LIBSUFFIX_4_CMAKE} ..
 * To build the project, type:
   make
