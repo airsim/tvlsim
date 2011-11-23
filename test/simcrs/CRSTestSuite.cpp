@@ -22,6 +22,8 @@
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/service/Logger.hpp>
+// SimFQT
+#include <simfqt/SIMFQT_Types.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Service.hpp>
 #include <simcrs/config/simcrs-paths.hpp>
@@ -122,8 +124,10 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   SIMCRS::SIMCRS_Service simcrsService (lLogParams, lCRSCode);
 
   // Build the BOM tree from parsing input files
+  const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
+  const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
   simcrsService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
-                              lYieldInputFilename, lFareInputFilename);
+                              lYieldFilePath, lFareFilePath);
 
   // Create an empty booking request structure
   // TODO: fill the booking request structure from the input parameters
@@ -162,59 +166,92 @@ BOOST_AUTO_TEST_CASE (simcrs_simple_simulation_test) {
   //
   const unsigned int lNbOfTravelSolutions = lTravelSolutionList.size();
 
-  // TODO: change the expected number of travel solutions to the actual number
+  // \todo change the expected number of travel solutions to the actual number
   const unsigned int lExpectedNbOfTravelSolutions = 1;
   
   // DEBUG
-  STDAIR_LOG_DEBUG ("Number of travel solutions for the booking request '"
-                    << lBookingRequest.describe() << "': "
-                    << lNbOfTravelSolutions << ". It is expected to be "
-                    << lExpectedNbOfTravelSolutions);
+  std::ostringstream oMessageKeptTS;
+  oMessageKeptTS << "The number of travel solutions for the booking request '"
+                 << lBookingRequest.describe() << "' is actually "
+                 << lNbOfTravelSolutions << ". That number is expected to be "
+                 << lExpectedNbOfTravelSolutions << ".";
+  STDAIR_LOG_DEBUG (oMessageKeptTS.str());
 
   BOOST_CHECK_EQUAL (lNbOfTravelSolutions, lExpectedNbOfTravelSolutions);
 
-  BOOST_CHECK_MESSAGE(lNbOfTravelSolutions == lExpectedNbOfTravelSolutions,
-                      "The number of travel solutions for the booking request '"
-                      << lBookingRequest.describe() << "' is equal to "
-                      << lNbOfTravelSolutions << ", but it should be equal to "
-                      << lExpectedNbOfTravelSolutions);
+  BOOST_CHECK_MESSAGE (lNbOfTravelSolutions == lExpectedNbOfTravelSolutions,
+                       oMessageKeptTS.str());
   
-  //
-  stdair::TravelSolutionStruct& lTravelSolution =
-    lTravelSolutionList.front();
+  /**
+   * Keep only the first travel solution. Given the assumption above, it is
+   * also the only one.
+   */
+  stdair::TravelSolutionStruct& lTravelSolution = lTravelSolutionList.front();
 
-  //
-  stdair::FareOptionList_T lFareOptionList =
-    lTravelSolution.getFareOptionList ();
+  /**
+   * Retrieve the list of fare options (e.g., the fares for all the
+   * booking classes and associated conditions).
+   */
+  const stdair::FareOptionList_T& lFareOptionList =
+    lTravelSolution.getFareOptionList();
 
-  //
+  /**
+   * Keep/choose only the fare option (associated to the corresponding
+   * given booking class) appearing at the beginning of the list,
+   * whatever it be.
+   *
+   * \note The "chosen" fare option is not necessarily the most expensive,
+   *       nor it is necessarily the least expensive.
+   */
   stdair::FareOptionStruct lFareOption = lFareOptionList.front();
   lTravelSolution.setChosenFareOption (lFareOption);
 
-  //  
-  const unsigned int lExpectedPrice = 320;
+  /**
+   * As of August 2011, the fare option, kept for the travel solution
+   * given above ('SQ;12,2011-Jan-31;SIN,BKK;08:20:00'), corresponds
+   * to the Y booking class and is valued to 400 Euros.
+   */
+  const unsigned int lExpectedPrice = 400;
   
   // DEBUG
-  STDAIR_LOG_DEBUG ("The price given by the fare quoter for '"
-                    << lTravelSolution.describe() << "' is: "
-                    << lFareOption.getFare() << " Euros, and should be "
-                    << lExpectedPrice);
+  std::ostringstream oMessageKeptFare;
+  oMessageKeptFare
+    << "The price given by the fare quoter for the booking request: '"
+    << lBookingRequest.describe() << "' and travel solution: '"
+    << lTravelSolution.describe() << "' is actually " << lFareOption.getFare()
+    << " Euros. It is expected to be " << lExpectedPrice << " Euros.";
+  STDAIR_LOG_DEBUG (oMessageKeptFare.str());
 
-  BOOST_CHECK_EQUAL (std::floor (lFareOption.getFare() + 0.5),
-                     lExpectedPrice);
+  BOOST_CHECK_EQUAL (std::floor (lFareOption.getFare() + 0.5), lExpectedPrice);
 
   BOOST_CHECK_MESSAGE (std::floor (lFareOption.getFare() + 0.5)
-                       == lExpectedPrice,
-                       "The price given by the fare quoter for '"
-                       << lTravelSolution.describe() << "' is: "
-                       << lFareOption.getFare() << " Euros, and should be "
-                       << lExpectedPrice);
+                       == lExpectedPrice, oMessageKeptFare.str());
 
-  // Make a booking (reminder: party size is 3)
+  /**
+   * Make a booking (reminder: party size is 3).
+   *
+   * \note The booking class is given in the travel solution, through the
+   *       chosen fare option, which has been set just above (on the chosen
+   *       TravelSolutionStruct instance).
+   */
+  // DEBUG
+  STDAIR_LOG_DEBUG ("A booking will now (attempted to) be made on the "
+                    "travel solution '" << lTravelSolution.describe()
+                    << "', for a party size of " << lPartySize << ".");
+  
   const bool isSellSuccessful =
     simcrsService.sell (lTravelSolution, lPartySize);
-  STDAIR_LOG_DEBUG ("Was the sell successful? Answer: " << isSellSuccessful);
   //BOOST_CHECK_NO_THROW ();
+
+  // DEBUG
+  std::ostringstream oMessageSell;
+  const std::string isSellSuccessfulStr = (isSellSuccessful == true)?"Yes":"No";
+  oMessageSell << "Was the sell successful? Answer: " << isSellSuccessfulStr;
+  STDAIR_LOG_DEBUG (oMessageSell.str());
+
+  BOOST_CHECK_EQUAL (isSellSuccessful, true);
+
+  BOOST_CHECK_MESSAGE (isSellSuccessful == true, oMessageSell.str());
 
   // Close the log file
   logOutputFile.close();
