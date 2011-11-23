@@ -52,7 +52,8 @@ init_build ()
 
 ##
 # Sub-modules
-add_modules (avlcal simlfs simcrs ${PROJECT_NAME})
+add_modules (simcrs ${PROJECT_NAME})
+# avlcal simlfs
 
 ##
 # For other projects to use DSim, install a few helpers for standard
