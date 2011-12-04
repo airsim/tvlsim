@@ -49,19 +49,26 @@ Building the library and test binary from the tarball:
 The latest stable source tarball (dsim*.tar.gz or .bz2) can be found here:
 http://sourceforge.net/project/showfiles.php?group_id=267805
 
+To customise the following to your environment, you can alter the path
+to the installation directory:
+export INSTALL_BASEDIR=/home/user/dev/deliveries
+export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
+
 Then, as usual:
 * To configure the project, type something like:
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=/home/user/dev/deliveries/dsim-99.99.99 \
-   -DWITH_STDAIR_PREFIX=/home/user/dev/deliveries/stdair-stable \
-   -DWITH_AIRRAC_PREFIX=/home/user/dev/deliveries/trademgen-stable \
-   -DWITH_AIRRAC_PREFIX=/home/user/dev/deliveries/travelccm-stable \
-   -DWITH_AIRRAC_PREFIX=/home/user/dev/deliveries/airsched-stable \
-   -DWITH_AIRRAC_PREFIX=/home/user/dev/deliveries/airrac-stable \
-   -DWITH_RMOL_PREFIX=/home/user/dev/deliveries/rmol-stable \
-   -DWITH_RMOL_PREFIX=/home/user/dev/deliveries/airinv-stable \
-   -DWITH_RMOL_PREFIX=/home/user/dev/deliveries/simfqt-stable \
-   -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON ..
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-99.99.99 \
+   -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
+   -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
+   -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
+   -DWITH_AIRSCHED_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
+   -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airrac-stable \
+   -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/rmol-stable \
+   -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
+   -DWITH_SIMFQT_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
+   -DWITH_SIMCRS_PREFIX=${INSTALL_BASEDIR}/simcrs-stable \
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON \
+   ${LIBSUFFIX_4_CMAKE} ..
 * To build the project, type:
   make
 * To test the project, type:
@@ -73,6 +80,10 @@ Then, as usual:
   make dist
 * To package the binary and the (HTML and PDF) documentation:
   make package
+* To run the local binary version:
+  ./dsim/dsim -b
+* To run the installed version:
+  ${INSTALL_BASEDIR}/dsim-99.99.99/bin/dsim -b
 
-Denis Arnaud (October 2011)
+Denis Arnaud (December 2011)
 
