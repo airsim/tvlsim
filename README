@@ -66,6 +66,7 @@ Then, as usual:
    -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/rmol-stable \
    -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
    -DWITH_SIMFQT_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
+   -DWITH_SIMCRS_PREFIX=${INSTALL_BASEDIR}/simcrs-stable \
    -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON \
    ${LIBSUFFIX_4_CMAKE} ..
 * To build the project, type:
@@ -76,7 +77,7 @@ Then, as usual:
   just type:
   make install
   cd ${INSTALL_BASEDIR}
-  rm -f dsim-stable && ln -s dsim-0.1.0 simcrs-stable
+  rm -f dsim-stable && ln -s dsim-0.1.0 dsim-stable
   cd -
 * To package the source files, type:
   make dist
@@ -84,17 +85,8 @@ Then, as usual:
   make package
 * To run the local binary version:
   ./dsim/dsim -b
-* To run the installed version (the first following lines must be done once
-  per session only):
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/stdair-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/airsched-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/airrac-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/rmol-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/airinv-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/simfqt-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/simcrs-stable/lib:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${INSTALL_BASEDIR}/dsim-stable/lib:$LD_LIBRARY_PATH
-  ${INSTALL_BASEDIR}/simcrs-stable/bin/dsim -b
+* To run the installed version:
+  ${INSTALL_BASEDIR}/dsim-stable/bin/dsim -b
 
-Denis Arnaud (November 2011)
+Denis Arnaud (December 2011)
 
