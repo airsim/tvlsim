@@ -1,0 +1,119 @@
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:677: Parsing schedule input file: /home/dan/dev/deliveries/stdair-0.38.0/share/stdair/samples/schedule03.csv
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA9, [2007-Apr-20/2007-Jun-30] - Sat.Sun.
+    LHR / 22:00:00 -- BKK / 15:15:00 [1] --> 11:15:00
+        F 5,         J 12,         W 20,         Y 300, 
+    BKK / 18:10:00 [1] -- SYD / 06:05:00 [2] --> 08:55:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- BKK / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+    LHR / 00:00:00 -- SYD / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+    BKK / 00:00:00 -- SYD / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA9, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.
+    LHR / 22:00:00 -- BKK / 15:15:00 [1] --> 11:15:00
+        F 5,         J 12,         W 20,         Y 300, 
+    BKK / 18:10:00 [1] -- SYD / 06:05:00 [2] --> 08:55:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- BKK / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+    LHR / 00:00:00 -- SYD / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+    BKK / 00:00:00 -- SYD / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMLSQ
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA117, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 08:20:00 -- JFK / 11:00:00 --> 07:40:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- JFK / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKM
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA175, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 10:55:00 -- JFK / 13:35:00 --> 07:40:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- JFK / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMRL
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA179, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 18:05:00 -- JFK / 20:45:00 --> 07:40:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- JFK / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMRVNELSQO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA207, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 09:40:00 -- MIA / 14:25:00 --> 09:45:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- MIA / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMRVNELSQO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA279, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 10:05:00 -- LAX / 13:10:00 --> 11:05:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- LAX / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMRVNELSQO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA295, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 11:35:00 -- ORD / 14:00:00 --> 08:25:00
+        F 5,         J 12,         W 20,         Y 300, 
+    LHR / 00:00:00 -- ORD / 00:00:00 --> 00:00:00
+        F FA        J JCDI        W WT        Y YBHKMRVNELSQO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA341, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    NCE / 08:55:00 -- LHR / 10:05:00 --> 02:10:00
+        J 12,         Y 300, 
+    NCE / 00:00:00 -- LHR / 00:00:00 --> 00:00:00
+        J JCDI        Y YBHKMRVNEQLSO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA343, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    NCE / 11:00:00 -- LHR / 12:15:00 --> 02:15:00
+        J 12,         Y 300, 
+    NCE / 00:00:00 -- LHR / 00:00:00 --> 00:00:00
+        J JCDI        Y YBHKMRVNEQLSO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA345, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    NCE / 16:20:00 -- LHR / 17:25:00 --> 02:05:00
+        J 12,         Y 300, 
+    NCE / 00:00:00 -- LHR / 00:00:00 --> 00:00:00
+        J JCDI        Y YBHKMRVNEQLSO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: BA347, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    NCE / 13:55:00 -- LHR / 15:00:00 --> 02:05:00
+        J 12,         Y 300, 
+    NCE / 00:00:00 -- LHR / 00:00:00 --> 00:00:00
+        J JCDI        Y YBHKMRVNEQLSO
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: AA101, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    LHR / 09:55:00 -- JFK / 12:50:00 --> 07:55:00
+        G 300, 
+    LHR / 00:00:00 -- JFK / 00:00:00 --> 00:00:00
+        G GHQKLMVSOWN
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: AA117, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    JFK / 14:20:00 -- LAX / 17:25:00 --> 06:05:00
+        F 12,         J 20,         Y 300, 
+    JFK / 00:00:00 -- LAX / 00:00:00 --> 00:00:00
+        F FA        J JDI        Y YBGHQKLMVSOWN
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: AA181, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    JFK / 17:00:00 -- LAX / 20:00:00 --> 06:00:00
+        F 12,         J 20,         Y 300, 
+    JFK / 00:00:00 -- LAX / 00:00:00 --> 00:00:00
+        F FA        J JDI        Y YBHKMLWVGSNOQ
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:391: FlightPeriod: AA585, [2007-Apr-20/2007-Jun-30] - Mon.Tue.Wed.Thu.Fri.Sat.Sun.
+    JFK / 15:40:00 -- MIA / 18:50:00 --> 03:10:00
+        F 12,         Y 300, 
+    JFK / 00:00:00 -- MIA / 00:00:00 --> 00:00:00
+        F FAP        Y YBHKMLWVGSONQ
+
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/command/ScheduleParserHelper.cpp:699: Parsing of schedule input file: /home/dan/dev/deliveries/stdair-0.38.0/share/stdair/samples/schedule03.csv succeeded: read 2575 characters. The input file has not been fully read. Stop point: 1
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/service/AIRSCHED_Service.cpp:194: Inventory generation time: 0.010737
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/batches/airsched.cpp:385: Booking request string: 'NCE BKK NCE 2007-04-21 2007-03-21 08:32:00 C 1 DF RO 5 NONE 10:00:00 2000.0 20.0'
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/service/AIRSCHED_Service.cpp:393: Segment-path build: 0.000526 - AIRSCHED_ServiceContext -- Owns StdAir service: 1
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/batches/airsched.cpp:396: Parsed booking request: At 2007-Mar-21 08:32:00, for (NCE, DF) NCE-BKK (RO) 2007-Apr-21 (5 days) 10:00:00 C 1 NONE 2000 20
+[D]/home/dan/dev/sim/airsched/airschedgithub/airsched/batches/airsched.cpp:401: Travel solutions:
+    [0] [0] BA;341,2007-Apr-21;NCE,LHR;08:55:00 ; [1] BA;9,2007-Apr-21;LHR,BKK;22:00:00 ---  --- 
+    [1] [0] BA;343,2007-Apr-21;NCE,LHR;11:00:00 ; [1] BA;9,2007-Apr-21;LHR,BKK;22:00:00 ---  --- 
+    [2] [0] BA;345,2007-Apr-21;NCE,LHR;16:20:00 ; [1] BA;9,2007-Apr-21;LHR,BKK;22:00:00 ---  --- 
+    [3] [0] BA;347,2007-Apr-21;NCE,LHR;13:55:00 ; [1] BA;9,2007-Apr-21;LHR,BKK;22:00:00 ---  --- 

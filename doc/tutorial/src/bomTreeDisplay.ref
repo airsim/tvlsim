@@ -1,0 +1,3067 @@
+===============================================================
+BomRoot:  -- ROOT -- 
+===============================================================
++++++++++++++++++++++++++++++++++++++++++++++++++
+Inventory: SQ
++++++++++++++++++++++++++++++++++++++++++++++++++
+******************************************
+FlightDate: SQ11, 2010-Jan-15
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-15, SIN-BKK, 2010-Jan-15, 08:20:00, 2010-Jan-15, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-15, SIN-BKK 2010-Jan-15, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 2, 298, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-15, SIN-BKK 2010-Jan-15, Y, 1, 0, 0, 0, 2, 298, 0, 
+SQ11 2010-Jan-15, SIN-BKK 2010-Jan-15, Y, 2, 0, 0, 0, 2, 298, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-15, SIN-BKK 2010-Jan-15, Y, 1, Y, 300 (0), 0, 0, 0, 2, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-15, SIN-BKK 2010-Jan-15, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-16
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-16, SIN-BKK, 2010-Jan-16, 08:20:00, 2010-Jan-16, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-16, SIN-BKK 2010-Jan-16, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 1.83244e-319, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-16, SIN-BKK 2010-Jan-16, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-16, SIN-BKK 2010-Jan-16, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-16, SIN-BKK 2010-Jan-16, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-16, SIN-BKK 2010-Jan-16, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-17
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-17, SIN-BKK, 2010-Jan-17, 08:20:00, 2010-Jan-17, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-17, SIN-BKK 2010-Jan-17, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 1.58896e-319, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-17, SIN-BKK 2010-Jan-17, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-17, SIN-BKK 2010-Jan-17, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-17, SIN-BKK 2010-Jan-17, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-17, SIN-BKK 2010-Jan-17, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-18
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-18, SIN-BKK, 2010-Jan-18, 08:20:00, 2010-Jan-18, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-18, SIN-BKK 2010-Jan-18, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-18, SIN-BKK 2010-Jan-18, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-18, SIN-BKK 2010-Jan-18, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-18, SIN-BKK 2010-Jan-18, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-18, SIN-BKK 2010-Jan-18, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-19
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-19, SIN-BKK, 2010-Jan-19, 08:20:00, 2010-Jan-19, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-19, SIN-BKK 2010-Jan-19, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-19, SIN-BKK 2010-Jan-19, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-19, SIN-BKK 2010-Jan-19, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-19, SIN-BKK 2010-Jan-19, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-19, SIN-BKK 2010-Jan-19, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-20
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-20, SIN-BKK, 2010-Jan-20, 08:20:00, 2010-Jan-20, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-20, SIN-BKK 2010-Jan-20, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-20, SIN-BKK 2010-Jan-20, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-20, SIN-BKK 2010-Jan-20, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-20, SIN-BKK 2010-Jan-20, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-20, SIN-BKK 2010-Jan-20, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-21
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-21, SIN-BKK, 2010-Jan-21, 08:20:00, 2010-Jan-21, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-21, SIN-BKK 2010-Jan-21, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-21, SIN-BKK 2010-Jan-21, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-21, SIN-BKK 2010-Jan-21, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-21, SIN-BKK 2010-Jan-21, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-21, SIN-BKK 2010-Jan-21, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-22
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-22, SIN-BKK, 2010-Jan-22, 08:20:00, 2010-Jan-22, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-22, SIN-BKK 2010-Jan-22, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-22, SIN-BKK 2010-Jan-22, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-22, SIN-BKK 2010-Jan-22, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-22, SIN-BKK 2010-Jan-22, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-22, SIN-BKK 2010-Jan-22, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-23
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-23, SIN-BKK, 2010-Jan-23, 08:20:00, 2010-Jan-23, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-23, SIN-BKK 2010-Jan-23, Y, 300, 300, 0, 0, 0, 0, 0, 0, 6.64029e-319, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-23, SIN-BKK 2010-Jan-23, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-23, SIN-BKK 2010-Jan-23, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-23, SIN-BKK 2010-Jan-23, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-23, SIN-BKK 2010-Jan-23, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-24
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-24, SIN-BKK, 2010-Jan-24, 08:20:00, 2010-Jan-24, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-24, SIN-BKK 2010-Jan-24, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-24, SIN-BKK 2010-Jan-24, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-24, SIN-BKK 2010-Jan-24, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-24, SIN-BKK 2010-Jan-24, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-24, SIN-BKK 2010-Jan-24, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-25
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-25, SIN-BKK, 2010-Jan-25, 08:20:00, 2010-Jan-25, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-25, SIN-BKK 2010-Jan-25, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-25, SIN-BKK 2010-Jan-25, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-25, SIN-BKK 2010-Jan-25, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-25, SIN-BKK 2010-Jan-25, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-25, SIN-BKK 2010-Jan-25, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-26
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-26, SIN-BKK, 2010-Jan-26, 08:20:00, 2010-Jan-26, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-26, SIN-BKK 2010-Jan-26, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-26, SIN-BKK 2010-Jan-26, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-26, SIN-BKK 2010-Jan-26, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-26, SIN-BKK 2010-Jan-26, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-26, SIN-BKK 2010-Jan-26, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-27
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-27, SIN-BKK, 2010-Jan-27, 08:20:00, 2010-Jan-27, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-27, SIN-BKK 2010-Jan-27, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-27, SIN-BKK 2010-Jan-27, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-27, SIN-BKK 2010-Jan-27, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-27, SIN-BKK 2010-Jan-27, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-27, SIN-BKK 2010-Jan-27, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-28
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-28, SIN-BKK, 2010-Jan-28, 08:20:00, 2010-Jan-28, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-28, SIN-BKK 2010-Jan-28, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-28, SIN-BKK 2010-Jan-28, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-28, SIN-BKK 2010-Jan-28, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-28, SIN-BKK 2010-Jan-28, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-28, SIN-BKK 2010-Jan-28, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-29
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-29, SIN-BKK, 2010-Jan-29, 08:20:00, 2010-Jan-29, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-29, SIN-BKK 2010-Jan-29, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-29, SIN-BKK 2010-Jan-29, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-29, SIN-BKK 2010-Jan-29, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-29, SIN-BKK 2010-Jan-29, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-29, SIN-BKK 2010-Jan-29, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-30
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-30, SIN-BKK, 2010-Jan-30, 08:20:00, 2010-Jan-30, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-30, SIN-BKK 2010-Jan-30, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-30, SIN-BKK 2010-Jan-30, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-30, SIN-BKK 2010-Jan-30, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-30, SIN-BKK 2010-Jan-30, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-30, SIN-BKK 2010-Jan-30, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Jan-31
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Jan-31, SIN-BKK, 2010-Jan-31, 08:20:00, 2010-Jan-31, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Jan-31, SIN-BKK 2010-Jan-31, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Jan-31, SIN-BKK 2010-Jan-31, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Jan-31, SIN-BKK 2010-Jan-31, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Jan-31, SIN-BKK 2010-Jan-31, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Jan-31, SIN-BKK 2010-Jan-31, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-01
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-01, SIN-BKK, 2010-Feb-01, 08:20:00, 2010-Feb-01, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-01, SIN-BKK 2010-Feb-01, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-01, SIN-BKK 2010-Feb-01, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-01, SIN-BKK 2010-Feb-01, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-01, SIN-BKK 2010-Feb-01, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-01, SIN-BKK 2010-Feb-01, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-02
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-02, SIN-BKK, 2010-Feb-02, 08:20:00, 2010-Feb-02, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-02, SIN-BKK 2010-Feb-02, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-02, SIN-BKK 2010-Feb-02, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-02, SIN-BKK 2010-Feb-02, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-02, SIN-BKK 2010-Feb-02, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-02, SIN-BKK 2010-Feb-02, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-03
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-03, SIN-BKK, 2010-Feb-03, 08:20:00, 2010-Feb-03, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-03, SIN-BKK 2010-Feb-03, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-03, SIN-BKK 2010-Feb-03, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-03, SIN-BKK 2010-Feb-03, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-03, SIN-BKK 2010-Feb-03, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-03, SIN-BKK 2010-Feb-03, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-04
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-04, SIN-BKK, 2010-Feb-04, 08:20:00, 2010-Feb-04, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-04, SIN-BKK 2010-Feb-04, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-04, SIN-BKK 2010-Feb-04, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-04, SIN-BKK 2010-Feb-04, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-04, SIN-BKK 2010-Feb-04, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-04, SIN-BKK 2010-Feb-04, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-05
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-05, SIN-BKK, 2010-Feb-05, 08:20:00, 2010-Feb-05, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-05, SIN-BKK 2010-Feb-05, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-05, SIN-BKK 2010-Feb-05, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-05, SIN-BKK 2010-Feb-05, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-05, SIN-BKK 2010-Feb-05, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-05, SIN-BKK 2010-Feb-05, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-06
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-06, SIN-BKK, 2010-Feb-06, 08:20:00, 2010-Feb-06, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-06, SIN-BKK 2010-Feb-06, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-06, SIN-BKK 2010-Feb-06, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-06, SIN-BKK 2010-Feb-06, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-06, SIN-BKK 2010-Feb-06, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-06, SIN-BKK 2010-Feb-06, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-07
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-07, SIN-BKK, 2010-Feb-07, 08:20:00, 2010-Feb-07, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-07, SIN-BKK 2010-Feb-07, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-07, SIN-BKK 2010-Feb-07, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-07, SIN-BKK 2010-Feb-07, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-07, SIN-BKK 2010-Feb-07, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-07, SIN-BKK 2010-Feb-07, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-08
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-08, SIN-BKK, 2010-Feb-08, 08:20:00, 2010-Feb-08, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-08, SIN-BKK 2010-Feb-08, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-08, SIN-BKK 2010-Feb-08, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-08, SIN-BKK 2010-Feb-08, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-08, SIN-BKK 2010-Feb-08, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-08, SIN-BKK 2010-Feb-08, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-09
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-09, SIN-BKK, 2010-Feb-09, 08:20:00, 2010-Feb-09, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-09, SIN-BKK 2010-Feb-09, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-09, SIN-BKK 2010-Feb-09, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-09, SIN-BKK 2010-Feb-09, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-09, SIN-BKK 2010-Feb-09, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-09, SIN-BKK 2010-Feb-09, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-10
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-10, SIN-BKK, 2010-Feb-10, 08:20:00, 2010-Feb-10, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-10, SIN-BKK 2010-Feb-10, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-10, SIN-BKK 2010-Feb-10, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-10, SIN-BKK 2010-Feb-10, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-10, SIN-BKK 2010-Feb-10, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-10, SIN-BKK 2010-Feb-10, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-11
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-11, SIN-BKK, 2010-Feb-11, 08:20:00, 2010-Feb-11, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-11, SIN-BKK 2010-Feb-11, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-11, SIN-BKK 2010-Feb-11, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-11, SIN-BKK 2010-Feb-11, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-11, SIN-BKK 2010-Feb-11, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-11, SIN-BKK 2010-Feb-11, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-12
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-12, SIN-BKK, 2010-Feb-12, 08:20:00, 2010-Feb-12, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-12, SIN-BKK 2010-Feb-12, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-12, SIN-BKK 2010-Feb-12, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-12, SIN-BKK 2010-Feb-12, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-12, SIN-BKK 2010-Feb-12, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-12, SIN-BKK 2010-Feb-12, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-13
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-13, SIN-BKK, 2010-Feb-13, 08:20:00, 2010-Feb-13, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-13, SIN-BKK 2010-Feb-13, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-13, SIN-BKK 2010-Feb-13, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-13, SIN-BKK 2010-Feb-13, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-13, SIN-BKK 2010-Feb-13, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-13, SIN-BKK 2010-Feb-13, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-14
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-14, SIN-BKK, 2010-Feb-14, 08:20:00, 2010-Feb-14, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-14, SIN-BKK 2010-Feb-14, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-14, SIN-BKK 2010-Feb-14, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-14, SIN-BKK 2010-Feb-14, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-14, SIN-BKK 2010-Feb-14, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-14, SIN-BKK 2010-Feb-14, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-15
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-15, SIN-BKK, 2010-Feb-15, 08:20:00, 2010-Feb-15, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-15, SIN-BKK 2010-Feb-15, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-15, SIN-BKK 2010-Feb-15, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-15, SIN-BKK 2010-Feb-15, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-15, SIN-BKK 2010-Feb-15, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-15, SIN-BKK 2010-Feb-15, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-16
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-16, SIN-BKK, 2010-Feb-16, 08:20:00, 2010-Feb-16, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-16, SIN-BKK 2010-Feb-16, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-16, SIN-BKK 2010-Feb-16, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-16, SIN-BKK 2010-Feb-16, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-16, SIN-BKK 2010-Feb-16, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-16, SIN-BKK 2010-Feb-16, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-17
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-17, SIN-BKK, 2010-Feb-17, 08:20:00, 2010-Feb-17, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-17, SIN-BKK 2010-Feb-17, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-17, SIN-BKK 2010-Feb-17, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-17, SIN-BKK 2010-Feb-17, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-17, SIN-BKK 2010-Feb-17, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-17, SIN-BKK 2010-Feb-17, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-18
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-18, SIN-BKK, 2010-Feb-18, 08:20:00, 2010-Feb-18, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-18, SIN-BKK 2010-Feb-18, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-18, SIN-BKK 2010-Feb-18, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-18, SIN-BKK 2010-Feb-18, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-18, SIN-BKK 2010-Feb-18, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-18, SIN-BKK 2010-Feb-18, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-19
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-19, SIN-BKK, 2010-Feb-19, 08:20:00, 2010-Feb-19, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-19, SIN-BKK 2010-Feb-19, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-19, SIN-BKK 2010-Feb-19, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-19, SIN-BKK 2010-Feb-19, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-19, SIN-BKK 2010-Feb-19, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-19, SIN-BKK 2010-Feb-19, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-20
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-20, SIN-BKK, 2010-Feb-20, 08:20:00, 2010-Feb-20, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-20, SIN-BKK 2010-Feb-20, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-20, SIN-BKK 2010-Feb-20, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-20, SIN-BKK 2010-Feb-20, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-20, SIN-BKK 2010-Feb-20, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-20, SIN-BKK 2010-Feb-20, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-21
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-21, SIN-BKK, 2010-Feb-21, 08:20:00, 2010-Feb-21, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-21, SIN-BKK 2010-Feb-21, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-21, SIN-BKK 2010-Feb-21, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-21, SIN-BKK 2010-Feb-21, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-21, SIN-BKK 2010-Feb-21, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-21, SIN-BKK 2010-Feb-21, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-22
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-22, SIN-BKK, 2010-Feb-22, 08:20:00, 2010-Feb-22, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-22, SIN-BKK 2010-Feb-22, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-22, SIN-BKK 2010-Feb-22, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-22, SIN-BKK 2010-Feb-22, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-22, SIN-BKK 2010-Feb-22, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-22, SIN-BKK 2010-Feb-22, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-23
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-23, SIN-BKK, 2010-Feb-23, 08:20:00, 2010-Feb-23, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-23, SIN-BKK 2010-Feb-23, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-23, SIN-BKK 2010-Feb-23, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-23, SIN-BKK 2010-Feb-23, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-23, SIN-BKK 2010-Feb-23, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-23, SIN-BKK 2010-Feb-23, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-24
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-24, SIN-BKK, 2010-Feb-24, 08:20:00, 2010-Feb-24, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-24, SIN-BKK 2010-Feb-24, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-24, SIN-BKK 2010-Feb-24, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-24, SIN-BKK 2010-Feb-24, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-24, SIN-BKK 2010-Feb-24, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-24, SIN-BKK 2010-Feb-24, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-25
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-25, SIN-BKK, 2010-Feb-25, 08:20:00, 2010-Feb-25, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-25, SIN-BKK 2010-Feb-25, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-25, SIN-BKK 2010-Feb-25, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-25, SIN-BKK 2010-Feb-25, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-25, SIN-BKK 2010-Feb-25, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-25, SIN-BKK 2010-Feb-25, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-26
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-26, SIN-BKK, 2010-Feb-26, 08:20:00, 2010-Feb-26, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-26, SIN-BKK 2010-Feb-26, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-26, SIN-BKK 2010-Feb-26, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-26, SIN-BKK 2010-Feb-26, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-26, SIN-BKK 2010-Feb-26, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-26, SIN-BKK 2010-Feb-26, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-27
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-27, SIN-BKK, 2010-Feb-27, 08:20:00, 2010-Feb-27, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-27, SIN-BKK 2010-Feb-27, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-27, SIN-BKK 2010-Feb-27, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-27, SIN-BKK 2010-Feb-27, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-27, SIN-BKK 2010-Feb-27, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-27, SIN-BKK 2010-Feb-27, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ11, 2010-Feb-28
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ11 2010-Feb-28, SIN-BKK, 2010-Feb-28, 08:20:00, 2010-Feb-28, 11:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ11 2010-Feb-28, SIN-BKK 2010-Feb-28, Y, 300, 300, 0, 0, 0, 0, 0, 0, 0, 0, 300, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ11 2010-Feb-28, SIN-BKK 2010-Feb-28, Y, 1, 0, 0, 0, 0, 300, 0, 
+SQ11 2010-Feb-28, SIN-BKK 2010-Feb-28, Y, 2, 0, 0, 0, 0, 300, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ11 2010-Feb-28, SIN-BKK 2010-Feb-28, Y, 1, Y, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ11 2010-Feb-28, SIN-BKK 2010-Feb-28, Y, 2, M, 300 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-15
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-15, SIN-HND, 2010-Jan-15, 09:20:00, 2010-Jan-15, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-15, SIN-HND 2010-Jan-15, Y, 200, 200, 2.082e+121, 5.53287e-48, 5.20268e-90, 0, 1.31346e-47, 1.05119e-153, 2.78986e+179, 0, 200, 9, 3.66962e-62, 1.0854e-71, 6.74783e-67, 6.9835e-77, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-15, SIN-HND 2010-Jan-15, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-15, SIN-HND 2010-Jan-15, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-15, SIN-HND 2010-Jan-15, Y, 1, Y13856, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-15, SIN-HND 2010-Jan-15, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-16
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-16, SIN-HND, 2010-Jan-16, 09:20:00, 2010-Jan-16, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-16, SIN-HND 2010-Jan-16, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 2.63638e-319, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-16, SIN-HND 2010-Jan-16, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-16, SIN-HND 2010-Jan-16, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-16, SIN-HND 2010-Jan-16, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-16, SIN-HND 2010-Jan-16, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-17
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-17, SIN-HND, 2010-Jan-17, 09:20:00, 2010-Jan-17, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-17, SIN-HND 2010-Jan-17, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 2.39291e-319, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-17, SIN-HND 2010-Jan-17, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-17, SIN-HND 2010-Jan-17, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-17, SIN-HND 2010-Jan-17, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-17, SIN-HND 2010-Jan-17, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-18
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-18, SIN-HND, 2010-Jan-18, 09:20:00, 2010-Jan-18, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-18, SIN-HND 2010-Jan-18, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 2.14469e-319, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-18, SIN-HND 2010-Jan-18, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-18, SIN-HND 2010-Jan-18, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-18, SIN-HND 2010-Jan-18, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-18, SIN-HND 2010-Jan-18, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-19
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-19, SIN-HND, 2010-Jan-19, 09:20:00, 2010-Jan-19, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-19, SIN-HND 2010-Jan-19, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-19, SIN-HND 2010-Jan-19, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-19, SIN-HND 2010-Jan-19, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-19, SIN-HND 2010-Jan-19, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-19, SIN-HND 2010-Jan-19, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-20
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-20, SIN-HND, 2010-Jan-20, 09:20:00, 2010-Jan-20, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-20, SIN-HND 2010-Jan-20, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-20, SIN-HND 2010-Jan-20, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-20, SIN-HND 2010-Jan-20, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-20, SIN-HND 2010-Jan-20, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-20, SIN-HND 2010-Jan-20, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-21
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-21, SIN-HND, 2010-Jan-21, 09:20:00, 2010-Jan-21, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-21, SIN-HND 2010-Jan-21, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-21, SIN-HND 2010-Jan-21, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-21, SIN-HND 2010-Jan-21, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-21, SIN-HND 2010-Jan-21, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-21, SIN-HND 2010-Jan-21, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-22
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-22, SIN-HND, 2010-Jan-22, 09:20:00, 2010-Jan-22, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-22, SIN-HND 2010-Jan-22, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-22, SIN-HND 2010-Jan-22, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-22, SIN-HND 2010-Jan-22, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-22, SIN-HND 2010-Jan-22, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-22, SIN-HND 2010-Jan-22, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-23
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-23, SIN-HND, 2010-Jan-23, 09:20:00, 2010-Jan-23, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-23, SIN-HND 2010-Jan-23, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-23, SIN-HND 2010-Jan-23, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-23, SIN-HND 2010-Jan-23, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-23, SIN-HND 2010-Jan-23, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-23, SIN-HND 2010-Jan-23, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-24
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-24, SIN-HND, 2010-Jan-24, 09:20:00, 2010-Jan-24, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-24, SIN-HND 2010-Jan-24, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-24, SIN-HND 2010-Jan-24, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-24, SIN-HND 2010-Jan-24, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-24, SIN-HND 2010-Jan-24, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-24, SIN-HND 2010-Jan-24, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-25
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-25, SIN-HND, 2010-Jan-25, 09:20:00, 2010-Jan-25, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-25, SIN-HND 2010-Jan-25, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-25, SIN-HND 2010-Jan-25, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-25, SIN-HND 2010-Jan-25, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-25, SIN-HND 2010-Jan-25, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-25, SIN-HND 2010-Jan-25, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-26
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-26, SIN-HND, 2010-Jan-26, 09:20:00, 2010-Jan-26, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-26, SIN-HND 2010-Jan-26, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-26, SIN-HND 2010-Jan-26, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-26, SIN-HND 2010-Jan-26, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-26, SIN-HND 2010-Jan-26, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-26, SIN-HND 2010-Jan-26, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-27
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-27, SIN-HND, 2010-Jan-27, 09:20:00, 2010-Jan-27, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-27, SIN-HND 2010-Jan-27, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-27, SIN-HND 2010-Jan-27, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-27, SIN-HND 2010-Jan-27, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-27, SIN-HND 2010-Jan-27, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-27, SIN-HND 2010-Jan-27, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-28
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-28, SIN-HND, 2010-Jan-28, 09:20:00, 2010-Jan-28, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-28, SIN-HND 2010-Jan-28, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-28, SIN-HND 2010-Jan-28, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-28, SIN-HND 2010-Jan-28, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-28, SIN-HND 2010-Jan-28, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-28, SIN-HND 2010-Jan-28, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-29
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-29, SIN-HND, 2010-Jan-29, 09:20:00, 2010-Jan-29, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-29, SIN-HND 2010-Jan-29, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-29, SIN-HND 2010-Jan-29, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-29, SIN-HND 2010-Jan-29, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-29, SIN-HND 2010-Jan-29, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-29, SIN-HND 2010-Jan-29, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-30
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-30, SIN-HND, 2010-Jan-30, 09:20:00, 2010-Jan-30, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-30, SIN-HND 2010-Jan-30, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-30, SIN-HND 2010-Jan-30, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-30, SIN-HND 2010-Jan-30, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-30, SIN-HND 2010-Jan-30, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-30, SIN-HND 2010-Jan-30, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Jan-31
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Jan-31, SIN-HND, 2010-Jan-31, 09:20:00, 2010-Jan-31, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Jan-31, SIN-HND 2010-Jan-31, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Jan-31, SIN-HND 2010-Jan-31, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Jan-31, SIN-HND 2010-Jan-31, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Jan-31, SIN-HND 2010-Jan-31, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Jan-31, SIN-HND 2010-Jan-31, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-01
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-01, SIN-HND, 2010-Feb-01, 09:20:00, 2010-Feb-01, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-01, SIN-HND 2010-Feb-01, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-01, SIN-HND 2010-Feb-01, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-01, SIN-HND 2010-Feb-01, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-01, SIN-HND 2010-Feb-01, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-01, SIN-HND 2010-Feb-01, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-02
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-02, SIN-HND, 2010-Feb-02, 09:20:00, 2010-Feb-02, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-02, SIN-HND 2010-Feb-02, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-02, SIN-HND 2010-Feb-02, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-02, SIN-HND 2010-Feb-02, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-02, SIN-HND 2010-Feb-02, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-02, SIN-HND 2010-Feb-02, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-03
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-03, SIN-HND, 2010-Feb-03, 09:20:00, 2010-Feb-03, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-03, SIN-HND 2010-Feb-03, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-03, SIN-HND 2010-Feb-03, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-03, SIN-HND 2010-Feb-03, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-03, SIN-HND 2010-Feb-03, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-03, SIN-HND 2010-Feb-03, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-04
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-04, SIN-HND, 2010-Feb-04, 09:20:00, 2010-Feb-04, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-04, SIN-HND 2010-Feb-04, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-04, SIN-HND 2010-Feb-04, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-04, SIN-HND 2010-Feb-04, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-04, SIN-HND 2010-Feb-04, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-04, SIN-HND 2010-Feb-04, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-05
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-05, SIN-HND, 2010-Feb-05, 09:20:00, 2010-Feb-05, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-05, SIN-HND 2010-Feb-05, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-05, SIN-HND 2010-Feb-05, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-05, SIN-HND 2010-Feb-05, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-05, SIN-HND 2010-Feb-05, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-05, SIN-HND 2010-Feb-05, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-06
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-06, SIN-HND, 2010-Feb-06, 09:20:00, 2010-Feb-06, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-06, SIN-HND 2010-Feb-06, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-06, SIN-HND 2010-Feb-06, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-06, SIN-HND 2010-Feb-06, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-06, SIN-HND 2010-Feb-06, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-06, SIN-HND 2010-Feb-06, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-07
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-07, SIN-HND, 2010-Feb-07, 09:20:00, 2010-Feb-07, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-07, SIN-HND 2010-Feb-07, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-07, SIN-HND 2010-Feb-07, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-07, SIN-HND 2010-Feb-07, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-07, SIN-HND 2010-Feb-07, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-07, SIN-HND 2010-Feb-07, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-08
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-08, SIN-HND, 2010-Feb-08, 09:20:00, 2010-Feb-08, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-08, SIN-HND 2010-Feb-08, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-08, SIN-HND 2010-Feb-08, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-08, SIN-HND 2010-Feb-08, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-08, SIN-HND 2010-Feb-08, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-08, SIN-HND 2010-Feb-08, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-09
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-09, SIN-HND, 2010-Feb-09, 09:20:00, 2010-Feb-09, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-09, SIN-HND 2010-Feb-09, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-09, SIN-HND 2010-Feb-09, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-09, SIN-HND 2010-Feb-09, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-09, SIN-HND 2010-Feb-09, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-09, SIN-HND 2010-Feb-09, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-10
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-10, SIN-HND, 2010-Feb-10, 09:20:00, 2010-Feb-10, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-10, SIN-HND 2010-Feb-10, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-10, SIN-HND 2010-Feb-10, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-10, SIN-HND 2010-Feb-10, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-10, SIN-HND 2010-Feb-10, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-10, SIN-HND 2010-Feb-10, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-11
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-11, SIN-HND, 2010-Feb-11, 09:20:00, 2010-Feb-11, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-11, SIN-HND 2010-Feb-11, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-11, SIN-HND 2010-Feb-11, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-11, SIN-HND 2010-Feb-11, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-11, SIN-HND 2010-Feb-11, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-11, SIN-HND 2010-Feb-11, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-12
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-12, SIN-HND, 2010-Feb-12, 09:20:00, 2010-Feb-12, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-12, SIN-HND 2010-Feb-12, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-12, SIN-HND 2010-Feb-12, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-12, SIN-HND 2010-Feb-12, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-12, SIN-HND 2010-Feb-12, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-12, SIN-HND 2010-Feb-12, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-13
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-13, SIN-HND, 2010-Feb-13, 09:20:00, 2010-Feb-13, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-13, SIN-HND 2010-Feb-13, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-13, SIN-HND 2010-Feb-13, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-13, SIN-HND 2010-Feb-13, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-13, SIN-HND 2010-Feb-13, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-13, SIN-HND 2010-Feb-13, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-14
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-14, SIN-HND, 2010-Feb-14, 09:20:00, 2010-Feb-14, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-14, SIN-HND 2010-Feb-14, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-14, SIN-HND 2010-Feb-14, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-14, SIN-HND 2010-Feb-14, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-14, SIN-HND 2010-Feb-14, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-14, SIN-HND 2010-Feb-14, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-15
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-15, SIN-HND, 2010-Feb-15, 09:20:00, 2010-Feb-15, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-15, SIN-HND 2010-Feb-15, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-15, SIN-HND 2010-Feb-15, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-15, SIN-HND 2010-Feb-15, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-15, SIN-HND 2010-Feb-15, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-15, SIN-HND 2010-Feb-15, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-16
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-16, SIN-HND, 2010-Feb-16, 09:20:00, 2010-Feb-16, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-16, SIN-HND 2010-Feb-16, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-16, SIN-HND 2010-Feb-16, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-16, SIN-HND 2010-Feb-16, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-16, SIN-HND 2010-Feb-16, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-16, SIN-HND 2010-Feb-16, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-17
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-17, SIN-HND, 2010-Feb-17, 09:20:00, 2010-Feb-17, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-17, SIN-HND 2010-Feb-17, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-17, SIN-HND 2010-Feb-17, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-17, SIN-HND 2010-Feb-17, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-17, SIN-HND 2010-Feb-17, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-17, SIN-HND 2010-Feb-17, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-18
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-18, SIN-HND, 2010-Feb-18, 09:20:00, 2010-Feb-18, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-18, SIN-HND 2010-Feb-18, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-18, SIN-HND 2010-Feb-18, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-18, SIN-HND 2010-Feb-18, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-18, SIN-HND 2010-Feb-18, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-18, SIN-HND 2010-Feb-18, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-19
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-19, SIN-HND, 2010-Feb-19, 09:20:00, 2010-Feb-19, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-19, SIN-HND 2010-Feb-19, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-19, SIN-HND 2010-Feb-19, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-19, SIN-HND 2010-Feb-19, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-19, SIN-HND 2010-Feb-19, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-19, SIN-HND 2010-Feb-19, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-20
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-20, SIN-HND, 2010-Feb-20, 09:20:00, 2010-Feb-20, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-20, SIN-HND 2010-Feb-20, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-20, SIN-HND 2010-Feb-20, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-20, SIN-HND 2010-Feb-20, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-20, SIN-HND 2010-Feb-20, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-20, SIN-HND 2010-Feb-20, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-21
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-21, SIN-HND, 2010-Feb-21, 09:20:00, 2010-Feb-21, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-21, SIN-HND 2010-Feb-21, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-21, SIN-HND 2010-Feb-21, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-21, SIN-HND 2010-Feb-21, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-21, SIN-HND 2010-Feb-21, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-21, SIN-HND 2010-Feb-21, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-22
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-22, SIN-HND, 2010-Feb-22, 09:20:00, 2010-Feb-22, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-22, SIN-HND 2010-Feb-22, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-22, SIN-HND 2010-Feb-22, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-22, SIN-HND 2010-Feb-22, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-22, SIN-HND 2010-Feb-22, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-22, SIN-HND 2010-Feb-22, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-23
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-23, SIN-HND, 2010-Feb-23, 09:20:00, 2010-Feb-23, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-23, SIN-HND 2010-Feb-23, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-23, SIN-HND 2010-Feb-23, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-23, SIN-HND 2010-Feb-23, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-23, SIN-HND 2010-Feb-23, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-23, SIN-HND 2010-Feb-23, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-24
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-24, SIN-HND, 2010-Feb-24, 09:20:00, 2010-Feb-24, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-24, SIN-HND 2010-Feb-24, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-24, SIN-HND 2010-Feb-24, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-24, SIN-HND 2010-Feb-24, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-24, SIN-HND 2010-Feb-24, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-24, SIN-HND 2010-Feb-24, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-25
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-25, SIN-HND, 2010-Feb-25, 09:20:00, 2010-Feb-25, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-25, SIN-HND 2010-Feb-25, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-25, SIN-HND 2010-Feb-25, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-25, SIN-HND 2010-Feb-25, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-25, SIN-HND 2010-Feb-25, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-25, SIN-HND 2010-Feb-25, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-26
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-26, SIN-HND, 2010-Feb-26, 09:20:00, 2010-Feb-26, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-26, SIN-HND 2010-Feb-26, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-26, SIN-HND 2010-Feb-26, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-26, SIN-HND 2010-Feb-26, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-26, SIN-HND 2010-Feb-26, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-26, SIN-HND 2010-Feb-26, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-27
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-27, SIN-HND, 2010-Feb-27, 09:20:00, 2010-Feb-27, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-27, SIN-HND 2010-Feb-27, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-27, SIN-HND 2010-Feb-27, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-27, SIN-HND 2010-Feb-27, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-27, SIN-HND 2010-Feb-27, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-27, SIN-HND 2010-Feb-27, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+FlightDate: SQ12, 2010-Feb-28
+******************************************
+******************************************
+Leg-Dates:
+----------
+Flight, Leg, BoardDate, BoardTime, OffDate, OffTime, Date Offset, Time Offset, Elapsed, Distance, Capacity, 
+SQ12 2010-Feb-28, SIN-HND, 2010-Feb-28, 09:20:00, 2010-Feb-28, 12:00:00, 07:40:00, 0, -05:00:00, 6300, 0, 
+******************************************
+******************************************
+LegCabins:
+----------
+Flight, Leg, Cabin, OffedCAP, PhyCAP, RgdADJ, AU, UPR, SS, Staff, WL, Group, CommSpace, AvPool, Avl, NAV, GAV, ACP, ETB, BidPrice, 
+SQ12 2010-Feb-28, SIN-HND 2010-Feb-28, Y, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 200, 9, 0, 0, 0, 0, 0, 
+******************************************
+******************************************
+Buckets:
+--------
+Flight, Leg, Cabin, Yield, AU/SI, SS, AV, 
+******************************************
+******************************************
+SegmentCabins:
+--------------
+Flight, Segment, Cabin, FF, Bkgs, MIN, UPR, CommSpace, AvPool, BP, 
+SQ12 2010-Feb-28, SIN-HND 2010-Feb-28, Y, 1, 0, 0, 0, 0, 200, 0, 
+SQ12 2010-Feb-28, SIN-HND 2010-Feb-28, Y, 2, 0, 0, 0, 0, 200, 0, 
+******************************************
+******************************************
+Subclasses:
+-----------
+Flight, Segment, Cabin, FF, Subclass, MIN/AU (Prot), Nego, NS%, OB%, Bkgs, GrpBks (pdg), StfBkgs, WLBkgs, ETB, ClassAvl, RevAvl, SegAvl, 
+SQ12 2010-Feb-28, SIN-HND 2010-Feb-28, Y, 1, Y, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+SQ12 2010-Feb-28, SIN-HND 2010-Feb-28, Y, 2, M, 200 (0), 0, 0, 0, 0, 0 (0), 0, 0, 0, 0, 0, 0, 
+******************************************
+
