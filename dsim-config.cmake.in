@@ -1,20 +1,22 @@
 #
 # Config file for the DSim package. It defines the following variables:
+#  DSIM_VERSION      - version of DSim
+#  DSIM_BINARY_DIRS  - binary directories for DSim
 #  DSIM_INCLUDE_DIRS - include directories for DSim
 #  DSIM_LIBRARY_DIRS - library directories for DSim (normally not used!)
-#  DSIM_BINARY_DIRS  - binary directories for DSim (normally not used!)
 #  DSIM_LIBRARIES    - libraries to link against
 #  DSIM_EXECUTABLES  - the DSim binaries/executables
 
 # Tell the user project where to find DSim headers and libraries
+set (DSIM_VERSION "@PACKAGE_VERSION@")
+set (DSIM_BINARY_DIRS "@DSIM_BIN_DIR@")
 set (DSIM_INCLUDE_DIRS "@DSIM_INCLUDE_DIRS@")
 set (DSIM_LIBRARY_DIRS "@DSIM_LIB_DIR@")
-set (DSIM_BINARY_DIRS "@DSIM_BIN_DIR@")
 
 # Library dependencies for DSim (contains definitions for the DSim IMPORTED
 # targets)
 include ("@DSIM_CMAKE_DIR@/dsim-library-depends.cmake")
 
 # These are the DSim IMPORTED targets, created by dsim-library-depends.cmake
-set (DSIM_LIBRARIES airraclib dsimlib)
+set (DSIM_LIBRARIES dsimlib)
 set (DSIM_EXECUTABLES dsim)
