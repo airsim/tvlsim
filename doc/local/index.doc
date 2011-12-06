@@ -1,0 +1,118 @@
+/*!
+\mainpage DSim Documentation
+
+\htmlonly
+<!-- start of main block -->
+<div style="width: 100%;">
+<!-- start of right margin -->
+<div style="float:right; width:200px; background-color: #eeeeff; 
+     border: 1px solid #b0b0b0; margin: 0 0 10px 20px; padding: 10px; 
+     font-size: 90%;">
+\endhtmlonly
+
+\section getting_started Getting Started
+
+- \ref features
+- \ref installation
+- \ref linking
+- \ref users_guide
+- \ref tutorials
+- \ref copyright
+- \ref help_wanted
+- \ref howto_release
+- \ref authors
+
+\section at_sourceforge DSim at SourceForge
+- <a href="http://sourceforge.net/projects/dsim/">Project page</a>
+- <a href="http://sourceforge.net/project/showfiles.php?group_id=267805">Download DSim</a>
+- <a href="https://sourceforge.net/apps/trac/dsim/newticket">Open a ticket for
+  a bug or feature</a>
+- <a href="http://sourceforge.net/mail/?group_id=267805">Mailing lists</a>
+- <a href="https://sourceforge.net/apps/phpbb/dsim/">Forums</a>
+  - <a href="https://sourceforge.net/apps/phpbb/dsim/viewforum.php?f=1">Discuss
+  about Development issues</a>
+  - <a href="https://sourceforge.net/apps/phpbb/dsim/viewforum.php?f=2">Ask for
+  Help</a>
+  - <a href="https://sourceforge.net/apps/phpbb/dsim/viewforum.php?f=3">Discuss
+  DSim</a>
+
+
+\section development DSim Development
+- <a href="http://dsim.git.sourceforge.net/git/gitweb.cgi?p=dsim/dsim;a=tree;h=refs/heads/trunk;hb=trunk">Git Repository</a> (Subversion is deprecated)
+- \ref coding_rules
+- \ref documentation
+- \ref test
+
+
+\section external_libs External Libraries
+- <a href="http://www.boost.org">Boost (C++ STL extensions)</a>
+- <a href="http://www.python.org/">Python</a>
+- <a href="http://dev.mysql.com/">MySQL client</a>
+- <a href="http://soci.sourceforge.net/">SOCI (C++ DB API)</a>
+
+\section social_sponsorship Support DSim
+\htmlonly
+<table width="100%">
+ <tr>
+  <td align="left" valign="middle">
+   <a href="http://twitter.com/share" class="twitter-share-button"
+	  data-count="none" data-via="denis_arnaud">Tweet</a>
+   <script type="text/javascript" 
+		   src="http://platform.twitter.com/widgets.js"></script>
+  </td>
+  <td align="right" valign="middle">
+   <g:plusone></g:plusone> 
+  </td>
+ </tr>
+</table>
+\endhtmlonly
+
+\htmlonly
+</div>
+<!-- end of right margin -->
+\endhtmlonly
+
+\section about About DSim
+
+DSim is a C++ library of classes and functions coordinating other open
+source modules dedicated at simulating an airline market, with all its
+corresponding IT systems. For instance, DSim uses the standard airline
+IT (StdAir: http://sourceforge.net/projects/stdair/) and Revenue
+Management (RMOL: http://sourceforge.net/projects/rmol/) libraries.  \ref N
+
+DSim makes an extensive use of existing open-source libraries for
+increased functionality, speed and accuracy. In particular the
+<a href="http://www.boost.org">Boost</a> (<em>C++ Standard Extensions</em>)
+library is used.
+
+The DSim library originates from the department of Operational
+Research and Innovation at <a href="http://www.amadeus.com">Amadeus</a>,
+Sophia Antipolis, France. DSim is released under the terms of the
+<a href="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public
+License</a> (LGPLv2) for you to enjoy.
+
+DSim should work on
+<a href="http://en.wikipedia.org/wiki/GNU/Linux">GNU/Linux</a>,
+<a href="http://www.sun.com/software/solaris/">Sun Solaris</a>,
+Microsoft Windows (with <a href="http://www.cygwin.com/">Cygwin</a>,
+<a href="http://www.mingw.org/">MinGW/MSYS</a>, or 
+<a href="http://msdn.microsoft.com/visualc/">Microsoft Visual C++ .NET</a>) and
+<a href="http://www.apple.com/macosx/">Mac OS X</a> operating systems.
+
+
+\note
+\anchor N
+(N) - The DSim library is \b NOT intended, in any way, to be used by
+any entity for production systems. If you want to report issue, bug or 
+feature request, or if you just want to give feedback, have a look on 
+the right-hand side of this page for the preferred reporting methods.
+In any case, please do not contact Amadeus directly for any matter
+related to DSim.
+
+
+\htmlonly
+</div>
+<!-- end of main block -->
+\endhtmlonly
+
+*/

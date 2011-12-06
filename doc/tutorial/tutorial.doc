@@ -1,33 +1,169 @@
 /*! 
-\page tutorial Tutorials
-\addindex Tutorial
+\page tutorials Tutorials
 
-This page contains some tutorial examples that will help you getting
-started using IT++. Most examples show how to construct some simple
-communication system simulations. The source codes for these examples
-can be found in \c {ITPP_HOME}/doc/tutorial/src.
+\section tut_toc Table of Contents
+- \ref tut_configuration
+- \ref tut_procedure
+ - \ref tut_procedure_summary
+ - \ref tut_procedure_results
+- \ref tut_how_network_building_file
+ - \ref tut_how_build_network_file
+ - \ref tut_how_network_building
+ - \ref tut_how_network_building_result
 
-Examples of basic functionality:
-- \ref vector_and_matrix
-- \ref itfile
-- \ref timer
+\section tut_configuration Preparing the AirSched Project for Development
 
-Examples of communications related functions:
-- \ref bpsk
-- \ref interleaver
-- \ref qpsk_simulation
-- \ref reedsolomon
-- \ref convcode
-- \ref spread
-- \ref rayleigh
+The source code for these examples can be found in the
+<tt>batches</tt> and <tt>test/airsched</tt> directories. They are
+compiled along with the rest of the \c AirSched project. See the 
+\ref users_guide for more details on how to build the \c AirSched
+project.
 
-More specialized examples:
-- \ref mimoconv
-- \ref ldpc_gen_codes
-- \ref ldpc_bersim_awgn
-- \ref mog
+\section tut_procedure Your first networkBuilde
 
-Other:
-- \ref matlab_itpp
+\subsection tut_procedure_summary Summary of the different steps
+
+All the steps below can be found in the same order in the batch
+<tt>AirSched.cpp</tt> program.
+
+First, we instanciate the AIRSCHED_Service object:
+
+\dontinclude AirSched.cpp
+\skipline logOutputFile
+\skipline lLogParams
+\skipline AirSchedService
+
+Then, we construct a default sample list of travel solutions and a default 
+booking request (as mentionned in \ref ug_procedure_bookingrequest and
+ \ref ug_procedure_travelsolution parts):
+
+\dontinclude airsched.cpp
+\skipline TravelSolutionList_T
+\line lTravelSolutionList
+\skipline BookingRequestStruct
+\line AirSchedService
+
+For basic use, the default BOM tree can be built using:
+\dontinclude AirSched.cpp
+\skipline buildSampleBom()
+
+The main step is the network building (see \ref ug_procedure):
+\dontinclude AirSched.cpp
+\skipline buildePrices
+
+\subsection tut_procedure_results Result of the Batch Program
+
+When the <tt>AirSched.cpp</tt> program is run (with the <tt>-b</tt>
+option), the log output file should look like:
+
+\include AirSched.ref
+
+What is interesting is to compare the travel solution list (here reduced to a 
+single travel solution) displayed before:
+
+\dontinclude AirSched.ref
+\skipline [0]
+
+and after the network building:
+
+\skipline [0]
+
+Between the two groups of dashes, we can see that a network option
+structure has been added by the network builder: the price is 450 EUR for
+the Y class, the ticket is refundable but there are exchange fees and
+the customer must stay over on saturday night.
+
+Let's return to our default BOM tree display: the only network rule stored was a 
+match for the travel solution into consideration (same origin airport, same 
+destination airport, flight date included in the network rule date range, same 
+airline "BA", ...).
+
+By looking at the network rule trip type "RT", we can guess we face a round trip 
+network: that means the price given in the default bom tree construction in 
+<tt>stdair::CmdBomManager.hpp</tt> has been divided by 2 because we are 
+considering either an inbound trip or an outbound one.
+
+\section tut_how_network_building_file Network building with an input file
+
+\subsection tut_how_build_network_file How to build a network input file?
+
+The objective here is to build a network input file to network builde the default 
+travel solution list built using:
+
+\dontinclude AirSched.cpp
+\skipline TravelSolutionList_T
+\line lTravelSolutionList
+
+This travel solution list, reduced to a singleton, can be displayed as done before:
+
+\dontinclude dsim.ref
+\skipline [0]
+
+We deduce:
+- we need a network rule whose origin-destination couple is "LHR, SYD".
+- the date range must include the date "2011-06-10".
+- the time range must include the time "21:45".
+- the airline operating is "BA", so it must be the airline pricing.
+
+We can deduce a part of our network rule file :
+
+\include networkFile0.ref
+
+We have no information about stay duration and advance purchase 
+(such information are contained into the booking request): 
+so let us put "0" to embrace all the requests possible.
+
+No information for the point-of-sale and the channel too: let us consider 
+all the channels ("IN", "DN", "IF" and DF") and all the points of sale 
+(the origin "LHR", the destination "SYD" and the rest-of-the-world "ROW")
+ existing. To access this information, we could look into the default 
+booking request.
+
+The input file is now:
+
+\include networkFile1.ref
+
+Let us say we have just the Economy cabin "Y" and Bristish Airways 
+prices ticket for class "Y".
+
+No information about the trip type, so we duplicate all the network rules
+for both type: one-way "OW" and round-trip "RT" (to access this information, 
+we could look to the default booking request).
+
+The network options are all set to a default value "T" (meaning true) and the 
+network values are chosen to be all distinct. 
+
+We obtain:
+
+\include networkFile2.ref
+
+\subsection tut_how_network_building Building the BOM tree  with an input file
+
+The steps are the same as before \ref tut_procedure_summary 
+except the bom tree must be built using the network input file :
+
+\dontinclude dsim.cpp
+\skipline parseAndLoad (lNetworkInputFilename);
+
+\subsection tut_how_network_building_result Result of the Batch Program
+
+When the <tt>AirSched.cpp</tt> program is run with the <tt>-f</tt>
+option linking with the file built just above:
+\verbatim 
+~/AirSched -f ~/<YourFileName>.csv 
+\endverbatim
+
+the last lines of the log output should look like:
+
+\verbatim 
+[D]~/AirSchedgit/AirSched/batches/AirSched.cpp:223: Travel solutions:
+    [0] [0] BA, 9, 2011-06-10, LHR, SYD, 21:45 --- Y, 145, 1 1 1 --- 
+\endverbatim
+
+We have just one network option added to the travel solution.  We can
+deduce from the price value 145 that the network builder used the
+network rule number 15 to price the travel solution.  We have an
+inbound or outbound trip of a round trip: the total price 290 has been
+divided by 2.
 
 */
