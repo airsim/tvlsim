@@ -18,7 +18,6 @@
 #include <stdair/stdair_exceptions.hpp>
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
-#include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
@@ -152,10 +151,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   
   // Initialise the simulation context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  const stdair::BasDBParams lDBParams ("dsim", "dsim", "localhost", "3306",
-                                       "sim_dsim");
   
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
+  DSIM::DSIM_Service dsimService (lLogParams, lStartDate, lEndDate,
                                   lRandomSeed);
 
   // Build the BOM tree from parsing input files
