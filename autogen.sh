@@ -93,10 +93,13 @@ cat > configure << _EOF
 # -----
 # The Hudson/Jenkins-based CI build-server often builds any simulator-related
 # projects with the same set up of options:
-# ./configure --with-stdair=/opt/stdair --with-trademgen=/opt/trademgen
+# ./configure --with-stdair=/opt/stdair
+#   --with-sevmgr=/opt/sevmgr --with-trademgen=/opt/trademgen
 #   --with-travelccm=/opt/travelccm --with-airsched=/opt/airsched
-#   --with-airrac=/opt/airrac --with-rmol=/opt/rmol --with-airinv=/opt/airinv
-#   --with-simfqt=/opt/simfqt
+#   --with-airrac=/opt/airrac --with-rmol=/opt/rmol
+#   --with-airinv=/opt/airinv --with-avlcal=/opt/avlcal
+#   --with-simfqt=/opt/simfqt --with-simlfs=/opt/simlfs 
+#   --with-simcrs=/opt/simcrs
 #
 _EOF
 
@@ -116,13 +119,17 @@ fi
 cat >> configure << _EOF
 PREFIX_OPTION=""
 STDAIR_OPTION=""
+SEVMGR_OPTION=""
 TRADEMGEN_OPTION=""
 TRAVELCCM_OPTION=""
 AIRSCHED_OPTION=""
 AIRRAC_OPTION=""
 RMOL_OPTION=""
 AIRINV_OPTION=""
+AVLCAL_OPTION=""
 SIMFQT_OPTION=""
+SIMLFS_OPTION=""
+SIMCRS_OPTION=""
 DOC_OPTION="${DOC_OPTION}"
 RM_OPTION="rm -rf build"
 BUILD_DIR_OPTION="${BUILD_DIR_OPTION}"
@@ -133,7 +140,7 @@ do
   then
     echo ""
     echo "Usage:"
-    echo "    \$0 [--prefix=<install_dir>] [--with-stdair=<stdair_install_dir>] [--with-trademgen=<trademgen_install_dir>] [--with-travelccm=<travelccm_install_dir>] [--with-airsched=<airsched_install_dir>] [--with-airrac=<airrac_install_dir>] [--with-rmol=<rmol_install_dir>] [--with-airinv=<airinv_install_dir>] [--with-simfqt=<simfqt_install_dir>] [--with-doc | --without-doc] [-n|-N|--norm] [-b|--buildir]"
+    echo "    \$0 [--prefix=<install_dir>] [--with-stdair=<stdair_install_dir>] [--with-sevmgr=<sevmgr_install_dir>] [--with-trademgen=<trademgen_install_dir>] [--with-travelccm=<travelccm_install_dir>] [--with-airsched=<airsched_install_dir>] [--with-airrac=<airrac_install_dir>] [--with-rmol=<rmol_install_dir>] [--with-airinv=<airinv_install_dir>] [--with-avlcal=<avlcal_install_dir>] [--with-simfqt=<simfqt_install_dir>] [--with-simlfs=<simlfs_install_dir>] [--with-simcrs=<simcrs_install_dir>] [--with-doc | --without-doc] [-n|-N|--norm] [-b|--buildir]"
     echo "      --with-doc/--without-doc : Force the (resp. non) generation of the documentation" 
     echo "      -n/-N/--norm             : Do not remove/clean older potential 'build' sub-directory" 
     echo "      -b/-B/--buildir          : Do the build in a dedicated 'build' sub-directory, rather than in-place" 
@@ -156,6 +163,18 @@ then
   then
     STDAIR_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-stdair=\(.*\)\$/\1/"\`
     STDAIR_OPTION="-DWITH_STDAIR_PREFIX=\${STDAIR_DIR}"
+  fi
+_EOF
+fi
+#
+if [ "${PROJECT_NAME}" != "sevmgr" ]
+then
+	cat >> configure << _EOF
+  IS_OPTION_SEVMGR=\`echo "\${opt_elem}" | grep "^--with-sevmgr="\`
+  if [ "\${IS_OPTION_SEVMGR}" != "" ]
+  then
+    SEVMGR_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-sevmgr=\(.*\)\$/\1/"\`
+    SEVMGR_OPTION="-DWITH_SEVMGR_PREFIX=\${SEVMGR_DIR}"
   fi
 _EOF
 fi
@@ -232,6 +251,18 @@ then
 _EOF
 fi
 #
+if [ "${PROJECT_NAME}" != "avlcal" ]
+then
+	cat >> configure << _EOF
+  IS_OPTION_AVLCAL=\`echo "\${opt_elem}" | grep "^--with-avlcal="\`
+  if [ "\${IS_OPTION_AVLCAL}" != "" ]
+  then
+    AVLCAL_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-avlcal=\(.*\)\$/\1/"\`
+    AVLCAL_OPTION="-DWITH_AVLCAL_PREFIX=\${AVLCAL_DIR}"
+  fi
+_EOF
+fi
+#
 if [ "${PROJECT_NAME}" != "simfqt" ]
 then
 	cat >> configure << _EOF
@@ -240,6 +271,30 @@ then
   then
     SIMFQT_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-simfqt=\(.*\)\$/\1/"\`
     SIMFQT_OPTION="-DWITH_SIMFQT_PREFIX=\${SIMFQT_DIR}"
+  fi
+_EOF
+fi
+#
+if [ "${PROJECT_NAME}" != "simlfs" ]
+then
+	cat >> configure << _EOF
+  IS_OPTION_SIMLFS=\`echo "\${opt_elem}" | grep "^--with-simlfs="\`
+  if [ "\${IS_OPTION_SIMLFS}" != "" ]
+  then
+    SIMLFS_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-simlfs=\(.*\)\$/\1/"\`
+    SIMLFS_OPTION="-DWITH_SIMLFS_PREFIX=\${SIMLFS_DIR}"
+  fi
+_EOF
+fi
+#
+if [ "${PROJECT_NAME}" != "simcrs" ]
+then
+	cat >> configure << _EOF
+  IS_OPTION_SIMCRS=\`echo "\${opt_elem}" | grep "^--with-simcrs="\`
+  if [ "\${IS_OPTION_SIMCRS}" != "" ]
+  then
+    SIMCRS_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-simcrs=\(.*\)\$/\1/"\`
+    SIMCRS_OPTION="-DWITH_SIMCRS_PREFIX=\${SIMCRS_DIR}"
   fi
 _EOF
 fi
@@ -277,7 +332,7 @@ fi
 BUILD_OPTION="-DCMAKE_BUILD_TYPE:STRING=Debug"
 
 #
-CMAKE_CMD="cmake \${PREFIX_OPTION} \${STDAIR_OPTION} \${TRADEMGEN_OPTION} \${TRAVELCCM_OPTION} \${AIRSCHED_OPTION} \${AIRRAC_OPTION} \${RMOL_OPTION} \${AIRINV_OPTION} \${SIMFQT_OPTION} \${LIB_OPTION} \${BUILD_OPTION} \${DOC_OPTION} \${SOURCE_DIR}"
+CMAKE_CMD="cmake \${PREFIX_OPTION} \${STDAIR_OPTION} \${SEVMGR_OPTION} \${TRADEMGEN_OPTION} \${TRAVELCCM_OPTION} \${AIRSCHED_OPTION} \${AIRRAC_OPTION} \${RMOL_OPTION} \${AIRINV_OPTION} \${AVLCAL_OPTION} \${SIMFQT_OPTION} \${SIMLFS_OPTION} \${SIMCRS_OPTION} \${LIB_OPTION} \${BUILD_OPTION} \${DOC_OPTION} \${SOURCE_DIR}"
 
 # Trace on
 set -x
