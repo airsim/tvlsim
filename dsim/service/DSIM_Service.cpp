@@ -490,9 +490,9 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   std::string DSIM_Service::
-  jsonExport (const stdair::AirlineCode_T& iAirlineCode,
-              const stdair::FlightNumber_T& iFlightNumber,
-              const stdair::Date_T& iDepartureDate) const {
+  jsonExportFlightDateObjects (const stdair::AirlineCode_T& iAirlineCode,
+			       const stdair::FlightNumber_T& iFlightNumber,
+			       const stdair::Date_T& iDepartureDate) const {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -507,8 +507,9 @@ namespace DSIM {
       lDSIM_ServiceContext.getSTDAIR_Service();
 
     // Delegate the JSON export to the dedicated service
-    return lSTDAIR_Service.jsonExport (iAirlineCode, iFlightNumber,
-                                       iDepartureDate);
+    return lSTDAIR_Service.jsonExportFlightDateObjects (iAirlineCode, 
+							iFlightNumber,
+							iDepartureDate);
   }
 
   // ////////////////////////////////////////////////////////////////////
