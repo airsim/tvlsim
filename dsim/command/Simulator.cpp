@@ -72,11 +72,11 @@ namespace DSIM {
          <li>Generate the next request for the same type/demand stream.</li>
        </ul>
     */
-    while (ioSTDAIR_Service.isQueueDone() == false) {
+    while (ioTRADEMGEN_Service.isQueueDone() == false) {
 
       // Get the next event from the event queue
       stdair::EventStruct lEventStruct;
-      stdair::ProgressStatusSet lPSS = ioSTDAIR_Service.popEvent (lEventStruct);
+      stdair::ProgressStatusSet lPSS = ioTRADEMGEN_Service.popEvent (lEventStruct);
 
       // DEBUG
       // STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
