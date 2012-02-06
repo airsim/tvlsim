@@ -301,7 +301,15 @@ namespace DSIM {
      * @param const stdair::BasLogParams& Parameters for the output log
      *        stream.
      */
-    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);
+    stdair::STDAIR_ServicePtr_T initStdAirService (const stdair::BasLogParams&);  
+
+    /**
+     * Initialise the SEVMGR service (including the log service).
+     *
+     * A reference on the root of the Event Queue, namely the EventQueue object,
+     * is stored within the service context for later use.
+     */
+    void initSEVMGRService ();
     
     /**
      * Initialise the SimCRS service (including the log service).
