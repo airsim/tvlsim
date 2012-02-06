@@ -11,7 +11,6 @@
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
 #include <stdair/bom/EventStruct.hpp>
-#include <stdair/bom/EventQueue.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/bom/CancellationStruct.hpp>
@@ -47,23 +46,23 @@ namespace DSIM {
 
     // Retrieve the expected (mean value of the) number of events to be
     // generated
-    //const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
-      //ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
+    const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+      ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
 
     /**
        Initialisation step.
        <br>Generate the first event for each demand stream.
     */
-    //const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-    //  ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
+    const stdair::Count_T& lActualNbOfEventsToBeGenerated =
+      ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
 
     // Initialise the (Boost) progress display object
-    // boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
+    //boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
   
     // DEBUG
-    //STDAIR_LOG_DEBUG ("Expected number of events: "
-      //                << lExpectedNbOfEventsToBeGenerated << ", actual: "
-        //              << lActualNbOfEventsToBeGenerated);
+    STDAIR_LOG_DEBUG ("Expected number of events: "
+                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
+                      << lActualNbOfEventsToBeGenerated);
   
     /**
        Main loop.
@@ -79,7 +78,7 @@ namespace DSIM {
       stdair::ProgressStatusSet lPSS = ioTRADEMGEN_Service.popEvent (lEventStruct);
 
       // DEBUG
-      // STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
+      STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
 
       // Check the event type
       const stdair::EventType::EN_EventType& lEventType =
@@ -105,7 +104,7 @@ namespace DSIM {
       }
 
       // Update the progress display
-      // ++lProgressDisplay;
+      //++lProgressDisplay;
     }
        
     // DEBUG
