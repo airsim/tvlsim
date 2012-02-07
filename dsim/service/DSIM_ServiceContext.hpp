@@ -9,6 +9,8 @@
 // StdAir
 #include <stdair/stdair_service_types.hpp>
 #include <stdair/service/ServiceAbstract.hpp>
+// SEvMgr
+#include <sevmgr/SEVMGR_Types.hpp>
 // SimCRS
 #include <simcrs/SIMCRS_Types.hpp>
 // TraDemGen
@@ -83,6 +85,20 @@ namespace DSIM {
     }
 
     /**
+     * Get the pointer on the SEVMGR service handler.
+     */
+    SEVMGR::SEVMGR_ServicePtr_T getSEVMGR_ServicePtr() const {
+      return _sevmgrService;
+    }
+
+    /**
+     * Get the SEVMGR service handler.
+     */
+    SEVMGR::SEVMGR_Service& getSEVMGR_Service() const {
+      assert (_sevmgrService != NULL);
+      return *_sevmgrService;
+    }
+    /**
      * State whether or not SIMCRS_Service owns the STDAIR service resources.
      */
     const bool getOwnStdairServiceFlag() const {
@@ -149,6 +165,13 @@ namespace DSIM {
                             const bool iOwnStdairService) {
       _stdairService = ioSTDAIR_ServicePtr;
       _ownStdairService = iOwnStdairService;
+    }  
+
+    /**
+     * Set the pointer on the SEVMGR service handler.
+     */
+    void setSEVMGR_Service (SEVMGR::SEVMGR_ServicePtr_T ioSEVMGR_ServicePtr) {
+      _sevmgrService = ioSEVMGR_ServicePtr;
     }
     
     /**
@@ -239,6 +262,11 @@ namespace DSIM {
      * State whether or not AIRINV owns the STDAIR service resources.
      */
     bool _ownStdairService;
+
+    /**
+     * SEvMgr service handler.
+     */
+    SEVMGR::SEVMGR_ServicePtr_T _sevmgrService;
 
     /**
      * CRS service handler.

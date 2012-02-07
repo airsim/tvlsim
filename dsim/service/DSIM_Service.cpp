@@ -22,6 +22,8 @@
 #include <stdair/service/Logger.hpp>
 #include <stdair/service/DBSessionManager.hpp>
 #include <stdair/STDAIR_Service.hpp>
+// SEvMgr
+#include <sevmgr/SEVMGR_Service.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
 // TraDemGen
@@ -65,6 +67,9 @@ namespace DSIM {
     // \note DSim owns the StdAir service resources here.
     const bool ownStdairService = true;
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+ 
+    // Initalise the SEVMGR service.
+    initSEVMGRService();
 
     // Initalise the TraDemGen service.
     initTRADEMGENService (iRandomSeed);
@@ -99,6 +104,9 @@ namespace DSIM {
     // \note DSim owns the StdAir service resources here.
     const bool ownStdairService = true;
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+ 
+    // Initalise the SEVMGR service.
+    initSEVMGRService();
 
     // Initalise the TraDemGen service.
     initTRADEMGENService (iRandomSeed);
@@ -127,7 +135,10 @@ namespace DSIM {
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
     const bool doesNotOwnStdairService = false;
-    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService); 
+
+    // Initalise the SEVMGR service.
+    initSEVMGRService();
 
     // Initalise the TraDemGen service.
     initTRADEMGENService (iRandomSeed);
@@ -212,7 +223,33 @@ namespace DSIM {
       boost::make_shared<stdair::STDAIR_Service> (iLogParams, iDBParams);
 
     return lSTDAIR_Service_ptr;
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initSEVMGRService() {
+
+    // Retrieve the Dsim service context
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    
+    // Retrieve the StdAir service context
+    stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
+    
+    /**
+     * Initialise the SEVMGR service handler.
+     *
+     * \note The (Boost.)Smart Pointer keeps track of the references
+     *       on the Service object, and deletes that object when it is
+     *       no longer referenced (e.g., at the end of the process).
+     */
+    SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr = 
+      boost::make_shared<SEVMGR::SEVMGR_Service> (lSTDAIR_Service_ptr);
+    
+    // Store the SEVMGR service object within the (DSim) service context
+    lDSIM_ServiceContext.setSEVMGR_Service (lSEVMGR_Service_ptr);
   }
+  
   
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::initSIMCRSService() {
@@ -223,7 +260,11 @@ namespace DSIM {
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();   
+
+    // Retrieve the StdAir service context
+    SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
+      lDSIM_ServiceContext.getSEVMGR_ServicePtr();
 
     // TODO: do not hardcode the CRS code (e.g., take it from a
     // configuration file).
@@ -239,6 +280,7 @@ namespace DSIM {
      */
     SIMCRS::SIMCRS_ServicePtr_T lSIMCRS_Service_ptr = 
       boost::make_shared<SIMCRS::SIMCRS_Service> (lSTDAIR_Service_ptr,
+						  lSEVMGR_Service_ptr,
                                                   lCRSCode);
     
     // Store the SIMCRS service object within the (DSim) service context
@@ -255,7 +297,11 @@ namespace DSIM {
     
     // Retrieve the StdAir service context
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
-      lDSIM_ServiceContext.getSTDAIR_ServicePtr();
+      lDSIM_ServiceContext.getSTDAIR_ServicePtr();  
+
+    // Retrieve the StdAir service context
+    SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
+      lDSIM_ServiceContext.getSEVMGR_ServicePtr();
 
     /**
      * Initialise the TraDemGen service handler.
@@ -266,6 +312,7 @@ namespace DSIM {
      */
     TRADEMGEN::TRADEMGEN_ServicePtr_T lTRADEMGEN_Service_ptr = 
       boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
+							lSEVMGR_Service_ptr,
                                                         iRandomSeed);
     
     // Store the TRADEMGEN service object within the (DSim) service context
