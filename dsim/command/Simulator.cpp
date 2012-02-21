@@ -100,6 +100,7 @@ namespace DSIM {
                                                lEventStruct,
                                                iForecastingMethod,
                                                iPartnershipTechnique); break;
+      case stdair::EventType::BRK_PT: break;
       default: assert (false); break;
       }
 
