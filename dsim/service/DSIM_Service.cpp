@@ -537,9 +537,7 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   std::string DSIM_Service::
-  jsonExportFlightDateObjects (const stdair::AirlineCode_T& iAirlineCode,
-			       const stdair::FlightNumber_T& iFlightNumber,
-			       const stdair::Date_T& iDepartureDate) const {
+  jsonHandler (const std::string& iJSONString) const {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -547,16 +545,14 @@ namespace DSIM {
                                                     "has not been initialised");
     }
     assert (_dsimServiceContext != NULL);
-
-    // Retrieve the StdAir service object from the (AirSched) service context
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
-    stdair::STDAIR_Service& lSTDAIR_Service =
-      lDSIM_ServiceContext.getSTDAIR_Service();
 
-    // Delegate the JSON export to the dedicated service
-    return lSTDAIR_Service.jsonExportFlightDateObjects (iAirlineCode, 
-							iFlightNumber,
-							iDepartureDate);
+    // Get a reference on the SIMCRS service handler
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+
+    return lSIMCRS_Service.jsonHandler (iJSONString);
+    
   }
 
   // ////////////////////////////////////////////////////////////////////

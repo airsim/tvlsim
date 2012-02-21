@@ -243,19 +243,14 @@ namespace DSIM {
   public:
     // //////////////// Export support methods /////////////////
     /**
-     * Recursively dump, in the returned string and in JSON format,
-     * the flight-date corresponding to the parameters given as input.
-     *
-     * @param const stdair::AirlineCode_T& Airline code of the flight to dump.
-     * @param const stdair::FlightNumber_T& Flight number of the
-     *        flight to dump.
-     * @param const stdair::Date_T& Departure date of the flight to dump.
-     * @return std::string Output string in which the BOM tree is JSON-ified.
+     * Dispatch the JSon command string to the SimCRS service.
+     * (Only SimCRS has json export commands for now).
+     * 
+     * @param std::string& Input string which contained the JSon command string.
+     * @return std::string Output string in which the asking objects are
+     *         logged/dumped with a JSon format.
      */
-    std::string jsonExportFlightDateObjects (const stdair::AirlineCode_T&,
-					     const stdair::FlightNumber_T&,
-					     const stdair::Date_T& iDepartureDate) const;
-
+    std::string jsonHandler (const std::string& iJSONString) const;
 
   public:
     // //////////////// Display support methods /////////////////
