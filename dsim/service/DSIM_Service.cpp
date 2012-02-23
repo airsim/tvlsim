@@ -12,6 +12,7 @@
 #include <soci/soci.h>
 #endif // SOCI_HEADERS_BURIED
 // StdAir
+#include <stdair/stdair_json.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
@@ -537,7 +538,7 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   std::string DSIM_Service::
-  jsonHandler (const std::string& iJSONString) const {
+  jsonHandler (const stdair::JSONString& iJSONString) const {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
