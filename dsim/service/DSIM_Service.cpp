@@ -14,10 +14,12 @@
 // StdAir
 #include <stdair/stdair_json.hpp>
 #include <stdair/basic/BasChronometer.hpp>
+#include <stdair/basic/JSonCommand.hpp>
 #include <stdair/bom/BomManager.hpp>
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
+#include <stdair/bom/BomJSONImport.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/FacSupervisor.hpp>
 #include <stdair/service/Logger.hpp>
@@ -548,12 +550,62 @@ namespace DSIM {
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
 
+    //
+    // Extract from the JSON-ified string the command
+    //
+    stdair::JSonCommand::EN_JSonCommand lEN_JSonCommand;
+    const bool hasCommandBeenRetrieved =
+      stdair::BomJSONImport::jsonImportCommand (iJSONString,
+                                                lEN_JSonCommand);
+    
+    if (hasCommandBeenRetrieved == false) {
+      // Return an error JSON-ified string
+      std::ostringstream oErrorStream;
+      oErrorStream << "{\"error\": \"Wrong JSON-ified string: "
+                   << "the command is not understood.\"}";
+      return oErrorStream.str();
+    }
+    assert (hasCommandBeenRetrieved == true);
+
+
+    //
+    // Dispatch the command to the right JSon service handler
+    // 
+    switch (lEN_JSonCommand) {
+    case stdair::JSonCommand::FLIGHT_DATE:
+    case stdair::JSonCommand::LIST:{
+      
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
 
     return lSIMCRS_Service.jsonHandler (iJSONString);
+    }
+    case stdair::JSonCommand::EVENT_LIST:{
+
+      // Retrieve the StdAir service context
+    SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
+      lDSIM_ServiceContext.getSEVMGR_ServicePtr();
+
+    return lSEVMGR_Service_ptr->jsonExportEventQueue ();
+    }
+    default: {
+        // Return an Error string
+        std::ostringstream lErrorCmdMessage;
+        const std::string& lCommandStr =
+          stdair::JSonCommand::getLabel(lEN_JSonCommand);
+        lErrorCmdMessage << "{\"error\": \"The command '" << lCommandStr
+                         << "' is not handled by the DSim service.\"}";
+        return lErrorCmdMessage.str();
+        break;
+      }
+    }
     
+    // Return an error JSON-ified string
+    assert (false);
+    std::string lJSONDump ("{\"error\": \"Wrong JSON-ified string\"}");
+    return lJSONDump;
+     
   }
 
   // ////////////////////////////////////////////////////////////////////
