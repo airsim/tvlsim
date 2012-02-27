@@ -25,6 +25,7 @@ module_library_add_standard (".;basic;bom;factory;command;service")
 #    module.
 module_binary_add (batches simulate)
 module_binary_add (server DSimServer)
+module_binary_add (ui/cmdline dsim)
 
 ##
 # Install the CMake import helper, so that third party projects can refer to it
