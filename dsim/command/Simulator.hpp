@@ -29,6 +29,8 @@ namespace TRAVELCCM {
 
 namespace DSIM {
 
+  class SimulationStatus;
+
   /** Class wrapping the simulation methods. */
   class Simulator : public CmdAbstract {
     friend class DSIM_Service;
@@ -37,6 +39,7 @@ namespace DSIM {
     /** Perform a simulation. */
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
+                         SimulationStatus&,
                          const stdair::DemandGenerationMethod&,
                          const stdair::ForecastingMethod&,
                          const stdair::PartnershipTechnique&);

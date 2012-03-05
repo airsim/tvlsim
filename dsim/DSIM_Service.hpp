@@ -265,6 +265,16 @@ namespace DSIM {
      */
     std::string csvDisplay() const;
 
+    /**
+     * Recursively display (dump in the returned string) the simulation
+     * status.
+     *
+     * @return std::string Output string in which the simulation
+     *         status is logged/dumped.
+     *
+     */
+    std::string simulationStatusDisplay() const;
+
 
     // /////// Construction and Destruction helper methods ///////
     /**

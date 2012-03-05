@@ -28,6 +28,7 @@
 #include <airsched/AIRSCHED_Service.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
+#include <dsim/bom/SimulationStatus.hpp>
 #include <dsim/command/Simulator.hpp>
 
 namespace DSIM {
@@ -37,6 +38,7 @@ namespace DSIM {
                             TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
                             TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                             stdair::STDAIR_Service& ioSTDAIR_Service,
+                            SimulationStatus& ioSimulationStatus,
                             const stdair::DemandGenerationMethod& iDemandGenerationMethod,
                             const stdair::ForecastingMethod& iForecastingMethod,
                             const stdair::PartnershipTechnique& iPartnershipTechnique) {
@@ -77,35 +79,79 @@ namespace DSIM {
       stdair::EventStruct lEventStruct;
       stdair::ProgressStatusSet lPSS = ioTRADEMGEN_Service.popEvent (lEventStruct);
 
+      // Update the simulation status with the current date
+      const stdair::DateTime_T& lCurrentEventDateTime = lEventStruct.getEventTime (); 
+      const stdair::Date_T& lCurrentEventDate = lCurrentEventDateTime.date();
+      ioSimulationStatus.setCurrentDate(lCurrentEventDate);
+
       // DEBUG
       STDAIR_LOG_DEBUG ("Poped event: '" << lEventStruct.describe() << "'.");
 
       // Check the event type
       const stdair::EventType::EN_EventType& lEventType =
-        lEventStruct.getEventType();
+        lEventStruct.getEventType(); 
+
+      stdair::ProgressPercentage_T lProgressPercentageByType;
 
       switch (lEventType) {
-      case stdair::EventType::BKG_REQ: playBookingRequest (ioSIMCRS_Service,
-                                                           ioTRADEMGEN_Service,
-                                                           ioTRAVELCCM_Service,
-                                                           lEventStruct,
-                                                           lPSS,
-                                                           iDemandGenerationMethod,
-                                                           iPartnershipTechnique); break;
-      case stdair::EventType::CX: playCancellation (ioSIMCRS_Service,
-                                                    lEventStruct); break;
-      case stdair::EventType::SNAPSHOT: playSnapshotEvent (ioSIMCRS_Service,
-                                                           lEventStruct); break;
-      case stdair::EventType::RM: playRMEvent (ioSIMCRS_Service,
-                                               lEventStruct,
-                                               iForecastingMethod,
-                                               iPartnershipTechnique); break;
+
+      case stdair::EventType::BKG_REQ: 
+	playBookingRequest (ioSIMCRS_Service,
+			    ioTRADEMGEN_Service,
+			    ioTRAVELCCM_Service,
+			    lEventStruct,
+			    lPSS,
+			    iDemandGenerationMethod,
+			    iPartnershipTechnique);  
+	// Re-Calculate the progress percentage for the booking requests
+	lProgressPercentageByType = 
+	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::BKG_REQ);
+	break;
+
+      case stdair::EventType::CX: 
+	playCancellation (ioSIMCRS_Service,
+			  lEventStruct); 	
+	// Re-Calculate the progress percentage for cancellations
+	lProgressPercentageByType = 0;
+	//ioTRADEMGEN_Service.calculateProgress(stdair::EventType::CX);
+	break;
+
+      case stdair::EventType::SNAPSHOT: 
+	playSnapshotEvent (ioSIMCRS_Service,
+			   lEventStruct); 	
+	// Re-Calculate the progress percentage for snap shots
+	lProgressPercentageByType = 
+	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::SNAPSHOT);
+	break;
+
+      case stdair::EventType::RM: 
+	playRMEvent (ioSIMCRS_Service,
+		     lEventStruct,
+		     iForecastingMethod,
+		     iPartnershipTechnique);	
+	// Re-Calculate the progress percentage for rm events
+	lProgressPercentageByType = 
+	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::RM);
+	break; 
+
       case stdair::EventType::BRK_PT: break;
+
       default: assert (false); break;
       }
 
       // Update the progress display
       //++lProgressDisplay;
+  
+      // Update the simulation status for the current type
+      ioSimulationStatus.updateProgress(lEventType,
+					lProgressPercentageByType);
+
+      // Update the global simulation status 
+      const stdair::ProgressPercentage_T lProgressPercentage = 
+	ioTRADEMGEN_Service.calculateProgress();
+      ioSimulationStatus.updateProgress(lProgressPercentage);
+	
+      
     }
        
     // DEBUG
@@ -240,7 +286,7 @@ namespace DSIM {
         // DEBUG
         STDAIR_LOG_DEBUG ("No travel solution has been found for: "
                           << lPoppedRequest);
-      }
+      }  
     }
   }
   
@@ -255,7 +301,7 @@ namespace DSIM {
     // DEBUG
     // STDAIR_LOG_DEBUG ("Play cancellation: "<<lCancellationStruct.describe());
 
-    ioSIMCRS_Service.playCancellation (lCancellationStruct);
+    ioSIMCRS_Service.playCancellation (lCancellationStruct); 
   }
   
   
@@ -270,7 +316,7 @@ namespace DSIM {
     // DEBUG
     // STDAIR_LOG_DEBUG ("Taking snapshots: " << lSnapshotStruct.describe());
 
-    ioSIMCRS_Service.takeSnapshots (lSnapshotStruct);
+    ioSIMCRS_Service.takeSnapshots (lSnapshotStruct);    
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -285,6 +331,6 @@ namespace DSIM {
     // DEBUG
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
-    //ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod, iPartnershipTechnique);
+    //ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod, iPartnershipTechnique);   
   }
 }

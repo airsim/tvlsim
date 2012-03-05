@@ -142,7 +142,11 @@ struct Command_T {
     NOP = 0,
     QUIT,
     HELP,
-    JSON_EVENT_LIST,
+    RUN,
+    DISPLAY_STATUS,
+    JSON_LIST_EVENT,
+    JSON_LIST_FLIGHT_DATE,
+    JSON_DISPLAY_FLIGHT_DATE,
     LAST_VALUE
   } Type_T;
 };
@@ -483,12 +487,198 @@ void initReadline (swift::SReadline& ioInputReader) {
   // - "identifiers"
   // - special identifier %file - means to perform a file name completion
   Completers.push_back ("help");
-  Completers.push_back ("json_event_list");
+  Completers.push_back ("run");
+  Completers.push_back ("display_status");
+  Completers.push_back ("json_list_event");
+  Completers.push_back ("json_list_flight_date");
+  Completers.push_back ("json_display_flight_date");
   Completers.push_back ("quit");
 
   // Now register the completers.
   // Actually it is possible to re-register another set at any time
   ioInputReader.RegisterCompletions (Completers);
+}
+
+// //////////////////////////////////////////////////////////////////
+void parseFlightKey (const TokenList_T& iTokenList,
+                     stdair::AirlineCode_T& ioAirlineCode,
+                     stdair::FlightNumber_T& ioFlightNumber) {
+  // Interpret the user input
+  if (iTokenList.empty() == false) {
+
+    // Read the airline code
+    TokenList_T::const_iterator itTok = iTokenList.begin();
+    if (itTok->empty() == false) {
+      ioAirlineCode = *itTok;
+      boost::algorithm::to_upper (ioAirlineCode);
+    }
+
+    // Read the flight-number
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          ioFlightNumber = boost::lexical_cast<stdair::FlightNumber_T> (*itTok);
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The flight number ('" << *itTok
+                    << "') cannot be understood. "
+                    << "The default value (all) is kept."
+                    << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+  }
+}
+
+
+// //////////////////////////////////////////////////////////////////
+void parseDateKey (const TokenList_T& iTokenList,
+                   stdair::Date_T& ioDate) {
+  //
+  const std::string kMonthStr[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  //
+  unsigned short ioDateYear = ioDate.year();
+  unsigned short ioDateMonth = ioDate.month();
+  std::string ioDateMonthStr = kMonthStr[ioDateMonth-1];
+  unsigned short ioDateDay = ioDate.day();
+
+  // Interpret the user input
+  if (iTokenList.empty() == false) {
+
+    // Read the year 
+    TokenList_T::const_iterator itTok = iTokenList.begin();
+    if (itTok->empty() == false) {
+      try {
+
+        ioDateYear = boost::lexical_cast<unsigned short> (*itTok);
+        if (ioDateYear < 100) {
+          ioDateYear += 2000;
+        }
+
+      } catch (boost::bad_lexical_cast& eCast) {
+        std::cerr << "The year of the date ('" << *itTok
+                  << "') cannot be understood. The default value ("
+                  << ioDateYear << ") is kept. " << std::endl;
+        return;
+      }
+
+    } else {
+      return;
+    }
+
+    // Read the month
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          const boost::regex lMonthRegex ("^(\\d{1,2})$");
+          const bool isMonthANumber = regex_match (*itTok, lMonthRegex);
+        
+          if (isMonthANumber == true) {
+            const unsigned short lMonth =
+              boost::lexical_cast<unsigned short> (*itTok);
+            if (lMonth > 12) {
+              throw boost::bad_lexical_cast();
+            }
+            ioDateMonthStr = kMonthStr[lMonth-1];
+
+          } else {
+            const std::string lMonthStr (*itTok);
+            if (lMonthStr.size() < 3) {
+              throw boost::bad_lexical_cast();
+            }
+            std::string lMonthStr1 (lMonthStr.substr (0, 1));
+            boost::algorithm::to_upper (lMonthStr1);
+            std::string lMonthStr23 (lMonthStr.substr (1, 2));
+            boost::algorithm::to_lower (lMonthStr23);
+            ioDateMonthStr = lMonthStr1 + lMonthStr23;
+          }
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The month of the date ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioDateMonthStr << ") is kept. " << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+
+    // Read the day
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          ioDateDay = boost::lexical_cast<unsigned short> (*itTok);
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The day of the date ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioDateDay << ") is kept. " << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+
+    // Re-compose the  date
+    std::ostringstream lDateStr;
+    lDateStr << ioDateYear << "-" << ioDateMonthStr
+                      << "-" << ioDateDay;
+
+    try {
+
+      ioDate =
+        boost::gregorian::from_simple_string (lDateStr.str());
+
+    } catch (boost::gregorian::bad_month& eCast) {
+      std::cerr << "The date ('" << lDateStr.str()
+                << "') cannot be understood. The default value ("
+                << ioDate << ") is kept. " << std::endl;
+      return;
+    }
+    
+  }
+}
+
+
+// //////////////////////////////////////////////////////////////////
+void parseFlightDateKey (TokenList_T& iTokenList,
+                         stdair::AirlineCode_T& ioAirlineCode,
+                         stdair::FlightNumber_T& ioFlightNumber,
+                         stdair::Date_T& ioDate) {
+  
+  // To re-compose the airline code, the flight number and the date,
+  // five tokens are needed.
+  if (iTokenList.size() != 5) {
+    return;
+  }
+
+  // Try to re-compose the airline code and the flight number
+  parseFlightKey (iTokenList, ioAirlineCode, ioFlightNumber);
+  // Erase the first two tokens (corresponding to the airline code
+  // and the flight number)
+  assert (iTokenList.size() >= 2);
+  iTokenList.erase(iTokenList.begin(),iTokenList.begin()+2);
+  // Try to re-compose the date
+  parseDateKey (iTokenList, ioDate);
+  
 }
 
 // //////////////////////////////////////////////////////////////////
@@ -504,8 +694,20 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
     if (lCommand == "help") {
       oCommandType = Command_T::HELP;
 
-    } else if (lCommand == "json_event_list") {
-      oCommandType = Command_T::JSON_EVENT_LIST;
+    } else if (lCommand == "run") {
+      oCommandType = Command_T::RUN;
+
+    } else if (lCommand == "display_status") {
+      oCommandType = Command_T::DISPLAY_STATUS;
+
+    } else if (lCommand == "json_list_event") {
+      oCommandType = Command_T::JSON_LIST_EVENT;
+      
+    } else if (lCommand == "json_list_flight_date") {
+      oCommandType = Command_T::JSON_LIST_FLIGHT_DATE;
+
+    } else if (lCommand == "json_display_flight_date") {
+      oCommandType = Command_T::JSON_DISPLAY_FLIGHT_DATE;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
@@ -575,6 +777,46 @@ TokenList_T extractTokenList (const TokenList_T& iTokenList,
   return oTokenList;
 }
 
+// /////////////////////////////////////////////////////////
+TokenList_T extractTokenListForFlightDate (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   line:            airline_code[ ]?flight_number departure_date
+   *   airline_code:    word (alpha{2,3})
+   *   flight_number:   number (digit{1,4})
+   *   departure_date:  year[/- ]?month[/- ]?day
+   *   year:            number (digit{2,4})
+   *   month:           (number (digit{1,2}) | word (alpha{3}))
+   *   day:             number (digit{1,2})
+   */
+  const std::string lRegEx("^([[:alpha:]]{2,3})?"
+                           "[[:space:]]*([[:digit:]]{1,4})?"
+                           "[/ ]*"
+                           "([[:digit:]]{2,4})?[/-]?[[:space:]]*"
+                           "([[:alpha:]]{3}|[[:digit:]]{1,2})?[/-]?[[:space:]]*"
+                           "([[:digit:]]{1,2})?$");
+
+  //
+  const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
+  return oTokenList;
+}    
+
+// /////////////////////////////////////////////////////////
+TokenList_T extractTokenListForFlight (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   line:            airline_code[ ]?flight_number departure_date
+   *   airline_code:    word (alpha{2,3})
+   *   flight_number:   number (digit{1,4})
+   */
+  const std::string lRegEx ("^([[:alpha:]]{2,3})?"
+                            "[[:space:]]*([[:digit:]]{1,4})?$");
+
+  //
+  const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
+  return oTokenList;
+}  
+
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
 
@@ -586,6 +828,11 @@ int main (int argc, char* argv[]) {
   // State whether the BOM tree should be built-in or parsed from an
   // input file
   bool isBuiltin;
+
+  // Default parameters for the interactive session
+  stdair::AirlineCode_T lDefaultAirlineCode;
+  stdair::FlightNumber_T lDefaultFlightNumber;
+  stdair::Date_T lDefaultDate;
 
   // Random generation seed
   stdair::RandomSeed_T lRandomSeed;
@@ -672,14 +919,28 @@ int main (int argc, char* argv[]) {
     // Build the sample BOM tree
     dsimService.buildSampleBom();
 
+    // Update the default parameters for the following interactive session
+    lDefaultAirlineCode = "BA";
+    lDefaultFlightNumber = 9;
+    lDefaultDate = stdair::Date_T (2011, 06, 10);
+
   } else {
+    
     // Build the BOM tree from parsing input files
     const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
     const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename); 
     dsimService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
                               lYieldFilePath, lFareFilePath,
                               lDemandInputFilename);
-  }
+
+    // Update the default parameters for the following interactive session
+    lDefaultAirlineCode = "SQ";
+    lDefaultFlightNumber = 12;
+    lDefaultDate = stdair::Date_T (2011, 01, 31);
+  } 
+
+  // Initialise the snapshot and RM events
+  dsimService.initSnapshotAndRMEvents();
 
   // DEBUG
   STDAIR_LOG_DEBUG ("====================================================");
@@ -723,10 +984,10 @@ int main (int argc, char* argv[]) {
     case Command_T::HELP: {
       std::cout << std::endl;
       std::cout << "Commands: " << std::endl;
-      std::cout << " help" << "\t\t" << "Display this help" << std::endl;
-      std::cout << " quit" << "\t\t" << "Quit the application" << std::endl;
+      std::cout << " help" << "\t\t\t" << "Display this help" << std::endl;
+      std::cout << " quit" << "\t\t\t" << "Quit the application" << std::endl;
       std::cout << " \nDebug Commands" << std::endl;
-      std::cout << " json_list" << "\t"
+      std::cout << " json_list_flight_date" << "\t"
                 << "List airlines, flights and departure dates in a JSON format"
                 << std::endl;
       std::cout << std::endl;
@@ -738,11 +999,39 @@ int main (int argc, char* argv[]) {
       break;
     }
 
+      // ////////////////////////////// Run ////////////////////////
+    case Command_T::RUN: {
+
+      std::cout << "Run" << std::endl;
+
+       // Perform a simulation
+      dsimService.simulate (lNbOfRuns, lDemandGenerationMethod,
+                            lForecastingMethod, lPartnershipTechnique);
+      break;
+    }
+
+      // ////////////////////////////// Display simulation status ////////////////////////
+
+    case Command_T::DISPLAY_STATUS: {
+      //
+      std::cout << "Display Simulation Status" << std::endl;
+
+      // Delegate the call to the dedicated service
+      const std::string& lSimulationStatusStr =
+        dsimService.simulationStatusDisplay();
+
+      // DEBUG: Display the simulation status string
+      std::cout << lSimulationStatusStr << std::endl;
+      STDAIR_LOG_DEBUG (lSimulationStatusStr);
+      
+      break;
+    }
+
       // ////////////////////////////// JSon Event List ////////////////////////
 
-    case Command_T::JSON_EVENT_LIST: {
+    case Command_T::JSON_LIST_EVENT: {
       //
-      std::cout << "JSON Event List" << std::endl;
+      std::cout << "JSON List Events" << std::endl;
 
       std::ostringstream lMyCommandJSONstream;
       lMyCommandJSONstream << "{\"event_list\":"
@@ -759,7 +1048,78 @@ int main (int argc, char* argv[]) {
       STDAIR_LOG_DEBUG (lCSVEventListDump);
       
       break;
+    }
+
+      // ////////////////////////////// JSon Flight Date List ////////////////////////
+
+    case Command_T::JSON_LIST_FLIGHT_DATE: {
+
+      //
+      TokenList_T lTokenList = extractTokenListForFlight (lTokenListByReadline);
+
+      stdair::AirlineCode_T lAirlineCode ("all");
+      stdair::FlightNumber_T lFlightNumber (0);
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightKey (lTokenList, lAirlineCode, lFlightNumber);
+
+      //
+      const std::string lFlightNumberStr = (lFlightNumber ==0)?" (all)":"";
+      std::cout << "JSON list of flights for "
+                << lAirlineCode << " " << lFlightNumber << lFlightNumberStr
+                << std::endl;
+
+      std::ostringstream lMyCommandJSONstream;
+      lMyCommandJSONstream << "{\"list\":"
+                           << "{ \"airline_code\":\"" << lAirlineCode
+			   << "\",\"flight_number\":\"" << lFlightNumber
+			   << "\"}}";
+      
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lFlightDateListJSONStr = 
+	dsimService.jsonHandler (lJSONCommandString);
+
+      // Display the flight-date JSON string
+      std::cout << lFlightDateListJSONStr << std::endl;
+      STDAIR_LOG_DEBUG (lFlightDateListJSONStr);
+
+      break;
     } 
+
+      // ////////////////////////////// JSon Flight Date Display ////////////////////////
+
+    case Command_T::JSON_DISPLAY_FLIGHT_DATE: {
+
+      //
+      TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline);
+
+      stdair::AirlineCode_T lAirlineCode (lDefaultAirlineCode);
+      stdair::FlightNumber_T lFlightNumber (lDefaultFlightNumber);
+      stdair::Date_T lFlightDate (lDefaultDate);
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);   
+
+      // Construct the JSON command string for the current parameters (current 
+      // airline code, current flight number and current date)
+      std::ostringstream lMyCommandJSONstream; 
+      lMyCommandJSONstream << "{\"flight_date\":" 
+			   << "{ \"departure_date\":\"" << lFlightDate
+			   << "\",\"airline_code\":\"" << lAirlineCode
+			   << "\",\"flight_number\":\"" << lFlightNumber
+			   << "\"}}";
+
+      // Get the flight-date details in a JSON string
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lCSVFlightDateDump =
+        dsimService.jsonHandler (lJSONCommandString);
+ 
+      // Display the flight-date JSON string
+      std::cout << lCSVFlightDateDump << std::endl;
+      STDAIR_LOG_DEBUG (lCSVFlightDateDump);
+
+      break;
+    }
 
       // /////////////////////////// Default / No value ///////////////////////
     case Command_T::NOP: {
