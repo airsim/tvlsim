@@ -19,7 +19,7 @@
 #include <travelccm/TRAVELCCM_Types.hpp>
 // DSim
 #include <dsim/DSIM_Types.hpp>
-#include <dsim/bom/ConfigurationParameters.hpp>
+#include <dsim/bom/SimulationStatus.hpp>
 #include <dsim/bom/RDSParameters.hpp>
 
 namespace DSIM {
@@ -46,26 +46,11 @@ namespace DSIM {
     }
 
     /**
-     * Get the configuration parameters.
+     * Get the pointer on the simulation status instance.
      */
-    const ConfigurationParameters& getConfigurationParameters() const {
-      return _configurationParameters;
-    }
-    
-    /**
-     * Get the start date of the simulation (delegated to the
-     * ConfigurationParameters object).
-     */
-    const stdair::Date_T& getStartDate() const {
-      return _configurationParameters.getStartDate();
-    }
-      
-    /**
-     * Get the end date of the simulation (delegated to the
-     * ConfigurationParameters object).
-     */
-    const stdair::Date_T& getEndDate() const {
-      return _configurationParameters.getEndDate();
+    SimulationStatus& getSimulationStatus() const {
+      assert (_simulationStatus != NULL);
+      return *_simulationStatus;
     }
     
     // /////////////// Getters on children //////////////
@@ -139,22 +124,6 @@ namespace DSIM {
     /** Set the simulator ID. */
     void setSimulatorID (const SimulatorID_T& iSimulatorID) {
       _simulatorID = iSimulatorID;
-    }
-
-    /**
-     * Set the start date of the simulation (delegated to the
-     * ConfigurationParameters object).
-     */
-    void setStartDate (const stdair::Date_T& iStartDate) {
-      _configurationParameters.setEndDate (iStartDate);
-    }
-      
-    /**
-     * Set the end date of the simulation (delegated to the
-     * ConfigurationParameters object).
-     */
-    void setEndDate (const stdair::Date_T& iEndDate) {
-      _configurationParameters.setEndDate (iEndDate);
     }
     
     // ///////// Setters on children //////////
@@ -250,6 +219,16 @@ namespace DSIM {
      */
     void reset();
 
+    /**
+     * Initialisation.
+     *
+     * The Simulation Status object is created by that method, and then
+     * stored within the service context.
+     */
+    void initSimulationStatus (const SimulatorID_T&,
+                               const stdair::Date_T& iStartDate,
+                               const stdair::Date_T& iEndDate);
+
 
   private:
     // //////////////////// Children ///////////////////////
@@ -294,9 +273,9 @@ namespace DSIM {
     SimulatorID_T _simulatorID;
 
     /**
-     * Configuration parameters.
+     * Pointer on the Simulation Status.
      */
-    ConfigurationParameters _configurationParameters;
+    SimulationStatus* _simulationStatus;
     
     /**
      * Reference Data Set parameters.

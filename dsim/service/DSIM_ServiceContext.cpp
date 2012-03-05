@@ -4,7 +4,10 @@
 // STL
 #include <cassert>
 #include <sstream>
+// StdAir
+#include <stdair/factory/FacBom.hpp>
 // Dsim
+#include <dsim/bom/SimulationStatus.hpp>
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
 
@@ -13,43 +16,63 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::DSIM_ServiceContext ()
     : _ownStdairService (false),
-      _configurationParameters (DEFAULT_SIMULATION_START_DATE,
-                                DEFAULT_SIMULATION_END_DATE) {
+      _simulationStatus (NULL) {
+    assert (false);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::DSIM_ServiceContext (const DSIM_ServiceContext&)
     : _ownStdairService (false),
-      _configurationParameters (DEFAULT_SIMULATION_START_DATE,
-                                DEFAULT_SIMULATION_END_DATE) {
+      _simulationStatus (NULL) {
+    assert (false);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::DSIM_ServiceContext (const stdair::Date_T& iStartDate,
                                             const stdair::Date_T& iEndDate)
     : _simulatorID (DEFAULT_DSIM_ID),
-      _configurationParameters (iStartDate, iEndDate) {
+      _simulationStatus (NULL) {
+    initSimulationStatus (DEFAULT_DSIM_ID, iStartDate, iEndDate);
   }
+  
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::DSIM_ServiceContext (const SimulatorID_T& iSimulatorID,
                                             const stdair::Date_T& iStartDate,
                                             const stdair::Date_T& iEndDate)
     : _simulatorID (iSimulatorID),
-      _configurationParameters (iStartDate, iEndDate) {
+      _simulationStatus (NULL) {
+    initSimulationStatus (iSimulatorID, iStartDate, iEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::~DSIM_ServiceContext() {
   }
-  
+
+
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_ServiceContext::initSimulationStatus (const SimulatorID_T& iSimulatorID,
+                                                  const stdair::Date_T& iStartDate,
+                                                  const stdair::Date_T& iEndDate) {
+
+    // Create a Simulation Status key
+    const SimulationStatusKey lKey (iSimulatorID, iStartDate, iEndDate);
+
+    // Create a Simulation Status object instance
+    SimulationStatus& lSimulationStatus =
+      stdair::FacBom<SimulationStatus>::instance().create (lKey);
+
+    // Store the event queue object
+    _simulationStatus = &lSimulationStatus;
+  }
+
   // //////////////////////////////////////////////////////////////////////
   const std::string DSIM_ServiceContext::shortDisplay() const {
     std::ostringstream oStr;
     oStr << "DSIM_ServiceContext [" << _simulatorID
          << "] -- Owns StdAir service: " << _ownStdairService
          << ". Configuration parameters: "
-         << _configurationParameters.describe();
+         << _simulationStatus->describe();
     return oStr.str();
   }
 

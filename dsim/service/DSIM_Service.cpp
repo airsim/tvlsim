@@ -618,9 +618,13 @@ namespace DSIM {
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
 
+    // Get a reference on the Simulation Status
+    SimulationStatus& lSimulationStatus =
+      lDSIM_ServiceContext.getSimulationStatus();
+
     // Retrieve the simulation parameters
-    const stdair::Date_T& lStartDate = lDSIM_ServiceContext.getStartDate();
-    const stdair::Date_T& lEndDate = lDSIM_ServiceContext.getEndDate();
+    const stdair::Date_T& lStartDate = lSimulationStatus.getStartDate();
+    const stdair::Date_T& lEndDate = lSimulationStatus.getEndDate();
 
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
@@ -639,13 +643,33 @@ namespace DSIM {
     }
     assert (_dsimServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (AirSched) service context
+    // Retrieve the StdAir service object from the (DSim) service context
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 
     // Delegate the BOM building to the dedicated service
     return lSTDAIR_Service.csvDisplay();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::simulationStatusDisplay() const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Get a reference on the Simulation Status
+    const SimulationStatus& lSimulationStatus =
+      lDSIM_ServiceContext.getSimulationStatus();
+
+    return lSimulationStatus.describe();
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -662,6 +686,10 @@ namespace DSIM {
     }
     assert (_dsimServiceContext != NULL);
     DSIM_ServiceContext& lDSIM_ServiceContext= *_dsimServiceContext;
+
+    // Get a reference on the Simulation Status
+    SimulationStatus& lSimulationStatus =
+      lDSIM_ServiceContext.getSimulationStatus();
 
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
@@ -689,7 +717,8 @@ namespace DSIM {
       lSimulationChronometer.start();
       Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                            lTRAVELCCM_Service, lSTDAIR_Service,
-                           iDemandGenerationMethod, iForecastingMethod, iPartnershipTechnique);
+                           lSimulationStatus, iDemandGenerationMethod,
+                           iForecastingMethod, iPartnershipTechnique);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
       // Reset the service (including the event queue) for the next run
