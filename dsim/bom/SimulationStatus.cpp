@@ -12,7 +12,8 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const Key_T& iKey)
-    : _key (iKey), _currentDate (iKey.getStartDate()),
+    : _key (iKey), _currentDate (iKey.getStartDate()),  
+      _nbOfBookings (0),
       _bookingRequestProgressPercentage (0),
       _snapShotProgressPercentage (0),
       _rmEventProgressPercentage (0),
@@ -27,6 +28,7 @@ namespace DSIM {
             DEFAULT_SIMULATION_START_DATE,
             DEFAULT_SIMULATION_END_DATE),
       _currentDate (DEFAULT_SIMULATION_START_DATE),
+      _nbOfBookings (0),
       _bookingRequestProgressPercentage (0),
       _snapShotProgressPercentage (0),
       _rmEventProgressPercentage (0),
@@ -39,6 +41,7 @@ namespace DSIM {
   SimulationStatus::SimulationStatus (const SimulationStatus& iSimulationStatus)
     : _key (iSimulationStatus._key),
       _currentDate (iSimulationStatus.getStartDate()),
+      _nbOfBookings (iSimulationStatus._nbOfBookings),
       _bookingRequestProgressPercentage (iSimulationStatus._bookingRequestProgressPercentage),
       _snapShotProgressPercentage (iSimulationStatus._snapShotProgressPercentage),
       _rmEventProgressPercentage (iSimulationStatus._rmEventProgressPercentage),
@@ -88,13 +91,28 @@ namespace DSIM {
       break;
     }
     }  
-  } 
+  }
 
   // //////////////////////////////////////////////////////////////////////
   void SimulationStatus::
   updateProgress (const stdair::ProgressPercentage_T lProgressPercentage) {
     _allEventsProgressPercentage = lProgressPercentage;
   }
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::reset () { 
+
+    _allEventsProgressPercentage =0;
+    _bookingRequestProgressPercentage = 0;
+    _cancellationProgressPercentage = 0;
+    _optimisationNotificationProgressPercentage = 0;
+    _snapShotProgressPercentage = 0;
+    _rmEventProgressPercentage = 0;
+    _breakPointProgressPercentage = 0;
+    _nbOfBookings = 0; 
+    _currentDate = getStartDate();
+   
+  } 
   
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationStatus::describe() const {
