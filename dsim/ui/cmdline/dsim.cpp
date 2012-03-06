@@ -143,6 +143,8 @@ struct Command_T {
     QUIT,
     HELP,
     RUN,
+    RESET,
+    LIST_EVENT,
     DISPLAY_STATUS,
     JSON_LIST_EVENT,
     JSON_LIST_FLIGHT_DATE,
@@ -695,7 +697,13 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::HELP;
 
     } else if (lCommand == "run") {
-      oCommandType = Command_T::RUN;
+      oCommandType = Command_T::RUN;  
+
+    } else if (lCommand == "reset") {
+      oCommandType = Command_T::RESET;  
+
+    } else if (lCommand == "list_event") {
+      oCommandType = Command_T::LIST_EVENT;
 
     } else if (lCommand == "display_status") {
       oCommandType = Command_T::DISPLAY_STATUS;
@@ -984,12 +992,28 @@ int main (int argc, char* argv[]) {
     case Command_T::HELP: {
       std::cout << std::endl;
       std::cout << "Commands: " << std::endl;
-      std::cout << " help" << "\t\t\t" << "Display this help" << std::endl;
-      std::cout << " quit" << "\t\t\t" << "Quit the application" << std::endl;
-      std::cout << " \nDebug Commands" << std::endl;
-      std::cout << " json_list_flight_date" << "\t"
+      std::cout << " help" << "\t\t\t\t" << "Display this help" << std::endl;
+      std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;   
+      std::cout << " run" << "\t\t\t\t"
+                << "Play all the events until the next break-point, if any"
+                << std::endl;  
+      std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
+                << "event queue) and generate the first event for each demand "
+                << "stream" << std::endl;  
+      std::cout << " display_status" << "\t\t\t" 
+		<< "Display the simulation status" << std::endl;
+      std::cout << " list_event" << "\t\t\t" 
+		<< "List events in the queue" << std::endl;
+      std::cout << " \nDebug Commands" << std::endl;   
+      std::cout << " json_list_event" << "\t\t"
+                << "List events in the queue in a JSON format"
+                << std::endl;  
+      std::cout << " json_list_flight_date" << "\t\t"
                 << "List airlines, flights and departure dates in a JSON format"
-                << std::endl;
+                << std::endl;        
+      std::cout << " json_display_flight_date" << "\t"
+                << "Display the given flight-date in a JSON format"
+		<< std::endl;
       std::cout << std::endl;
       break;
     }
@@ -1024,6 +1048,30 @@ int main (int argc, char* argv[]) {
       std::cout << lSimulationStatusStr << std::endl;
       STDAIR_LOG_DEBUG (lSimulationStatusStr);
       
+      break;
+    }     
+
+      // ////////////////////////////// Reset /////////////////////////
+    case Command_T::RESET: {
+      //
+      std::cout << "Reset" << std::endl;   
+      dsimService.reset ();	
+
+      //
+      break;
+    } 
+
+      // ////////////////////////////// List /////////////////////////
+    case Command_T::LIST_EVENT: {
+      //
+      std::cout << "List" << std::endl;   
+
+      std::ostringstream oEventListStr;
+      oEventListStr << dsimService.listEvents ();	
+      std::cout << oEventListStr.str() << std::endl;   
+      STDAIR_LOG_DEBUG (oEventListStr.str());
+
+      //
       break;
     }
 
