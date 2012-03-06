@@ -238,7 +238,12 @@ namespace DSIM {
      * @return BookingRequestStruct& Sample booking request structure.
      */
     stdair::BookingRequestStruct
-    buildSampleBookingRequest (const bool isForCRS = false);
+    buildSampleBookingRequest (const bool isForCRS = false);   
+
+    /**
+     * Reset the context of the service
+     */
+    void reset() const;  
 
     
   public:
@@ -263,7 +268,15 @@ namespace DSIM {
      * @return std::string Output string in which the BOM tree is
      *        logged/dumped.
      */
-    std::string csvDisplay() const;
+    std::string csvDisplay() const;  
+
+    /**
+     * Display (dump in the returned string) the event list of the event queue.
+     *
+     * @return std::string Output string in which the events are
+     *        logged/dumped.
+     */
+    std::string listEvents () const;
 
     /**
      * Recursively display (dump in the returned string) the simulation
