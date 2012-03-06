@@ -77,6 +77,11 @@ namespace DSIM {
      */
     void updateProgress(const stdair::ProgressPercentage_T);
 
+    /**
+     * Reset all the parameters
+     */
+    void reset ();
+
   public:
     // /////////// Display support method /////////////
     /**
@@ -147,7 +152,7 @@ namespace DSIM {
     /**
      * Current number of bookings
      */
-     stdair::NbOfBookings_T lNbOfBookings;
+     stdair::NbOfBookings_T _nbOfBookings;
   
     /**
      * Progress statuses.

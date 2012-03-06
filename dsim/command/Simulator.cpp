@@ -112,8 +112,8 @@ namespace DSIM {
 	playCancellation (ioSIMCRS_Service,
 			  lEventStruct); 	
 	// Re-Calculate the progress percentage for cancellations
-	lProgressPercentageByType = 0;
-	//ioTRADEMGEN_Service.calculateProgress(stdair::EventType::CX);
+	lProgressPercentageByType =
+	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::CX);
 	break;
 
       case stdair::EventType::SNAPSHOT: 

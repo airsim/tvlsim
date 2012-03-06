@@ -650,7 +650,70 @@ namespace DSIM {
 
     // Delegate the BOM building to the dedicated service
     return lSTDAIR_Service.csvDisplay();
+  } 
+
+  // //////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::listEvents () const {  
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
+
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+
+    // Delegate the BOM building to the dedicated service
+    return lTRADEMGEN_Service.list ();
+
   }
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::reset() const {  
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
+
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+    // Reset the TRADEMGEN service 
+    lTRADEMGEN_Service.reset();
+
+    // TODO
+    // Get a reference on the SIMCRS service handler
+    /**SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+       lDSIM_ServiceContext.getSIMCRS_Service();
+       // Reset the SIMCRS service 
+       lSIMCRS_Service.reset();*/ 
+
+    // TODO
+    // Get a reference on the TRAVELCCM service handler
+    /**TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
+       lDSIM_ServiceContext.getTRAVELCCM_Service();  
+       // Reset the TRAVELCCM service 
+       lTRAVELCCM_Service.reset();*/
+
+    // Reset the simulation status object  
+    // Get a reference on the Simulation Status
+    SimulationStatus& lSimulationStatus =
+      lDSIM_ServiceContext.getSimulationStatus();
+    lSimulationStatus.reset();
+    
+  }  
 
   // //////////////////////////////////////////////////////////////////////
   std::string DSIM_Service::simulationStatusDisplay() const {
@@ -697,7 +760,7 @@ namespace DSIM {
 
     // Get a reference on the TRADEMGEN service handler
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
-      lDSIM_ServiceContext.getTRADEMGEN_Service();
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
     
     // Get a reference on the TRAVELCCM service handler
     TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
