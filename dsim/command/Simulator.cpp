@@ -134,7 +134,11 @@ namespace DSIM {
 	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::RM);
 	break; 
 
-      case stdair::EventType::BRK_PT: break;
+      case stdair::EventType::BRK_PT:	
+	// Re-Calculate the progress percentage for break point events
+	lProgressPercentageByType = 
+	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::BRK_PT);
+	break;
 
       default: assert (false); break;
       }

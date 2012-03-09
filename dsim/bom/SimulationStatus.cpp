@@ -19,6 +19,7 @@ namespace DSIM {
       _rmEventProgressPercentage (0),
       _optimisationNotificationProgressPercentage (0),
       _cancellationProgressPercentage (0),
+      _breakPointProgressPercentage (0),
       _allEventsProgressPercentage (0) {
   }
   
@@ -33,7 +34,8 @@ namespace DSIM {
       _snapShotProgressPercentage (0),
       _rmEventProgressPercentage (0),
       _optimisationNotificationProgressPercentage (0),
-      _cancellationProgressPercentage (0),
+      _cancellationProgressPercentage (0),     
+      _breakPointProgressPercentage (0),
       _allEventsProgressPercentage (0) {
   }
 
@@ -47,6 +49,7 @@ namespace DSIM {
       _rmEventProgressPercentage (iSimulationStatus._rmEventProgressPercentage),
       _optimisationNotificationProgressPercentage (iSimulationStatus._optimisationNotificationProgressPercentage),
       _cancellationProgressPercentage (iSimulationStatus._cancellationProgressPercentage),
+      _breakPointProgressPercentage (iSimulationStatus._breakPointProgressPercentage),
       _allEventsProgressPercentage (iSimulationStatus._allEventsProgressPercentage) {
     assert (false);
   }
@@ -128,10 +131,12 @@ namespace DSIM {
          << _snapShotProgressPercentage << "%"
          << "\nRM events:                  "
          << _rmEventProgressPercentage << "%"
-         << "\nOptimisation notifications: "
-         << _optimisationNotificationProgressPercentage << "%"
+      /**<< "\nOptimisation notifications: "
+         << _optimisationNotificationProgressPercentage << "%"*/
          << "\nCancellations:              "
-         << _cancellationProgressPercentage << "%";
+         << _cancellationProgressPercentage << "%"
+	 << "\nBreak points:               "
+         << _breakPointProgressPercentage << "%";
     return oStr.str();
   }
   
