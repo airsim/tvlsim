@@ -159,6 +159,7 @@ struct Command_T {
     JSON_LIST_FLIGHT_DATE,
     JSON_DISPLAY_FLIGHT_DATE, 
     JSON_SET_BREAK_POINT,
+    JSON_RUN,
     LAST_VALUE
   } Type_T;
 };
@@ -506,7 +507,8 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("json_list_event");
   Completers.push_back ("json_list_flight_date");
   Completers.push_back ("json_display_flight_date");
-  Completers.push_back ("json_set_break_point");
+  Completers.push_back ("json_set_break_point"); 
+  Completers.push_back ("json_run");
   Completers.push_back ("quit");
 
   // Now register the completers.
@@ -752,7 +754,10 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::JSON_DISPLAY_FLIGHT_DATE; 
 
     } else if (lCommand == "json_set_break_point") {
-      oCommandType = Command_T::JSON_SET_BREAK_POINT;
+      oCommandType = Command_T::JSON_SET_BREAK_POINT; 
+
+    } else if (lCommand == "json_run") {
+      oCommandType = Command_T::JSON_RUN;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
@@ -789,12 +794,19 @@ std::string toString (const TokenList_T& iTokenList) {
 // /////////////////////////////////////////////////////////
 bool regex_callback(const boost::match_results<std::string::const_iterator>& what)
 {
+  // Put the matched strings in the list of tokens to be returned back
+  // to the caller
   // what[1] contains the year of the date
-  GlobalTokenListForDate.push_back(what[1].str()); 
-  // what[2] contains the day of the date   
-  GlobalTokenListForDate.push_back(what[2].str());  
+  // what[2] contains the day of the date
   // what[3] contains the month of the date
-  GlobalTokenListForDate.push_back(what[3].str());
+  const unsigned short lMatchSetSize = what.size();
+  for (unsigned short matchIdx = 1; matchIdx != lMatchSetSize; ++matchIdx) {
+    const std::string lMatchedString (std::string (what[matchIdx].first,
+                                                   what[matchIdx].second));
+    //if (lMatchedString.empty() == false) {
+    GlobalTokenListForDate.push_back (lMatchedString);
+    //}
+  }
   return true;
 }
 
@@ -1087,7 +1099,7 @@ int main (int argc, char* argv[]) {
       std::cout << " help" << "\t\t\t\t" << "Display this help" << std::endl;
       std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;   
       std::cout << " run" << "\t\t\t\t"
-                << "Play all the events until the next break-point, if any"
+                << "Perform the simulation until the next break-point, if any"
                 << std::endl;  
       std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
                 << "event queue) and generate the first event for each demand "
@@ -1107,7 +1119,10 @@ int main (int argc, char* argv[]) {
                 << "Display the given flight-date in a JSON format"
 		<< std::endl;  
       std::cout << " json_set_break_point" << "\t\t"
-                << "Insert the given break points in the event list"
+                << "Insert the given break points in the event list"  
+		<< std::endl;
+      std::cout << " json_run" << "\t\t\t"
+                << "Perform the simulation until the next break-point, if any"
 		<< std::endl;
       std::cout << std::endl;
       break;
@@ -1306,6 +1321,27 @@ int main (int argc, char* argv[]) {
       std::cout << lCSVBPDump << std::endl;
       STDAIR_LOG_DEBUG (lCSVBPDump);
 
+      break;
+    }     
+
+      // ////////////////////////////// JSon Run  ////////////////////////
+
+    case Command_T::JSON_RUN: {
+      //
+      std::cout << "JSON Run" << std::endl;
+
+      std::ostringstream lMyCommandJSONstream;
+      lMyCommandJSONstream << "{\"run\": \"1\"}";
+
+      // Delegate the call to the dedicated service
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lCSVEventListDump =
+        dsimService.jsonHandler (lJSONCommandString);
+
+      // DEBUG: Display the events queue JSON string
+      std::cout << lCSVEventListDump << std::endl;
+      STDAIR_LOG_DEBUG (lCSVEventListDump);
+      
       break;
     }
 
