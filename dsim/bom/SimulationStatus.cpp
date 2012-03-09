@@ -20,7 +20,8 @@ namespace DSIM {
       _optimisationNotificationProgressPercentage (0),
       _cancellationProgressPercentage (0),
       _breakPointProgressPercentage (0),
-      _allEventsProgressPercentage (0) {
+      _allEventsProgressPercentage (0),
+      _simulationMode('r') {
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -36,7 +37,8 @@ namespace DSIM {
       _optimisationNotificationProgressPercentage (0),
       _cancellationProgressPercentage (0),     
       _breakPointProgressPercentage (0),
-      _allEventsProgressPercentage (0) {
+      _allEventsProgressPercentage (0),
+      _simulationMode ('r') {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -50,7 +52,8 @@ namespace DSIM {
       _optimisationNotificationProgressPercentage (iSimulationStatus._optimisationNotificationProgressPercentage),
       _cancellationProgressPercentage (iSimulationStatus._cancellationProgressPercentage),
       _breakPointProgressPercentage (iSimulationStatus._breakPointProgressPercentage),
-      _allEventsProgressPercentage (iSimulationStatus._allEventsProgressPercentage) {
+      _allEventsProgressPercentage (iSimulationStatus._allEventsProgressPercentage),
+      _simulationMode(iSimulationStatus.getSimulationMode()) {
     assert (false);
   }
 

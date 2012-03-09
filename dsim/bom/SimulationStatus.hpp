@@ -13,6 +13,7 @@
 #include <stdair/basic/StructAbstract.hpp>
 #include <stdair/basic/EventType.hpp>
 // DSim
+#include <dsim/basic/SimulationMode.hpp>
 #include <dsim/bom/SimulationStatusKey.hpp>
 
 namespace DSIM {
@@ -55,6 +56,20 @@ namespace DSIM {
      */
     const stdair::Date_T& getEndDate() const {
       return _key.getEndDate();
+    } 
+    
+    /**
+     * Get the current mode of the simulation.
+     */
+    const SimulationMode& getSimulationMode() const {
+      return _simulationMode;
+    } 
+
+    /**
+     * Get the current mode of the simulation.
+     */
+    SimulationMode::EN_SimulationMode getMode() const {
+      return _simulationMode.getMode();
     }
     
   public:
@@ -81,6 +96,13 @@ namespace DSIM {
      * Reset all the parameters
      */
     void reset ();
+
+    /**
+     * Change the current mode of the simulation.
+     */
+    void setMode (const SimulationMode::EN_SimulationMode& iEN_SimulationMode) {
+      return _simulationMode.setMode(iEN_SimulationMode);
+    }
 
   public:
     // /////////// Display support method /////////////
@@ -173,6 +195,10 @@ namespace DSIM {
     stdair::ProgressPercentage_T _breakPointProgressPercentage;
     stdair::ProgressPercentage_T _allEventsProgressPercentage;
     
+    /** 
+     * Simulation Mode (i.e. running, on a break point or done)
+     */
+    SimulationMode _simulationMode;
   };
 
 }

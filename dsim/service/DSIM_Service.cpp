@@ -37,6 +37,7 @@
 #include <travelccm/TRAVELCCM_Service.hpp>
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
+#include <dsim/basic/SimulationMode.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/command/Simulator.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
@@ -550,7 +551,7 @@ namespace DSIM {
                                                     "has not been initialised");
     }
     assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
 
     //
     // Extract from the JSON-ified string the command
@@ -609,7 +610,7 @@ namespace DSIM {
       
       initBreakPointEvents (lBreakPointList);	
 
-      // Return an error JSON-ified string
+      // Return a JSON-ified string
       std::ostringstream oStream;
       oStream << "{\"done\": \"" << lBreakPointList.size() 
 		   << " break point(s) added to the queue.\"}";
@@ -617,6 +618,33 @@ namespace DSIM {
       break;
     } 
     case stdair::JSonCommand::RUN:{ 
+      //
+      // TODO: STOP hardcoding !!!
+      // Making a service to enable Json import of those values.
+      //
+      // Number of Run
+      const NbOfRuns_T lNbOfRuns = 1;
+      // Forecasting method.
+      const stdair::ForecastingMethod lForecastingMethod ('M');
+      // Demand generation method.
+      const stdair::DemandGenerationMethod lDemandGenerationMethod ('S');
+      // Partnership technique.
+      const stdair::PartnershipTechnique lPartnershipTechnique('N');
+
+      simulate (lNbOfRuns, lDemandGenerationMethod,
+		lForecastingMethod, lPartnershipTechnique);
+
+      // Get a reference on the Simulation Status
+      SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+      
+      // Return a JSON-ified string
+      std::ostringstream oStream;
+      oStream << "{\"done\": \"Current Date: "
+	      << lSimulationStatus.getCurrentDate() << "\"}";
+      return oStream.str();
+      break;
+      
       break;
     }
     default: {
@@ -822,7 +850,7 @@ namespace DSIM {
 
     // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
-      lDSIM_ServiceContext.getSimulationStatus();
+      lDSIM_ServiceContext.getSimulationStatus();  
 
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
@@ -855,7 +883,9 @@ namespace DSIM {
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
       // Reset the service (including the event queue) for the next run
-      lTRADEMGEN_Service.reset();
+      if (lSimulationStatus.getMode() == SimulationMode::DONE) {
+	lTRADEMGEN_Service.reset();
+      }
 
       // DEBUG
       STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure
