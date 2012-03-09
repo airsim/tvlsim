@@ -13,6 +13,7 @@
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
+#include <stdair/bom/BreakPointStruct.hpp>
 // AIRRAC
 #include <airrac/AIRRAC_Types.hpp>
 // SimFQT
@@ -127,7 +128,12 @@ namespace DSIM {
     /**
      * Initialise the snapshot and RM events for the inventories.
      */
-    void initSnapshotAndRMEvents();
+    void initSnapshotAndRMEvents();  
+
+    /**
+     * Initialise the break points.
+     */
+    void initBreakPointEvents(const stdair::BreakPointList_T&);
 
     /**
      * Re-initialise the simulation service, as well as all the other
@@ -257,7 +263,7 @@ namespace DSIM {
      * @return std::string Output string in which the asking objects are
      *         logged/dumped with a JSon format.
      */
-    std::string jsonHandler (const stdair::JSONString&) const;
+    std::string jsonHandler (const stdair::JSONString&);
 
   public:
     // //////////////// Display support methods /////////////////
