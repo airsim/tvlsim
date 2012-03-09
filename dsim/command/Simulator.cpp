@@ -10,7 +10,6 @@
 // StdAir
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
-#include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/bom/CancellationStruct.hpp>
@@ -28,43 +27,57 @@
 #include <airsched/AIRSCHED_Service.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
+#include <dsim/basic/SimulationMode.hpp>
 #include <dsim/bom/SimulationStatus.hpp>
 #include <dsim/command/Simulator.hpp>
 
 namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
-  void Simulator::simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-                            TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
-                            TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
-                            stdair::STDAIR_Service& ioSTDAIR_Service,
-                            SimulationStatus& ioSimulationStatus,
-                            const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-                            const stdair::ForecastingMethod& iForecastingMethod,
-                            const stdair::PartnershipTechnique& iPartnershipTechnique) {
+  void Simulator::
+  simulate (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
+	    TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
+	    TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
+	    stdair::STDAIR_Service& ioSTDAIR_Service,
+	    SimulationStatus& ioSimulationStatus,
+	    const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+	    const stdair::ForecastingMethod& iForecastingMethod,
+	    const stdair::PartnershipTechnique& iPartnershipTechnique) {
 
-    // DEBUG
-    STDAIR_LOG_DEBUG ("The simulation is starting");
+    if (ioSimulationStatus.getMode() == SimulationMode::RUNNING) {  
 
-    // Retrieve the expected (mean value of the) number of events to be
-    // generated
-    const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
+      // DEBUG
+      std::cout << "The simulation is starting" << std::endl; 
+      STDAIR_LOG_DEBUG ("The simulation is starting");   
+ 
+      /**
+	 Initialisation step.
+	 <br>Generate the first event for each demand stream.
+      */
+      // Retrieve the expected (mean value of the) number of events to be
+      // generated
+      const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
       ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
+      const stdair::Count_T& lActualNbOfEventsToBeGenerated =
+	ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);  
 
-    /**
-       Initialisation step.
-       <br>Generate the first event for each demand stream.
-    */
-    const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-      ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
+      // DEBUG
+      STDAIR_LOG_DEBUG ("Expected number of events: "
+			<< lExpectedNbOfEventsToBeGenerated << ", actual: "
+			<< lActualNbOfEventsToBeGenerated);
+
+    } else if (ioSimulationStatus.getMode() == SimulationMode::BREAK) {    
+ 
+      // DEBUG
+      std::cout << "The simulation continues" << std::endl;
+      STDAIR_LOG_DEBUG ("The simulation continues");
+      
+      // Change the current mode of the simulation status
+      ioSimulationStatus.setMode (SimulationMode::RUNNING);
+    }
 
     // Initialise the (Boost) progress display object
     //boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
-  
-    // DEBUG
-    STDAIR_LOG_DEBUG ("Expected number of events: "
-                      << lExpectedNbOfEventsToBeGenerated << ", actual: "
-                      << lActualNbOfEventsToBeGenerated);
   
     /**
        Main loop.
@@ -77,11 +90,14 @@ namespace DSIM {
 
       // Get the next event from the event queue
       stdair::EventStruct lEventStruct;
-      stdair::ProgressStatusSet lPSS = ioTRADEMGEN_Service.popEvent (lEventStruct);
+      stdair::ProgressStatusSet lPSS = 
+	ioTRADEMGEN_Service.popEvent (lEventStruct);
 
       // Update the simulation status with the current date
-      const stdair::DateTime_T& lCurrentEventDateTime = lEventStruct.getEventTime (); 
-      const stdair::Date_T& lCurrentEventDate = lCurrentEventDateTime.date();
+      const stdair::DateTime_T& lCurrentEventDateTime = 
+	lEventStruct.getEventTime (); 
+      const stdair::Date_T& lCurrentEventDate = 
+	lCurrentEventDateTime.date();
       ioSimulationStatus.setCurrentDate(lCurrentEventDate);
 
       // DEBUG
@@ -90,8 +106,6 @@ namespace DSIM {
       // Check the event type
       const stdair::EventType::EN_EventType& lEventType =
         lEventStruct.getEventType(); 
-
-      stdair::ProgressPercentage_T lProgressPercentageByType;
 
       switch (lEventType) {
 
@@ -102,26 +116,17 @@ namespace DSIM {
 			    lEventStruct,
 			    lPSS,
 			    iDemandGenerationMethod,
-			    iPartnershipTechnique);  
-	// Re-Calculate the progress percentage for the booking requests
-	lProgressPercentageByType = 
-	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::BKG_REQ);
+			    iPartnershipTechnique); 
 	break;
-
+	
       case stdair::EventType::CX: 
 	playCancellation (ioSIMCRS_Service,
 			  lEventStruct); 	
-	// Re-Calculate the progress percentage for cancellations
-	lProgressPercentageByType =
-	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::CX);
 	break;
 
       case stdair::EventType::SNAPSHOT: 
 	playSnapshotEvent (ioSIMCRS_Service,
 			   lEventStruct); 	
-	// Re-Calculate the progress percentage for snap shots
-	lProgressPercentageByType = 
-	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::SNAPSHOT);
 	break;
 
       case stdair::EventType::RM: 
@@ -129,37 +134,56 @@ namespace DSIM {
 		     lEventStruct,
 		     iForecastingMethod,
 		     iPartnershipTechnique);	
-	// Re-Calculate the progress percentage for rm events
-	lProgressPercentageByType = 
-	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::RM);
 	break; 
 
       case stdair::EventType::BRK_PT:	
-	// Re-Calculate the progress percentage for break point events
-	lProgressPercentageByType = 
-	  ioTRADEMGEN_Service.calculateProgress(stdair::EventType::BRK_PT);
+	// Change the current mode of the simulation status
+	ioSimulationStatus.setMode (SimulationMode::BREAK);
+	updateStatus (ioTRADEMGEN_Service, lEventType, ioSimulationStatus);
+	return;
 	break;
 
-      default: assert (false); break;
+      case stdair::EventType::OPT_NOT_4_FD: 
+      case stdair::EventType::OPT_NOT_4_NET: 
+      case stdair::EventType::SKD_CHG:
+	break;	
+      default: assert (false); 
+	break;
       }
+      
+      updateStatus (ioTRADEMGEN_Service, lEventType, ioSimulationStatus);
 
       // Update the progress display
       //++lProgressDisplay;
-  
-      // Update the simulation status for the current type
-      ioSimulationStatus.updateProgress(lEventType,
-					lProgressPercentageByType);
-
-      // Update the global simulation status 
-      const stdair::ProgressPercentage_T lProgressPercentage = 
-	ioTRADEMGEN_Service.calculateProgress();
-      ioSimulationStatus.updateProgress(lProgressPercentage);
-	
       
-    }
+    }	
+
+    // Change the current mode of the simulation status
+    ioSimulationStatus.setMode (SimulationMode::DONE);
        
     // DEBUG
     STDAIR_LOG_DEBUG ("The simulation has ended");
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  void Simulator::
+  updateStatus (TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
+		const stdair::EventType::EN_EventType& iEN_EventType,
+		SimulationStatus& ioSimulationStatus) {    	
+
+    // Re-Calculate the progress percentage for the given event type
+    stdair::ProgressPercentage_T lProgressPercentageByType = 
+      ioTRADEMGEN_Service.calculateProgress (iEN_EventType);
+
+    // Update the simulation status for the current type
+    ioSimulationStatus.updateProgress (iEN_EventType,
+				       lProgressPercentageByType);
+
+    // Update the global simulation status 
+    const stdair::ProgressPercentage_T lProgressPercentage = 
+      ioTRADEMGEN_Service.calculateProgress ();
+    ioSimulationStatus.updateProgress (lProgressPercentage);
+
   }
 
   // ////////////////////////////////////////////////////////////////////

@@ -8,6 +8,7 @@
 #include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/basic/PartnershipTechnique.hpp>
+#include <stdair/bom/EventStruct.hpp>
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
 
@@ -42,7 +43,12 @@ namespace DSIM {
                          SimulationStatus&,
                          const stdair::DemandGenerationMethod&,
                          const stdair::ForecastingMethod&,
-                         const stdair::PartnershipTechnique&);
+                         const stdair::PartnershipTechnique&);  
+
+    /** Update the simulation status. */
+    static void updateStatus(TRADEMGEN::TRADEMGEN_Service&,
+			     const stdair::EventType::EN_EventType&,
+			     SimulationStatus& ioSimulationStatus);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
