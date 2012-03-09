@@ -37,6 +37,11 @@
  */
 typedef std::vector<std::string> WordList_T;
 
+/**
+ * List of dates (for break points)
+ */
+typedef std::list<stdair::Date_T> DateList_T;
+
 
 // //////// Constants //////
 /**
@@ -134,6 +139,10 @@ const std::string K_DSIM_DEFAULT_DB_PORT ("3306");
  */
 typedef std::vector<std::string> TokenList_T;
 
+// //////////////////////////////////////////////////////////////////////
+TokenList_T GlobalTokenListForDate;
+
+// //////////////////////////////////////////////////////////////////////
 /**
  * Enumeration representing the command entered by the user on the command-line.
  */
@@ -148,7 +157,8 @@ struct Command_T {
     DISPLAY_STATUS,
     JSON_LIST_EVENT,
     JSON_LIST_FLIGHT_DATE,
-    JSON_DISPLAY_FLIGHT_DATE,
+    JSON_DISPLAY_FLIGHT_DATE, 
+    JSON_SET_BREAK_POINT,
     LAST_VALUE
   } Type_T;
 };
@@ -489,11 +499,14 @@ void initReadline (swift::SReadline& ioInputReader) {
   // - "identifiers"
   // - special identifier %file - means to perform a file name completion
   Completers.push_back ("help");
-  Completers.push_back ("run");
+  Completers.push_back ("run");  
+  Completers.push_back ("reset");
   Completers.push_back ("display_status");
+  Completers.push_back ("list_event");
   Completers.push_back ("json_list_event");
   Completers.push_back ("json_list_flight_date");
   Completers.push_back ("json_display_flight_date");
+  Completers.push_back ("json_set_break_point");
   Completers.push_back ("quit");
 
   // Now register the completers.
@@ -538,7 +551,6 @@ void parseFlightKey (const TokenList_T& iTokenList,
     }
   }
 }
-
 
 // //////////////////////////////////////////////////////////////////
 void parseDateKey (const TokenList_T& iTokenList,
@@ -659,6 +671,28 @@ void parseDateKey (const TokenList_T& iTokenList,
   }
 }
 
+// //////////////////////////////////////////////////////////////////
+void parseDateListKey (stdair::Date_T& iDefaultDate,
+		       DateList_T& ioDateList) {
+ 
+  // To re-compose a date, three tokens are needed.
+  if (GlobalTokenListForDate.size() < 3) {
+    ioDateList.push_back (iDefaultDate); 
+    return; 
+  }
+
+  // To re-compose a date, three tokens are needed.
+  while (GlobalTokenListForDate.size() >= 3) {
+    // Try to re-compose the airline code and the flight number
+    parseDateKey (GlobalTokenListForDate, iDefaultDate);
+    ioDateList.push_back (iDefaultDate); 
+    // Erase the first three tokens (corresponding to the year,
+    // month and date of the first date
+    GlobalTokenListForDate.erase(GlobalTokenListForDate.begin(), 
+				 GlobalTokenListForDate.begin()+3);
+  }
+  
+}
 
 // //////////////////////////////////////////////////////////////////
 void parseFlightDateKey (TokenList_T& iTokenList,
@@ -715,7 +749,10 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::JSON_LIST_FLIGHT_DATE;
 
     } else if (lCommand == "json_display_flight_date") {
-      oCommandType = Command_T::JSON_DISPLAY_FLIGHT_DATE;
+      oCommandType = Command_T::JSON_DISPLAY_FLIGHT_DATE; 
+
+    } else if (lCommand == "json_set_break_point") {
+      oCommandType = Command_T::JSON_SET_BREAK_POINT;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
@@ -750,6 +787,40 @@ std::string toString (const TokenList_T& iTokenList) {
 }
 
 // /////////////////////////////////////////////////////////
+bool regex_callback(const boost::match_results<std::string::const_iterator>& what)
+{
+  // what[1] contains the year of the date
+  GlobalTokenListForDate.push_back(what[1].str()); 
+  // what[2] contains the day of the date   
+  GlobalTokenListForDate.push_back(what[2].str());  
+  // what[3] contains the month of the date
+  GlobalTokenListForDate.push_back(what[3].str());
+  return true;
+}
+
+// /////////////////////////////////////////////////////////
+void extractTokenListDate (const TokenList_T& iTokenList,
+				  const std::string& iRegularExpression) {
+  TokenList_T oTokenList;
+
+  // Re-create the string with all the tokens (which had been trimmed
+  // by read-line)
+  const std::string lFullLine = toString (iTokenList);
+
+  // See the caller for the regular expression
+  boost::regex expression (iRegularExpression);
+  
+  std::string::const_iterator start = lFullLine.begin();
+  std::string::const_iterator end = lFullLine.end();
+
+  // construct the iterators
+  boost::sregex_iterator m1(start, end, expression);
+  boost::sregex_iterator m2;
+  std::for_each(m1, m2, &regex_callback);
+
+}
+
+// /////////////////////////////////////////////////////////
 TokenList_T extractTokenList (const TokenList_T& iTokenList,
                               const std::string& iRegularExpression) {
   TokenList_T oTokenList;
@@ -765,9 +836,9 @@ TokenList_T extractTokenList (const TokenList_T& iTokenList,
   std::string::const_iterator end = lFullLine.end();
 
   boost::match_results<std::string::const_iterator> what;
-  boost::match_flag_type flags = boost::match_default | boost::format_sed; 
+  boost::match_flag_type flags = boost::match_default; 
   regex_search (start, end, what, expression, flags);
-  
+
   // Put the matched strings in the list of tokens to be returned back
   // to the caller
   const unsigned short lMatchSetSize = what.size();
@@ -780,7 +851,7 @@ TokenList_T extractTokenList (const TokenList_T& iTokenList,
   }
 
   // DEBUG
-  // std::cout << "After (token list): " << oTokenList << std::endl;
+  //std::cout << "After (token list): " << oTokenList << std::endl;
 
   return oTokenList;
 }
@@ -807,7 +878,26 @@ TokenList_T extractTokenListForFlightDate (const TokenList_T& iTokenList) {
   //
   const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
   return oTokenList;
-}    
+} 
+
+// /////////////////////////////////////////////////////////
+void extractTokenListForDate (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   departure:  year[/- ]?month[/- ]?day
+   *   year:       number (digit{2,4})
+   *   month:      (number (digit{1,2}) | word (alpha{3}))
+   *   day:        number (digit{1,2})
+   */
+  const std::string lRegEx("([[:digit:]]{2,4})[/-]?"
+			   "([[:alpha:]]{3}|[[:digit:]]{1,2})[/-]?"
+			   "([[:digit:]]{1,2})");
+
+  // const std::string lRegEx("[[:digit:]]{2}");
+  //
+  extractTokenListDate (iTokenList, lRegEx);
+
+}      
 
 // /////////////////////////////////////////////////////////
 TokenList_T extractTokenListForFlight (const TokenList_T& iTokenList) {
@@ -823,7 +913,7 @@ TokenList_T extractTokenListForFlight (const TokenList_T& iTokenList) {
   //
   const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
   return oTokenList;
-}  
+} 
 
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
@@ -986,6 +1076,8 @@ int main (int argc, char* argv[]) {
     // Interpret the user input
     lCommandType = extractCommand (lTokenListByReadline);
 
+    GlobalTokenListForDate.clear();
+
     switch (lCommandType) {
 
       // ////////////////////////////// Help ////////////////////////
@@ -1013,6 +1105,9 @@ int main (int argc, char* argv[]) {
                 << std::endl;        
       std::cout << " json_display_flight_date" << "\t"
                 << "Display the given flight-date in a JSON format"
+		<< std::endl;  
+      std::cout << " json_set_break_point" << "\t\t"
+                << "Insert the given break points in the event list"
 		<< std::endl;
       std::cout << std::endl;
       break;
@@ -1139,14 +1234,14 @@ int main (int argc, char* argv[]) {
     case Command_T::JSON_DISPLAY_FLIGHT_DATE: {
 
       //
-      TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline);
+      TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline); 
 
       stdair::AirlineCode_T lAirlineCode (lDefaultAirlineCode);
       stdair::FlightNumber_T lFlightNumber (lDefaultFlightNumber);
       stdair::Date_T lFlightDate (lDefaultDate);
       // Parse the parameters given by the user, giving default values
       // in case the user does not specify some (or all) of them
-      parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);   
+      parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);  
 
       // Construct the JSON command string for the current parameters (current 
       // airline code, current flight number and current date)
@@ -1165,6 +1260,51 @@ int main (int argc, char* argv[]) {
       // Display the flight-date JSON string
       std::cout << lCSVFlightDateDump << std::endl;
       STDAIR_LOG_DEBUG (lCSVFlightDateDump);
+
+      break;
+    }   
+
+      // ////////////////////////////// JSon Set Break Point ////////////////////////
+
+    case Command_T::JSON_SET_BREAK_POINT: { 
+
+      std::cout << "JSON Set Break Point(s)" << std::endl;
+
+      // 
+      extractTokenListForDate (lTokenListByReadline);
+      
+      stdair::Date_T lDate (lDefaultDate);
+      DateList_T lDateList;
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseDateListKey (lDate, lDateList); 
+
+      assert (lDateList.size() >= 1);
+
+      // Construct the JSON command string for the current parameters (current 
+      // airline code, current flight number and current date)
+      std::ostringstream lMyCommandJSONstream; 
+      lMyCommandJSONstream << "{\"break_point\":[";
+
+      for (DateList_T::const_iterator itDate = lDateList.begin(); 
+	   itDate != lDateList.end(); itDate++) {
+	const stdair::Date_T lDate = *itDate;
+	if (itDate == lDateList.begin()) {
+	  lMyCommandJSONstream << "{\"bp\":\"" << lDate << "\"}";
+	} else {
+	  lMyCommandJSONstream <<",{\"bp\":\"" << lDate << "\"}";
+	}
+      }
+      lMyCommandJSONstream << "]}";
+
+      // Add the break point to the simulation
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lCSVBPDump =
+        dsimService.jsonHandler (lJSONCommandString);
+ 
+      // Display the BP JSON string
+      std::cout << lCSVBPDump << std::endl;
+      STDAIR_LOG_DEBUG (lCSVBPDump);
 
       break;
     }
