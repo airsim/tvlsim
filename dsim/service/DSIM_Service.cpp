@@ -577,11 +577,11 @@ namespace DSIM {
     case stdair::JSonCommand::FLIGHT_DATE:
     case stdair::JSonCommand::LIST:{
       
-    // Get a reference on the SIMCRS service handler
-    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
-      lDSIM_ServiceContext.getSIMCRS_Service();
+      // Get a reference on the SIMCRS service handler
+      SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+	lDSIM_ServiceContext.getSIMCRS_Service();
 
-    return lSIMCRS_Service.jsonHandler (iJSONString);
+      return lSIMCRS_Service.jsonHandler (iJSONString);
     }
     case stdair::JSonCommand::EVENT_LIST:{ 
 
@@ -589,82 +589,98 @@ namespace DSIM {
       TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
 	lDSIM_ServiceContext.getTRADEMGEN_Service(); 
 
-    return lTRADEMGEN_Service.jsonHandler (iJSONString);
+      return lTRADEMGEN_Service.jsonHandler (iJSONString);
     } 
     case stdair::JSonCommand::BREAK_POINT:{   
-
-      stdair::BreakPointList_T lBreakPointList; 
-
-      const bool hasBreakPointListBeenRetrieved =
-	stdair::BomJSONImport::jsonImportBreakPoints(iJSONString,
-						     lBreakPointList);    
-
-      if (hasBreakPointListBeenRetrieved == false) {
-	// Return an error JSON-ified string
-	std::ostringstream oErrorStream;
-	oErrorStream << "{\"error\": \"Wrong JSON-ified string: "
-		     << "the break point list is not understood.\"}";
-	return oErrorStream.str();
-      }
-      assert (hasBreakPointListBeenRetrieved == true);
-      
-      initBreakPointEvents (lBreakPointList);	
-
-      // Return a JSON-ified string
-      std::ostringstream oStream;
-      oStream << "{\"done\": \"" << lBreakPointList.size() 
-		   << " break point(s) added to the queue.\"}";
-      return oStream.str();
-      break;
+      return jsonBreakPointHandler (iJSONString);
     } 
     case stdair::JSonCommand::RUN:{ 
-      //
-      // TODO: STOP hardcoding !!!
-      // Making a service to enable Json import of those values.
-      //
-      // Number of Run
-      const NbOfRuns_T lNbOfRuns = 1;
-      // Forecasting method.
-      const stdair::ForecastingMethod lForecastingMethod ('M');
-      // Demand generation method.
-      const stdair::DemandGenerationMethod lDemandGenerationMethod ('S');
-      // Partnership technique.
-      const stdair::PartnershipTechnique lPartnershipTechnique('N');
-
-      simulate (lNbOfRuns, lDemandGenerationMethod,
-		lForecastingMethod, lPartnershipTechnique);
-
-      // Get a reference on the Simulation Status
-      SimulationStatus& lSimulationStatus =
-	lDSIM_ServiceContext.getSimulationStatus(); 
-      
-      // Return a JSON-ified string
-      std::ostringstream oStream;
-      oStream << "{\"done\": \"Current Date: "
-	      << lSimulationStatus.getCurrentDate() << "\"}";
-      return oStream.str();
-      break;
-      
-      break;
+      return jsonRunHandler (iJSONString);
     }
     default: {
-        // Return an Error string
-        std::ostringstream lErrorCmdMessage;
-        const std::string& lCommandStr =
-          stdair::JSonCommand::getLabel(lEN_JSonCommand);
-        lErrorCmdMessage << "{\"error\": \"The command '" << lCommandStr
-                         << "' is not handled by the DSim service.\"}";
-        return lErrorCmdMessage.str();
-        break;
-      }
+      // Return an Error string
+      std::ostringstream lErrorCmdMessage;
+      const std::string& lCommandStr =
+	stdair::JSonCommand::getLabel(lEN_JSonCommand);
+      lErrorCmdMessage << "{\"error\": \"The command '" << lCommandStr
+		       << "' is not handled by the DSim service.\"}";
+      return lErrorCmdMessage.str();
+      break;
+    }
     }
     
     // Return an error JSON-ified string
     assert (false);
     std::string lJSONDump ("{\"error\": \"Wrong JSON-ified string\"}");
     return lJSONDump;
-     
+  }  
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  jsonBreakPointHandler (const stdair::JSONString& iJSONString) {
+
+    stdair::BreakPointList_T lBreakPointList;   
+
+    const bool hasBreakPointListBeenRetrieved =
+      stdair::BomJSONImport::jsonImportBreakPoints(iJSONString,
+						   lBreakPointList);    
+
+    if (hasBreakPointListBeenRetrieved == false) {
+      // Return an error JSON-ified string
+	std::ostringstream oErrorStream;
+	oErrorStream << "{\"error\": \"Wrong JSON-ified string: "
+		     << "the break point list is not understood.\"}";
+	return oErrorStream.str();
+    }
+    assert (hasBreakPointListBeenRetrieved == true);
+      
+    initBreakPointEvents (lBreakPointList);	
+
+    // Return a JSON-ified string
+    std::ostringstream oStream;
+    oStream << "{\"done\": \"" << lBreakPointList.size() 
+	    << " break point(s) added to the queue.\"}";
+    return oStream.str();
   } 
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  jsonRunHandler (const stdair::JSONString& iJSONString) { 
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
+
+    //
+    // TODO: STOP hardcoding !!!
+    // Making a service to enable Json import of those values.
+    //
+    // Number of Run
+    const NbOfRuns_T lNbOfRuns = 1;
+    // Forecasting method.
+    const stdair::ForecastingMethod lForecastingMethod ('M');
+    // Demand generation method.
+    const stdair::DemandGenerationMethod lDemandGenerationMethod ('S');
+    // Partnership technique.
+    const stdair::PartnershipTechnique lPartnershipTechnique('N');
+
+    simulate (lNbOfRuns, lDemandGenerationMethod,
+	      lForecastingMethod, lPartnershipTechnique);
+
+    // Get a reference on the Simulation Status
+    SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+      
+    // Return a JSON-ified string
+    std::ostringstream oStream;
+    oStream << "{\"done\": \"Current Date: "
+	    << lSimulationStatus.getCurrentDate() << "\"}";
+    return oStream.str();
+  }
 
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::initBreakPointEvents(const stdair::BreakPointList_T& iBreakPointList) {
@@ -873,6 +889,11 @@ namespace DSIM {
       STDAIR_LOG_DEBUG ("Simulation[" << idx << "] begins - "
                         << lDSIM_ServiceContext.display());
 
+      if (idx > 0) {
+	// Reset the service (including the event queue) for the next run
+	reset();
+      }
+
       // Delegate the booking to the dedicated command
       stdair::BasChronometer lSimulationChronometer;
       lSimulationChronometer.start();
@@ -881,11 +902,6 @@ namespace DSIM {
                            lSimulationStatus, iDemandGenerationMethod,
                            iForecastingMethod, iPartnershipTechnique);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
-
-      // Reset the service (including the event queue) for the next run
-      if (lSimulationStatus.getMode() == SimulationMode::DONE) {
-	lTRADEMGEN_Service.reset();
-      }
 
       // DEBUG
       STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure

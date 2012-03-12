@@ -117,6 +117,7 @@ namespace DSIM {
     _breakPointProgressPercentage = 0;
     _nbOfBookings = 0; 
     _currentDate = getStartDate();
+    _simulationMode.setMode (SimulationMode::RUNNING);
    
   } 
   

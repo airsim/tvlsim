@@ -255,8 +255,8 @@ namespace DSIM {
   public:
     // //////////////// Export support methods /////////////////
     /**
-     * Dispatch the JSon command string to the SimCRS service.
-     * (Only SimCRS has json export commands for now).
+     * Dispatch the JSon command string to the right service:
+     * itself (DSim service), SimCRS service or TraDemGen service.
      * 
      * @param const stdair::JSONString& Input string which contained the JSon
      *        command string.
@@ -264,6 +264,28 @@ namespace DSIM {
      *         logged/dumped with a JSon format.
      */
     std::string jsonHandler (const stdair::JSONString&);
+
+  private: 
+    /**
+     * Handle the JSon Break Point command.
+     * 
+     * @param const stdair::JSONString& Input string which contained the JSon
+     *        command string.
+     * @return std::string Output string in which the asking objects are
+     *         logged/dumped with a JSon format.
+     */
+    std::string jsonBreakPointHandler (const stdair::JSONString&);
+ 
+    /**
+     * Handle the JSon Run command.
+     * 
+     * @param const stdair::JSONString& Input string which contained the JSon
+     *        command string.
+     * @return std::string Output string in which the asking objects are
+     *         logged/dumped with a JSon format.
+     */
+    std::string jsonRunHandler (const stdair::JSONString&);
+
 
   public:
     // //////////////// Display support methods /////////////////
