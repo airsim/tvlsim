@@ -596,6 +596,13 @@ namespace DSIM {
     } 
     case stdair::JSonCommand::RUN:{ 
       return jsonRunHandler (iJSONString);
+    } 
+    case stdair::JSonCommand::RESET:{   
+      reset();
+      // Return a JSON-ified string
+      std::ostringstream oStream;
+      oStream << "{\"done\": \"1\"}";
+      return oStream.str();
     }
     default: {
       // Return an Error string
@@ -638,8 +645,7 @@ namespace DSIM {
 
     // Return a JSON-ified string
     std::ostringstream oStream;
-    oStream << "{\"done\": \"" << lBreakPointList.size() 
-	    << " break point(s) added to the queue.\"}";
+    oStream << "{\"done\": \"" << lBreakPointList.size() << "\"}";
     return oStream.str();
   } 
 
@@ -677,8 +683,8 @@ namespace DSIM {
       
     // Return a JSON-ified string
     std::ostringstream oStream;
-    oStream << "{\"done\": \"Current Date: "
-	    << lSimulationStatus.getCurrentDate() << "\"}";
+    oStream << "{\"done\": \""
+            << lSimulationStatus.getCurrentDate() << "\"}";
     return oStream.str();
   }
 
