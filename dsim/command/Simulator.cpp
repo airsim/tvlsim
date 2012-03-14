@@ -47,8 +47,8 @@ namespace DSIM {
     if (ioSimulationStatus.getMode() == SimulationMode::RUNNING) {  
 
       // DEBUG
-      std::cout << "The simulation is starting" << std::endl; 
-      STDAIR_LOG_DEBUG ("The simulation is starting");   
+      std::cout << "Starting the simulation..." << std::endl; 
+      STDAIR_LOG_DEBUG ("Starting the simulation...");   
  
       /**
 	 Initialisation step.
@@ -69,8 +69,8 @@ namespace DSIM {
     } else if (ioSimulationStatus.getMode() == SimulationMode::BREAK) {    
  
       // DEBUG
-      std::cout << "The simulation continues" << std::endl;
-      STDAIR_LOG_DEBUG ("The simulation continues");
+      std::cout << "Resuming the simulation..." << std::endl;
+      STDAIR_LOG_DEBUG ("Resuming the simulation...");
       
       // Change the current mode of the simulation status
       ioSimulationStatus.setMode (SimulationMode::RUNNING);
@@ -140,6 +140,15 @@ namespace DSIM {
 	// Change the current mode of the simulation status
 	ioSimulationStatus.setMode (SimulationMode::BREAK);
 	updateStatus (ioTRADEMGEN_Service, lEventType, ioSimulationStatus);
+        // DEBUG
+        std::cout << "The simulation has stopped on '"
+                  << ioSimulationStatus.getCurrentDate()
+                  << "': break point encountered.\n"
+                  << ioSimulationStatus.describe()
+                  << std::endl; 
+        STDAIR_LOG_DEBUG ("Break point encountered\n"
+                          << ioSimulationStatus.describe());
+        
 	return;
 	break;
 
@@ -162,7 +171,8 @@ namespace DSIM {
     ioSimulationStatus.setMode (SimulationMode::DONE);
        
     // DEBUG
-    STDAIR_LOG_DEBUG ("The simulation has ended");
+    std::cout << "The simulation has ended.\n" << std::endl;
+    STDAIR_LOG_DEBUG ("The simulation has ended.");
   } 
 
   // ////////////////////////////////////////////////////////////////////

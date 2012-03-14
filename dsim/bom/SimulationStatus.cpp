@@ -124,23 +124,24 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationStatus::describe() const {
     std::ostringstream oStr;
-    oStr << _key.toString()
-         << "\nCurrent date: " << _currentDate
-         << "\n------ Progress statuses ------"
-         << "\nAll events:                 "
-         << _allEventsProgressPercentage << "%"
-         << "\nBooking requests:           "
-         << _bookingRequestProgressPercentage << "%"
-         << "\nSnap shots:                 "
-         << _snapShotProgressPercentage << "%"
-         << "\nRM events:                  "
-         << _rmEventProgressPercentage << "%"
+    oStr << "\n----------- Progress statuses ----------"
+         << "\n All events: \t\t\t"
+         << _allEventsProgressPercentage << "% "
+         << "\n----------------------------------------"
+         << "\n Booking requests: \t\t"
+         << _bookingRequestProgressPercentage << "% "
+         << "\n Snap shots: \t\t\t"
+         << _snapShotProgressPercentage << "% "
+         << "\n RM events: \t\t\t"
+         << _rmEventProgressPercentage << "% "
       /**<< "\nOptimisation notifications: "
          << _optimisationNotificationProgressPercentage << "%"*/
-         << "\nCancellations:              "
-         << _cancellationProgressPercentage << "%"
-	 << "\nBreak points:               "
-         << _breakPointProgressPercentage << "%";
+         << "\n Cancellations: \t\t"
+         << _cancellationProgressPercentage << "% "
+	 << "\n Break points: \t\t\t"
+         << _breakPointProgressPercentage << "% "
+         << "\n----------------------------------------"
+         << std::endl;
     return oStr.str();
   }
   

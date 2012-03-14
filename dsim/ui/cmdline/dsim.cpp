@@ -1141,8 +1141,6 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// Run ////////////////////////
     case Command_T::RUN: {
 
-      std::cout << "Run" << std::endl;
-
        // Perform a simulation
       dsimService.simulate (lNbOfRuns, lDemandGenerationMethod,
                             lForecastingMethod, lPartnershipTechnique);
@@ -1153,7 +1151,7 @@ int main (int argc, char* argv[]) {
 
     case Command_T::DISPLAY_STATUS: {
       //
-      std::cout << "Display Simulation Status" << std::endl;
+      std::cout << "Simulation Status" << std::endl;
 
       // Delegate the call to the dedicated service
       const std::string& lSimulationStatusStr =
@@ -1288,8 +1286,6 @@ int main (int argc, char* argv[]) {
 
     case Command_T::JSON_SET_BREAK_POINT: { 
 
-      std::cout << "JSON Set Break Point(s)" << std::endl;
-
       // 
       extractTokenListForDate (lTokenListByReadline);
       
@@ -1323,8 +1319,10 @@ int main (int argc, char* argv[]) {
         dsimService.jsonHandler (lJSONCommandString);
  
       // Display the BP JSON string
-      std::cout << lCSVBPDump << std::endl;
       STDAIR_LOG_DEBUG (lCSVBPDump);
+
+      std::cout << lDateList.size()
+                << " break points added to the queue\n" << std::endl; 
 
       break;
     }      
@@ -1365,7 +1363,6 @@ int main (int argc, char* argv[]) {
         dsimService.jsonHandler (lJSONCommandString);
 
       // DEBUG: Display the events queue JSON string
-      std::cout << lCSVEventListDump << std::endl;
       STDAIR_LOG_DEBUG (lCSVEventListDump);
       
       break;
