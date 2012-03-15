@@ -540,6 +540,28 @@ namespace DSIM {
     // Delegate the BOM building to the dedicated service
     return lSTDAIR_Service.buildSampleBookingRequest (isForCRS);
   }
+  
+  // ////////////////////////////////////////////////////////////////////
+  bool DSIM_Service::sell (const std::string& iSegmentDateKey,
+                             const stdair::ClassCode_T& iClassCode,
+                             const stdair::PartySize_T& iPartySize) {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the SimCRS service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service(); 
+
+    // Delegate the BOM display to the dedicated service
+    return lSIMCRS_Service.sell (iSegmentDateKey, iClassCode,
+                                 iPartySize);
+  }
 
   // ////////////////////////////////////////////////////////////////////
   std::string DSIM_Service::
@@ -782,7 +804,7 @@ namespace DSIM {
     }
     assert (_dsimServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (DSim) service context
+    // Retrieve the TraDemGen service object from the (DSim) service context
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
 
     // Get a reference on the TRADEMGEN service handler
@@ -792,6 +814,50 @@ namespace DSIM {
     // Delegate the BOM building to the dedicated service
     return lTRADEMGEN_Service.list ();
 
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  list (const stdair::AirlineCode_T& iAirlineCode,
+        const stdair::FlightNumber_T& iFlightNumber) const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the SimCRS service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service(); 
+
+    // Delegate the BOM display to the dedicated service
+    return lSIMCRS_Service.list (iAirlineCode, iFlightNumber);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  csvDisplay (const stdair::AirlineCode_T& iAirlineCode,
+              const stdair::FlightNumber_T& iFlightNumber,
+              const stdair::Date_T& iDepartureDate) const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the SimCRS service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service(); 
+
+    // Delegate the BOM display to the dedicated service
+    return lSIMCRS_Service.csvDisplay (iAirlineCode, iFlightNumber,
+                                       iDepartureDate);
   }
 
   // ////////////////////////////////////////////////////////////////////
