@@ -130,11 +130,11 @@ namespace DSIM {
          << "\n----------------------------------------"
          << "\n Booking requests: \t\t"
          << _bookingRequestProgressPercentage << "% "
-         << "\n Snap shots: \t\t\t"
+      /** << "\n Snap shots: \t\t\t"
          << _snapShotProgressPercentage << "% "
          << "\n RM events: \t\t\t"
          << _rmEventProgressPercentage << "% "
-      /**<< "\nOptimisation notifications: "
+         << "\nOptimisation notifications: "
          << _optimisationNotificationProgressPercentage << "%"*/
          << "\n Cancellations: \t\t"
          << _cancellationProgressPercentage << "% "
