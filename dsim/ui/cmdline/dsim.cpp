@@ -154,7 +154,10 @@ struct Command_T {
     RUN,
     RESET,
     LIST_EVENT,
+    LIST_FLIGHT_DATE,
+    DISPLAY_FLIGHT_DATE,
     DISPLAY_STATUS,
+    SELL,
     JSON_LIST_EVENT,
     JSON_LIST_FLIGHT_DATE,
     JSON_DISPLAY_FLIGHT_DATE, 
@@ -504,7 +507,11 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("run");  
   Completers.push_back ("reset");
   Completers.push_back ("display_status");
+  Completers.push_back ("display_flight_date");
   Completers.push_back ("list_event");
+  Completers.push_back ("list_flight_date");
+  Completers.push_back ("set_break_point");
+  Completers.push_back ("sell"); 
   Completers.push_back ("json_list_event");
   Completers.push_back ("json_list_flight_date");
   Completers.push_back ("json_display_flight_date");
@@ -522,9 +529,9 @@ void initReadline (swift::SReadline& ioInputReader) {
 void parseFlightKey (const TokenList_T& iTokenList,
                      stdair::AirlineCode_T& ioAirlineCode,
                      stdair::FlightNumber_T& ioFlightNumber) {
+
   // Interpret the user input
   if (iTokenList.empty() == false) {
-
     // Read the airline code
     TokenList_T::const_iterator itTok = iTokenList.begin();
     if (itTok->empty() == false) {
@@ -548,6 +555,71 @@ void parseFlightKey (const TokenList_T& iTokenList,
                     << std::endl;
           return;
         }
+      }
+
+    } else {
+      return;
+    }
+  }
+}
+
+// //////////////////////////////////////////////////////////////////
+void parseBookingClassKey (const TokenList_T& iTokenList,
+                           stdair::ClassCode_T& ioBookingClass,
+                           stdair::PartySize_T& ioPartySize,
+                           stdair::AirportCode_T& ioOrigin,
+                           stdair::AirportCode_T& ioDestination) {
+  // Interpret the user input
+  if (iTokenList.empty() == false) {
+
+    // Read the booking class
+    TokenList_T::const_iterator itTok = iTokenList.begin();
+    if (itTok->empty() == false) {
+      ioBookingClass = *itTok;
+      boost::algorithm::to_upper (ioBookingClass);
+    }
+      
+    // Read the party size
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        try {
+
+          ioPartySize = boost::lexical_cast<stdair::PartySize_T> (*itTok);
+
+        } catch (boost::bad_lexical_cast& eCast) {
+          std::cerr << "The party size ('" << *itTok
+                    << "') cannot be understood. The default value ("
+                    << ioPartySize << ") is kept." << std::endl;
+          return;
+        }
+      }
+
+    } else {
+      return;
+    }
+
+    // Read the origin
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        ioOrigin = *itTok;
+        boost::algorithm::to_upper (ioOrigin);
+      }
+
+    } else {
+      return;
+    }
+
+    // Read the destination
+    ++itTok;
+    if (itTok != iTokenList.end()) {
+
+      if (itTok->empty() == false) {
+        ioDestination = *itTok;
+        boost::algorithm::to_upper (ioDestination);
       }
 
     } else {
@@ -706,7 +778,7 @@ void parseFlightDateKey (TokenList_T& iTokenList,
   
   // To re-compose the airline code, the flight number and the date,
   // five tokens are needed.
-  if (iTokenList.size() != 5) {
+  if (iTokenList.size() < 5) {
     return;
   }
 
@@ -718,7 +790,8 @@ void parseFlightDateKey (TokenList_T& iTokenList,
   iTokenList.erase(iTokenList.begin(),iTokenList.begin()+2);
   // Try to re-compose the date
   parseDateKey (iTokenList, ioDate);
-  
+  assert (iTokenList.size() >= 3);
+  iTokenList.erase(iTokenList.begin(),iTokenList.begin()+3);
 }
 
 // //////////////////////////////////////////////////////////////////
@@ -743,8 +816,23 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
     } else if (lCommand == "list_event") {
       oCommandType = Command_T::LIST_EVENT;
 
+    } else if (lCommand == "list_flight_date") {
+      oCommandType = Command_T::LIST_FLIGHT_DATE;
+
     } else if (lCommand == "display_status") {
       oCommandType = Command_T::DISPLAY_STATUS;
+
+    } else if (lCommand == "display_flight_date") {
+      oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
+
+    } else if (lCommand == "display_flight_date") {
+      oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
+
+    } else if (lCommand == "set_break_point") {
+      oCommandType = Command_T::JSON_SET_BREAK_POINT;
+
+    } else if (lCommand == "sell") {
+      oCommandType = Command_T::SELL;
 
     } else if (lCommand == "json_list_event") {
       oCommandType = Command_T::JSON_LIST_EVENT;
@@ -914,7 +1002,7 @@ void extractTokenListForDate (const TokenList_T& iTokenList) {
   //
   extractTokenListDate (iTokenList, lRegEx);
 
-}      
+} 
 
 // /////////////////////////////////////////////////////////
 TokenList_T extractTokenListForFlight (const TokenList_T& iTokenList) {
@@ -930,7 +1018,40 @@ TokenList_T extractTokenListForFlight (const TokenList_T& iTokenList) {
   //
   const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
   return oTokenList;
-} 
+}
+
+// /////////////////////////////////////////////////////////
+TokenList_T extractTokenListForClass (const TokenList_T& iTokenList) {
+  /**
+   * Expected format:
+   *   line:            airline_code flight_number departure_date class_code
+   *                    party_size origin destination
+   *   airline_code:    word (alpha{2,3})
+   *   flight_number:   number (digit{1,4})
+   *   departure_date:  year[/- ]?month[/- ]?day
+   *   year:            number (digit{2,4})
+   *   month:           (number (digit{1,2}) | word (alpha{3}))
+   *   day:             number (digit{1,2})
+   *   class_code:      word (alpha)
+   *   party_size:      number (digit{1,3})
+   *   origin:          word (alpha{3})
+   *   destination:     word (alpha{3})
+   */
+  const std::string lRegEx ("^([[:alpha:]]{2,3})?"
+                            "[[:space:]]*([[:digit:]]{1,4})?"
+                            "[/ ]*"
+                            "([[:digit:]]{2,4})?[/-]?[[:space:]]*"
+                            "([[:alpha:]]{3}|[[:digit:]]{1,2})?[/-]?[[:space:]]*"
+                            "([[:digit:]]{1,2})?"
+                            "[[:space:]]*([[:alpha:]]{1})?"
+                            "[[:space:]]*([[:digit:]]{1,3})?"
+                            "[[:space:]]*([[:alpha:]]{3})?"
+                            "[[:space:]]*([[:alpha:]]{3})?$");
+
+  //
+  const TokenList_T& oTokenList = extractTokenList (iTokenList, lRegEx);
+  return oTokenList;
+}   
 
 // ///////// M A I N ////////////
 int main (int argc, char* argv[]) {
@@ -948,6 +1069,10 @@ int main (int argc, char* argv[]) {
   stdair::AirlineCode_T lDefaultAirlineCode;
   stdair::FlightNumber_T lDefaultFlightNumber;
   stdair::Date_T lDefaultDate;
+  stdair::AirportCode_T lDefaultOrigin;
+  stdair::AirportCode_T lDefaultDestination;
+  stdair::ClassCode_T lDefaultBookingClass;
+  stdair::PartySize_T lDefaultPartySize;
 
   // Random generation seed
   stdair::RandomSeed_T lRandomSeed;
@@ -1038,6 +1163,10 @@ int main (int argc, char* argv[]) {
     lDefaultAirlineCode = "BA";
     lDefaultFlightNumber = 9;
     lDefaultDate = stdair::Date_T (2011, 06, 10);
+    lDefaultBookingClass = "Q";
+    lDefaultPartySize = 2;
+    lDefaultOrigin = "LHR";
+    lDefaultDestination = "SYD";
 
   } else {
     
@@ -1052,10 +1181,11 @@ int main (int argc, char* argv[]) {
     lDefaultAirlineCode = "SQ";
     lDefaultFlightNumber = 12;
     lDefaultDate = stdair::Date_T (2011, 01, 31);
+    lDefaultBookingClass = "Y";
+    lDefaultPartySize = 2;
+    lDefaultOrigin = "SIN";
+    lDefaultDestination = "BKK";
   } 
-
-  // Initialise the snapshot and RM events
-  dsimService.initSnapshotAndRMEvents();
 
   // DEBUG
   STDAIR_LOG_DEBUG ("====================================================");
@@ -1100,20 +1230,28 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// Help ////////////////////////
     case Command_T::HELP: {
       std::cout << std::endl;
-      std::cout << "Commands: " << std::endl;
+      std::cout << "Commands:\n" << std::endl;
       std::cout << " help" << "\t\t\t\t" << "Display this help" << std::endl;
-      std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;   
-      std::cout << " run" << "\t\t\t\t"
-                << "Perform the simulation until the next break-point, if any"
-                << std::endl;  
-      std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
-                << "event queue) and generate the first event for each demand "
-                << "stream" << std::endl;  
+      std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;
       std::cout << " display_status" << "\t\t\t" 
 		<< "Display the simulation status" << std::endl;
       std::cout << " list_event" << "\t\t\t" 
 		<< "List events in the queue" << std::endl;
-      std::cout << " \nDebug Commands" << std::endl;   
+      std::cout << " list_flight_date" << "\t\t"
+                << "List airlines, flights and departure dates"
+                << std::endl;        
+      std::cout << " display_flight_date" << "\t\t"
+                << "Display the given flight-date"
+		<< std::endl;  
+      std::cout << " set_break_point" << "\t\t"
+                << "Insert the given break points in the event list"  
+		<< std::endl;
+      std::cout << " run" << "\t\t\t\t"
+                << "Perform the simulation until the next break-point, if any"
+                << std::endl;
+      std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
+                << "event queue)" << std::endl;  
+      std::cout << " \n\nDebug Commands:\n" << std::endl;   
       std::cout << " json_list_event" << "\t\t"
                 << "List events in the queue in a JSON format"
                 << std::endl;  
@@ -1174,10 +1312,10 @@ int main (int argc, char* argv[]) {
       break;
     } 
 
-      // ////////////////////////////// List /////////////////////////
+      // ////////////////////////////// List Events /////////////////////////
     case Command_T::LIST_EVENT: {
       //
-      std::cout << "List" << std::endl;   
+      std::cout << "List the events in the queue" << std::endl;   
 
       std::ostringstream oEventListStr;
       oEventListStr << dsimService.listEvents ();	
@@ -1187,6 +1325,116 @@ int main (int argc, char* argv[]) {
       //
       break;
     }
+
+      // ////////////////////////////// List Flight Date /////////////////////////
+    case Command_T::LIST_FLIGHT_DATE: {
+      
+      //
+      TokenList_T lTokenList = extractTokenListForFlight (lTokenListByReadline);
+
+      stdair::AirlineCode_T lAirlineCode ("all");
+      stdair::FlightNumber_T lFlightNumber (0);
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightKey (lTokenList, lAirlineCode, lFlightNumber);
+
+      //
+      const std::string lFlightNumberStr = (lFlightNumber ==0)?" (all)":"";
+      std::cout << "List of flights for "
+                << lAirlineCode << " " << lFlightNumber << lFlightNumberStr
+                << std::endl;
+
+      // DEBUG: Display the flight-date
+      const std::string& lFlightDateListStr =
+        dsimService.list (lAirlineCode, lFlightNumber);
+
+      if (lFlightDateListStr.empty() == false) {
+        std::cout << lFlightDateListStr << std::endl;
+        STDAIR_LOG_DEBUG (lFlightDateListStr);
+
+      } else {
+        std::cerr << "There is no result for "
+                  << lAirlineCode << " " << lFlightNumber << lFlightNumberStr
+                  << ". Just type the list command without any parameter "
+                  << "to see the flight-dates for all the airlines and for all "
+                  << "the flight numbers."
+                  << std::endl;
+      }
+      
+      //
+      break;
+    }
+
+      // ////////////////////////////// Display ////////////////////////
+    case Command_T::DISPLAY_FLIGHT_DATE: {
+
+      //
+      TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline); 
+
+      stdair::AirlineCode_T lAirlineCode (lDefaultAirlineCode);
+      stdair::FlightNumber_T lFlightNumber (lDefaultFlightNumber);
+      stdair::Date_T lFlightDate (lDefaultDate);
+      
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);
+      
+      // DEBUG: Display the flight-date
+      const std::string& lCSVFlightDateDump =
+        dsimService.csvDisplay (lAirlineCode, lFlightNumber, lFlightDate);
+      
+      std::cout << lCSVFlightDateDump << std::endl;
+      STDAIR_LOG_DEBUG (lCSVFlightDateDump);
+
+      break;
+    }
+
+      // ////////////////////////////// Sell ////////////////////////
+    case Command_T::SELL: {
+      //
+      TokenList_T lTokenList = extractTokenListForClass (lTokenListByReadline);
+
+      stdair::AirlineCode_T lAirlineCode (lDefaultAirlineCode);
+      stdair::FlightNumber_T lFlightNumber (lDefaultFlightNumber);
+      stdair::Date_T lFlightDate (lDefaultDate);
+      stdair::AirportCode_T lOrigin (lDefaultOrigin);
+      stdair::AirportCode_T lDestination (lDefaultDestination);
+      stdair::ClassCode_T lBookingClass (lDefaultBookingClass);
+      stdair::PartySize_T lPartySize (lDefaultPartySize);
+
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightDateKey (lTokenList, lAirlineCode,lFlightNumber, lFlightDate);
+      parseBookingClassKey (lTokenList, lBookingClass,
+                            lPartySize, lOrigin, lDestination);
+
+      // Make a booking
+      std::ostringstream oSDKStr;
+      oSDKStr << lAirlineCode << ","
+              << lFlightNumber << ","
+              << lFlightDate << ","
+              << lOrigin << "," << lDestination;
+      const std::string lSegmentDateKey (oSDKStr.str());
+
+      // Perform the sell
+      const bool isSellSuccessful = 
+        dsimService.sell (lSegmentDateKey, lBookingClass,
+                          lPartySize);
+
+      // DEBUG
+      const std::string isSellSuccessfulStr =
+        (isSellSuccessful == true)?"Yes":"No";
+      std::ostringstream oSaleStr;
+      oSaleStr << "Sale ('" << lSegmentDateKey << "', "
+               << lBookingClass << ": " << lPartySize
+               << ") successful? " << isSellSuccessfulStr;
+      std::cout << oSaleStr.str() << std::endl;
+      
+      // DEBUG
+      STDAIR_LOG_DEBUG (oSaleStr.str());
+
+      break;
+    }     
 
       // ////////////////////////////// JSon Event List ////////////////////////
 
