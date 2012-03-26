@@ -53,7 +53,7 @@ const std::string K_DSIM_DEFAULT_LOG_FILENAME ("dsim.log");
  * Default name and location for the (CSV) schedule input file.
  */
 const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                          "/rds01/schedule.csv");
+                                                          "/rds01/schedule05.csv");
 
 /**
  * Default name and location for the (CSV) O&D input file.
@@ -77,7 +77,7 @@ const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
  * Default name and location for the (CSV) demand input file.
  */
 const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                        "/rds01/demand.csv");
+                                                        "/rds01/demand05.csv");
 
 /**
  * Default forecasting method name: 'M' for MultiplicativePickUp.
@@ -1039,7 +1039,7 @@ TokenList_T extractTokenListForClass (const TokenList_T& iTokenList) {
    */
   const std::string lRegEx ("^([[:alpha:]]{2,3})?"
                             "[[:space:]]*([[:digit:]]{1,4})?"
-                            "[/ ]*"
+                            "[/, ]*"
                             "([[:digit:]]{2,4})?[/-]?[[:space:]]*"
                             "([[:alpha:]]{3}|[[:digit:]]{1,2})?[/-]?[[:space:]]*"
                             "([[:digit:]]{1,2})?"
@@ -1084,10 +1084,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2008, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);
+  stdair::Date_T lEndDate (2009, boost::gregorian::Mar, 03);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1180,7 +1180,7 @@ int main (int argc, char* argv[]) {
     // Update the default parameters for the following interactive session
     lDefaultAirlineCode = "SQ";
     lDefaultFlightNumber = 12;
-    lDefaultDate = stdair::Date_T (2011, 01, 31);
+    lDefaultDate = stdair::Date_T (2009, 01, 5);
     lDefaultBookingClass = "Y";
     lDefaultPartySize = 2;
     lDefaultOrigin = "SIN";
@@ -1250,7 +1250,9 @@ int main (int argc, char* argv[]) {
                 << "Perform the simulation until the next break-point, if any"
                 << std::endl;
       std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
-                << "event queue)" << std::endl;  
+                << "event queue)" << std::endl;
+      std::cout << " sell" << "\t\t\t\t" << "Make a booking on the given flight-date"
+                << std::endl; 
       std::cout << " \n\nDebug Commands:\n" << std::endl;   
       std::cout << " json_list_event" << "\t\t"
                 << "List events in the queue in a JSON format"
@@ -1261,12 +1263,12 @@ int main (int argc, char* argv[]) {
       std::cout << " json_display_flight_date" << "\t"
                 << "Display the given flight-date in a JSON format"
 		<< std::endl;  
-      std::cout << " json_set_break_point" << "\t\t"
+      /**std::cout << " json_set_break_point" << "\t\t"
                 << "Insert the given break points in the event list"  
 		<< std::endl;
       std::cout << " json_run" << "\t\t\t"
                 << "Perform the simulation until the next break-point, if any"
-		<< std::endl;
+		<< std::endl;*/
       std::cout << std::endl;
       break;
     }
