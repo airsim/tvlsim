@@ -450,8 +450,8 @@ int readConfiguration (int argc, char* argv[],
   if (vm.count ("partnership")) {
     ioPartnershipTechnique =
       stdair::PartnershipTechnique (lPartnershipTechniqueChar);
-    std::cout << "Partnership technique is: "
-              << ioPartnershipTechnique.describe() << std::endl;
+    /**std::cout << "Partnership technique is: "
+       << ioPartnershipTechnique.describe() << std::endl;*/
   }
 
   //
@@ -464,7 +464,7 @@ int readConfiguration (int argc, char* argv[],
   //
   if (vm.count ("user")) {
     ioDBUser = vm["user"].as< std::string >();
-    std::cout << "SQL database user name is: " << ioDBUser << std::endl;
+    //std::cout << "SQL database user name is: " << ioDBUser << std::endl;
   }
 
   if (vm.count ("passwd")) {
@@ -474,22 +474,22 @@ int readConfiguration (int argc, char* argv[],
 
   if (vm.count ("host")) {
     ioDBHost = vm["host"].as< std::string >();
-    std::cout << "SQL database host name is: " << ioDBHost << std::endl;
+    // std::cout << "SQL database host name is: " << ioDBHost << std::endl;
   }
 
   if (vm.count ("port")) {
     ioDBPort = vm["port"].as< std::string >();
-    std::cout << "SQL database port number is: " << ioDBPort << std::endl;
+    //std::cout << "SQL database port number is: " << ioDBPort << std::endl;
   }
 
   if (vm.count ("dbname")) {
     ioDBDBName = vm["dbname"].as< std::string >();
-    std::cout << "SQL database name is: " << ioDBDBName << std::endl;
+    //std::cout << "SQL database name is: " << ioDBDBName << std::endl;
   }
 
   //
   ioQueryString = createStringFromWordList (lWordList);
-  std::cout << "The query string is: " << ioQueryString << std::endl;
+  //std::cout << "The query string is: " << ioQueryString << std::endl;
   
   return 0;
 }

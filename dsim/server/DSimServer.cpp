@@ -71,7 +71,7 @@ const ServerPort_T K_DSIM_DEFAULT_SERVER_PORT (5555);
  * Default name and location for the (CSV) schedule input file.
  */
 const std::string K_DSIM_DEFAULT_SCHEDULE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                          "/rds01/schedule.csv");
+                                                          "/rds01/schedule05.csv");
 
 /**
  * Default name and location for the (CSV) O&D input file.
@@ -95,7 +95,7 @@ const std::string K_DSIM_DEFAULT_FARE_INPUT_FILENAME (STDAIR_SAMPLE_DIR
  * Default name and location for the (CSV) demand input file.
  */
 const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
-                                                        "/rds01/demand.csv");
+                                                        "/rds01/demand05.csv");
 
 /**
  * Default forecasting method name: 'M' for MultiplicativePickUp.
