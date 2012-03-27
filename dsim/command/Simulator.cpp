@@ -125,7 +125,7 @@ namespace DSIM {
 	break;
 
       case stdair::EventType::SNAPSHOT: 
-	playSnapshotEvent (ioSIMCRS_Service,
+      	playSnapshotEvent (ioSIMCRS_Service,
 			   lEventStruct); 	
 	break;
 
@@ -270,11 +270,12 @@ namespace DSIM {
         ioSIMCRS_Service.calculateSegmentPathList (lPoppedRequest);
       
       if (lTravelSolutionList.empty() == false) {
-        // Get the availability for each travel solution.
-        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
-        
+
         // Get the fare quote for each travel solution.
         ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
+        
+        // Get the availability for each travel solution.
+        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
         
         // Get a travel solution choice.
         const stdair::TravelSolutionStruct* lChosenTS_ptr =
