@@ -636,6 +636,9 @@ int main (int argc, char* argv[]) {
                               lDemandInputFilename);
     
   }
+  
+  // Initialise the snapshot and RM events
+  dsimService.initSnapshotAndRMEvents();
 
   // Build the connection string (e.g., "tcp://*:5555", which is the default)
   std::ostringstream oZeroMQBindStream;
