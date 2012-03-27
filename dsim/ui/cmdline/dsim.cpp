@@ -82,7 +82,7 @@ const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /**
  * Default forecasting method name: 'M' for MultiplicativePickUp.
  */
-const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
+const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('A');
 
 /**
  * Default demand generation method name: 'S' for Statistics Order.
@@ -1087,7 +1087,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2008, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2009, boost::gregorian::Mar, 03);
+  stdair::Date_T lEndDate (2009, boost::gregorian::Sep, 01);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1185,7 +1185,10 @@ int main (int argc, char* argv[]) {
     lDefaultPartySize = 2;
     lDefaultOrigin = "SIN";
     lDefaultDestination = "BKK";
-  } 
+  }
+  
+  // Initialise the snapshot and RM events
+  dsimService.initSnapshotAndRMEvents();
 
   // DEBUG
   STDAIR_LOG_DEBUG ("====================================================");
