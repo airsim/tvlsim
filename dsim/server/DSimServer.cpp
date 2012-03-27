@@ -100,7 +100,7 @@ const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
 /**
  * Default forecasting method name: 'M' for MultiplicativePickUp.
  */
-const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('M');
+const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('A');
 
 /**
  * Default demand generation method name: 'S' for Statistics Order.
