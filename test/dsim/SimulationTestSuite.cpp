@@ -19,7 +19,6 @@
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasFileMgr.hpp>
-#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/service/Logger.hpp>
 // SimFQT
@@ -67,12 +66,6 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Method for the demand generation (here, statistics order)
   const stdair::DemandGenerationMethod lOrderStatDemandGenMethod =
     stdair::DemandGenerationMethod::STA_ORD;
-
-  // Method for the forecast (here, additive pick-up)
-  const stdair::ForecastingMethod lAdditiveForecastMethod =
-    stdair::ForecastingMethod::ADD_PK;
-  const stdair::PartnershipTechnique lNoPartnershipMethod =
-    stdair::PartnershipTechnique::NONE;
 
   // Start date
   const stdair::Date_T lStartDate (2009, boost::gregorian::Jan, 01);
@@ -170,9 +163,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
   BOOST_CHECK_NO_THROW (dsimService.simulate (lNbOfRuns,
-                                              lOrderStatDemandGenMethod,
-                                              lAdditiveForecastMethod,
-                                              lNoPartnershipMethod));
+                                              lOrderStatDemandGenMethod));
 
   // Close the log file
   logOutputFile.close();
