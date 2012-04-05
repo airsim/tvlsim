@@ -5,9 +5,7 @@
 // Import section
 // //////////////////////////////////////////////////////////////////////
 // StdAir
-#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
-#include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/EventStruct.hpp>
 // DSIM
 #include <dsim/command/CmdAbstract.hpp>
@@ -41,9 +39,7 @@ namespace DSIM {
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
                          SimulationStatus&,
-                         const stdair::DemandGenerationMethod&,
-                         const stdair::ForecastingMethod&,
-                         const stdair::PartnershipTechnique&);  
+                         const stdair::DemandGenerationMethod&);  
 
     /** Update the simulation status. */
     static void updateStatus(TRADEMGEN::TRADEMGEN_Service&,
@@ -56,8 +52,7 @@ namespace DSIM {
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
                                     stdair::ProgressStatusSet&,
-                                    const stdair::DemandGenerationMethod&,
-                                    const stdair::PartnershipTechnique&);
+                                    const stdair::DemandGenerationMethod&);
 
     /** Play a cancellation event. */
     static void playCancellation (SIMCRS::SIMCRS_Service&,
@@ -69,8 +64,8 @@ namespace DSIM {
 
 
     /** Play a RM event. */
-    static void playRMEvent (SIMCRS::SIMCRS_Service&, const stdair::EventStruct&,
-                             const stdair::ForecastingMethod&, const stdair::PartnershipTechnique&);
+    static void playRMEvent (SIMCRS::SIMCRS_Service&,
+                             const stdair::EventStruct&);
 
   private:
     /** Constructors. */

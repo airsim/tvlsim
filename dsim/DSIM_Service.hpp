@@ -9,9 +9,7 @@
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_service_types.hpp>
-#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
-#include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 #include <stdair/bom/BreakPointStruct.hpp>
 // AIRRAC
@@ -173,8 +171,7 @@ namespace DSIM {
      *        States which partnership technique should be used by both
      *        the revenue management (RMOL) and inventory control (AirInv).
      */
-    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&,
-                   const stdair::ForecastingMethod&, const stdair::PartnershipTechnique&);
+    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&);
     
     /**
      * Display the list of airlines.
