@@ -689,15 +689,10 @@ namespace DSIM {
     //
     // Number of Run
     const NbOfRuns_T lNbOfRuns = 1;
-    // Forecasting method.
-    const stdair::ForecastingMethod lForecastingMethod ('M');
     // Demand generation method.
     const stdair::DemandGenerationMethod lDemandGenerationMethod ('S');
-    // Partnership technique.
-    const stdair::PartnershipTechnique lPartnershipTechnique('N');
-
-    simulate (lNbOfRuns, lDemandGenerationMethod,
-	      lForecastingMethod, lPartnershipTechnique);
+    
+    simulate (lNbOfRuns, lDemandGenerationMethod);
 
     // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
@@ -924,9 +919,7 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
   simulate (const NbOfRuns_T& iNbOfRuns,
-            const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-            const stdair::ForecastingMethod& iForecastingMethod,
-            const stdair::PartnershipTechnique& iPartnershipTechnique) {
+            const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -971,8 +964,7 @@ namespace DSIM {
       lSimulationChronometer.start();
       Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                            lTRAVELCCM_Service, lSTDAIR_Service,
-                           lSimulationStatus, iDemandGenerationMethod,
-                           iForecastingMethod, iPartnershipTechnique);
+                           lSimulationStatus, iDemandGenerationMethod);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();
 
       // DEBUG

@@ -40,9 +40,7 @@ namespace DSIM {
 	    TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
 	    stdair::STDAIR_Service& ioSTDAIR_Service,
 	    SimulationStatus& ioSimulationStatus,
-	    const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-	    const stdair::ForecastingMethod& iForecastingMethod,
-	    const stdair::PartnershipTechnique& iPartnershipTechnique) {
+	    const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
 
     if (ioSimulationStatus.getMode() == SimulationMode::RUNNING) {  
 
@@ -115,8 +113,7 @@ namespace DSIM {
 			    ioTRAVELCCM_Service,
 			    lEventStruct,
 			    lPSS,
-			    iDemandGenerationMethod,
-			    iPartnershipTechnique); 
+			    iDemandGenerationMethod); 
 	break;
 	
       case stdair::EventType::CX: 
@@ -131,9 +128,7 @@ namespace DSIM {
 
       case stdair::EventType::RM: 
 	playRMEvent (ioSIMCRS_Service,
-		     lEventStruct,
-		     iForecastingMethod,
-		     iPartnershipTechnique);	
+		     lEventStruct);	
 	break; 
 
       case stdair::EventType::BRK_PT:	
@@ -203,8 +198,7 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
-                      const stdair::DemandGenerationMethod& iDemandGenerationMethod,
-                      const stdair::PartnershipTechnique& iPartnershipTechnique) {
+                      const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -273,9 +267,9 @@ namespace DSIM {
 
         // Get the fare quote for each travel solution.
         ioSIMCRS_Service.fareQuote (lPoppedRequest, lTravelSolutionList);
-        
+
         // Get the availability for each travel solution.
-        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList, iPartnershipTechnique);
+        ioSIMCRS_Service.calculateAvailability (lTravelSolutionList);
         
         // Get a travel solution choice.
         const stdair::TravelSolutionStruct* lChosenTS_ptr =
@@ -361,15 +355,13 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playRMEvent (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-               const stdair::EventStruct& iEventStruct,
-               const stdair::ForecastingMethod& iForecastingMethod,
-               const stdair::PartnershipTechnique& iPartnershipTechnique) {
+               const stdair::EventStruct& iEventStruct) {
     // Retrieve the RM event struct from the event.
     const stdair::RMEventStruct lRMEvent = iEventStruct.getRMEvent();
 
     // DEBUG
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
-    //ioSIMCRS_Service.optimise (lRMEvent, iForecastingMethod, iPartnershipTechnique);   
+    //ioSIMCRS_Service.optimise (lRMEvent);   
   }
 }

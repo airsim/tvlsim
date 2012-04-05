@@ -22,9 +22,7 @@
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
-#include <stdair/basic/ForecastingMethod.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
-#include <stdair/basic/PartnershipTechnique.hpp>
 #include <stdair/service/Logger.hpp>
 // DSim
 #include <dsim/config/dsim-paths.hpp>
@@ -98,19 +96,9 @@ const std::string K_DSIM_DEFAULT_DEMAND_INPUT_FILENAME (STDAIR_SAMPLE_DIR
                                                         "/rds01/demand05.csv");
 
 /**
- * Default forecasting method name: 'M' for MultiplicativePickUp.
- */
-const char K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR ('A');
-
-/**
  * Default demand generation method name: 'S' for Statistics Order.
  */
 const char K_DSIM_DEMAND_GENERATION_METHOD_CHAR ('S');
-
-/**
- * Default partnership technique name: 'N' for None ().
- */
-const char K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR ('N');
 
 /**
  * Default random generation seed (e.g., 120765987).
@@ -208,19 +196,13 @@ int readConfiguration (int argc, char* argv[], std::string& ioServerProtocol,
                        stdair::Filename_T& ioFareInputFilename,
                        stdair::Filename_T& ioDemandInputFilename,
                        std::string& ioLogFilename,
-                       stdair::ForecastingMethod& ioForecastingMethod,
                        stdair::DemandGenerationMethod& ioDemandGenerationMethod,
-                       stdair::PartnershipTechnique& ioPartnershipTechnique,
                        std::string& ioDBUser, std::string& ioDBPasswd,
                        std::string& ioDBHost, std::string& ioDBPort,
                        std::string& ioDBDBName) {
 
-  // Forecast method as a single char (e.g., 'A' or 'M').
-  char lForecastingMethodChar;
   // Demand generation method as a single char (e.g., 'P' or 'S').
   char lDemandGenerationMethodChar;
-  // Partnership technique as a single char (e.g., 'r' or 'C').
-  char lPartnershipTechniqueChar;
   
   // Default for the built-in input
   ioIsBuiltin = K_DSIM_DEFAULT_BUILT_IN_INPUT;
@@ -281,15 +263,9 @@ int readConfiguration (int argc, char* argv[], std::string& ioServerProtocol,
     ("log,l",
      boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_DSIM_DEFAULT_LOG_FILENAME),
      "Filepath for the logs")
-    ("forecast,F",
-     boost::program_options::value< char >(&lForecastingMethodChar)->default_value(K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR),
-     "Method used to forecast demand: Additive Pick-Up (e.g., A) or Multiplicative Pick-Up (e.g., M)")
     ("demandgeneration,G",
      boost::program_options::value< char >(&lDemandGenerationMethodChar)->default_value(K_DSIM_DEMAND_GENERATION_METHOD_CHAR),
      "Method used to generate the demand (i.e., booking requests): Poisson Process (e.g., P) or Statistics Order (e.g., S)")
-    ("partnership,T",
-     boost::program_options::value< char >(&lPartnershipTechniqueChar)->default_value(K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR),
-     "Technique used in a partnership (defines both revenue management and inventory control methods): None (N), Revenue Availability Exchange using Demand Aggregation (r), Revenue Availability Exchange using Yield Proration (R), Interline Bid Price using Demand Aggregation (i), Interline Bid Price using Yield Proration (I), Interline Bid Price using Yield Proration without protection (U), Revenue Management Cooperation (C) or Advanced Revenue Management Cooperation (A)")
     ("user,u",
      boost::program_options::value< std::string >(&ioDBUser)->default_value(K_DSIM_DEFAULT_DB_USER),
      "SQL database hostname (e.g., dsim)")
@@ -441,24 +417,11 @@ int readConfiguration (int argc, char* argv[], std::string& ioServerProtocol,
   }
 
   //
-  if (vm.count ("forecast")) {
-    ioForecastingMethod = stdair::ForecastingMethod (lForecastingMethodChar);
-    std::cout << "Forecasting method is: " << ioForecastingMethod.describe() << std::endl;
-  }
-
-  //
   if (vm.count ("demandgeneration")) {
     ioDemandGenerationMethod =
       stdair::DemandGenerationMethod (lDemandGenerationMethodChar);
     std::cout << "Demand generation method is: "
               << ioDemandGenerationMethod.describe() << std::endl;
-  }
-
-  if (vm.count ("partnership")) {
-    ioPartnershipTechnique =
-      stdair::PartnershipTechnique (lPartnershipTechniqueChar);
-    std::cout << "Partnership technique is: "
-              << ioPartnershipTechnique.describe() << std::endl;
   }
 
   //
@@ -570,16 +533,9 @@ int main (int argc, char* argv[]) {
   // Output log File
   std::string lLogFilename;
 
-  // Forecasting method.
-  stdair::ForecastingMethod
-    lForecastingMethod (K_DSIM_DEFAULT_FORECASTING_METHOD_CHAR);
-
   // Demand generation method.
   stdair::DemandGenerationMethod
     lDemandGenerationMethod (K_DSIM_DEMAND_GENERATION_METHOD_CHAR);
-
-  // Partnership technique.
-  stdair::PartnershipTechnique lPartnershipTechnique(K_DSIM_PARTNERSHIP_TECHNIQUE_CHAR);
 
   // SQL database parameters
   std::string lDBUser;
@@ -595,7 +551,7 @@ int main (int argc, char* argv[]) {
                        lScheduleInputFilename, lOnDInputFilename,
                        lYieldInputFilename, lFareInputFilename,
                        lDemandInputFilename, lLogFilename,
-                       lForecastingMethod, lDemandGenerationMethod, lPartnershipTechnique, 
+                       lDemandGenerationMethod, 
                        lDBUser, lDBPasswd, lDBHost, lDBPort, lDBDBName);
 
   if (lOptionParserStatus == K_DSIM_EARLY_RETURN_STATUS) {
