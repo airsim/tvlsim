@@ -151,11 +151,12 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Build the BOM tree from parsing input files
   const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
   const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
+  const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
   BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,
                                                   lOnDInputFilename,
                                                   lYieldFilePath ,
                                                   lFareFilePath,
-                                                  lDemandInputFilename));
+                                                  lDemandFilePath));
 
   // Initialise the snapshot and RM events
   BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());
