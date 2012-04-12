@@ -1047,10 +1047,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2008, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2009, boost::gregorian::Sep, 01);
+  stdair::Date_T lEndDate (2012, boost::gregorian::Sep, 01);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1127,11 +1127,14 @@ int main (int argc, char* argv[]) {
   } else {
     
     // Build the BOM tree from parsing input files
+    stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
+    stdair::ODFilePath lODFilePath (lOnDInputFilename);
     const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
-    const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename); 
-    dsimService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
+    const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
+    const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);  
+    dsimService.parseAndLoad (lScheduleFilePath, lODFilePath,
                               lYieldFilePath, lFareFilePath,
-                              lDemandInputFilename);
+                              lDemandFilePath);
 
     // Update the default parameters for the following interactive session
     lDefaultAirlineCode = "SQ";

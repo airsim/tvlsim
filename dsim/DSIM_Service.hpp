@@ -6,6 +6,7 @@
 // //////////////////////////////////////////////////////////////////////
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
+#include <stdair/stdair_file.hpp>
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/stdair_maths_types.hpp>
 #include <stdair/stdair_service_types.hpp>
@@ -16,6 +17,8 @@
 #include <airrac/AIRRAC_Types.hpp>
 // SimFQT
 #include <simfqt/SIMFQT_Types.hpp>
+// TRADEMGEN
+#include <trademgen/TRADEMGEN_Types.hpp>
 // Dsim
 #include <dsim/DSIM_Types.hpp>
 
@@ -111,17 +114,17 @@ namespace DSIM {
      * The CSV files, describing the airline schedule, O&Ds, fares and yields
      * for the simulator, are parsed and instantiated in memory accordingly.
      *
-     * @param const stdair::Filename_T& Filename of the input schedule file.
-     * @param const stdair::Filename_T& Filename of the input O&D file.
+     * @param const stdair::ScheduleFilePath& Filename of the input schedule file.
+     * @param const stdair::ODFilePath& Filename of the input O&D file.
      * @param const AIRRAC::YieldFilePath& Filename of the input yield file.
      * @param const SIMFQT::FareFilePath& Filename of the input fare file.
-     * @param const stdair::Filename_T& Filename of the input demand file.
+     * @param const TRADEMGEN::DemandFilePath& Filename of the input demand file.
      */
-    void parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
-                       const stdair::Filename_T& iODInputFilename,
-                       const AIRRAC::YieldFilePath& iYieldInputFilepath,
-                       const SIMFQT::FareFilePath& iFareInputFilepath,
-                       const stdair::Filename_T& iDemandInputFilename);
+    void parseAndLoad (const stdair::ScheduleFilePath&,
+                       const stdair::ODFilePath&,
+                       const AIRRAC::YieldFilePath&,
+                       const SIMFQT::FareFilePath&,
+                       const TRADEMGEN::DemandFilePath&);
 
     /**
      * Initialise the snapshot and RM events for the inventories.

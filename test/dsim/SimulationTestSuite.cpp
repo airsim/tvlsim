@@ -149,13 +149,16 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lRandomSeed);
 
   // Build the BOM tree from parsing input files
+  stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
+  stdair::ODFilePath lODFilePath (lOnDInputFilename);
   const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
   const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
-  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleInputFilename,
-                                                  lOnDInputFilename,
+  const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
+  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleFilePath,
+                                                  lODFilePath,
                                                   lYieldFilePath ,
                                                   lFareFilePath,
-                                                  lDemandInputFilename));
+                                                  lDemandFilePath));
 
   // Initialise the snapshot and RM events
   BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());

@@ -410,11 +410,11 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
-                const stdair::Filename_T& iODInputFilename,
+  parseAndLoad (const stdair::ScheduleFilePath& iScheduleInputFilename,
+                const stdair::ODFilePath& iODInputFilename,
                 const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath,
-                const stdair::Filename_T& iDemandInputFilename) {
+                const TRADEMGEN::DemandFilePath& iDemandFilepath) {
 
     // Retrieve the DSim service context
     assert (_dsimServiceContext != NULL);
@@ -433,7 +433,7 @@ namespace DSIM {
      */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service();
-    lTRADEMGEN_Service.parseAndLoad (iDemandInputFilename);
+    lTRADEMGEN_Service.parseAndLoad (iDemandFilepath);
   }
   
   // ////////////////////////////////////////////////////////////////////
