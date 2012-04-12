@@ -410,8 +410,8 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  parseAndLoad (const stdair::Filename_T& iScheduleInputFilename,
-                const stdair::Filename_T& iODInputFilename,
+  parseAndLoad (const stdair::ScheduleFilePath& iScheduleInputFilename,
+                const stdair::ODFilePath& iODInputFilename,
                 const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath,
                 const TRADEMGEN::DemandFilePath& iDemandFilepath) {

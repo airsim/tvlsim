@@ -585,10 +585,12 @@ int main (int argc, char* argv[]) {
   } else {
 
     // Build the BOM tree from parsing input files
+    stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
+    stdair::ODFilePath lODFilePath (lOnDInputFilename);
     const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
     const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
     const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
-    dsimService.parseAndLoad (lScheduleInputFilename, lOnDInputFilename,
+    dsimService.parseAndLoad (lScheduleFilePath, lODFilePath,
                               lYieldFilePath, lFareFilePath,
                               lDemandFilePath);
     
