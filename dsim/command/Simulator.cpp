@@ -113,12 +113,14 @@ namespace DSIM {
 			    ioTRAVELCCM_Service,
 			    lEventStruct,
 			    lPSS,
+                            ioSimulationStatus,
 			    iDemandGenerationMethod); 
 	break;
 	
       case stdair::EventType::CX: 
 	playCancellation (ioSIMCRS_Service,
-			  lEventStruct); 	
+			  lEventStruct,
+                          ioSimulationStatus); 	
 	break;
 
       case stdair::EventType::SNAPSHOT: 
@@ -198,7 +200,9 @@ namespace DSIM {
                       TRAVELCCM::TRAVELCCM_Service& ioTRAVELCCM_Service,
                       const stdair::EventStruct& iEventStruct,
                       stdair::ProgressStatusSet& ioPSS,
+                      SimulationStatus& ioSimulationStatus,
                       const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
+    
     // Extract the corresponding demand/booking request
     const stdair::BookingRequestStruct& lPoppedRequest =
       iEventStruct.getBookingRequest();
@@ -295,6 +299,7 @@ namespace DSIM {
           
         // If the sale succeeded, generate the potential cancellation event.
         if (saleSucceedful == true) {
+          ioSimulationStatus.increaseGlobalNumberOfBookings();
           ioTRADEMGEN_Service.generateCancellation (*lChosenTS_ptr,
                                                     lPartySize, lReqDateTime,
                                                     lDepDate);
@@ -330,14 +335,15 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playCancellation (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-                    const stdair::EventStruct& iEventStruct) {
+                    const stdair::EventStruct& iEventStruct,
+                    SimulationStatus& ioSimulationStatus) {
     // Retrieve the cancellation struct from the event.
     const stdair::CancellationStruct lCancellationStruct =
       iEventStruct.getCancellation();
 
     // DEBUG
     // STDAIR_LOG_DEBUG ("Play cancellation: "<<lCancellationStruct.describe());
-
+    ioSimulationStatus.increaseGlobalNumberOfCancellation();
     ioSIMCRS_Service.playCancellation (lCancellationStruct); 
   }
   
