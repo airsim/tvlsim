@@ -14,6 +14,7 @@ namespace DSIM {
   SimulationStatus::SimulationStatus (const Key_T& iKey)
     : _key (iKey), _currentDate (iKey.getStartDate()),  
       _nbOfBookings (0),
+      _nbOfCancellations (0),
       _bookingRequestProgressPercentage (0),
       _snapShotProgressPercentage (0),
       _rmEventProgressPercentage (0),
@@ -31,6 +32,7 @@ namespace DSIM {
             DEFAULT_SIMULATION_END_DATE),
       _currentDate (DEFAULT_SIMULATION_START_DATE),
       _nbOfBookings (0),
+      _nbOfCancellations (0),
       _bookingRequestProgressPercentage (0),
       _snapShotProgressPercentage (0),
       _rmEventProgressPercentage (0),
@@ -46,6 +48,7 @@ namespace DSIM {
     : _key (iSimulationStatus._key),
       _currentDate (iSimulationStatus.getStartDate()),
       _nbOfBookings (iSimulationStatus._nbOfBookings),
+      _nbOfCancellations (iSimulationStatus._nbOfCancellations),
       _bookingRequestProgressPercentage (iSimulationStatus._bookingRequestProgressPercentage),
       _snapShotProgressPercentage (iSimulationStatus._snapShotProgressPercentage),
       _rmEventProgressPercentage (iSimulationStatus._rmEventProgressPercentage),
@@ -115,7 +118,8 @@ namespace DSIM {
     _snapShotProgressPercentage = 0;
     _rmEventProgressPercentage = 0;
     _breakPointProgressPercentage = 0;
-    _nbOfBookings = 0; 
+    _nbOfBookings = 0;
+    _nbOfCancellations = 0;
     _currentDate = getStartDate();
     _simulationMode.setMode (SimulationMode::RUNNING);
    
@@ -124,7 +128,10 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationStatus::describe() const {
     std::ostringstream oStr;
-    oStr << "\n----------- Progress statuses ----------"
+    oStr << "\nStart Date ---- Current Date ---- End Date\n"
+         << getStartDate() << "     " << _currentDate
+         << "       " << getEndDate()
+         << "\n\n----------- Progress statuses ----------"
          << "\n All events: \t\t\t"
          << _allEventsProgressPercentage << "% "
          << "\n----------------------------------------"
@@ -141,6 +148,8 @@ namespace DSIM {
 	 << "\n Break points: \t\t\t"
          << _breakPointProgressPercentage << "% "
          << "\n----------------------------------------"
+         << "\n\nTotal number of bookings:       " << _nbOfBookings
+         << "\nTotal number of cancellations:  " << _nbOfCancellations
          << std::endl;
     return oStr.str();
   }

@@ -104,6 +104,14 @@ namespace DSIM {
       return _simulationMode.setMode(iEN_SimulationMode);
     }
 
+    void increaseGlobalNumberOfBookings () {
+      _nbOfBookings++;
+    }
+
+    void increaseGlobalNumberOfCancellation() {
+      _nbOfCancellations++;
+    }
+
   public:
     // /////////// Display support method /////////////
     /**
@@ -175,6 +183,11 @@ namespace DSIM {
      * Current number of bookings
      */
      stdair::NbOfBookings_T _nbOfBookings;
+
+    /**
+     * Current number of cancellations
+     */
+     stdair::NbOfBookings_T _nbOfCancellations;
   
     /**
      * Progress statuses.

@@ -52,11 +52,13 @@ namespace DSIM {
                                     TRAVELCCM::TRAVELCCM_Service&,
                                     const stdair::EventStruct&,
                                     stdair::ProgressStatusSet&,
+                                    SimulationStatus&,
                                     const stdair::DemandGenerationMethod&);
 
     /** Play a cancellation event. */
     static void playCancellation (SIMCRS::SIMCRS_Service&,
-                                  const stdair::EventStruct&);
+                                  const stdair::EventStruct&,
+                                  SimulationStatus&);
                                   
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
