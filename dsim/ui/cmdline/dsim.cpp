@@ -1055,7 +1055,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2012, boost::gregorian::Sep, 01);
+  stdair::Date_T lEndDate (2009, boost::gregorian::Sep, 01);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1109,18 +1109,13 @@ int main (int argc, char* argv[]) {
   logOutputFile.open (lLogFilename.c_str());
   logOutputFile.clear();
 
-  // Initialise the simulation context
-  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
-                                  lRandomSeed);
-
-  // Check wether or not (CSV) input files should be read
+  // Check wether or not (CSV) input files should be read to initiate the 
+  // default parameters
   if (isBuiltin == true) {
 
-    // Build the sample BOM tree
-    dsimService.buildSampleBom();
-
     // Update the default parameters for the following interactive session
+    lStartDate = stdair::Date_T (2011, 01, 01);
+    lEndDate = stdair::Date_T (2011, 12, 01);
     lDefaultAirlineCode = "BA";
     lDefaultFlightNumber = 9;
     lDefaultDate = stdair::Date_T (2011, 06, 10);
@@ -1128,6 +1123,29 @@ int main (int argc, char* argv[]) {
     lDefaultPartySize = 2;
     lDefaultOrigin = "LHR";
     lDefaultDestination = "SYD";
+
+  } else {
+
+    // Update the default parameters for the following interactive session
+    lDefaultAirlineCode = "SQ";
+    lDefaultFlightNumber = 12;
+    lDefaultDate = stdair::Date_T (2009, 02, 9);
+    lDefaultBookingClass = "Y";
+    lDefaultPartySize = 2;
+    lDefaultOrigin = "SIN";
+    lDefaultDestination = "BKK";
+  } 
+
+  // Initialise the simulation context
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
+                                  lRandomSeed);
+ 
+  // Check wether or not (CSV) input files should be read
+  if (isBuiltin == true) {
+
+    // Build the sample BOM tree
+    dsimService.buildSampleBom();
 
   } else {
     
@@ -1140,17 +1158,8 @@ int main (int argc, char* argv[]) {
     dsimService.parseAndLoad (lScheduleFilePath, lODFilePath,
                               lYieldFilePath, lFareFilePath,
                               lDemandFilePath);
+  } 
 
-    // Update the default parameters for the following interactive session
-    lDefaultAirlineCode = "SQ";
-    lDefaultFlightNumber = 12;
-    lDefaultDate = stdair::Date_T (2009, 01, 5);
-    lDefaultBookingClass = "Y";
-    lDefaultPartySize = 2;
-    lDefaultOrigin = "SIN";
-    lDefaultDestination = "BKK";
-  }
-  
   // Initialise the snapshot and RM events
   dsimService.initSnapshotAndRMEvents();
 
