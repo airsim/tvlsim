@@ -12,16 +12,11 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const Key_T& iKey)
-    : _key (iKey), _currentDate (iKey.getStartDate()),  
+    : _key (iKey), 
+      _currentDate (iKey.getStartDate()),  
       _nbOfBookings (0),
-      _nbOfCancellations (0),
-      _bookingRequestProgressPercentage (0),
-      _snapShotProgressPercentage (0),
-      _rmEventProgressPercentage (0),
-      _optimisationNotificationProgressPercentage (0),
-      _cancellationProgressPercentage (0),
-      _breakPointProgressPercentage (0),
-      _allEventsProgressPercentage (0),
+      _totalElapsedTime (0),
+      _estimatedRemainingTime (0),
       _simulationMode('r') {
   }
   
@@ -32,14 +27,8 @@ namespace DSIM {
             DEFAULT_SIMULATION_END_DATE),
       _currentDate (DEFAULT_SIMULATION_START_DATE),
       _nbOfBookings (0),
-      _nbOfCancellations (0),
-      _bookingRequestProgressPercentage (0),
-      _snapShotProgressPercentage (0),
-      _rmEventProgressPercentage (0),
-      _optimisationNotificationProgressPercentage (0),
-      _cancellationProgressPercentage (0),     
-      _breakPointProgressPercentage (0),
-      _allEventsProgressPercentage (0),
+      _totalElapsedTime (0),
+      _estimatedRemainingTime (0),
       _simulationMode ('r') {
   }
 
@@ -48,14 +37,8 @@ namespace DSIM {
     : _key (iSimulationStatus._key),
       _currentDate (iSimulationStatus.getStartDate()),
       _nbOfBookings (iSimulationStatus._nbOfBookings),
-      _nbOfCancellations (iSimulationStatus._nbOfCancellations),
-      _bookingRequestProgressPercentage (iSimulationStatus._bookingRequestProgressPercentage),
-      _snapShotProgressPercentage (iSimulationStatus._snapShotProgressPercentage),
-      _rmEventProgressPercentage (iSimulationStatus._rmEventProgressPercentage),
-      _optimisationNotificationProgressPercentage (iSimulationStatus._optimisationNotificationProgressPercentage),
-      _cancellationProgressPercentage (iSimulationStatus._cancellationProgressPercentage),
-      _breakPointProgressPercentage (iSimulationStatus._breakPointProgressPercentage),
-      _allEventsProgressPercentage (iSimulationStatus._allEventsProgressPercentage),
+      _totalElapsedTime (iSimulationStatus._totalElapsedTime),
+      _estimatedRemainingTime (iSimulationStatus._estimatedRemainingTime),
       _simulationMode(iSimulationStatus.getSimulationMode()) {
     assert (false);
   }
@@ -67,91 +50,152 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   void SimulationStatus::
-  updateProgress (const stdair::EventType::EN_EventType& iEventType,
-		  const stdair::ProgressPercentage_T lProgressPercentage) { 
+  updateProgress (const stdair::EventType::EN_EventType& iType,
+		  const stdair::ProgressStatus& iProgressStatus,
+                  const double& iEventMeasure) {    
 
-    switch (iEventType) {
-    case stdair::EventType::BKG_REQ: {
-      _bookingRequestProgressPercentage = lProgressPercentage;
-      break;
-    }
-    case stdair::EventType::CX: {
-      _cancellationProgressPercentage = lProgressPercentage;
-      break;
-    }
-    case stdair::EventType::OPT_NOT_4_FD: {
-      _optimisationNotificationProgressPercentage = lProgressPercentage;
-      break;
-    }
-    case stdair::EventType::SNAPSHOT: {
-      _snapShotProgressPercentage = lProgressPercentage;
-      break;
-    }
-    case stdair::EventType::RM: {
-      _rmEventProgressPercentage = lProgressPercentage;
-      break;
-    } 
-    case stdair::EventType::BRK_PT: {
-      _breakPointProgressPercentage = lProgressPercentage;
-      break;
-    }
-    default: {
-      assert (false);
-      break;
-    }
-    }  
-  }
+    const stdair::Count_T lNbOfActualEventsOfSuchType = 
+      iProgressStatus.getActualNb();
+    const stdair::Count_T lNbOfCurrentEventsOfSuchType = 
+      iProgressStatus.getCurrentNb();    
+    const stdair::Count_T lNbOfRemainingEventsOfSuchType = 
+      lNbOfActualEventsOfSuchType - lNbOfCurrentEventsOfSuchType;
+    stdair::Count_T lPreviousNbOfActualEventsOfSuchType = 0;
+    stdair::Count_T lPreviousNbOfCurrentEventsOfSuchType = 0;
 
-  // //////////////////////////////////////////////////////////////////////
-  void SimulationStatus::
-  updateProgress (const stdair::ProgressPercentage_T lProgressPercentage) {
-    _allEventsProgressPercentage = lProgressPercentage;
+    // Retrieve, if existing, the ProgressStatus structure
+    // corresponding to the given event type and update it
+    SEVMGR::ProgressStatusMap_T::iterator itProgressStatus =
+      _progressStatusMap.find (iType);
+    if (itProgressStatus == _progressStatusMap.end()) { 
+      const bool hasInsertBeenSuccessful =
+        _progressStatusMap.insert (SEVMGR::ProgressStatusMap_T::
+                                   value_type (iType, iProgressStatus)).second;
+      
+      if (hasInsertBeenSuccessful == false) {
+        STDAIR_LOG_ERROR ("No progress_status can be inserted "
+                          << "for the following event type: "
+                          << stdair::EventType::getLabel(iType) << ".");
+	throw stdair::EventException ("No progress_status can be inserted "
+				      "for the following event type: "
+				      + stdair::EventType::getLabel(iType));
+      }
+    } else {
+      stdair::ProgressStatus& lProgressStatus = itProgressStatus->second;
+      lPreviousNbOfActualEventsOfSuchType = lProgressStatus.getActualNb();
+      lPreviousNbOfCurrentEventsOfSuchType = lProgressStatus.getCurrentNb();
+      lProgressStatus = iProgressStatus;
+    }
+
+    // Update the global elapsed time chronometer
+    _totalElapsedTime += iEventMeasure;  
+
+    // Retrieve, if existing, the Chronometer structure
+    // corresponding to the given event type and update it
+    ChronometerMap_T::iterator itChronometer =
+      _chronometerMap.find (iType);
+    if (itChronometer == _chronometerMap.end()) { 
+      const bool hasInsertBeenSuccessful =
+        _chronometerMap.insert (ChronometerMap_T::
+				value_type (iType, iEventMeasure)).second;
+      
+      if (hasInsertBeenSuccessful == false) {
+        STDAIR_LOG_ERROR ("No chronometer can be inserted "
+                          << "for the following event type: "
+                          << stdair::EventType::getLabel(iType) << ".");
+	throw stdair::EventException ("No chronometer can be inserted for the "
+				      "following event type: "
+				      + stdair::EventType::getLabel(iType));
+      }
+      _estimatedRemainingTime += lNbOfRemainingEventsOfSuchType*iEventMeasure; 
+      return;
+    } else {
+      double& lChronometer = itChronometer->second; 
+      const stdair::Count_T lPreviousNbOfRemainingEventsOfSuchType = 
+	lPreviousNbOfActualEventsOfSuchType - lPreviousNbOfCurrentEventsOfSuchType; 
+      if (lPreviousNbOfCurrentEventsOfSuchType > 0) { 
+	_estimatedRemainingTime -= lPreviousNbOfRemainingEventsOfSuchType*
+	  lChronometer/lPreviousNbOfCurrentEventsOfSuchType;  
+      }
+      if (lNbOfCurrentEventsOfSuchType > 0) {
+	lChronometer += iEventMeasure; 	
+	_estimatedRemainingTime += lNbOfRemainingEventsOfSuchType*
+	  lChronometer/lNbOfCurrentEventsOfSuchType;
+      } 
+      _estimatedRemainingTime = std::max(_estimatedRemainingTime, 0.0);
+    }
+    
   }
 
   // //////////////////////////////////////////////////////////////////////
   void SimulationStatus::reset () { 
 
-    _allEventsProgressPercentage =0;
-    _bookingRequestProgressPercentage = 0;
-    _cancellationProgressPercentage = 0;
-    _optimisationNotificationProgressPercentage = 0;
-    _snapShotProgressPercentage = 0;
-    _rmEventProgressPercentage = 0;
-    _breakPointProgressPercentage = 0;
+    _progressStatusMap.clear();
     _nbOfBookings = 0;
-    _nbOfCancellations = 0;
     _currentDate = getStartDate();
+    _totalElapsedTime = 0;
+    _estimatedRemainingTime = 0;
+    _overallProgressStatus.reset();
     _simulationMode.setMode (SimulationMode::RUNNING);
+    _progressStatusMap.clear();
+    _chronometerMap.clear();
    
   } 
   
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationStatus::describe() const {
     std::ostringstream oStr;
+
+    //
+    // Add the display of the start, current and end date
+    //
     oStr << "\nStart Date ---- Current Date ---- End Date\n"
          << getStartDate() << "     " << _currentDate
-         << "       " << getEndDate()
-         << "\n\n----------- Progress statuses ----------"
-         << "\n All events: \t\t\t"
-         << _allEventsProgressPercentage << "% "
-         << "\n----------------------------------------"
-         << "\n Booking requests: \t\t"
-         << _bookingRequestProgressPercentage << "% "
-         << "\n Snap shots: \t\t\t"
-         << _snapShotProgressPercentage << "% "
-         << "\n RM events: \t\t\t"
-         << _rmEventProgressPercentage << "% "
-      /**<< "\n Optimisation notifications: "
-         << _optimisationNotificationProgressPercentage << "%"*/
-         << "\n Cancellations: \t\t"
-         << _cancellationProgressPercentage << "% "
-	 << "\n Break points: \t\t\t"
-         << _breakPointProgressPercentage << "% "
-         << "\n----------------------------------------"
-         << "\n\nTotal number of bookings:       " << _nbOfBookings
-         << "\nTotal number of cancellations:  " << _nbOfCancellations
+         << "       " << getEndDate();
+
+    //
+    // Add the display of the overall progress status
+    //
+    std::string lEventTypeStr = "All";
+    describeHelper(lEventTypeStr);  
+    oStr << "\n\n----------------- Progress statuses ----------------"
+	 << "\n " << lEventTypeStr << _overallProgressStatus.toString()
+	 << "\n----------------------------------------------------";
+
+    //
+    // Add the display of the specific progress statuses
+    //
+    std::string lOptionalStr;
+    SEVMGR::ProgressStatusMap_T::const_iterator itPS = 
+      _progressStatusMap.begin(); 
+    while (itPS != _progressStatusMap.end()) {
+      const stdair::EventType::EN_EventType& lType = itPS->first;
+      const stdair::ProgressStatus& lProgressStatus = itPS->second;
+      lEventTypeStr = stdair::EventType::getLabel(lType);
+      describeHelper(lEventTypeStr);
+      oStr << "\n " << lEventTypeStr << lProgressStatus.toString(); 
+      itPS++;
+      lOptionalStr = "\n----------------------------------------------------";
+    }
+    oStr << lOptionalStr << "\n";  
+
+    //
+    // Add other information such as the total number of bookings, ...
+    //
+    oStr << "\nTotal number of bookings:      " << _nbOfBookings
+	 << "\n\nElapsed time:             " 
+	 << std::setprecision (2) << std::fixed << _totalElapsedTime << " s"
+	 << "\nEstimated remaining time: " 
+	 << _estimatedRemainingTime << " s"
          << std::endl;
     return oStr.str();
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::describeHelper(std::string& ioEventTypeName) const {  
+    ioEventTypeName += " Events:"; 
+    const std::size_t lSizeBeforePercent (30);  
+    ioEventTypeName.resize (lSizeBeforePercent,' ');  
   }
   
 }

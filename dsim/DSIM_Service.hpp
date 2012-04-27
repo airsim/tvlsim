@@ -249,7 +249,7 @@ namespace DSIM {
     /**
      * Reset the context of the service
      */
-    void reset() const;
+    void reset();
     
     /**
      * Register a booking.

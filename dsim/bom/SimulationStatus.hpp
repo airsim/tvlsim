@@ -11,10 +11,12 @@
 // StdAir
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
-#include <stdair/basic/EventType.hpp>
+// SEvMgr
+#include <sevmgr/SEVMGR_Types.hpp>
 // DSim
 #include <dsim/basic/SimulationMode.hpp>
 #include <dsim/bom/SimulationStatusKey.hpp>
+#include <dsim/DSIM_Types.hpp>
 
 namespace DSIM {
 
@@ -70,8 +72,36 @@ namespace DSIM {
      */
     SimulationMode::EN_SimulationMode getMode() const {
       return _simulationMode.getMode();
+    } 
+
+    /**
+     * Get the total number of bookings
+     */
+    const stdair::NbOfBookings_T& getNumberOfBookings() const {
+      return _nbOfBookings;
+    }  
+
+    /**
+     * Get the elapsed time
+     */
+    const double& getElapsedTime() const {
+      return _totalElapsedTime;
+    }    
+
+    /**
+     * Get the estimated remaining time
+     */
+    const double&  getEstimatedRemainingTime() const {
+      return _estimatedRemainingTime;
+    }   
+
+    /**
+     * Get the overall progress status.
+     */   
+    const stdair::ProgressStatus& getOverallProgressStatus() const {
+      return _overallProgressStatus;
     }
-    
+
   public:
     // //////////////// Setters /////////////////
     /**
@@ -82,15 +112,11 @@ namespace DSIM {
     } 
  
     /**
-     * Update the progress status of the given event type
+     * Update the progress status for a specific type
      */
     void updateProgress(const stdair::EventType::EN_EventType&,
-			const stdair::ProgressPercentage_T);  
-
-    /**
-     * Update the total progress status
-     */
-    void updateProgress(const stdair::ProgressPercentage_T);
+			const stdair::ProgressStatus&,
+			const double& iEventMeasure = 0);
 
     /**
      * Reset all the parameters
@@ -103,14 +129,17 @@ namespace DSIM {
     void setMode (const SimulationMode::EN_SimulationMode& iEN_SimulationMode) {
       return _simulationMode.setMode(iEN_SimulationMode);
     }
-
-    void increaseGlobalNumberOfBookings () {
-      _nbOfBookings++;
+    
+    /**
+     * Update the total number of bookings
+     */
+    void increaseGlobalNumberOfBookings (const stdair::PartySize_T& iPartySize) {
+      _nbOfBookings += iPartySize;
     }
 
-    void increaseGlobalNumberOfCancellation() {
-      _nbOfCancellations++;
-    }
+    void setOverallProgressStatus (const stdair::ProgressStatus& iProgressStatus) {  
+      _overallProgressStatus = iProgressStatus;
+    }		  
 
   public:
     // /////////// Display support method /////////////
@@ -143,6 +172,8 @@ namespace DSIM {
       return _key.toString();
     }
 
+  private:
+    void describeHelper(std::string&) const;
     
   public:
     /**
@@ -182,31 +213,33 @@ namespace DSIM {
     /**
      * Current number of bookings
      */
-     stdair::NbOfBookings_T _nbOfBookings;
-
-    /**
-     * Current number of cancellations
-     */
-     stdair::NbOfBookings_T _nbOfCancellations;
+    stdair::NbOfBookings_T _nbOfBookings;
   
     /**
-     * Progress statuses.
-     *
-     * <br>The progress is status is the ratio of:
-     * <ul>
-     *   <li>the current number of events, summed over all the demand
-     *       streams,</li>
-     *   <li>over the total number of events, also summed over all the demand
-     *       streams.</li>
-     * </ul>
+     * Counters holding the overall progress status.
      */
-    stdair::ProgressPercentage_T _bookingRequestProgressPercentage;
-    stdair::ProgressPercentage_T _snapShotProgressPercentage;
-    stdair::ProgressPercentage_T _rmEventProgressPercentage;
-    stdair::ProgressPercentage_T _optimisationNotificationProgressPercentage;
-    stdair::ProgressPercentage_T _cancellationProgressPercentage;
-    stdair::ProgressPercentage_T _breakPointProgressPercentage;
-    stdair::ProgressPercentage_T _allEventsProgressPercentage;
+    stdair::ProgressStatus _overallProgressStatus;
+
+    /**
+     * Counters holding the overall progress status, for each event
+     * type (e.g., booking request, optimisation notification,
+     * schedule change, break point).
+     */
+    SEVMGR::ProgressStatusMap_T _progressStatusMap;
+
+    /**
+     * Global counters holding the elapsed time and the estimated 
+     * remaining one.
+     */
+    double _totalElapsedTime;  
+    double _estimatedRemainingTime;
+
+    /**
+     * Counters holding the total chronometers, for each event
+     * type (e.g., booking request, optimisation notification,
+     * schedule change, break point).
+     */
+    ChronometerMap_T _chronometerMap;
     
     /** 
      * Simulation Mode (i.e. running, on a break point or done)

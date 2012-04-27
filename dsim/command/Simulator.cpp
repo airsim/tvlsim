@@ -10,6 +10,7 @@
 // StdAir
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
+#include <stdair/basic/BasChronometer.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/bom/CancellationStruct.hpp>
@@ -57,7 +58,7 @@ namespace DSIM {
       const stdair::Count_T& lExpectedNbOfEventsToBeGenerated =
       ioTRADEMGEN_Service.getExpectedTotalNumberOfRequestsToBeGenerated();
       const stdair::Count_T& lActualNbOfEventsToBeGenerated =
-	ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);  
+	ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
 
       // DEBUG
       STDAIR_LOG_DEBUG ("Expected number of events: "
@@ -103,7 +104,10 @@ namespace DSIM {
 
       // Check the event type
       const stdair::EventType::EN_EventType& lEventType =
-        lEventStruct.getEventType(); 
+        lEventStruct.getEventType();
+
+      stdair::BasChronometer lNextEventChronometer;
+      lNextEventChronometer.start();
 
       switch (lEventType) {
 
@@ -119,8 +123,7 @@ namespace DSIM {
 	
       case stdair::EventType::CX: 
 	playCancellation (ioSIMCRS_Service,
-			  lEventStruct,
-                          ioSimulationStatus); 	
+			  lEventStruct); 	
 	break;
 
       case stdair::EventType::SNAPSHOT: 
@@ -156,9 +159,12 @@ namespace DSIM {
       default: assert (false); 
 	break;
       }
-      
-      updateStatus (ioTRADEMGEN_Service, lEventType, ioSimulationStatus);
 
+      // Update the simulation status
+      const double lNextEventMeasure = lNextEventChronometer.elapsed();
+      updateStatus (ioTRADEMGEN_Service, lEventType, 
+		    ioSimulationStatus, lNextEventMeasure);
+      
       // Update the progress display
       //++lProgressDisplay;
       
@@ -174,22 +180,23 @@ namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
-  updateStatus (TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
+  updateStatus (const TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
 		const stdair::EventType::EN_EventType& iEN_EventType,
-		SimulationStatus& ioSimulationStatus) {    	
+		SimulationStatus& ioSimulationStatus,
+		const double& iEventMeasure) { 	
+    // Update the global simulation status 
+    const stdair::ProgressStatus& lProgressStatus = 
+      ioTRADEMGEN_Service.getProgressStatus ();
+    ioSimulationStatus.setOverallProgressStatus (lProgressStatus);  
 
     // Re-Calculate the progress percentage for the given event type
-    stdair::ProgressPercentage_T lProgressPercentageByType = 
-      ioTRADEMGEN_Service.calculateProgress (iEN_EventType);
-
+    const stdair::ProgressStatus& lProgressStatusByType = 
+      ioTRADEMGEN_Service.getProgressStatus (iEN_EventType);
+    
     // Update the simulation status for the current type
-    ioSimulationStatus.updateProgress (iEN_EventType,
-				       lProgressPercentageByType);
-
-    // Update the global simulation status 
-    const stdair::ProgressPercentage_T lProgressPercentage = 
-      ioTRADEMGEN_Service.calculateProgress ();
-    ioSimulationStatus.updateProgress (lProgressPercentage);
+    ioSimulationStatus.updateProgress(iEN_EventType,
+				      lProgressStatusByType,
+				      iEventMeasure);
 
   }
 
@@ -299,7 +306,7 @@ namespace DSIM {
           
         // If the sale succeeded, generate the potential cancellation event.
         if (saleSucceedful == true) {
-          ioSimulationStatus.increaseGlobalNumberOfBookings();
+          ioSimulationStatus.increaseGlobalNumberOfBookings(lPartySize);
           ioTRADEMGEN_Service.generateCancellation (*lChosenTS_ptr,
                                                     lPartySize, lReqDateTime,
                                                     lDepDate);
@@ -335,15 +342,13 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   void Simulator::
   playCancellation (SIMCRS::SIMCRS_Service& ioSIMCRS_Service,
-                    const stdair::EventStruct& iEventStruct,
-                    SimulationStatus& ioSimulationStatus) {
+                    const stdair::EventStruct& iEventStruct) {
     // Retrieve the cancellation struct from the event.
     const stdair::CancellationStruct lCancellationStruct =
       iEventStruct.getCancellation();
 
     // DEBUG
     // STDAIR_LOG_DEBUG ("Play cancellation: "<<lCancellationStruct.describe());
-    ioSimulationStatus.increaseGlobalNumberOfCancellation();
     ioSIMCRS_Service.playCancellation (lCancellationStruct); 
   }
   

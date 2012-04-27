@@ -38,6 +38,7 @@
 // Dsim
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/basic/SimulationMode.hpp>
+#include <dsim/bom/BomJSONExport.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/command/Simulator.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
@@ -432,8 +433,14 @@ namespace DSIM {
      * Let the demand generation component parse its input file.
      */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
-      lDSIM_ServiceContext.getTRADEMGEN_Service();
-    lTRADEMGEN_Service.parseAndLoad (iDemandFilepath);
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+    lTRADEMGEN_Service.parseAndLoad (iDemandFilepath);  
+
+    // Update the Simulation Status
+    SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::BKG_REQ,
+			    lSimulationStatus);
   }
   
   // ////////////////////////////////////////////////////////////////////
@@ -483,7 +490,13 @@ namespace DSIM {
      */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service();
-    lTRADEMGEN_Service.buildSampleBom();
+    lTRADEMGEN_Service.buildSampleBom();    
+
+    // Update the Simulation Status
+    SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::BKG_REQ,
+			    lSimulationStatus);
 
     /**
      * Let the customer choice manager (i.e., the TravelCCM component) build the
@@ -625,7 +638,15 @@ namespace DSIM {
       std::ostringstream oStream;
       oStream << "{\"done\": \"1\"}";
       return oStream.str();
-    }
+    } 
+    case stdair::JSonCommand::STATUS:{  
+      // Get a reference on the Simulation Status
+      SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+      std::ostringstream oStream;
+      BomJSONExport::jsonExportSimulationStatus(oStream, lSimulationStatus); 
+      return oStream.str();
+    }						  
     default: {
       // Return an Error string
       std::ostringstream lErrorCmdMessage;
@@ -743,6 +764,16 @@ namespace DSIM {
       lSEVMGR_Service_ptr->addEvent (lEventStruct);
     }
 
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+ 
+    // Update the Simulation Status
+    SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::BRK_PT,
+			    lSimulationStatus);
+
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -767,7 +798,18 @@ namespace DSIM {
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
 
-    lSIMCRS_Service.initSnapshotAndRMEvents (lStartDate, lEndDate);
+    lSIMCRS_Service.initSnapshotAndRMEvents (lStartDate, lEndDate);    
+
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+ 
+    // Update the Simulation Status
+    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::RM,
+			    lSimulationStatus);
+    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::SNAPSHOT,
+			    lSimulationStatus);
+ 
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -856,7 +898,7 @@ namespace DSIM {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::reset() const {  
+  void DSIM_Service::reset() {  
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -889,10 +931,12 @@ namespace DSIM {
        lTRAVELCCM_Service.reset();*/
 
     // Reset the simulation status object  
-    // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
       lDSIM_ServiceContext.getSimulationStatus();
-    lSimulationStatus.reset();
+    lSimulationStatus.reset(); 
+
+    // Re-init Snapshot and RMEvents
+    initSnapshotAndRMEvents();
     
   }  
 
