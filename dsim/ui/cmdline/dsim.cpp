@@ -152,6 +152,7 @@ struct Command_T {
     JSON_SET_BREAK_POINT,
     JSON_RUN,
     JSON_RESET,
+    JSON_STATUS,
     LAST_VALUE
   } Type_T;
 };
@@ -477,7 +478,8 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("sell"); 
   Completers.push_back ("json_list_event");
   Completers.push_back ("json_list_flight_date");
-  Completers.push_back ("json_display_flight_date");
+  Completers.push_back ("json_display_flight_date");  
+  Completers.push_back ("json_status");
   Completers.push_back ("json_set_break_point"); 
   Completers.push_back ("json_run"); 
   Completers.push_back ("json_reset");
@@ -813,7 +815,10 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::JSON_RUN; 
 
     } else if (lCommand == "json_reset") {
-      oCommandType = Command_T::JSON_RESET;
+      oCommandType = Command_T::JSON_RESET; 
+
+    } else if (lCommand == "json_status") {
+      oCommandType = Command_T::JSON_STATUS;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
@@ -1575,6 +1580,27 @@ int main (int argc, char* argv[]) {
 
       // DEBUG: Display the events queue JSON string
       STDAIR_LOG_DEBUG (lCSVEventListDump);
+      
+      break;
+    } 
+
+      // ////////////////////////////// JSon Display Status  ////////////////////////
+
+    case Command_T::JSON_STATUS: {
+      //
+      std::cout << "JSON Display status" << std::endl;
+
+      std::ostringstream lMyCommandJSONstream;
+      lMyCommandJSONstream << "{\"status\": \"1\"}";
+
+      // Delegate the call to the dedicated service
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lSimulationStatusJSonDump =
+        dsimService.jsonHandler (lJSONCommandString);
+
+      // DEBUG: Display the simulation status JSON string    
+      std::cout << lSimulationStatusJSonDump << std::endl;
+      STDAIR_LOG_DEBUG (lSimulationStatusJSonDump);
       
       break;
     }
