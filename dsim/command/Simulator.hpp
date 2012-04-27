@@ -42,9 +42,10 @@ namespace DSIM {
                          const stdair::DemandGenerationMethod&);  
 
     /** Update the simulation status. */
-    static void updateStatus(TRADEMGEN::TRADEMGEN_Service&,
+    static void updateStatus(const TRADEMGEN::TRADEMGEN_Service&,
 			     const stdair::EventType::EN_EventType&,
-			     SimulationStatus& ioSimulationStatus);
+			     SimulationStatus&,
+			     const double& iEventMeasure = 0);
 
     /** Play a booking request event. */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
@@ -57,8 +58,7 @@ namespace DSIM {
 
     /** Play a cancellation event. */
     static void playCancellation (SIMCRS::SIMCRS_Service&,
-                                  const stdair::EventStruct&,
-                                  SimulationStatus&);
+                                  const stdair::EventStruct&);
                                   
     /** Play a snapshot event. */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
