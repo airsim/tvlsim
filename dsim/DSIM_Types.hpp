@@ -11,6 +11,7 @@
 #include <boost/shared_ptr.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
+#include <stdair/basic/EventType.hpp>
 
 namespace DSIM {
 
@@ -38,7 +39,16 @@ namespace DSIM {
   /**
    * (Smart) Pointer on the SimCRS service handler.
    */
-  typedef boost::shared_ptr<DSIM_Service> DSIM_ServicePtr_T;
+  typedef boost::shared_ptr<DSIM_Service> DSIM_ServicePtr_T;  
+
+  /**
+   * Definition of the (STL) map of chronometer structures, one
+   * for each event type (e.g., booking request, optimisation
+   * notification).
+   */
+  typedef std::map<stdair::EventType::EN_EventType,
+		   double> ChronometerMap_T;
+  
   
 }
 #endif // __DSIM_DSIM_TYPES_HPP
