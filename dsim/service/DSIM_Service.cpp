@@ -19,8 +19,6 @@
 #include <stdair/bom/BomRoot.hpp>
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
-#include <stdair/bom/BreakPointStruct.hpp>
-#include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/BomJSONImport.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/FacSupervisor.hpp>
@@ -684,11 +682,18 @@ namespace DSIM {
     }
     assert (hasBreakPointListBeenRetrieved == true);
       
-    initBreakPointEvents (lBreakPointList);	
-
+    const stdair::Count_T lBreakPointsListSize = 
+      lBreakPointList.size();
+    const stdair::Count_T lNumberOfBreakPointsAdded = 
+      initBreakPointEvents (lBreakPointList);	
+   
     // Return a JSON-ified string
     std::ostringstream oStream;
-    oStream << "{\"done\": \"" << lBreakPointList.size() << "\"}";
+    if (lNumberOfBreakPointsAdded != lBreakPointsListSize) {
+      oStream << "{\"failed: \"" << lNumberOfBreakPointsAdded << "\"}";
+    } else {
+      oStream << "{\"done\": \"" << lBreakPointList.size() << "\"}";
+    }
     return oStream.str();
   } 
 
@@ -727,52 +732,32 @@ namespace DSIM {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initBreakPointEvents(const stdair::BreakPointList_T& iBreakPointList) {
+  const stdair::Count_T DSIM_Service::
+  initBreakPointEvents(const stdair::BreakPointList_T& iBreakPointList) {
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
       throw stdair::NonInitialisedServiceException ("The DSim service "
                                                     "has not been initialised");
     }
     assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
-
-    // Retrieve the StdAir service context
-    SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
-      lDSIM_ServiceContext.getSEVMGR_ServicePtr();   
-
-    // Update the status of cancellation events within the event queue. 
-    const bool hasProgressStatus = 
-      lSEVMGR_Service_ptr->hasProgressStatus(stdair::EventType::BRK_PT); 
-    const stdair::Count_T lBreakPointNumber = iBreakPointList.size();
-    if (hasProgressStatus == false) {   
-      lSEVMGR_Service_ptr->addStatus (stdair::EventType::BRK_PT, lBreakPointNumber); 
-    } else {   
-      stdair::Count_T lCurrentBPNumber = 
-	lSEVMGR_Service_ptr->getActualTotalNumberOfEventsToBeGenerated (stdair::EventType::BRK_PT);
-      lCurrentBPNumber += lBreakPointNumber;
-      lSEVMGR_Service_ptr->updateStatus (stdair::EventType::BRK_PT, lCurrentBPNumber);   
-    } 
-
-    for (stdair::BreakPointList_T::const_iterator itBPEvent = iBreakPointList.begin();
-         itBPEvent != iBreakPointList.end(); ++itBPEvent) {
-      const stdair::BreakPointStruct& lBPEvent = *itBPEvent;   
-      stdair::BreakPointPtr_T lBPEventPtr =
-        boost::make_shared<stdair::BreakPointStruct> (lBPEvent);
-      // Create an event structure
-      stdair::EventStruct lEventStruct (stdair::EventType::BRK_PT,
-					lBPEventPtr);
-      lSEVMGR_Service_ptr->addEvent (lEventStruct);
-    }
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
 
     // Get a reference on the TRADEMGEN service handler
-    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+    const TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service(); 
- 
-    // Update the Simulation Status
+
+    // Retrieve the StdAir service context
+    SEVMGR::SEVMGR_Service& lSEVMGR_Service =
+      lDSIM_ServiceContext.getSEVMGR_Service();      
+
+    // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
-	lDSIM_ServiceContext.getSimulationStatus(); 
-    Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::BRK_PT,
-			    lSimulationStatus);
+      lDSIM_ServiceContext.getSimulationStatus(); 
+
+    return Simulator::initialiseBreakPoint (lTRADEMGEN_Service,
+					    lSEVMGR_Service,
+					    iBreakPointList,
+					    lSimulationStatus);
 
   }
 
@@ -850,6 +835,29 @@ namespace DSIM {
 
     // Delegate the BOM building to the dedicated service
     return lTRADEMGEN_Service.list ();
+
+  }   
+
+  // //////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::
+  listEvents (const stdair::EventType::EN_EventType& iEventType) const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the TraDemGen service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
+
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+
+    // Delegate the BOM building to the dedicated service
+    return lTRADEMGEN_Service.list (iEventType);
 
   }
 

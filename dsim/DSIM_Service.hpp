@@ -133,8 +133,13 @@ namespace DSIM {
 
     /**
      * Initialise the break points.
+     * @param  const stdair::BreakPointList_T& List of break points to add to
+     *         the simulation event queue.
+     * @return const stdair::Count_T Number of break points actually added to
+     *         the queue (some break points might be outside the simulation 
+     *         period, and thus are not added to the queue).
      */
-    void initBreakPointEvents(const stdair::BreakPointList_T&);
+    const stdair::Count_T initBreakPointEvents(const stdair::BreakPointList_T&);
 
     /**
      * Re-initialise the simulation service, as well as all the other
@@ -315,7 +320,17 @@ namespace DSIM {
      * @return std::string Output string in which the events are
      *        logged/dumped.
      */
-    std::string listEvents () const;
+    std::string listEvents () const;    
+
+    /**
+     * Display (dump in the returned string) the events with the given type.
+     *
+     * @param const stdair::EventType::EN_EventType& Type of the events to 
+     *        display.
+     * @return std::string Output string in which the events are
+     *        logged/dumped.
+     */
+    std::string listEvents (const stdair::EventType::EN_EventType&) const;
 
     /**
      * Recursively display (dump in the returned string) the simulation
