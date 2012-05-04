@@ -25,6 +25,9 @@ namespace TRADEMGEN {
 namespace TRAVELCCM {
   class TRAVELCCM_Service;
 }
+namespace SEVMGR {
+  class SEVMGR_Service;
+}
 
 namespace DSIM {
 
@@ -67,7 +70,13 @@ namespace DSIM {
 
     /** Play a RM event. */
     static void playRMEvent (SIMCRS::SIMCRS_Service&,
-                             const stdair::EventStruct&);
+                             const stdair::EventStruct&);  
+ 
+    /** Add the break points into the event queue. */
+    static const stdair::Count_T initialiseBreakPoint (const TRADEMGEN::TRADEMGEN_Service&,
+						       SEVMGR::SEVMGR_Service&,
+						       const stdair::BreakPointList_T&,
+						       SimulationStatus&);
 
   private:
     /** Constructors. */

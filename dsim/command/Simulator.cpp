@@ -1,6 +1,8 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
+// Boost
+#include <boost/make_shared.hpp>
 // STL
 #include <fstream>
 #include <string>
@@ -15,11 +17,15 @@
 #include <stdair/bom/SnapshotStruct.hpp>
 #include <stdair/bom/CancellationStruct.hpp>
 #include <stdair/bom/RMEventStruct.hpp>
+#include <stdair/bom/BreakPointStruct.hpp>
+#include <stdair/bom/EventStruct.hpp>
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
 // Distribution
 #include <simcrs/SIMCRS_Service.hpp>
+// SEVMGR
+#include <sevmgr/SEVMGR_Service.hpp>
 // TRADEMGEN
 #include <trademgen/TRADEMGEN_Service.hpp>
 // TRAVELCCM
@@ -378,5 +384,61 @@ namespace DSIM {
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
     //ioSIMCRS_Service.optimise (lRMEvent);   
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  const stdair::Count_T Simulator::
+  initialiseBreakPoint (const TRADEMGEN::TRADEMGEN_Service& ioTRADEMGEN_Service,
+			SEVMGR::SEVMGR_Service& ioSEVMGR_Service,
+			const stdair::BreakPointList_T& iBreakPointList,
+			SimulationStatus& ioSimulationStatus) {
+    
+    // Number of break points actually added to the event queue. 
+    stdair::Count_T lBreakPointNumber = 0;
+
+    // Get the start and end date of the simulation 
+    const stdair::Date_T& lStartDate = ioSimulationStatus.getStartDate();
+    const stdair::Date_T& lEndDate = ioSimulationStatus.getEndDate();
+
+    // Try to add each break point of the list to the event queue.
+    for (stdair::BreakPointList_T::const_iterator itBPEvent = 
+	   iBreakPointList.begin();
+         itBPEvent != iBreakPointList.end(); ++itBPEvent) {
+      const stdair::BreakPointStruct& lBPEvent = *itBPEvent;
+      const stdair::DateTime_T& lDateTimeBP = 
+	lBPEvent.getBreakPointTime();
+      const stdair::Date_T lDateBP = lDateTimeBP.date();
+      // If the break point is within the simulation period, add it to the 
+      // queue.
+      if (lDateBP <= lEndDate && lDateBP >= lStartDate) {
+	stdair::BreakPointPtr_T lBPEventPtr =
+	  boost::make_shared<stdair::BreakPointStruct> (lBPEvent);
+	// Create an event structure
+	stdair::EventStruct lEventStruct (stdair::EventType::BRK_PT,
+					  lBPEventPtr);
+	ioSEVMGR_Service.addEvent (lEventStruct);
+	lBreakPointNumber ++;
+      }
+    } 
+
+    if (lBreakPointNumber > 0) { 
+      // Update the status of break point events within the event queue. 
+      const bool hasProgressStatus = 
+	ioSEVMGR_Service.hasProgressStatus(stdair::EventType::BRK_PT); 
+      if (hasProgressStatus == false) {   
+	ioSEVMGR_Service.addStatus (stdair::EventType::BRK_PT, 
+				    lBreakPointNumber); 
+      } else {   
+	stdair::Count_T lCurrentBPNumber = ioSEVMGR_Service.
+	  getActualTotalNumberOfEventsToBeGenerated (stdair::EventType::BRK_PT);
+	lCurrentBPNumber += lBreakPointNumber;
+	ioSEVMGR_Service.updateStatus (stdair::EventType::BRK_PT, 
+				       lCurrentBPNumber);   
+      }     
+      // Update the global Simulation Status
+      updateStatus(ioTRADEMGEN_Service, stdair::EventType::BRK_PT,
+		 ioSimulationStatus);
+    }
+    return lBreakPointNumber;
   }
 }
