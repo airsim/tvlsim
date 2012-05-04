@@ -146,6 +146,7 @@ struct Command_T {
     DISPLAY_FLIGHT_DATE,
     DISPLAY_STATUS,
     SELL,
+    SET_BREAK_POINT,
     JSON_LIST_EVENT,
     JSON_LIST_FLIGHT_DATE,
     JSON_DISPLAY_FLIGHT_DATE, 
@@ -471,8 +472,16 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("run");  
   Completers.push_back ("reset");
   Completers.push_back ("display_status");
-  Completers.push_back ("display_flight_date");
+  Completers.push_back ("display_flight_date");  
   Completers.push_back ("list_event");
+  Completers.push_back ("list_event BookingRequest");
+  Completers.push_back ("list_event Cancellation");
+  Completers.push_back ("list_event OptimisationNotificationForFlightDate"); 
+  Completers.push_back ("list_event OptimisationNotificationForNetwork");
+  Completers.push_back ("list_event ScheduleChange");
+  Completers.push_back ("list_event Snapshot");
+  Completers.push_back ("list_event RevenueManagement");
+  Completers.push_back ("list_event BreakPoint");
   Completers.push_back ("list_flight_date");
   Completers.push_back ("set_break_point");
   Completers.push_back ("sell"); 
@@ -794,7 +803,7 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
 
     } else if (lCommand == "set_break_point") {
-      oCommandType = Command_T::JSON_SET_BREAK_POINT;
+      oCommandType = Command_T::SET_BREAK_POINT;
 
     } else if (lCommand == "sell") {
       oCommandType = Command_T::SELL;
@@ -1211,8 +1220,19 @@ int main (int argc, char* argv[]) {
       std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;
       std::cout << " display_status" << "\t\t\t" 
 		<< "Display the simulation status" << std::endl;
-      std::cout << " list_event" << "\t\t\t" 
-		<< "List events in the queue" << std::endl;
+      std::cout << " list_event" << "\t\t\t"
+		<< "List events in the queue. It is possible to filter events according to their types"
+		<< std::endl	
+		<< "\t\t\t\t'list_event BookingRequest' "
+		<< "list all the booking requests" << std::endl	
+		<< "\t\t\t\t'list_event Cancellation' "
+		<< "list all the cancellation events" << std::endl
+		<< "\t\t\t\t'list_event Snapshot' "
+		<< "list all the snap shots" << std::endl		
+		<< "\t\t\t\t'list_event RevenueManagement' "
+		<< "list all the revenue management events" << std::endl
+		<< "\t\t\t\t'list_event BreakPoint' "
+		<< "list all the break points" << std::endl;
       std::cout << " list_flight_date" << "\t\t"
                 << "List airlines, flights and departure dates"
                 << std::endl;        
@@ -1239,12 +1259,15 @@ int main (int argc, char* argv[]) {
       std::cout << " json_display_flight_date" << "\t"
                 << "Display the given flight-date in a JSON format"
 		<< std::endl;  
-      /**std::cout << " json_set_break_point" << "\t\t"
+      std::cout << " json_display_status" << "\t\t"
+                << "Display the simulation status in a JSON format"
+		<< std::endl;   
+      std::cout << " json_set_break_point" << "\t\t"
                 << "Insert the given break points in the event list"  
 		<< std::endl;
       std::cout << " json_run" << "\t\t\t"
                 << "Perform the simulation until the next break-point, if any"
-		<< std::endl;*/
+		<< std::endl;
       std::cout << std::endl;
       break;
     }
@@ -1291,17 +1314,89 @@ int main (int argc, char* argv[]) {
 
       // ////////////////////////////// List Events /////////////////////////
     case Command_T::LIST_EVENT: {
-      //
-      std::cout << "List the events in the queue" << std::endl;   
 
+      //
       std::ostringstream oEventListStr;
-      oEventListStr << dsimService.listEvents ();	
+
+      if (lTokenListByReadline.empty() == true) { 
+
+	// If no parameter is given, list all the events in the queue
+	oEventListStr << dsimService.listEvents ();	
+	std::cout << oEventListStr.str() << std::endl;   
+	STDAIR_LOG_DEBUG (oEventListStr.str());
+
+      } else if (lTokenListByReadline.size() == 1) { 
+
+	assert (lTokenListByReadline.size() > 0);
+	std::string lEventTypeStr (lTokenListByReadline[0]);
+
+	// If exactly one parameter is given, try to convert it into
+	// an event type
+	try {
+	  
+	  const stdair::EventType lEventType (lEventTypeStr);
+	  oEventListStr << dsimService.listEvents (lEventType.getType());	
+	  
+	} catch (stdair::CodeConversionException e) {
+	  oEventListStr << "The event type '" << lEventTypeStr
+			<< "' is not known. Try 'help' for "
+			<< "more information on the 'list_event' command."
+			<< std::endl;
+	}
+      } else {
+	
+	// If more than one parameter is given, display an error message	
+	oEventListStr << "The event type is not understood: try 'help' for "
+		      << "more information on the 'list_event' command."
+		      << std::endl;
+      }	
       std::cout << oEventListStr.str() << std::endl;   
       STDAIR_LOG_DEBUG (oEventListStr.str());
 
       //
       break;
-    }
+    }    
+
+      // ////////////////////////////// JSon Set Break Point ////////////////////////
+
+    case Command_T::SET_BREAK_POINT: { 
+
+      // 
+      extractTokenListForDate (lTokenListByReadline);
+      
+      stdair::Date_T lDate (lDefaultDate);
+      DateList_T lDateList;
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseDateListKey (lDate, lDateList); 
+
+      assert (lDateList.size() >= 1);
+
+      // Construct the break point list
+      stdair::BreakPointList_T lBreakPointList;
+      for (DateList_T::const_iterator itDate = lDateList.begin();
+	  itDate != lDateList.end(); itDate++) { 
+	const stdair::Date_T& lDate = *itDate;
+	stdair::BreakPointStruct lBreakPoint (lDate);
+	lBreakPointList.push_back(lBreakPoint);
+      } 
+
+      assert (lBreakPointList.size() >= 1);
+
+      // Add the break points to the simulation
+      const stdair::Count_T lNumberOfBreakPointsAdded = 
+        dsimService.initBreakPointEvents (lBreakPointList);
+ 
+      //   
+      std::ostringstream oBreakPointStr;
+      oBreakPointStr << lNumberOfBreakPointsAdded 
+		     << " out of " << lBreakPointList.size()
+		     << " break points have been added to the queue.";
+      std::cout << oBreakPointStr.str() << std::endl;
+      STDAIR_LOG_DEBUG (oBreakPointStr.str());
+	
+      break;
+    }      
 
       // ////////////////////////////// List Flight Date /////////////////////////
     case Command_T::LIST_FLIGHT_DATE: {
@@ -1332,7 +1427,7 @@ int main (int argc, char* argv[]) {
       } else {
         std::cerr << "There is no result for "
                   << lAirlineCode << " " << lFlightNumber << lFlightNumberStr
-                  << ". Just type the list command without any parameter "
+                  << ". Just type the 'list' command without any parameter "
                   << "to see the flight-dates for all the airlines and for all "
                   << "the flight numbers."
                   << std::endl;
@@ -1544,10 +1639,8 @@ int main (int argc, char* argv[]) {
         dsimService.jsonHandler (lJSONCommandString);
  
       // Display the BP JSON string
+      std::cout << lCSVBPDump << std::endl;
       STDAIR_LOG_DEBUG (lCSVBPDump);
-
-      std::cout << lDateList.size()
-                << " break points added to the queue\n" << std::endl; 
 
       break;
     }      
