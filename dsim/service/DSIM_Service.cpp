@@ -746,7 +746,7 @@ namespace DSIM {
     const TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service(); 
 
-    // Retrieve the StdAir service context
+    // Retrieve the SEvMgr service context
     SEVMGR::SEVMGR_Service& lSEVMGR_Service =
       lDSIM_ServiceContext.getSEVMGR_Service();      
 
