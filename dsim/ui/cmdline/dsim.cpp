@@ -1223,15 +1223,15 @@ int main (int argc, char* argv[]) {
       std::cout << " list_event" << "\t\t\t"
 		<< "List events in the queue. It is possible to filter events according to their types"
 		<< std::endl	
-		<< "\t\t\t\t'list_event BookingRequest' "
+		<< "\t\t\t\t  'list_event BookingRequest' "
 		<< "list all the booking requests" << std::endl	
-		<< "\t\t\t\t'list_event Cancellation' "
+		<< "\t\t\t\t  'list_event Cancellation' "
 		<< "list all the cancellation events" << std::endl
-		<< "\t\t\t\t'list_event Snapshot' "
+		<< "\t\t\t\t  'list_event Snapshot' "
 		<< "list all the snap shots" << std::endl		
-		<< "\t\t\t\t'list_event RevenueManagement' "
+		<< "\t\t\t\t  'list_event RevenueManagement' "
 		<< "list all the revenue management events" << std::endl
-		<< "\t\t\t\t'list_event BreakPoint' "
+		<< "\t\t\t\t  'list_event BreakPoint' "
 		<< "list all the break points" << std::endl;
       std::cout << " list_flight_date" << "\t\t"
                 << "List airlines, flights and departure dates"
@@ -1321,9 +1321,7 @@ int main (int argc, char* argv[]) {
       if (lTokenListByReadline.empty() == true) { 
 
 	// If no parameter is given, list all the events in the queue
-	oEventListStr << dsimService.listEvents ();	
-	std::cout << oEventListStr.str() << std::endl;   
-	STDAIR_LOG_DEBUG (oEventListStr.str());
+	oEventListStr << dsimService.listEvents ();
 
       } else if (lTokenListByReadline.size() == 1) { 
 
