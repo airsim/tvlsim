@@ -100,6 +100,13 @@ namespace DSIM {
      */   
     const stdair::ProgressStatus& getOverallProgressStatus() const {
       return _overallProgressStatus;
+    }  
+
+    /**
+     * Get the overall progress status.
+     */   
+    const SEVMGR::ProgressStatusMap_T& getProgressStatusMap() const {
+      return _progressStatusMap;
     }
 
   public:

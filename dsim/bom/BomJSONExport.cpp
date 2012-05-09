@@ -30,8 +30,9 @@ namespace DSIM {
 			      const SimulationStatus& iSimulationStatus) {
 
 #if BOOST_VERSION >= 104100   
-    // Create an empty property tree object
-    bpt::ptree ptSimulationStatus;  
+    // Create empty property tree objects
+    bpt::ptree ptSimulationStatus;   
+    bpt::ptree ptEventStatusList;   
     bpt::ptree pt;    
 
     // Put the start date in the simulation status tree
@@ -69,6 +70,35 @@ namespace DSIM {
     const stdair::Count_T& lOverallActualNumber = 
       lOverallProgressStatus.getActualNb(); 
     ptSimulationStatus.put ("actual_number", lOverallActualNumber);
+
+    // Retrieve the progress status map
+    const SEVMGR::ProgressStatusMap_T& lProgressStatusMap = 
+      iSimulationStatus.getProgressStatusMap();  
+    // Put data for each event type in the simulation status tree 
+    for (SEVMGR::ProgressStatusMap_T::const_iterator itPS = 
+      lProgressStatusMap.begin(); itPS != lProgressStatusMap.end(); itPS++) {   
+      bpt::ptree ptEventStatus;
+      const stdair::EventType::EN_EventType& lEventType = itPS->first;
+      const stdair::ProgressStatus& lProgressStatus = itPS->second;
+      // Put the event type
+      const std::string& lEventTypeStr = 
+	stdair::EventType::getLabel(lEventType);
+      ptEventStatus.put ("type", lEventTypeStr);  
+      // Put the current number of events for this event type
+      const stdair::Count_T& lCurrentNumber = 
+	lProgressStatus.getCurrentNb();
+      ptEventStatus.put ("current_number", lCurrentNumber);
+      // Put the actual number of events for this event type
+      const stdair::Count_T& lActualNumber = 
+	lProgressStatus.getActualNb(); 
+      ptEventStatus.put ("actual_number", lActualNumber);  
+
+      // Put the current status tree in the status array
+      ptEventStatusList.push_back(std::make_pair("", ptEventStatus));
+    }
+
+    // Add the list of status to the status tree
+    ptSimulationStatus.add_child ("specific_status", ptEventStatusList); 
 
     // Store the status tree into the global tree
     pt.add_child ("status", ptSimulationStatus); 	
