@@ -799,9 +799,6 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
     } else if (lCommand == "display_flight_date") {
       oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
 
-    } else if (lCommand == "display_flight_date") {
-      oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
-
     } else if (lCommand == "set_break_point") {
       oCommandType = Command_T::SET_BREAK_POINT;
 
