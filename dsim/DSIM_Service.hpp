@@ -23,7 +23,8 @@
 #include <dsim/DSIM_Types.hpp>
 
 // Forward declarations
-namespace stdair {
+namespace stdair { 
+  class BomRoot;
   struct BasLogParams;
   struct BasDBParams;
   struct BookingRequestStruct;
@@ -196,6 +197,17 @@ namespace DSIM {
      *      stdair::CmdBomManager for more details.
      */
     void buildSampleBom();
+
+    /**
+     * Clone the persistent BOM object.
+     */
+    void clonePersistentBom ();  
+
+    /**
+     * Build all the complementary links in the given bom root object.
+     * \note Do nothing for now.
+     */
+    void buildComplementaryLinks (stdair::BomRoot&);
 
     /**
      * Build a sample list of travel solutions.
@@ -373,6 +385,7 @@ namespace DSIM {
                             const stdair::FlightNumber_T&,
                             const stdair::Date_T& iDepartureDate) const;
 
+  private:
 
     // /////// Construction and Destruction helper methods ///////
     /**
@@ -464,7 +477,12 @@ namespace DSIM {
     /**
      * Finalise.
      */
-    void finalise();
+    void finalise(); 
+
+    /**
+     * Prepare a new Run
+     */
+    void prepareNewRun();
 
 
   private:

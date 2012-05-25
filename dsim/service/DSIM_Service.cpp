@@ -413,12 +413,33 @@ namespace DSIM {
                 const stdair::ODFilePath& iODInputFilename,
                 const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath,
-                const TRADEMGEN::DemandFilePath& iDemandFilepath) {
+                const TRADEMGEN::DemandFilePath& iDemandFilepath) {   
 
     // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
     assert (_dsimServiceContext != NULL);
+
+    // Retrieve the DSim service context and whether it owns the Stdair
+    // service
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
-    
+    const bool doesOwnStdairService =
+      lDSIM_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (DSIM) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Retrieve the persistent BOM root object.
+    stdair::BomRoot& lPersistentBomRoot = 
+      lSTDAIR_Service.getPersistentBomRoot();
+      
+    /**
+     * 1. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components
+     */ 
     /**
      * Let the schedule, inventory and pricing managers parse their input files.
      */
@@ -434,7 +455,24 @@ namespace DSIM {
       lDSIM_ServiceContext.getTRADEMGEN_Service(); 
     lTRADEMGEN_Service.parseAndLoad (iDemandFilepath);  
 
-    // Update the Simulation Status
+    /**
+     * 2. Build the complementary objects/links for the current component (here,
+     *    TravelCCM)
+     */ 
+    buildComplementaryLinks (lPersistentBomRoot);  
+
+    /**
+     * 3. Have DSIM clone the whole persistent BOM tree, only when the StdAir
+     *    service is owned by the current component (DSim here).
+     */
+    if (doesOwnStdairService == true) {
+      //
+      clonePersistentBom ();
+    }
+
+    /**
+     *  Update the Simulation Status
+     */
     SimulationStatus& lSimulationStatus =
 	lDSIM_ServiceContext.getSimulationStatus(); 
     Simulator::updateStatus(lTRADEMGEN_Service, stdair::EventType::BKG_REQ,
@@ -460,6 +498,10 @@ namespace DSIM {
     // Retrieve the StdAir service object from the (DSim) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Retrieve the persistent BOM root object.
+    stdair::BomRoot& lPersistentBomRoot = 
+      lSTDAIR_Service.getPersistentBomRoot();
 
     /**
      * 1. Have StdAir build the whole BOM tree, only when the StdAir service is
@@ -507,9 +549,80 @@ namespace DSIM {
     /**
      * 3. Build the complementary objects/links for the current component (here,
      *    DSim).
-     *
-     * \note: Currently, no more things to do by DSim.
+     */   
+    buildComplementaryLinks (lPersistentBomRoot);    
+
+    /**
+     * 4. Have DSIM clone the whole persistent BOM tree, only when the StdAir
+     *    service is owned by the current component (DSim here).
      */
+    if (doesOwnStdairService == true) {
+      //
+      clonePersistentBom ();
+    }
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::clonePersistentBom () {  
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the DSim service context and whether it owns the Stdair
+    // service
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+    const bool doesOwnStdairService =
+      lDSIM_ServiceContext.getOwnStdairServiceFlag();
+
+    // Retrieve the StdAir service object from the (DSim) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service(); 
+
+    /**
+     * 1. Have StdAir clone the whole persistent BOM tree, only when the StdAir
+     *    service is owned by the current component (DSIM here)
+     */
+    if (doesOwnStdairService == true) {
+      //
+      lSTDAIR_Service.clonePersistentBom ();
+    } 
+
+    /**
+     * 2. Delegate the complementary building of objects and links by the
+     *    appropriate levels/components.
+     */ 
+    /**
+     * Let the CRS (i.e., the SimCRS component) build the schedules, O&Ds,
+     * inventories, yields and fares.
+     */
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+    lSIMCRS_Service.clonePersistentBom ();
+
+    /**
+     * Let the demand manager (i.e., the TraDemGen component) build the
+     * demand generators/streams.
+     */
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service();
+    lTRADEMGEN_Service.clonePersistentBom ();
+
+   /**
+    * 3. Build the complementary objects/links for the current component (here,
+    *    DSim).
+    */  
+    stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();   
+    buildComplementaryLinks (lBomRoot);    
+
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::buildComplementaryLinks (stdair::BomRoot& ioBomRoot) {
+    // Currently, no more things to do by DSIM at that stage.
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -916,8 +1029,10 @@ namespace DSIM {
     assert (_dsimServiceContext != NULL);
 
     // Retrieve the StdAir service object from the (DSim) service context
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
-
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+ 
+    // TODO: gsabatier
+    // Reset everything except break points
     // Get a reference on the TRADEMGEN service handler
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service(); 
@@ -941,7 +1056,53 @@ namespace DSIM {
     // Reset the simulation status object  
     SimulationStatus& lSimulationStatus =
       lDSIM_ServiceContext.getSimulationStatus();
-    lSimulationStatus.reset(); 
+    lSimulationStatus.reset();
+
+    // Re-init Snapshot and RMEvents
+    initSnapshotAndRMEvents();
+
+    // Clone again the persistent BOM tree
+    clonePersistentBom ();
+    
+  }    
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::prepareNewRun() {  
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the StdAir service object from the (DSim) service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
+ 
+    // Get a reference on the TRADEMGEN service handler
+    TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
+      lDSIM_ServiceContext.getTRADEMGEN_Service(); 
+    // Reset the TRADEMGEN service 
+    lTRADEMGEN_Service.reset();
+
+    // TODO
+    // Get a reference on the SIMCRS service handler
+    /**SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+       lDSIM_ServiceContext.getSIMCRS_Service();
+       // Reset the SIMCRS service 
+       lSIMCRS_Service.reset();*/ 
+
+    // TODO
+    // Get a reference on the TRAVELCCM service handler
+    /**TRAVELCCM::TRAVELCCM_Service& lTRAVELCCM_Service =
+       lDSIM_ServiceContext.getTRAVELCCM_Service();  
+       // Reset the TRAVELCCM service 
+       lTRAVELCCM_Service.reset();*/
+
+    // Prepare a new run in the simulation status object  
+    SimulationStatus& lSimulationStatus =
+      lDSIM_ServiceContext.getSimulationStatus();
+    lSimulationStatus.prepareNewRun(); 
 
     // Re-init Snapshot and RMEvents
     initSnapshotAndRMEvents();
@@ -985,6 +1146,11 @@ namespace DSIM {
     SimulationStatus& lSimulationStatus =
       lDSIM_ServiceContext.getSimulationStatus();  
 
+    // TODO: gsabatier
+    // Removed this line. The number of runs will be in 
+    // parsed from the config file
+    lSimulationStatus.setTotalNumberOfRuns (iNbOfRuns);
+
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
@@ -1000,15 +1166,23 @@ namespace DSIM {
     // Get a reference on the STDAIR service handler
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
-
-    for (NbOfRuns_T idx = 0; idx != iNbOfRuns; ++idx) {
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Simulation[" << idx << "] begins - "
-                        << lDSIM_ServiceContext.display());
-
-      if (idx > 0) {
-	// Reset the service (including the event queue) for the next run
-	reset();
+ 
+    // Get the number of the current run
+    const NbOfRuns_T& lCurrentRun = lSimulationStatus.getCurrentRun();
+    for (NbOfRuns_T idx = lCurrentRun; idx <= iNbOfRuns; ++idx) {
+    
+      // 
+      const SimulationMode& lSimulationModeAtBeginning = 
+	lSimulationStatus.getSimulationMode();
+      if (lSimulationModeAtBeginning == SimulationMode::DONE) {
+	prepareNewRun();
+	// DEBUG
+	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] begins - "
+			  << lDSIM_ServiceContext.display());
+      } else if (lSimulationModeAtBeginning == SimulationMode::BREAK) {
+	// DEBUG
+	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] continues - "
+			  << lDSIM_ServiceContext.display());
       }
 
       // Delegate the booking to the dedicated command
@@ -1017,11 +1191,18 @@ namespace DSIM {
       Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                            lTRAVELCCM_Service, lSTDAIR_Service,
                            lSimulationStatus, iDemandGenerationMethod);
-      const double lSimulationMeasure = lSimulationChronometer.elapsed();
+      const double lSimulationMeasure = lSimulationChronometer.elapsed();	
 
-      // DEBUG
-      STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure
-                        << " - " << lDSIM_ServiceContext.display());
+      // Has a break point been encountered or is the run finished?
+      const SimulationMode& lSimulationModeAtTheEnd = 
+	lSimulationStatus.getSimulationMode();
+      if (lSimulationModeAtTheEnd == SimulationMode::BREAK) {
+	return;
+      } else if (lSimulationModeAtTheEnd == SimulationMode::DONE) { 
+	// DEBUG
+	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure
+			  << " - " << lDSIM_ServiceContext.display());
+      }
     }
   }
 
