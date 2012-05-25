@@ -47,29 +47,29 @@ namespace DSIM {
     const stdair::Date_T& lCurrentDate = 
       iSimulationStatus.getCurrentDate();
     ptSimulationStatus.put ("current_date", lCurrentDate);   
-    // Put the total number of bookings in the simulation status tree
-    const stdair::NbOfBookings_T& lNumberOfBookings = 
-      iSimulationStatus.getNumberOfBookings();
-    ptSimulationStatus.put ("bks", lNumberOfBookings);     
+    // Put the current number of bookings in the simulation status tree
+    const stdair::NbOfBookings_T& lCurrentNumberOfBookings = 
+      iSimulationStatus.getCurrentNumberOfBookings();
+    ptSimulationStatus.put ("bks", lCurrentNumberOfBookings);     
     // Put the total elapsed time in the simulation status tree
-    const double& lElapsedTime = 
-      iSimulationStatus.getElapsedTime(); 
-    ptSimulationStatus.put ("elapsed_time", lElapsedTime);   
+    const double& lCurrentElapsedTime = 
+      iSimulationStatus.getCurrentElapsedTime(); 
+    ptSimulationStatus.put ("elapsed_time", lCurrentElapsedTime);   
     // Put the estimate remaining time in the simulation status tree
-    const double& lEstimatedRemainingTime = 
-      iSimulationStatus.getEstimatedRemainingTime(); 
-    ptSimulationStatus.put ("remaining_time", lEstimatedRemainingTime);
-    // Get the overall progress status
-    const stdair::ProgressStatus& lOverallProgressStatus =
-      iSimulationStatus.getOverallProgressStatus();  
-    // Put the overall current number in the simulation status tree
-    const stdair::Count_T& lOverallCurrentNumber = 
-      lOverallProgressStatus.getCurrentNb(); 
-    ptSimulationStatus.put ("current_number", lOverallCurrentNumber);
-    // Put the overall current number in the simulation status tree
-    const stdair::Count_T& lOverallActualNumber = 
-      lOverallProgressStatus.getActualNb(); 
-    ptSimulationStatus.put ("actual_number", lOverallActualNumber);
+    const double& lCurrentEstimatedRemainingTime = 
+      iSimulationStatus.getCurrentEstimatedRemainingTime(); 
+    ptSimulationStatus.put ("remaining_time", lCurrentEstimatedRemainingTime);
+    // Get the current progress status
+    const stdair::ProgressStatus& lCurrentProgressStatus =
+      iSimulationStatus.getCurrentProgressStatus();  
+    // Put the current number in the simulation status tree
+    const stdair::Count_T& lCurrentNumber = 
+      lCurrentProgressStatus.getCurrentNb(); 
+    ptSimulationStatus.put ("current_number", lCurrentNumber);
+    // Put the actual number in the simulation status tree
+    const stdair::Count_T& lActualNumber = 
+      lCurrentProgressStatus.getActualNb(); 
+    ptSimulationStatus.put ("actual_number", lActualNumber);
 
     // Retrieve the progress status map
     const SEVMGR::ProgressStatusMap_T& lProgressStatusMap = 

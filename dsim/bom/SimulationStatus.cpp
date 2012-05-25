@@ -5,6 +5,7 @@
 #include <cassert>
 #include <sstream>
 // DSim
+#include <dsim/basic/BasConst_General.hpp>
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/bom/SimulationStatus.hpp>
 
@@ -13,10 +14,14 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const Key_T& iKey)
     : _key (iKey), 
-      _currentDate (iKey.getStartDate()),  
-      _nbOfBookings (0),
-      _totalElapsedTime (0),
-      _estimatedRemainingTime (0),
+      _currentDate (iKey.getStartDate()),   
+      _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
+      _currentRun (DEFAULT_NUMBER_OF_RUNS),
+      _currentNbOfBookings (0),  
+      _totalElapsedTime (0),    
+      _estimatedRemainingTime (0),     
+      _currentElapsedTime (0),
+      _currentEstimatedRemainingTime (0),     
       _simulationMode('r') {
   }
   
@@ -25,20 +30,28 @@ namespace DSIM {
     : _key (DEFAULT_DSIM_ID,
             DEFAULT_SIMULATION_START_DATE,
             DEFAULT_SIMULATION_END_DATE),
-      _currentDate (DEFAULT_SIMULATION_START_DATE),
-      _nbOfBookings (0),
-      _totalElapsedTime (0),
-      _estimatedRemainingTime (0),
+      _currentDate (DEFAULT_SIMULATION_START_DATE), 
+      _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
+      _currentRun (DEFAULT_NUMBER_OF_RUNS),
+      _currentNbOfBookings (0),  
+      _totalElapsedTime (0),    
+      _estimatedRemainingTime (0),  
+      _currentElapsedTime  (0),      
+      _currentEstimatedRemainingTime (0),  
       _simulationMode ('r') {
   }
 
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const SimulationStatus& iSimulationStatus)
-    : _key (iSimulationStatus._key),
-      _currentDate (iSimulationStatus.getStartDate()),
-      _nbOfBookings (iSimulationStatus._nbOfBookings),
-      _totalElapsedTime (iSimulationStatus._totalElapsedTime),
-      _estimatedRemainingTime (iSimulationStatus._estimatedRemainingTime),
+    : _key (iSimulationStatus._key),  
+      _currentDate (iSimulationStatus.getStartDate()),  
+      _totalNumberOfRuns (iSimulationStatus._totalNumberOfRuns),
+      _currentRun (iSimulationStatus._currentRun),
+      _currentNbOfBookings (iSimulationStatus._currentNbOfBookings), 
+      _totalElapsedTime (iSimulationStatus._totalElapsedTime),    
+      _estimatedRemainingTime (iSimulationStatus._estimatedRemainingTime), 
+      _currentElapsedTime (iSimulationStatus._currentElapsedTime),
+      _currentEstimatedRemainingTime (iSimulationStatus._currentEstimatedRemainingTime),
       _simulationMode(iSimulationStatus.getSimulationMode()) {
     assert (false);
   }
@@ -46,7 +59,25 @@ namespace DSIM {
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::~SimulationStatus() {
    
-  } 
+  }   
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::
+  setCurrentProgressStatus (const stdair::ProgressStatus& iProgressStatus) { 
+ 
+    // Update the current progress status
+    _currentProgressStatus = iProgressStatus;
+      
+    // Get the current number to
+    /** const stdair::Count_T& lCurrentNb = iProgressStatus.getCurrentNb(); 
+    _overallProgressStatus.setCurrentNb(iProgressStatus);
+
+    // Get the actual number.
+    const stdair::Count_T& lActualNb = iProgressStatus.getActualNb(); 
+    // Mutilpy it by the number of runs
+    const stdair::Count_T& lGlobalCurrentNb = lActualNb * _totalNumberOfRuns;
+    _overallProgressStatus.setActualNb(iProgressStatus);*/
+  }
 
   // //////////////////////////////////////////////////////////////////////
   void SimulationStatus::
@@ -87,8 +118,8 @@ namespace DSIM {
       lProgressStatus = iProgressStatus;
     }
 
-    // Update the global elapsed time chronometer
-    _totalElapsedTime += iEventMeasure;  
+    // Update the cuurent elapsed time chronometer
+    _currentElapsedTime += iEventMeasure;  
 
     // Retrieve, if existing, the Chronometer structure
     // corresponding to the given event type and update it
@@ -107,59 +138,128 @@ namespace DSIM {
 				      "following event type: "
 				      + stdair::EventType::getLabel(iType));
       }
-      _estimatedRemainingTime += lNbOfRemainingEventsOfSuchType*iEventMeasure; 
+      _currentEstimatedRemainingTime += 
+	lNbOfRemainingEventsOfSuchType*iEventMeasure; 
       return;
     } else {
       double& lChronometer = itChronometer->second; 
       const stdair::Count_T lPreviousNbOfRemainingEventsOfSuchType = 
-	lPreviousNbOfActualEventsOfSuchType - lPreviousNbOfCurrentEventsOfSuchType; 
+	lPreviousNbOfActualEventsOfSuchType - 
+	lPreviousNbOfCurrentEventsOfSuchType; 
       if (lPreviousNbOfCurrentEventsOfSuchType > 0) { 
-	_estimatedRemainingTime -= lPreviousNbOfRemainingEventsOfSuchType*
+	_currentEstimatedRemainingTime -= 
+	  lPreviousNbOfRemainingEventsOfSuchType*
 	  lChronometer/lPreviousNbOfCurrentEventsOfSuchType;  
       }
       if (lNbOfCurrentEventsOfSuchType > 0) {
 	lChronometer += iEventMeasure; 	
-	_estimatedRemainingTime += lNbOfRemainingEventsOfSuchType*
+	_currentEstimatedRemainingTime  += lNbOfRemainingEventsOfSuchType*
 	  lChronometer/lNbOfCurrentEventsOfSuchType;
       } 
-      _estimatedRemainingTime = std::max(_estimatedRemainingTime, 0.0);
-    }
+      _currentEstimatedRemainingTime = 
+	std::max(_currentEstimatedRemainingTime, 0.0);
+    }   
+
+    // Update the global chronometers
+    _totalElapsedTime = _currentElapsedTime 
+      + (_currentRun - 1)
+      *(_currentElapsedTime + _currentEstimatedRemainingTime);
+    _estimatedRemainingTime = _currentEstimatedRemainingTime
+      + (_totalNumberOfRuns - _currentRun)
+      *(_currentElapsedTime + _currentEstimatedRemainingTime);
     
+  }  
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::
+  increaseGlobalNumberOfBookings (const stdair::PartySize_T& iPartySize) {
+    _currentNbOfBookings += iPartySize;
+    _totalNbOfBookings += iPartySize;
   }
 
   // //////////////////////////////////////////////////////////////////////
-  void SimulationStatus::reset () { 
+  void SimulationStatus::reset () {    
 
-    _progressStatusMap.clear();
-    _nbOfBookings = 0;
-    _currentDate = getStartDate();
-    _totalElapsedTime = 0;
-    _estimatedRemainingTime = 0;
-    _overallProgressStatus.reset();
-    _simulationMode.setMode (SimulationMode::RUNNING);
-    _progressStatusMap.clear();
-    _chronometerMap.clear();
+    // Update the total number of bookings
+    _totalNbOfBookings -= _currentNbOfBookings;  
+
+    // Update the current and total time counters  
+    _estimatedRemainingTime = 
+      (_currentElapsedTime + _currentEstimatedRemainingTime)
+      *(_totalNumberOfRuns - _currentRun + 1);
+    _totalElapsedTime -= _currentElapsedTime;
+
+    // Prepare the new run
+    prepareNewRun ();
    
-  } 
+  }
+
+  // ////////////////////////////////////////////////////////////////////// 
+  void SimulationStatus::prepareNewRun () { 
+   
+    // Reset the start date
+    _currentDate = getStartDate();
+
+    // Update the current number of bookings
+    _currentNbOfBookings = 0;
   
+    // Update the current and total time counters
+    _currentElapsedTime = 0;
+    _currentEstimatedRemainingTime = 0;
+
+    // Reset the current progress status and maps
+    _currentProgressStatus.reset();
+    _progressStatusMap.clear();
+    _chronometerMap.clear(); 
+
+    // Reset the simulation Mode
+    _simulationMode.setMode (SimulationMode::RUNNING);
+   
+  }
+   
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationStatus::describe() const {
     std::ostringstream oStr;
 
     //
-    // Add the display of the start, current and end date
+    // Display information on all the runs (if many)
+    //  
+    if (_totalNumberOfRuns > 1) {  
+      //
+      // Add the number of the run
+      // 
+      oStr << "Simulation composed of " << _totalNumberOfRuns << " runs."
+	   << std::endl;
+      oStr << "\nTotal number of bookings:      " << _totalNbOfBookings
+	 << "\n\nElapsed time:             " 
+	 << std::setprecision (2) << std::fixed << _totalElapsedTime << " s"
+	 << "\nEstimated remaining time: " 
+	 << _estimatedRemainingTime << " s"
+         << std::endl;
+
+    }   
+
     //
+    // Add the number of the run
+    // 
+    oStr << "Current Run (" << _currentRun 
+	 << "/"  << _totalNumberOfRuns << ")"
+	 << std::endl;   
+    
+    //
+    // Add the display of the start, current and end date
+    // 
     oStr << "\nStart Date ---- Current Date ---- End Date\n"
          << getStartDate() << "     " << _currentDate
-         << "       " << getEndDate();
+         << "       " << getEndDate() << std::endl;
 
     //
     // Add the display of the overall progress status
     //
-    std::string lEventTypeStr = "All";
+     std::string lEventTypeStr = "All";
     describeHelper(lEventTypeStr);  
     oStr << "\n\n----------------- Progress statuses ----------------"
-	 << "\n " << lEventTypeStr << _overallProgressStatus.toString()
+	 << "\n " << lEventTypeStr << _currentProgressStatus.toString()
 	 << "\n----------------------------------------------------";
 
     //
@@ -177,16 +277,17 @@ namespace DSIM {
       itPS++;
       lOptionalStr = "\n----------------------------------------------------";
     }
-    oStr << lOptionalStr << "\n";  
+    oStr << lOptionalStr << std::endl;
 
     //
     // Add other information such as the total number of bookings, ...
     //
-    oStr << "\nTotal number of bookings:      " << _nbOfBookings
+    oStr << "\nTotal number of bookings:      " 
+	 << _currentNbOfBookings
 	 << "\n\nElapsed time:             " 
-	 << std::setprecision (2) << std::fixed << _totalElapsedTime << " s"
+	 << std::setprecision (2) << std::fixed << _currentElapsedTime << " s"
 	 << "\nEstimated remaining time: " 
-	 << _estimatedRemainingTime << " s"
+	 << _currentEstimatedRemainingTime << " s"
          << std::endl;
     return oStr.str();
   }

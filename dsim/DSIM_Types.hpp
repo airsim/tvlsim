@@ -7,6 +7,7 @@
 // STL
 #include <exception>
 #include <string>
+#include <map>
 // Boost
 #include <boost/shared_ptr.hpp>
 // StdAir

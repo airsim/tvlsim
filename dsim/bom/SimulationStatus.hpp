@@ -58,6 +58,13 @@ namespace DSIM {
      */
     const stdair::Date_T& getEndDate() const {
       return _key.getEndDate();
+    }    
+
+    /**
+     * Get the current run of the simulation.
+     */
+    const NbOfRuns_T& getCurrentRun() const {
+      return _currentRun;
     } 
     
     /**
@@ -77,33 +84,33 @@ namespace DSIM {
     /**
      * Get the total number of bookings
      */
-    const stdair::NbOfBookings_T& getNumberOfBookings() const {
-      return _nbOfBookings;
+    const stdair::NbOfBookings_T& getCurrentNumberOfBookings() const {
+      return _currentNbOfBookings;
     }  
 
     /**
      * Get the elapsed time
      */
-    const double& getElapsedTime() const {
-      return _totalElapsedTime;
+    const double& getCurrentElapsedTime() const {
+      return _currentElapsedTime;
     }    
 
     /**
      * Get the estimated remaining time
      */
-    const double&  getEstimatedRemainingTime() const {
-      return _estimatedRemainingTime;
+    const double& getCurrentEstimatedRemainingTime() const {
+      return _currentEstimatedRemainingTime;
     }   
 
     /**
      * Get the overall progress status.
      */   
-    const stdair::ProgressStatus& getOverallProgressStatus() const {
-      return _overallProgressStatus;
+    const stdair::ProgressStatus& getCurrentProgressStatus() const {
+      return _currentProgressStatus;
     }  
 
     /**
-     * Get the overall progress status.
+     * Get the current progress status.
      */   
     const SEVMGR::ProgressStatusMap_T& getProgressStatusMap() const {
       return _progressStatusMap;
@@ -131,6 +138,11 @@ namespace DSIM {
     void reset ();
 
     /**
+     * Prepare a new run (i.e. reset the values of the current run)
+     */
+    void prepareNewRun ();
+
+    /**
      * Change the current mode of the simulation.
      */
     void setMode (const SimulationMode::EN_SimulationMode& iEN_SimulationMode) {
@@ -140,13 +152,28 @@ namespace DSIM {
     /**
      * Update the total number of bookings
      */
-    void increaseGlobalNumberOfBookings (const stdair::PartySize_T& iPartySize) {
-      _nbOfBookings += iPartySize;
-    }
+    void increaseGlobalNumberOfBookings (const stdair::PartySize_T&);
 
-    void setOverallProgressStatus (const stdair::ProgressStatus& iProgressStatus) {  
-      _overallProgressStatus = iProgressStatus;
-    }		  
+    /**
+     * Set the current and overall progress statuses
+     */
+    void setCurrentProgressStatus (const stdair::ProgressStatus&);
+    
+    /**
+     * Update the total number of runs
+     */
+    void setTotalNumberOfRuns (const NbOfRuns_T& iNbOfRuns) {
+      _totalNumberOfRuns = iNbOfRuns;
+    } 
+
+    /**
+     * Increase the number of the current run
+     */
+    void increaseCurrentNumberOfRun () {
+      if (_currentRun < _totalNumberOfRuns) {
+	_currentRun++;
+      }
+    }
 
   public:
     // /////////// Display support method /////////////
@@ -208,29 +235,49 @@ namespace DSIM {
   private:
     // //////////////// Attributes /////////////////
     /**
-     * Primary key: Simulator ID.
+     * Primary key: start date, end date
      */
     Key_T _key;
   
     /**
      * Currrent date of the simulation.
      */
-    stdair::Date_T _currentDate;
+    stdair::Date_T _currentDate;    
 
     /**
-     * Current number of bookings
+     * Total number of runs
      */
-    stdair::NbOfBookings_T _nbOfBookings;
+    NbOfRuns_T _totalNumberOfRuns;    
+
+    /**
+     * Number of the current run
+     */
+    NbOfRuns_T _currentRun;
+
+    /**
+     * Total number of bookings for the current run
+     */
+    stdair::NbOfBookings_T _currentNbOfBookings;  
+
+    /**
+     * Total number of bookings taking into account all the runs
+     */
+    stdair::NbOfBookings_T _totalNbOfBookings;
+
+    /**
+     * Counters holding the overall progress status
+     */  
+    stdair::ProgressStatus _overallProgressStatus;
   
     /**
-     * Counters holding the overall progress status.
+     * Counters holding the progress status for the current run
      */
-    stdair::ProgressStatus _overallProgressStatus;
+    stdair::ProgressStatus _currentProgressStatus;
 
     /**
      * Counters holding the overall progress status, for each event
      * type (e.g., booking request, optimisation notification,
-     * schedule change, break point).
+     * schedule change, break point) for the current run
      */
     SEVMGR::ProgressStatusMap_T _progressStatusMap;
 
@@ -239,7 +286,14 @@ namespace DSIM {
      * remaining one.
      */
     double _totalElapsedTime;  
-    double _estimatedRemainingTime;
+    double _estimatedRemainingTime; 
+
+    /**
+     * Counters holding the elapsed time and the estimated 
+     * remaining one for the current run
+     */  
+    double _currentElapsedTime;  
+    double _currentEstimatedRemainingTime; 
 
     /**
      * Counters holding the total chronometers, for each event
