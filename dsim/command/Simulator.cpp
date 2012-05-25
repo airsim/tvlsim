@@ -48,12 +48,12 @@ namespace DSIM {
 	    stdair::STDAIR_Service& ioSTDAIR_Service,
 	    SimulationStatus& ioSimulationStatus,
 	    const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
-
+ 
+    std::ostringstream oBeginStr;
     if (ioSimulationStatus.getMode() == SimulationMode::RUNNING) {  
 
       // DEBUG
-      std::cout << "Starting the simulation..." << std::endl; 
-      STDAIR_LOG_DEBUG ("Starting the simulation...");   
+      oBeginStr << "Starting the simulation..." << std::endl;
  
       /**
 	 Initialisation step.
@@ -66,20 +66,22 @@ namespace DSIM {
       const stdair::Count_T& lActualNbOfEventsToBeGenerated =
 	ioTRADEMGEN_Service.generateFirstRequests(iDemandGenerationMethod);
 
-      // DEBUG
+      // DEBUG  
       STDAIR_LOG_DEBUG ("Expected number of events: "
 			<< lExpectedNbOfEventsToBeGenerated << ", actual: "
 			<< lActualNbOfEventsToBeGenerated);
 
     } else if (ioSimulationStatus.getMode() == SimulationMode::BREAK) {    
  
-      // DEBUG
-      std::cout << "Resuming the simulation..." << std::endl;
-      STDAIR_LOG_DEBUG ("Resuming the simulation...");
-      
+      // DEBUG 
+      oBeginStr << "Resuming the simulation..." << std::endl;
+    
       // Change the current mode of the simulation status
       ioSimulationStatus.setMode (SimulationMode::RUNNING);
-    }
+    } 
+    
+    std::cout << oBeginStr.str() << std::endl;
+    STDAIR_LOG_DEBUG (oBeginStr.str());   
 
     // Initialise the (Boost) progress display object
     //boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -178,10 +180,13 @@ namespace DSIM {
 
     // Change the current mode of the simulation status
     ioSimulationStatus.setMode (SimulationMode::DONE);
+    ioSimulationStatus.increaseCurrentNumberOfRun();	
        
-    // DEBUG
-    std::cout << "The simulation has ended.\n" << std::endl;
-    STDAIR_LOG_DEBUG ("The simulation has ended.");
+    // DEBUG  
+    std::ostringstream oEndStr;
+    oEndStr << "The simulation has ended." << std::endl; 
+    std::cout << oEndStr.str() << std::endl;
+    STDAIR_LOG_DEBUG (oEndStr.str());
   } 
 
   // ////////////////////////////////////////////////////////////////////
@@ -193,7 +198,7 @@ namespace DSIM {
     // Update the global simulation status 
     const stdair::ProgressStatus& lProgressStatus = 
       ioTRADEMGEN_Service.getProgressStatus ();
-    ioSimulationStatus.setOverallProgressStatus (lProgressStatus);  
+    ioSimulationStatus.setCurrentProgressStatus (lProgressStatus);  
 
     // Re-Calculate the progress percentage for the given event type
     const stdair::ProgressStatus& lProgressStatusByType = 
@@ -410,7 +415,7 @@ namespace DSIM {
       const stdair::Date_T lDateBP = lDateTimeBP.date();
       // If the break point is within the simulation period, add it to the 
       // queue.
-      if (lDateBP <= lEndDate && lDateBP >= lStartDate) {
+      if (lDateBP < lEndDate && lDateBP >= lStartDate) {
 	stdair::BreakPointPtr_T lBPEventPtr =
 	  boost::make_shared<stdair::BreakPointStruct> (lBPEvent);
 	// Create an event structure

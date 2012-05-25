@@ -23,4 +23,9 @@ namespace DSIM {
   const stdair::Date_T DEFAULT_SIMULATION_END_DATE (2010,
                                                     boost::gregorian::Dec, 31);
 
+  /**
+   * Default number of runs for the simulation (= one run).
+   */
+  const NbOfRuns_T DEFAULT_NUMBER_OF_RUNS (1);
+
 }
