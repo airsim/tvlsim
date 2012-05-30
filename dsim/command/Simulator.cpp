@@ -388,7 +388,7 @@ namespace DSIM {
     // DEBUG
     STDAIR_LOG_DEBUG ("Running RM system: " << lRMEvent.describe());
 
-    //ioSIMCRS_Service.optimise (lRMEvent);   
+    ioSIMCRS_Service.optimise (lRMEvent);   
   } 
 
   // ////////////////////////////////////////////////////////////////////
