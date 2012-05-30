@@ -923,10 +923,11 @@ namespace DSIM {
     // Retrieve the StdAir service object from the (DSim) service context
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     stdair::STDAIR_Service& lSTDAIR_Service =
-      lDSIM_ServiceContext.getSTDAIR_Service();
+      lDSIM_ServiceContext.getSTDAIR_Service(); 
+    const stdair::BomRoot& lBomRoot = lSTDAIR_Service.getBomRoot();
 
     // Delegate the BOM building to the dedicated service
-    return lSTDAIR_Service.csvDisplay();
+    return lSTDAIR_Service.csvDisplay(lBomRoot);
   } 
 
   // //////////////////////////////////////////////////////////////////////

@@ -1247,6 +1247,9 @@ int main (int argc, char* argv[]) {
       std::cout << " sell" << "\t\t\t\t" << "Make a booking on the given flight-date"
                 << std::endl; 
       std::cout << " \n\nDebug Commands:\n" << std::endl;   
+      std::cout << " json_display_status" << "\t\t"
+                << "Display the simulation status in a JSON format"
+		<< std::endl;     
       std::cout << " json_list_event" << "\t\t"
                 << "List events in the queue in a JSON format"
                 << std::endl;  
@@ -1255,15 +1258,15 @@ int main (int argc, char* argv[]) {
                 << std::endl;        
       std::cout << " json_display_flight_date" << "\t"
                 << "Display the given flight-date in a JSON format"
-		<< std::endl;  
-      std::cout << " json_display_status" << "\t\t"
-                << "Display the simulation status in a JSON format"
-		<< std::endl;   
+		<< std::endl; 
       std::cout << " json_set_break_point" << "\t\t"
                 << "Insert the given break points in the event list"  
 		<< std::endl;
       std::cout << " json_run" << "\t\t\t"
                 << "Perform the simulation until the next break-point, if any"
+		<< std::endl;
+      std::cout << " json_reset" << "\t\t\t"
+                << "Reset the service (including the event queue)"
 		<< std::endl;
       std::cout << std::endl;
       break;
