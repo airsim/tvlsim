@@ -13,10 +13,10 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   const std::string SimulationMode::_labels[LAST_VALUE] =
-    { "running", "break", "done" };
+    { "start", "running", "break", "done" };
 
   // //////////////////////////////////////////////////////////////////////
-  const char SimulationMode::_modeLabels[LAST_VALUE] = { 'r', 'b', 'd'};
+  const char SimulationMode::_modeLabels[LAST_VALUE] = { 's', 'r', 'b', 'd'};
 
   // //////////////////////////////////////////////////////////////////////
   SimulationMode::SimulationMode()
@@ -35,7 +35,8 @@ namespace DSIM {
   SimulationMode::getMode (const char iModeChar) {
  
     EN_SimulationMode oSimulationMode;
-    switch (iModeChar) {
+    switch (iModeChar) { 
+    case 's': oSimulationMode = START; break;
     case 'r': oSimulationMode = RUNNING; break;
     case 'b': oSimulationMode = BREAK; break;
     case 'd': oSimulationMode = DONE; break;
