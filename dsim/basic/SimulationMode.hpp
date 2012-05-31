@@ -17,29 +17,30 @@ namespace DSIM {
   struct SimulationMode : public stdair::StructAbstract {
   public:
     typedef enum { 
-      RUNNING = 0,
+      START = 0,
+      RUNNING,
       BREAK,
       DONE,	
       LAST_VALUE
     } EN_SimulationMode;
 
     /**
-     * Get the label as a string (e.g., "running", "break" or "done").
+     * Get the label as a string (e.g., "start", "running", "break" or "done").
      */
     static const std::string& getLabel (const EN_SimulationMode&);
 
     /**
-     * Get the mode value from parsing a single char (e.g., 'r', 'b', 'd').
+     * Get the mode value from parsing a single char (e.g., 's', 'r', 'b', 'd').
      */
     static EN_SimulationMode getMode (const char);
 
     /**
-     * Get the label as a single char (e.g., 'r', 'b', 'd').
+     * Get the label as a single char (e.g., 's', 'r', 'b', 'd').
      */
     static char getModeLabel (const EN_SimulationMode&);
 
     /**
-     * Get the label as a string of a single char (e.g., 'r', 'b', 'd').
+     * Get the label as a string of a single char (e.g., 's', 'r', 'b', 'd').
      */
     static std::string getModeLabelAsString (const EN_SimulationMode&);
 
@@ -54,17 +55,17 @@ namespace DSIM {
     EN_SimulationMode getMode() const;
 
     /**
-     * Get the enumerated value as a char (e.g., 'r', 'b', 'd').
+     * Get the enumerated value as a char (e.g., 's', 'r', 'b', 'd').
      */
     char getModeAsChar() const;
 
     /**
-     * Get the enumerated value as a short string (e.g., "r", "b", "d").
+     * Get the enumerated value as a short string (e.g., "s", "r", "b", "d").
      */
     std::string getModeAsString() const;
     
     /**
-     * Give a description of the structure (e.g., "running", "break" or "done").
+     * Give a description of the structure (e.g., "start", "running", "break" or "done").
      */
     const std::string describe() const;
  

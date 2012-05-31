@@ -34,7 +34,11 @@ namespace DSIM {
     bpt::ptree ptSimulationStatus;   
     bpt::ptree ptEventStatusList;   
     bpt::ptree pt;    
-
+  
+    // Get the current mode of the simulation.
+    const SimulationMode& lSimulationMode = 
+      iSimulationStatus.getSimulationMode();
+    ptSimulationStatus.put ("state", lSimulationMode.describe());
     // Put the start date in the simulation status tree
     const stdair::Date_T& lStartDate = 
       iSimulationStatus.getStartDate();

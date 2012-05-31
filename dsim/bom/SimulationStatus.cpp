@@ -22,7 +22,7 @@ namespace DSIM {
       _estimatedRemainingTime (0),     
       _currentElapsedTime (0),
       _currentEstimatedRemainingTime (0),     
-      _simulationMode('r') {
+      _simulationMode('s') {
   }
   
   // //////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ namespace DSIM {
       _estimatedRemainingTime (0),  
       _currentElapsedTime  (0),      
       _currentEstimatedRemainingTime (0),  
-      _simulationMode ('r') {
+      _simulationMode ('s') {
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -191,6 +191,9 @@ namespace DSIM {
 
     // Prepare the new run
     prepareNewRun ();
+    
+    // Reset the simulation Mode
+    _simulationMode.setMode (SimulationMode::START);
    
   }
 
@@ -210,10 +213,7 @@ namespace DSIM {
     // Reset the current progress status and maps
     _currentProgressStatus.reset();
     _progressStatusMap.clear();
-    _chronometerMap.clear(); 
-
-    // Reset the simulation Mode
-    _simulationMode.setMode (SimulationMode::RUNNING);
+    _chronometerMap.clear();
    
   }
    

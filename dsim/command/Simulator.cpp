@@ -50,7 +50,7 @@ namespace DSIM {
 	    const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
  
     std::ostringstream oBeginStr;
-    if (ioSimulationStatus.getMode() == SimulationMode::RUNNING) {  
+    if (ioSimulationStatus.getMode() == SimulationMode::START) {  
 
       // DEBUG
       oBeginStr << "Starting the simulation..." << std::endl;
@@ -75,10 +75,10 @@ namespace DSIM {
  
       // DEBUG 
       oBeginStr << "Resuming the simulation..." << std::endl;
-    
-      // Change the current mode of the simulation status
-      ioSimulationStatus.setMode (SimulationMode::RUNNING);
     } 
+
+    // Change the current mode of the simulation status
+    ioSimulationStatus.setMode (SimulationMode::RUNNING);
     
     std::cout << oBeginStr.str() << std::endl;
     STDAIR_LOG_DEBUG (oBeginStr.str());   
