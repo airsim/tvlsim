@@ -485,7 +485,15 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("list_flight_date");
   Completers.push_back ("set_break_point");
   Completers.push_back ("sell"); 
-  Completers.push_back ("json_list_event");
+  Completers.push_back ("json_list_event");   
+  Completers.push_back ("json_list_event BookingRequest");
+  Completers.push_back ("json_list_event Cancellation");
+  Completers.push_back ("json_list_event OptimisationNotificationForFlightDate"); 
+  Completers.push_back ("json_list_event OptimisationNotificationForNetwork");
+  Completers.push_back ("json_list_event ScheduleChange");
+  Completers.push_back ("json_list_event Snapshot");
+  Completers.push_back ("json_list_event RevenueManagement");
+  Completers.push_back ("json_list_event BreakPoint"); 
   Completers.push_back ("json_list_flight_date");
   Completers.push_back ("json_display_flight_date");  
   Completers.push_back ("json_status");
@@ -1511,18 +1519,33 @@ int main (int argc, char* argv[]) {
       // ////////////////////////////// JSon Event List ////////////////////////
 
     case Command_T::JSON_LIST_EVENT: {
+      
       //
-      std::cout << "JSON List Events" << std::endl;
+      std::cout << "JSON List Events" << std::endl; 
 
-      std::ostringstream lMyCommandJSONstream;
-      lMyCommandJSONstream << "{\"event_list\":"
-                           << "{ \"event_type\":\"" << "all"
-			   << "\"}}";
+      //
+      std::ostringstream lJSONEventListStr;
+      lJSONEventListStr << "{\"event_list\":";
+
+      if (lTokenListByReadline.empty() == true) { 
+
+	// If no parameter is given, list all the events in the queue
+	lJSONEventListStr << "{ \"event_type\":\"" << "all";
+
+      } else if (lTokenListByReadline.size() == 1) { 
+
+	// If one parameter is given, filter according to this event type
+	assert (lTokenListByReadline.empty() == false);
+	const std::string lEventTypeStr (lTokenListByReadline[0]);	
+	lJSONEventListStr << "{ \"event_type\":\"" << lEventTypeStr;
+
+      }	 	
+      lJSONEventListStr << "\"}}";
 
       // Delegate the call to the dedicated service
-      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const stdair::JSONString lJSONEventTypeString (lJSONEventListStr.str());
       const std::string& lCSVEventListDump =
-        dsimService.jsonHandler (lJSONCommandString);
+        dsimService.jsonHandler (lJSONEventTypeString);
 
       // DEBUG: Display the events queue JSON string
       std::cout << lCSVEventListDump << std::endl;
