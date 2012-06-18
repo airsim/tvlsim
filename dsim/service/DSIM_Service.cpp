@@ -411,6 +411,8 @@ namespace DSIM {
   void DSIM_Service::
   parseAndLoad (const stdair::ScheduleFilePath& iScheduleInputFilename,
                 const stdair::ODFilePath& iODInputFilename,
+                const stdair::FRAT5FilePath& iFRAT5InputFilename,
+                const stdair::FFDisutilityFilePath& iFFDisutilityInputFilename,
                 const AIRRAC::YieldFilePath& iYieldInputFilepath,
                 const SIMFQT::FareFilePath& iFareInputFilepath,
                 const TRADEMGEN::DemandFilePath& iDemandFilepath) {   
@@ -446,6 +448,8 @@ namespace DSIM {
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
     lSIMCRS_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
+                                  iFRAT5InputFilename,
+                                  iFFDisutilityInputFilename,
                                   iYieldInputFilepath, iFareInputFilepath);
 
     /**

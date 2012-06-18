@@ -90,6 +90,14 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // O&D input file name
   const stdair::Filename_T lOnDInputFilename (STDAIR_SAMPLE_DIR "/ond01.csv");
 
+  // FRAT5 curve input file name
+  const stdair::Filename_T lFRAT5InputFilename (STDAIR_SAMPLE_DIR
+                                               "/frat5.csv");
+
+  // Fare family disutility curve input file name
+  const stdair::Filename_T lFFDisutilityInputFilename (STDAIR_SAMPLE_DIR
+                                                       "/ffDisutility.csv");
+
   // Yield input file name
   const stdair::Filename_T lYieldInputFilename (STDAIR_SAMPLE_DIR
                                                "/rds01/yield.csv");
@@ -110,6 +118,20 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
     stdair::BasFileMgr::doesExistAndIsReadable (lOnDInputFilename);
   BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
                        "The '" << lOnDInputFilename
+                       << "' input file can not be open and read");
+  
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lFRAT5InputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lFRAT5InputFilename
+                       << "' input file can not be open and read");
+  
+  // Check that the file path given as input corresponds to an actual file
+  doesExistAndIsReadable =
+    stdair::BasFileMgr::doesExistAndIsReadable (lFFDisutilityInputFilename);
+  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
+                       "The '" << lFFDisutilityInputFilename
                        << "' input file can not be open and read");
 
   // Check that the file path given as input corresponds to an actual file
@@ -151,11 +173,15 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Build the BOM tree from parsing input files
   stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
   stdair::ODFilePath lODFilePath (lOnDInputFilename);
+  stdair::FRAT5FilePath lFRAT5FilePath (lFRAT5InputFilename);
+  stdair::FFDisutilityFilePath lFFDisutilityFilePath (lFFDisutilityInputFilename);
   const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
   const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
   const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
   BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleFilePath,
                                                   lODFilePath,
+                                                  lFRAT5FilePath,
+                                                  lFFDisutilityFilePath,
                                                   lYieldFilePath ,
                                                   lFareFilePath,
                                                   lDemandFilePath));
