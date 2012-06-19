@@ -357,7 +357,7 @@ int readConfiguration (int argc, char* argv[],
     }
 
     if (vm.count ("ff_disutility")) {
-      ioFRAT5Filename = vm["ff_disutility"].as< std::string >();
+      ioFFDisutilityFilename = vm["ff_disutility"].as< std::string >();
       std::cout << "FF disutility input filename is: "
                 << ioFFDisutilityFilename << std::endl;
 
@@ -539,7 +539,6 @@ int main (int argc, char* argv[]) {
 
   // Check wether or not (CSV) input files should be read
   if (isBuiltin == true) {
-
     // Build the sample BOM tree
     dsimService.buildSampleBom();
 
