@@ -410,7 +410,7 @@ int readConfiguration (int argc, char* argv[], std::string& ioServerProtocol,
     }
 
     if (vm.count ("ff_disutility")) {
-      ioFRAT5Filename = vm["ff_disutility"].as< std::string >();
+      ioFFDisutilityFilename = vm["ff_disutility"].as< std::string >();
       std::cout << "FF disutility input filename is: "
                 << ioFFDisutilityFilename << std::endl;
 
