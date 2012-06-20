@@ -19,14 +19,18 @@
 // StdAir
 #include <stdair/stdair_basic_types.hpp>
 #include <stdair/stdair_json.hpp>
+#include <stdair/stdair_exceptions.hpp>
 #include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasLogParams.hpp>
 #include <stdair/basic/BasDBParams.hpp>
 #include <stdair/basic/DemandGenerationMethod.hpp>
+#include <stdair/basic/BasConst_BomDisplay.hpp>
+#include <stdair/bom/RMEventStruct.hpp>
 #include <stdair/service/Logger.hpp>
 // DSIM
 #include <dsim/DSIM_Service.hpp>
 #include <dsim/DSIM_Types.hpp>
+#include <dsim/bom/SimulationStatus.hpp>
 #include <dsim/config/dsim-paths.hpp>
 
 // //////// Type definitions ///////
@@ -152,6 +156,7 @@ struct Command_T {
     HELP,
     RUN,
     RESET,
+    OPTIMISE,
     LIST_EVENT,
     LIST_FLIGHT_DATE,
     DISPLAY_FLIGHT_DATE,
@@ -509,8 +514,9 @@ void initReadline (swift::SReadline& ioInputReader) {
   // - "identifiers"
   // - special identifier %file - means to perform a file name completion
   Completers.push_back ("help");
-  Completers.push_back ("run");  
+  Completers.push_back ("run");
   Completers.push_back ("reset");
+  Completers.push_back ("optimise");  
   Completers.push_back ("display_status");
   Completers.push_back ("display_flight_date");  
   Completers.push_back ("list_event");
@@ -830,7 +836,10 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
       oCommandType = Command_T::HELP;
 
     } else if (lCommand == "run") {
-      oCommandType = Command_T::RUN;  
+      oCommandType = Command_T::RUN;
+
+    } else if (lCommand == "optimise") {
+      oCommandType = Command_T::OPTIMISE;  
 
     } else if (lCommand == "reset") {
       oCommandType = Command_T::RESET;  
@@ -1415,7 +1424,7 @@ int main (int argc, char* argv[]) {
       break;
     }    
 
-      // ////////////////////////////// JSon Set Break Point ////////////////////////
+      // ////////////////////////////// Set Break Point ////////////////////////
 
     case Command_T::SET_BREAK_POINT: { 
 
@@ -1564,7 +1573,58 @@ int main (int argc, char* argv[]) {
       STDAIR_LOG_DEBUG (oSaleStr.str());
 
       break;
-    }     
+    } 
+
+      // ////////////////////////////// Optimise ////////////////////////
+    case Command_T::OPTIMISE: {
+
+      // 
+      TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline);
+
+      stdair::AirlineCode_T lAirlineCode ("all");
+      stdair::FlightNumber_T lFlightNumber (0);
+      stdair::Date_T lFlightDate (lDefaultDate);
+      
+      // Parse the parameters given by the user, giving default values
+      // in case the user does not specify some (or all) of them
+      parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);
+
+      const std::string& lDepartureDateStr =
+        boost::gregorian::to_iso_extended_string (lFlightDate);
+      std::ostringstream oStr;
+      oStr << lFlightNumber
+           << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER << " " << lDepartureDateStr;
+      const stdair::KeyDescription_T lFDKeyDescription (oStr.str());
+
+      //
+      std::ostringstream oOptimiseStr;
+      oOptimiseStr << "Optimise " << lAirlineCode << " " << lFDKeyDescription;
+
+      const DSIM::SimulationStatus& lSimulationStatus =
+        dsimService.getSimulationStatus();
+      const stdair::Date_T& lCurrentDate =
+        lSimulationStatus.getCurrentDate();
+      const stdair::DateTime_T lRMDateTime (lCurrentDate,
+                                            stdair::DEFAULT_NULL_DURATION);
+
+      //
+      const stdair::RMEventStruct lRMEvent (lAirlineCode, lFDKeyDescription,
+                                            lRMDateTime);
+
+      // Perform a simulation
+      try {
+        dsimService.optimise (lRMEvent);
+      } catch (stdair::ObjectNotFoundException lObjectNotFoundException) {
+        oOptimiseStr << " FAILED: " << lObjectNotFoundException.what();
+      }
+
+      // DEBUG
+      oOptimiseStr << std::endl;
+      std::cout << oOptimiseStr.str();
+      STDAIR_LOG_DEBUG (oOptimiseStr.str());
+      
+      break;
+    }    
 
       // ////////////////////////////// JSon Event List ////////////////////////
 
