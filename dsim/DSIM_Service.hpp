@@ -29,6 +29,7 @@ namespace stdair {
   struct BasDBParams;
   struct BookingRequestStruct;
   class JSONString;
+  struct RMEventStruct;
 }
 
 namespace DSIM {
@@ -36,6 +37,7 @@ namespace DSIM {
   // Forward declaration
   class DSIM_ServiceContext;
   struct RDSParameters;
+  class SimulationStatus;
   
   /**
    * Interface (API) for the simulator services.
@@ -110,6 +112,61 @@ namespace DSIM {
                   const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
 
     /**
+     * Destructor.
+     */
+    ~DSIM_Service();
+
+    
+  public:
+    // /////////// Business Methods /////////////
+    /**
+     * Perform a simulation.
+     *
+     * \note Currently, the multi-run piece of functionality does not work
+     *       properly. Indeed, only the demand generation service context
+     *       is resetted correctly; the inventories, schedules, etc, are not
+     *       resetted at all. Achieving a fully working multi-run simulation
+     *       framework will require some significant work. In the meantime,
+     *       a work around is to launch in a row several mono-run simulations,
+     *       with a distinct random generation seed for every simulation run.
+     *
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
+     * @param const stdair::DemandGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.
+     * @param const stdair::ForecastingMethod&
+     *        States which forecasting method should be used by the
+     *        revenue management (RMOL component).
+     * @param const stdair::PartnershipTechnique&
+     *        States which partnership technique should be used by both
+     *        the revenue management (RMOL) and inventory control (AirInv).
+     */
+    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&);
+
+    /**
+     * Optimise (revenue management) a flight-date/network-date
+     */
+    void optimise (const stdair::RMEventStruct&);
+    
+    /**
+     * Display the list of airlines.
+     */
+    void displayAirlineListFromDB() const;
+
+    /**
+     * Build a sample BOM tree, and attach it to the BomRoot instance.
+     *
+     * As for now, the BOM sample tree is the one built by the SimCRS and
+     * TraDemGen components.
+     *
+     * \see SIMCRS::SIMCRS_Service, TRADEMGEN::TRADEMGEN_Service and
+     *      stdair::CmdBomManager for more details.
+     */
+    void buildSampleBom();
+
+    /**
      * Parse the schedule, O&D, fare and yield input files.
      *
      * The CSV files, describing the airline schedule, O&Ds, fares and yields
@@ -151,67 +208,6 @@ namespace DSIM {
      * component services (e.g., SimCRS, TraDemGen, TravelCCM).
      */
     void reinitServices();
-
-    /**
-     * Destructor.
-     */
-    ~DSIM_Service();
-
-    
-  public:
-    // /////////// Business Methods /////////////
-    /**
-     * Perform a simulation.
-     *
-     * \note Currently, the multi-run piece of functionality does not work
-     *       properly. Indeed, only the demand generation service context
-     *       is resetted correctly; the inventories, schedules, etc, are not
-     *       resetted at all. Achieving a fully working multi-run simulation
-     *       framework will require some significant work. In the meantime,
-     *       a work around is to launch in a row several mono-run simulations,
-     *       with a distinct random generation seed for every simulation run.
-     *
-     * @param const NbOfRuns_T& Number of simulation runs to be performed.
-     * @param const stdair::DemandGenerationMethod&
-     *        States whether the demand generation must be performed
-     *        following the method based on statistic orders.
-     *        The alternative method, while more "intuitive", is also a
-     *        sequential algorithm.
-     * @param const stdair::ForecastingMethod&
-     *        States which forecasting method should be used by the
-     *        revenue management (RMOL component).
-     * @param const stdair::PartnershipTechnique&
-     *        States which partnership technique should be used by both
-     *        the revenue management (RMOL) and inventory control (AirInv).
-     */
-    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&);
-    
-    /**
-     * Display the list of airlines.
-     */
-    void displayAirlineListFromDB() const;
-
-    /**
-     * Build a sample BOM tree, and attach it to the BomRoot instance.
-     *
-     * As for now, the BOM sample tree is the one built by the SimCRS and
-     * TraDemGen components.
-     *
-     * \see SIMCRS::SIMCRS_Service, TRADEMGEN::TRADEMGEN_Service and
-     *      stdair::CmdBomManager for more details.
-     */
-    void buildSampleBom();
-
-    /**
-     * Clone the persistent BOM object.
-     */
-    void clonePersistentBom ();  
-
-    /**
-     * Build all the complementary links in the given bom root object.
-     * \note Do nothing for now.
-     */
-    void buildComplementaryLinks (stdair::BomRoot&);
 
     /**
      * Build a sample list of travel solutions.
@@ -388,6 +384,13 @@ namespace DSIM {
     std::string csvDisplay (const stdair::AirlineCode_T&,
                             const stdair::FlightNumber_T&,
                             const stdair::Date_T& iDepartureDate) const;
+    
+  public:
+    // //////////////// Getters /////////////////
+    /**
+     * Get the simulation status.
+     */
+    const SimulationStatus& getSimulationStatus();
 
   private:
 
@@ -487,6 +490,17 @@ namespace DSIM {
      * Prepare a new Run
      */
     void prepareNewRun();
+
+    /**
+     * Clone the persistent BOM object.
+     */
+    void clonePersistentBom ();  
+
+    /**
+     * Build all the complementary links in the given bom root object.
+     * \note Do nothing for now.
+     */
+    void buildComplementaryLinks (stdair::BomRoot&);
 
 
   private:

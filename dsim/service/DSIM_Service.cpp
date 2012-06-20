@@ -1269,4 +1269,37 @@ namespace DSIM {
     STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
   }
 
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::optimise (const stdair::RMEventStruct& iRMEvent) {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service has not "
+                                                    "been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Get a reference on the SIMCRS service handler
+    SIMCRS::SIMCRS_Service& lSIMCRS_Service =
+      lDSIM_ServiceContext.getSIMCRS_Service();
+
+    // Call the dedicated service
+    lSIMCRS_Service.optimise (iRMEvent);
+  }
+
+  // ////////////////////////////////////////////////////////////////////
+  const SimulationStatus& DSIM_Service::getSimulationStatus() {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service has not "
+                                                    "been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    return lDSIM_ServiceContext.getSimulationStatus();
+
+  }
 }
