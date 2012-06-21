@@ -1280,60 +1280,95 @@ int main (int argc, char* argv[]) {
     case Command_T::HELP: {
       std::cout << std::endl;
       std::cout << "Commands:\n" << std::endl;
-      std::cout << " help" << "\t\t\t\t" << "Display this help" << std::endl;
-      std::cout << " quit" << "\t\t\t\t" << "Quit the application" << std::endl;
+      std::cout << " help" << "\t\t\t\t" << "Display this help."
+                << std::endl;
+      std::cout << " quit" << "\t\t\t\t" << "Quit the application."
+                << std::endl;
       std::cout << " display_status" << "\t\t\t" 
-		<< "Display the simulation status" << std::endl;
+		<< "Display the simulation status."
+                << std::endl;
       std::cout << " list_event" << "\t\t\t"
-		<< "List events in the queue. It is possible to filter events according to their types"
+		<< "List events in the queue."
+                << std::endl
+                << "\t\t\t\tIt is possible to filter events according to their types:"
 		<< std::endl	
 		<< "\t\t\t\t  'list_event BookingRequest' "
-		<< "list all the booking requests" << std::endl	
+		<< "list all the booking requests."
+                << std::endl	
 		<< "\t\t\t\t  'list_event Cancellation' "
-		<< "list all the cancellation events" << std::endl
+		<< "list all the cancellation events."
+                << std::endl
 		<< "\t\t\t\t  'list_event Snapshot' "
-		<< "list all the snap shots" << std::endl		
+		<< "list all the snap shots."
+                << std::endl		
 		<< "\t\t\t\t  'list_event RevenueManagement' "
-		<< "list all the revenue management events" << std::endl
+		<< "list all the revenue management events."
+                << std::endl
 		<< "\t\t\t\t  'list_event BreakPoint' "
-		<< "list all the break points" << std::endl;
+		<< "list all the break points."
+                << std::endl;
       std::cout << " list_flight_date" << "\t\t"
-                << "List airlines, flights and departure dates"
+                << "List airlines, flights and departure dates."
                 << std::endl;        
       std::cout << " display_flight_date" << "\t\t"
-                << "Display the given flight-date"
-		<< std::endl;  
+                << "Display the given flight-date."
+                << std::endl
+                << "\t\t\t\tIf the parameters list is empty or wrong, default values are used:"
+                << std::endl
+                << "\t\t\t\t  'display_flight_date " << lDefaultAirlineCode
+                << lDefaultFlightNumber << " " << lDefaultDate << "'"
+                << std::endl;
       std::cout << " set_break_point" << "\t\t"
-                << "Insert the given break points in the event list"  
-		<< std::endl;
+                << "Insert the given break points in the event list."
+                << std::endl
+                << "\t\t\t\tIf the parameters list is empty or wrong, a default value is used:"
+		<< std::endl
+                << "\t\t\t\t  'set_break_point " << lDefaultDate << "'"
+                << std::endl;
       std::cout << " run" << "\t\t\t\t"
-                << "Perform the simulation until the next break-point, if any"
+                << "Perform the simulation until the next break-point, if any."
                 << std::endl;
       std::cout << " reset" << "\t\t\t\t" << "Reset the service (including the "
-                << "event queue)" << std::endl;
-      std::cout << " sell" << "\t\t\t\t" << "Make a booking on the given flight-date"
+                << "event queue)."
+                << std::endl;
+      std::cout << " sell" << "\t\t\t\t" << "Make a booking on the given flight-date."
+                << std::endl
+                << "\t\t\t\tIf the parameters list is empty or wrong, default values are used:"
+                << std::endl
+                << "\t\t\t\t  'sell " << lDefaultAirlineCode
+                << lDefaultFlightNumber << " " << lDefaultDate << " "
+                << lDefaultBookingClass << " " << lDefaultPartySize << " "
+                << lDefaultOrigin << " " << lDefaultDestination << "'"
+                << std::endl;
+      std::cout << " optimise" << "\t\t\t" << "Optimise the given flight-date."
+                << std::endl
+                << "\t\t\t\tIf the parameters list is empty or wrong, default values are used:"
+                << std::endl
+                << "\t\t\t\t  'optimise " << lDefaultAirlineCode
+                << lDefaultFlightNumber << " " << lDefaultDate << "'"
                 << std::endl; 
-      std::cout << " \n\nDebug Commands:\n" << std::endl;   
+      std::cout << " \n\nDebug Commands:\n"
+                << std::endl;   
       std::cout << " json_display_status" << "\t\t"
-                << "Display the simulation status in a JSON format"
+                << "Display the simulation status in a JSON format."
 		<< std::endl;     
       std::cout << " json_list_event" << "\t\t"
-                << "List events in the queue in a JSON format"
+                << "List events in the queue in a JSON format."
                 << std::endl;  
       std::cout << " json_list_flight_date" << "\t\t"
-                << "List airlines, flights and departure dates in a JSON format"
+                << "List airlines, flights and departure dates in a JSON format."
                 << std::endl;        
       std::cout << " json_display_flight_date" << "\t"
-                << "Display the given flight-date in a JSON format"
+                << "Display the given flight-date in a JSON format."
 		<< std::endl; 
       std::cout << " json_set_break_point" << "\t\t"
-                << "Insert the given break points in the event list"  
+                << "Insert the given break points in the event list."  
 		<< std::endl;
       std::cout << " json_run" << "\t\t\t"
-                << "Perform the simulation until the next break-point, if any"
+                << "Perform the simulation until the next break-point, if any."
 		<< std::endl;
       std::cout << " json_reset" << "\t\t\t"
-                << "Reset the service (including the event queue)"
+                << "Reset the service (including the event queue)."
 		<< std::endl;
       std::cout << std::endl;
       break;
@@ -1447,8 +1482,8 @@ int main (int argc, char* argv[]) {
 	stdair::BreakPointStruct lBreakPoint (lDate);
 	lBreakPointList.push_back(lBreakPoint);
       } 
-
-      assert (lBreakPointList.size() >= 1);
+      const stdair::Count_T lBPListSize = lBreakPointList.size();
+      assert (lBPListSize >= 1);
 
       // Add the break points to the simulation
       const stdair::Count_T lNumberOfBreakPointsAdded = 
@@ -1456,9 +1491,14 @@ int main (int argc, char* argv[]) {
  
       //   
       std::ostringstream oBreakPointStr;
-      oBreakPointStr << lNumberOfBreakPointsAdded 
-		     << " out of " << lBreakPointList.size()
-		     << " break points have been added to the queue.";
+      oBreakPointStr << lNumberOfBreakPointsAdded << " out of "
+                     << lBreakPointList.size() << " break point";
+      if (lBPListSize > 1) {
+        oBreakPointStr << "s have";
+      } else {
+        oBreakPointStr << " has";
+      }
+      oBreakPointStr << " been added to the queue.";
       std::cout << oBreakPointStr.str() << std::endl;
       STDAIR_LOG_DEBUG (oBreakPointStr.str());
 	
@@ -1547,7 +1587,6 @@ int main (int argc, char* argv[]) {
       parseBookingClassKey (lTokenList, lBookingClass,
                             lPartySize, lOrigin, lDestination);
 
-      // Make a booking
       std::ostringstream oSDKStr;
       oSDKStr << lAirlineCode << ","
               << lFlightNumber << ","
@@ -1581,14 +1620,15 @@ int main (int argc, char* argv[]) {
       // 
       TokenList_T lTokenList = extractTokenListForFlightDate (lTokenListByReadline);
 
-      stdair::AirlineCode_T lAirlineCode ("all");
-      stdair::FlightNumber_T lFlightNumber (0);
+      stdair::AirlineCode_T lAirlineCode (lDefaultAirlineCode);
+      stdair::FlightNumber_T lFlightNumber (lDefaultFlightNumber);
       stdair::Date_T lFlightDate (lDefaultDate);
       
       // Parse the parameters given by the user, giving default values
       // in case the user does not specify some (or all) of them
       parseFlightDateKey (lTokenList, lAirlineCode, lFlightNumber, lFlightDate);
 
+      // Build the flight date key description using the correct format
       const std::string& lDepartureDateStr =
         boost::gregorian::to_iso_extended_string (lFlightDate);
       std::ostringstream oStr;
@@ -1596,10 +1636,7 @@ int main (int argc, char* argv[]) {
            << stdair::DEFAULT_KEY_SUB_FLD_DELIMITER << " " << lDepartureDateStr;
       const stdair::KeyDescription_T lFDKeyDescription (oStr.str());
 
-      //
-      std::ostringstream oOptimiseStr;
-      oOptimiseStr << "Optimise " << lAirlineCode << " " << lFDKeyDescription;
-
+      // Retrieve the simulation status in order to know the current date
       const DSIM::SimulationStatus& lSimulationStatus =
         dsimService.getSimulationStatus();
       const stdair::Date_T& lCurrentDate =
@@ -1607,11 +1644,16 @@ int main (int argc, char* argv[]) {
       const stdair::DateTime_T lRMDateTime (lCurrentDate,
                                             stdair::DEFAULT_NULL_DURATION);
 
-      //
+      // Build the revenue management event corresponding to the given
+      // inventory, the given flight date and the current date time 
       const stdair::RMEventStruct lRMEvent (lAirlineCode, lFDKeyDescription,
                                             lRMDateTime);
 
-      // Perform a simulation
+      // DEBUG
+      std::ostringstream oOptimiseStr;
+      oOptimiseStr << "Optimise " << lAirlineCode << " " << lFDKeyDescription;
+
+      // Launch the optimiser
       try {
         dsimService.optimise (lRMEvent);
       } catch (stdair::ObjectNotFoundException lObjectNotFoundException) {
