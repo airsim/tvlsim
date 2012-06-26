@@ -474,13 +474,21 @@ namespace DSIM {
      */
     void initServiceContext (const stdair::Date_T& iStartDate,
                              const stdair::Date_T& iEndDate);
+    
+    /**
+     * @brief Initialise the configuration.
+     *
+     * Search if an INI config file exits in the current directory.
+     * If existing, try to transform its content into a boost property tree.
+     */
+    void initConfig();
 
     /**
      * Initialise the (DSim) service context (i.e., the DSIM_ServiceContext
      * object).
      */
     void initDsimService();
-
+    
     /**
      * Finalise.
      */
