@@ -13,6 +13,7 @@
 #endif // SOCI_HEADERS_BURIED
 // StdAir
 #include <stdair/stdair_json.hpp>
+#include <stdair/stdair_file.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/JSonCommand.hpp>
 #include <stdair/bom/BomManager.hpp>
@@ -20,6 +21,7 @@
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/BomJSONImport.hpp>
+#include <stdair/bom/BomINIImport.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/FacSupervisor.hpp>
 #include <stdair/service/Logger.hpp>
@@ -65,6 +67,9 @@ namespace DSIM {
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       initStdAirService (iLogParams);
     
+    // Init Config
+    initConfig ();
+    
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
     
@@ -102,6 +107,9 @@ namespace DSIM {
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       initStdAirService (iLogParams, iDBParams);
     
+    // Init Config
+    initConfig ();
+
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
     
@@ -133,6 +141,9 @@ namespace DSIM {
                               const stdair::Date_T& iEndDate,
                               const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
+
+    // Init Config
+    initConfig ();
     
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
@@ -353,6 +364,17 @@ namespace DSIM {
   void DSIM_Service::initDsimService() {
     // Do nothing at this stage. A sample BOM tree may be built by
     // calling the buildSampleBom() method
+  }
+
+  // //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initConfig() {
+    
+    // Look for a config INI file (which may be present in the current
+    // directory)
+    const stdair::ConfigINIFile lConfigINIFile ("dsim.ini");
+
+    // Try to import the configuration
+    stdair::BomINIImport::importINIConfig (lConfigINIFile);
   }
 
   // //////////////////////////////////////////////////////////////////////
