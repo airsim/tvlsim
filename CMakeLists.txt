@@ -98,3 +98,9 @@ display_status ()
 ##         CMake Cache Storage       ##
 #######################################
 store_in_cache ()
+
+
+#######################################
+##          DSim config file         ##
+#######################################
+module_config_add (config dsim)
