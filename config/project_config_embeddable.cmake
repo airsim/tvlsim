@@ -109,6 +109,8 @@ macro (set_project_options _build_doc _enable_tests)
     "Installation directory for data files")
   set (INSTALL_SAMPLE_DIR share/${PROJECT_NAME}/samples CACHE PATH
     "Installation directory for (CSV) sample files")
+  set (INSTALL_ETC_DIR etc CACHE PATH
+    "Installation directory for Config files")
 
   # Make relative paths absolute (needed later on)
   foreach (_path_type LIB BIN INCLUDE DATA SAMPLE)
@@ -1488,6 +1490,30 @@ macro (module_binary_add _exec_source_dir)
   set (${MODULE_NAME}_ALL_EXECS ${${MODULE_NAME}_ALL_EXECS} PARENT_SCOPE)
 
 endmacro (module_binary_add)
+
+##
+# Installation of the configuration INI file (format cfg).
+# The two parameters (among which only the first one is mandatory) are:
+#  * The path/directory where the configuration file can be found.
+#  * If specified, the name to be given to the file. If no such name
+#    is given as parameter, the configuration file is given the name of 
+#    the current module.
+macro (module_config_add _config_source_dir)
+  # First, derive the name to be given to the config file, defaulting
+  # to the name of the module
+  set (_config_name ${MODULE_NAME})
+  if (${ARGC} GREATER 1})
+    set (_config_name ${ARGV1})
+  endif (${ARGC} GREATER 1})
+
+  # Define the macro path of the configuration file
+  set (PROJ_PATH_CFG_SRC ${_config_source_dir}/${_config_name}.cfg)
+
+  # Installation of the cfg file
+  install (FILES ${PROJ_PATH_CFG_SRC} 
+    DESTINATION "${INSTALL_ETC_DIR}" COMPONENT runtime)
+
+endmacro (module_config_add)
 
 ##
 # Add a (Shell, Python, Perl, Ruby, etc) script to be installed.

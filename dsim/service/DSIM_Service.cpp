@@ -21,7 +21,6 @@
 #include <stdair/bom/AirlineStruct.hpp>
 #include <stdair/bom/BookingRequestStruct.hpp>
 #include <stdair/bom/BomJSONImport.hpp>
-#include <stdair/bom/BomINIImport.hpp>
 #include <stdair/command/DBManagerForAirlines.hpp>
 #include <stdair/service/FacSupervisor.hpp>
 #include <stdair/service/Logger.hpp>
@@ -43,6 +42,7 @@
 #include <dsim/command/Simulator.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
 #include <dsim/DSIM_Service.hpp>
+#include <dsim/config/dsim-paths.hpp>
 
 namespace DSIM {
 
@@ -67,16 +67,16 @@ namespace DSIM {
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       initStdAirService (iLogParams);
     
-    // Init Config
-    initConfig ();
-    
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
     
     // Add the StdAir service context to the DSim service context
     // \note DSim owns the StdAir service resources here.
     const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
+   
+    // Init Config
+    initConfig ();
  
     // Initalise the SEVMGR service.
     initSEVMGRService();
@@ -106,9 +106,6 @@ namespace DSIM {
     // Initialise the StdAir service handler
     stdair::STDAIR_ServicePtr_T lSTDAIR_Service_ptr =
       initStdAirService (iLogParams, iDBParams);
-    
-    // Init Config
-    initConfig ();
 
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
@@ -116,8 +113,11 @@ namespace DSIM {
     // Add the StdAir service context to the DSim service context
     // \note DSim owns the StdAir service resources here.
     const bool ownStdairService = true;
-    addStdAirService (lSTDAIR_Service_ptr, ownStdairService);
- 
+    addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
+
+    // Init Config
+    initConfig ();
+
     // Initalise the SEVMGR service.
     initSEVMGRService();
 
@@ -141,9 +141,6 @@ namespace DSIM {
                               const stdair::Date_T& iEndDate,
                               const stdair::RandomSeed_T& iRandomSeed)
     : _dsimServiceContext (NULL) {
-
-    // Init Config
-    initConfig ();
     
     // Initialise the service context
     initServiceContext (iStartDate, iEndDate);
@@ -151,7 +148,10 @@ namespace DSIM {
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
     const bool doesNotOwnStdairService = false;
-    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService); 
+    addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);     
+
+    // Init Config
+    initConfig ();
 
     // Initalise the SEVMGR service.
     initSEVMGRService();
@@ -364,17 +364,31 @@ namespace DSIM {
   void DSIM_Service::initDsimService() {
     // Do nothing at this stage. A sample BOM tree may be built by
     // calling the buildSampleBom() method
-  }
+  } 
 
-  // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initConfig() {
+// //////////////////////////////////////////////////////////////////////
+  void DSIM_Service::initConfig() { 
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the DSim service context
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
+
+    // Retrieve the StdAir service object from the (DSIM) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
     
     // Look for a config INI file (which may be present in the current
     // directory)
-    const stdair::ConfigINIFile lConfigINIFile ("dsim.ini");
+    const stdair::ConfigINIFile lConfigINIFile (SYSCONFDIR "/dsim.cfg");
 
     // Try to import the configuration
-    stdair::BomINIImport::importINIConfig (lConfigINIFile);
+    lSTDAIR_Service.importINIConfig (lConfigINIFile);
   }
 
   // //////////////////////////////////////////////////////////////////////
