@@ -169,7 +169,8 @@ struct Command_T {
     JSON_SET_BREAK_POINT,
     JSON_RUN,
     JSON_RESET,
-    JSON_STATUS,
+    JSON_STATUS, 
+    JSON_CONFIG,
     LAST_VALUE
   } Type_T;
 };
@@ -542,10 +543,11 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("json_list_event BreakPoint"); 
   Completers.push_back ("json_list_flight_date");
   Completers.push_back ("json_display_flight_date");  
-  Completers.push_back ("json_status");
+  Completers.push_back ("json_display_status");
   Completers.push_back ("json_set_break_point"); 
   Completers.push_back ("json_run"); 
-  Completers.push_back ("json_reset");
+  Completers.push_back ("json_reset"); 
+  Completers.push_back ("json_display_config");
   Completers.push_back ("quit");
 
   // Now register the completers.
@@ -880,8 +882,11 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
     } else if (lCommand == "json_reset") {
       oCommandType = Command_T::JSON_RESET; 
 
-    } else if (lCommand == "json_status") {
-      oCommandType = Command_T::JSON_STATUS;
+    } else if (lCommand == "json_display_status") {
+      oCommandType = Command_T::JSON_STATUS; 
+
+    } else if (lCommand == "json_display_config") {
+      oCommandType = Command_T::JSON_CONFIG;
 
     } else if (lCommand == "quit") {
       oCommandType = Command_T::QUIT;
@@ -1118,7 +1123,7 @@ int main (int argc, char* argv[]) {
   stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
   
   // End date
-  stdair::Date_T lEndDate (2009, boost::gregorian::Sep, 01);
+  stdair::Date_T lEndDate (2012, boost::gregorian::Sep, 01);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1227,10 +1232,11 @@ int main (int argc, char* argv[]) {
     const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
     const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
     const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);  
-    dsimService.parseAndLoad (lScheduleFilePath, lODFilePath,
+    dsimService.setInputFiles (lScheduleFilePath, lODFilePath,
                               lFRAT5FilePath, lFFDisutilityFilePath,
                               lYieldFilePath, lFareFilePath,
                               lDemandFilePath);
+    dsimService.parseAndLoad ();
   } 
 
   // Initialise the snapshot and RM events
@@ -1351,7 +1357,10 @@ int main (int argc, char* argv[]) {
                 << std::endl;   
       std::cout << " json_display_status" << "\t\t"
                 << "Display the simulation status in a JSON format."
-		<< std::endl;     
+		<< std::endl;      
+      std::cout << " json_display_config" << "\t\t"
+                << "Display the simulation configuration in a JSON format."
+		<< std::endl;      
       std::cout << " json_list_event" << "\t\t"
                 << "List events in the queue in a JSON format."
                 << std::endl;  
@@ -1880,7 +1889,29 @@ int main (int argc, char* argv[]) {
       STDAIR_LOG_DEBUG (lSimulationStatusJSonDump);
       
       break;
+    }    
+
+      // ////////////////////////////// JSon Config Display  ////////////////////////
+
+    case Command_T::JSON_CONFIG: {
+      //
+      std::cout << "JSON Configuration Display" << std::endl;
+
+      std::ostringstream lMyCommandJSONstream;
+      lMyCommandJSONstream << "{\"config\": \"1\"}";
+
+      // Delegate the call to the dedicated service
+      const stdair::JSONString lJSONCommandString (lMyCommandJSONstream.str());
+      const std::string& lConfigurationStatusJSonDump =
+        dsimService.jsonHandler (lJSONCommandString);
+
+      // DEBUG: Display the configuration  JSON string    
+      std::cout << lConfigurationStatusJSonDump << std::endl;
+      STDAIR_LOG_DEBUG (lConfigurationStatusJSonDump);
+      
+      break;
     }
+
 
       // /////////////////////////// Default / No value ///////////////////////
     case Command_T::NOP: {
