@@ -43,7 +43,7 @@ namespace DSIM {
      * Get the start date of the simulation.
      */
     const stdair::Date_T& getStartDate() const {
-      return _key.getStartDate();
+      return _startDate;
     }
 
     /**
@@ -57,7 +57,7 @@ namespace DSIM {
      * Get the end date of the simulation.
      */
     const stdair::Date_T& getEndDate() const {
-      return _key.getEndDate();
+      return _endDate;
     }    
 
     /**
@@ -117,7 +117,17 @@ namespace DSIM {
     }
 
   public:
-    // //////////////// Setters /////////////////
+    // //////////////// Setters ///////////////// 
+    /**
+     * Set the start and end date of the simulation.
+     */
+    void setSimulationPeriod (const stdair::Date_T& iStartDate,
+			      const stdair::Date_T& iEndDate) {
+      _startDate = iStartDate; 
+      _endDate = iEndDate;
+      setCurrentDate (iStartDate);
+    } 
+
     /**
      * Set the current date of the simulation.
      */
@@ -238,11 +248,21 @@ namespace DSIM {
      * Primary key: start date, end date
      */
     Key_T _key;
+
+    /**
+     * Start date of the simulation.
+     */ 
+    stdair::Date_T _startDate;   
+
+    /**
+     * Current date of the simulation.
+     */
+    stdair::Date_T _currentDate;   
   
     /**
-     * Currrent date of the simulation.
+     * End date of the simulation.
      */
-    stdair::Date_T _currentDate;    
+    stdair::Date_T _endDate;    
 
     /**
      * Total number of runs
