@@ -193,17 +193,15 @@ namespace DSIM {
   private:
     /// //////////////// Constructors and destructors /////////////
     /**
-     * Main constructors.
+     * Default constructor.
      */
-    DSIM_ServiceContext (const stdair::Date_T& iStartDate,
-                         const stdair::Date_T& iEndDate);
-    DSIM_ServiceContext (const SimulatorID_T&, const stdair::Date_T& iStartDate,
-                         const stdair::Date_T& iEndDate);
+    DSIM_ServiceContext ();
 
     /**
-     * Default constructor (not to be used).
+     * Main constructor.
      */
-    DSIM_ServiceContext();
+    DSIM_ServiceContext (const SimulatorID_T&);
+
     /**
      * Copy constructor (not to be used).
      */
@@ -225,9 +223,7 @@ namespace DSIM {
      * The Simulation Status object is created by that method, and then
      * stored within the service context.
      */
-    void initSimulationStatus (const SimulatorID_T&,
-                               const stdair::Date_T& iStartDate,
-                               const stdair::Date_T& iEndDate);
+    void initSimulationStatus (const SimulatorID_T&);
 
 
   private:
