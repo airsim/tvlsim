@@ -10,27 +10,19 @@
 namespace DSIM {
 
   // ////////////////////////////////////////////////////////////////////
-  SimulationStatusKey::SimulationStatusKey (const SimulatorID_T& iSimulatorID,
-                                            const stdair::Date_T& iStartDate,
-                                            const stdair::Date_T& iEndDate)
-    : _simulatorID (iSimulatorID),
-      _startDate (iStartDate),
-      _endDate (iEndDate) {
+  SimulationStatusKey::SimulationStatusKey (const SimulatorID_T& iSimulatorID)
+    : _simulatorID (iSimulatorID) {
   }
 
   // ////////////////////////////////////////////////////////////////////
   SimulationStatusKey::SimulationStatusKey()
-    : _simulatorID (DEFAULT_DSIM_ID),
-      _startDate (DEFAULT_SIMULATION_START_DATE),
-      _endDate (DEFAULT_SIMULATION_END_DATE) {
+    : _simulatorID (DEFAULT_DSIM_ID) {
     assert (false);
   }
   
   // ////////////////////////////////////////////////////////////////////
   SimulationStatusKey::SimulationStatusKey (const SimulationStatusKey& iKey)
-    : _simulatorID (iKey._simulatorID),
-      _startDate (iKey._startDate),
-      _endDate (iKey._endDate) {
+    : _simulatorID (iKey._simulatorID) {
   }
 
   // ////////////////////////////////////////////////////////////////////
@@ -49,10 +41,7 @@ namespace DSIM {
   // ////////////////////////////////////////////////////////////////////
   const std::string SimulationStatusKey::toString () const {
     std::ostringstream oStr;
-    oStr << "(" <<_simulatorID << ")"
-         << "[" << _startDate
-         << ", " <<_endDate
-         << "]";
+    oStr << "(" <<_simulatorID << ")";
     return oStr.str();
   }
 

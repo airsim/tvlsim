@@ -14,13 +14,6 @@
 namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_ServiceContext::DSIM_ServiceContext ()
-    : _ownStdairService (false),
-      _simulationStatus (NULL) {
-    assert (false);
-  }
-
-  // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext::DSIM_ServiceContext (const DSIM_ServiceContext&)
     : _ownStdairService (false),
       _simulationStatus (NULL) {
@@ -28,21 +21,18 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_ServiceContext::DSIM_ServiceContext (const stdair::Date_T& iStartDate,
-                                            const stdair::Date_T& iEndDate)
+  DSIM_ServiceContext::DSIM_ServiceContext ()
     : _simulatorID (DEFAULT_DSIM_ID),
       _simulationStatus (NULL) {
-    initSimulationStatus (DEFAULT_DSIM_ID, iStartDate, iEndDate);
+    initSimulationStatus (DEFAULT_DSIM_ID);
   }
   
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_ServiceContext::DSIM_ServiceContext (const SimulatorID_T& iSimulatorID,
-                                            const stdair::Date_T& iStartDate,
-                                            const stdair::Date_T& iEndDate)
+  DSIM_ServiceContext::DSIM_ServiceContext (const SimulatorID_T& iSimulatorID)
     : _simulatorID (iSimulatorID),
       _simulationStatus (NULL) {
-    initSimulationStatus (iSimulatorID, iStartDate, iEndDate);
+    initSimulationStatus (iSimulatorID);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -51,12 +41,10 @@ namespace DSIM {
 
 
   // //////////////////////////////////////////////////////////////////////
-  void DSIM_ServiceContext::initSimulationStatus (const SimulatorID_T& iSimulatorID,
-                                                  const stdair::Date_T& iStartDate,
-                                                  const stdair::Date_T& iEndDate) {
+  void DSIM_ServiceContext::initSimulationStatus (const SimulatorID_T& iSimulatorID) {
 
     // Create a Simulation Status key
-    const SimulationStatusKey lKey (iSimulatorID, iStartDate, iEndDate);
+    const SimulationStatusKey lKey (iSimulatorID);
 
     // Create a Simulation Status object instance
     SimulationStatus& lSimulationStatus =

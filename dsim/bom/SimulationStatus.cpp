@@ -13,8 +13,10 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const Key_T& iKey)
-    : _key (iKey), 
-      _currentDate (iKey.getStartDate()),   
+    : _key (iKey),   
+      _startDate (DEFAULT_SIMULATION_START_DATE),    
+      _currentDate (DEFAULT_SIMULATION_START_DATE),     
+      _endDate (DEFAULT_SIMULATION_END_DATE),   
       _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
       _currentRun (DEFAULT_NUMBER_OF_RUNS),
       _currentNbOfBookings (0),  
@@ -27,10 +29,10 @@ namespace DSIM {
   
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus()
-    : _key (DEFAULT_DSIM_ID,
-            DEFAULT_SIMULATION_START_DATE,
-            DEFAULT_SIMULATION_END_DATE),
-      _currentDate (DEFAULT_SIMULATION_START_DATE), 
+    : _key (DEFAULT_DSIM_ID),
+      _startDate (DEFAULT_SIMULATION_START_DATE),   
+      _currentDate (DEFAULT_SIMULATION_START_DATE),     
+      _endDate (DEFAULT_SIMULATION_END_DATE),   
       _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
       _currentRun (DEFAULT_NUMBER_OF_RUNS),
       _currentNbOfBookings (0),  
@@ -43,8 +45,10 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   SimulationStatus::SimulationStatus (const SimulationStatus& iSimulationStatus)
-    : _key (iSimulationStatus._key),  
-      _currentDate (iSimulationStatus.getStartDate()),  
+    : _key (iSimulationStatus._key),   
+      _startDate (iSimulationStatus._startDate),  
+      _currentDate (iSimulationStatus._currentDate),     
+      _endDate (iSimulationStatus._endDate),     
       _totalNumberOfRuns (iSimulationStatus._totalNumberOfRuns),
       _currentRun (iSimulationStatus._currentRun),
       _currentNbOfBookings (iSimulationStatus._currentNbOfBookings), 
@@ -201,7 +205,7 @@ namespace DSIM {
   void SimulationStatus::prepareNewRun () { 
    
     // Reset the start date
-    _currentDate = getStartDate();
+    _currentDate = _startDate;
 
     // Update the current number of bookings
     _currentNbOfBookings = 0;
@@ -250,8 +254,8 @@ namespace DSIM {
     // Add the display of the start, current and end date
     // 
     oStr << "\nStart Date ---- Current Date ---- End Date\n"
-         << getStartDate() << "     " << _currentDate
-         << "       " << getEndDate() << std::endl;
+         << _startDate << "     " << _currentDate
+         << "       " << _endDate << std::endl;
 
     //
     // Add the display of the overall progress status

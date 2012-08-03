@@ -14,6 +14,7 @@
 // StdAir
 #include <stdair/stdair_json.hpp>
 #include <stdair/stdair_file.hpp>
+#include <stdair/basic/BasConst_General.hpp>
 #include <stdair/basic/BasChronometer.hpp>
 #include <stdair/basic/JSonCommand.hpp>
 #include <stdair/bom/BomManager.hpp>
@@ -68,7 +69,7 @@ namespace DSIM {
       initStdAirService (iLogParams);
     
     // Initialise the service context
-    initServiceContext (iStartDate, iEndDate);
+    initServiceContext ();
     
     // Add the StdAir service context to the DSim service context
     // \note DSim owns the StdAir service resources here.
@@ -76,13 +77,13 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
    
     // Init Config
-    initConfig ();
+    initConfig (iStartDate, iEndDate, iRandomSeed);
  
     // Initalise the SEVMGR service.
     initSEVMGRService();
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService (iRandomSeed);
+    initTRADEMGENService ();
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -108,7 +109,7 @@ namespace DSIM {
       initStdAirService (iLogParams, iDBParams);
 
     // Initialise the service context
-    initServiceContext (iStartDate, iEndDate);
+    initServiceContext ();
     
     // Add the StdAir service context to the DSim service context
     // \note DSim owns the StdAir service resources here.
@@ -116,13 +117,13 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
 
     // Init Config
-    initConfig ();
+    initConfig (iStartDate, iEndDate, iRandomSeed);
 
     // Initalise the SEVMGR service.
     initSEVMGRService();
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService (iRandomSeed);
+    initTRADEMGENService ();
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -143,7 +144,7 @@ namespace DSIM {
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
-    initServiceContext (iStartDate, iEndDate);
+    initServiceContext ();
     
     // Store the STDAIR service object within the (AIRINV) service context
     // \note AirInv does not own the STDAIR service resources here.
@@ -151,13 +152,13 @@ namespace DSIM {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);     
 
     // Init Config
-    initConfig ();
+    initConfig (iStartDate, iEndDate, iRandomSeed);
 
     // Initalise the SEVMGR service.
     initSEVMGRService();
 
     // Initalise the TraDemGen service.
-    initTRADEMGENService (iRandomSeed);
+    initTRADEMGENService ();
 
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
@@ -184,11 +185,11 @@ namespace DSIM {
   }
 
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initServiceContext (const stdair::Date_T& iStartDate,
-                                         const stdair::Date_T& iEndDate) {
+  void DSIM_Service::initServiceContext () {
+
     // Initialise the context
     DSIM_ServiceContext& lDSIM_ServiceContext =
-      FacDsimServiceContext::instance().create (iStartDate, iEndDate);
+      FacDsimServiceContext::instance().create ();
     _dsimServiceContext = &lDSIM_ServiceContext;
   }
 
@@ -304,8 +305,7 @@ namespace DSIM {
   }
   
   // ////////////////////////////////////////////////////////////////////
-  void DSIM_Service::
-  initTRADEMGENService (const stdair::RandomSeed_T& iRandomSeed) {
+  void DSIM_Service::initTRADEMGENService () {
 
     // Retrieve the Dsim service context
     assert (_dsimServiceContext != NULL);
@@ -319,6 +319,13 @@ namespace DSIM {
     SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
       lDSIM_ServiceContext.getSEVMGR_ServicePtr();
 
+    // Look for the random seed in the configuration
+    stdair::RandomSeed_T lRandomSeed (stdair::DEFAULT_RANDOM_SEED);
+    const bool hasSeedBeenRetrieved = 
+      lSTDAIR_Service_ptr->exportConfigValue<stdair::RandomSeed_T> (lRandomSeed, 
+								    "random.seed");
+    assert (hasSeedBeenRetrieved == true);
+
     /**
      * Initialise the TraDemGen service handler.
      *
@@ -329,7 +336,7 @@ namespace DSIM {
     TRADEMGEN::TRADEMGEN_ServicePtr_T lTRADEMGEN_Service_ptr = 
       boost::make_shared<TRADEMGEN::TRADEMGEN_Service> (lSTDAIR_Service_ptr,
 							lSEVMGR_Service_ptr,
-                                                        iRandomSeed);
+                                                        lRandomSeed);
     
     // Store the TRADEMGEN service object within the (DSim) service context
     lDSIM_ServiceContext.setTRADEMGEN_Service (lTRADEMGEN_Service_ptr);
@@ -367,7 +374,9 @@ namespace DSIM {
   } 
 
 // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initConfig() { 
+  void DSIM_Service::initConfig (const stdair::Date_T& iStartDate,
+				 const stdair::Date_T& iEndDate,
+				 const stdair::RandomSeed_T& iRandomSeed) {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -375,20 +384,47 @@ namespace DSIM {
                                                     "has not been initialised");
     }
     assert (_dsimServiceContext != NULL);
-
-    // Retrieve the DSim service context
     DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
 
     // Retrieve the StdAir service object from the (DSIM) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Import the start date, the end date and the random seed in the 
+    // configuration.
+    const std::string& lStartDateStr =
+      boost::gregorian::to_simple_string(iStartDate);
+    lSTDAIR_Service.importConfigValue (lStartDateStr, "date.start");    
+    const std::string& lEndDateStr =
+      boost::gregorian::to_simple_string(iEndDate); 
+    lSTDAIR_Service.importConfigValue (lEndDateStr, "date.end");   
+    const std::string& lRandomSeedStr = 
+      boost::lexical_cast<std::string> (iRandomSeed);
+    lSTDAIR_Service.importConfigValue (lRandomSeedStr, "random.seed");
     
-    // Look for a config INI file (which may be present in the current
+    // Look for a config INI file (which may be present in the conf
     // directory)
     const stdair::ConfigINIFile lConfigINIFile (SYSCONFDIR "/dsim.cfg");
 
     // Try to import the configuration
-    lSTDAIR_Service.importINIConfig (lConfigINIFile);
+    lSTDAIR_Service.importINIConfig (lConfigINIFile);  
+
+    // Look for the start and end date in the configuration holder.
+    stdair::Date_T lStartDate (iStartDate);
+    const bool hasStartDateBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Date_T> (lStartDate, 
+							 "date.start"); 
+    assert (hasStartDateBeenRetrieved == true);
+    stdair::Date_T lEndDate (iEndDate);
+    const bool hasEndDateBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Date_T> (lEndDate, 
+							 "date.end");
+    assert (hasEndDateBeenRetrieved == true);
+ 
+    // Update the Simulation Status
+    SimulationStatus& lSimulationStatus =
+	lDSIM_ServiceContext.getSimulationStatus(); 
+    lSimulationStatus.setSimulationPeriod (lStartDate, lEndDate);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -441,17 +477,53 @@ namespace DSIM {
       lDSIM_ServiceContext.getTRADEMGEN_Service();
     lTRADEMGEN_Service.reinitServices();
      */
-  }
+  } 
 
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  parseAndLoad (const stdair::ScheduleFilePath& iScheduleInputFilename,
-                const stdair::ODFilePath& iODInputFilename,
-                const stdair::FRAT5FilePath& iFRAT5InputFilename,
-                const stdair::FFDisutilityFilePath& iFFDisutilityInputFilename,
-                const AIRRAC::YieldFilePath& iYieldInputFilepath,
-                const SIMFQT::FareFilePath& iFareInputFilepath,
-                const TRADEMGEN::DemandFilePath& iDemandFilepath) {   
+  setInputFiles (const stdair::ScheduleFilePath& iScheduleInputFilename,
+		 const stdair::ODFilePath& iODInputFilename,
+		 const stdair::FRAT5FilePath& iFRAT5InputFilename,
+		 const stdair::FFDisutilityFilePath& iFFDisutilityInputFilename,
+		 const AIRRAC::YieldFilePath& iYieldInputFilepath,
+		 const SIMFQT::FareFilePath& iFareInputFilepath,
+		 const TRADEMGEN::DemandFilePath& iDemandFilepath) {   
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+
+    // Retrieve the DSim service context and whether it owns the Stdair
+    // service
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
+
+    // Retrieve the StdAir service object from the (DSIM) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+    
+    // Import the input files names into the configuration
+    lSTDAIR_Service.importConfigValue (iScheduleInputFilename.name(), 
+				       "input.schedule");    
+    lSTDAIR_Service.importConfigValue (iODInputFilename.name(), 
+				       "input.ond");   
+    lSTDAIR_Service.importConfigValue (iFRAT5InputFilename.name(), 
+				       "input.frat5"); 
+    lSTDAIR_Service.importConfigValue (iFFDisutilityInputFilename.name(), 
+				       "input.ffdisutility");    
+    lSTDAIR_Service.importConfigValue (iYieldInputFilepath.name(), 
+				       "input.yield");   
+    lSTDAIR_Service.importConfigValue (iFareInputFilepath.name(), 
+				       "input.fare");  
+    lSTDAIR_Service.importConfigValue (iDemandFilepath.name(), 
+				       "input.demand");
+  } 
+
+  // ////////////////////////////////////////////////////////////////////
+  void DSIM_Service::
+  parseAndLoad () {   
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -470,9 +542,43 @@ namespace DSIM {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 
-    // Retrieve the persistent BOM root object.
-    stdair::BomRoot& lPersistentBomRoot = 
-      lSTDAIR_Service.getPersistentBomRoot();
+    // Look for the input files in the configuration holder
+    stdair::Filename_T lFilename (""); 
+    const bool hasScheduleFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.schedule"); 
+    assert (hasScheduleFileBeenRetrieved == true);     
+    const stdair::ScheduleFilePath lScheduleInputFilename (lFilename);  
+    const bool hasODFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.ond");  
+     assert (hasODFileBeenRetrieved == true);      
+    const stdair::ODFilePath lODInputFilename (lFilename);  
+    const bool hasFrat5FileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.frat5");  
+    assert (hasFrat5FileBeenRetrieved == true);  
+    const stdair::FRAT5FilePath lFRAT5InputFilename (lFilename);  
+    const bool hasFFdisutilityFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.ffdisutility");  
+    assert (hasFFdisutilityFileBeenRetrieved == true);      
+    const stdair::FFDisutilityFilePath lFFDisutilityInputFilename (lFilename);     
+    const bool hasYieldFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.yield");  
+    assert (hasYieldFileBeenRetrieved == true);     
+    const AIRRAC::YieldFilePath lYieldInputFilepath (lFilename);     
+    const bool hasFareFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.fare");  
+    assert (hasFareFileBeenRetrieved == true);     
+    const SIMFQT::FareFilePath lFareInputFilepath (lFilename);     
+    const bool hasDemandFileBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<stdair::Filename_T> (lFilename, 
+							     "input.demand");  
+    assert (hasDemandFileBeenRetrieved == true);     
+    const TRADEMGEN::DemandFilePath lDemandFilepath (lFilename);
       
     /**
      * 1. Delegate the complementary building of objects and links by the
@@ -483,22 +589,25 @@ namespace DSIM {
      */
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
       lDSIM_ServiceContext.getSIMCRS_Service();
-    lSIMCRS_Service.parseAndLoad (iScheduleInputFilename, iODInputFilename,
-                                  iFRAT5InputFilename,
-                                  iFFDisutilityInputFilename,
-                                  iYieldInputFilepath, iFareInputFilepath);
+    lSIMCRS_Service.parseAndLoad (lScheduleInputFilename, lODInputFilename,
+                                  lFRAT5InputFilename,
+                                  lFFDisutilityInputFilename,
+                                  lYieldInputFilepath, lFareInputFilepath);
 
     /**
      * Let the demand generation component parse its input file.
      */
     TRADEMGEN::TRADEMGEN_Service& lTRADEMGEN_Service =
       lDSIM_ServiceContext.getTRADEMGEN_Service(); 
-    lTRADEMGEN_Service.parseAndLoad (iDemandFilepath);  
+    lTRADEMGEN_Service.parseAndLoad (lDemandFilepath);  
 
     /**
      * 2. Build the complementary objects/links for the current component (here,
      *    TravelCCM)
      */ 
+    // Retrieve the persistent BOM root object.
+    stdair::BomRoot& lPersistentBomRoot = 
+      lSTDAIR_Service.getPersistentBomRoot();
     buildComplementaryLinks (lPersistentBomRoot);  
 
     /**
@@ -797,6 +906,12 @@ namespace DSIM {
       std::ostringstream oStream;
       BomJSONExport::jsonExportSimulationStatus(oStream, lSimulationStatus); 
       return oStream.str();
+    }	  
+    case stdair::JSonCommand::CONFIG:{ 
+      // Retrieve the StdAir service object from the (DSim) service context
+      stdair::STDAIR_Service& lSTDAIR_Service =
+	lDSIM_ServiceContext.getSTDAIR_Service();  
+      return lSTDAIR_Service.jsonExportConfiguration();
     }						  
     default: {
       // Return an Error string

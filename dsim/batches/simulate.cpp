@@ -551,10 +551,11 @@ int main (int argc, char* argv[]) {
     const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
     const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
     const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
-    dsimService.parseAndLoad (lScheduleFilePath, lODFilePath,
+    dsimService.setInputFiles (lScheduleFilePath, lODFilePath,
                               lFRAT5FilePath, lFFDisutilityFilePath,
                               lYieldFilePath, lFareFilePath,
                               lDemandFilePath);
+    dsimService.parseAndLoad ();
   }
 
   // Initialise the snapshot and RM events

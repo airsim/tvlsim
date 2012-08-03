@@ -27,20 +27,6 @@ namespace DSIM {
       return _simulatorID;
     }
 
-    /**
-     * Get the start date of the simulation.
-     */
-    const stdair::Date_T& getStartDate() const {
-      return _startDate;
-    }
-    
-    /**
-     * Get the end date of the simulation.
-     */
-    const stdair::Date_T& getEndDate() const {
-      return _endDate;
-    }
-
     // /////////// Display support methods /////////
     /**
      * Dump a Business Object Key into an output stream.
@@ -69,9 +55,7 @@ namespace DSIM {
     /**
      * Main constructor.
      */
-    SimulationStatusKey (const SimulatorID_T& iSimulatorID,
-                         const stdair::Date_T& iStartDate,
-                         const stdair::Date_T& iEndDate);
+    SimulationStatusKey (const SimulatorID_T& iSimulatorID);
 
     /**
      * Copy Constructor.
@@ -97,16 +81,6 @@ namespace DSIM {
      * ID for the SimulationStatus object.
      */
     SimulatorID_T _simulatorID;
-
-    /**
-     * Start date of the simulation.
-     */
-    stdair::Date_T _startDate;
-
-    /**
-     * End date of the simulation.
-     */
-    stdair::Date_T _endDate;
 
   };
 

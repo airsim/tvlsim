@@ -32,10 +32,10 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   DSIM_ServiceContext& FacDsimServiceContext::
-  create (const stdair::Date_T& iStartDate, const stdair::Date_T& iEndDate) {
+  create () {
     DSIM_ServiceContext* aDSIM_ServiceContext_ptr = NULL;
 
-    aDSIM_ServiceContext_ptr = new DSIM_ServiceContext (iStartDate, iEndDate);
+    aDSIM_ServiceContext_ptr = new DSIM_ServiceContext ();
     assert (aDSIM_ServiceContext_ptr != NULL);
 
     // The new object is added to the Bom pool

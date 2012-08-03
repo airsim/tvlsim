@@ -171,20 +171,25 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
                                   lRandomSeed);
 
   // Build the BOM tree from parsing input files
-  stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
-  stdair::ODFilePath lODFilePath (lOnDInputFilename);
-  stdair::FRAT5FilePath lFRAT5FilePath (lFRAT5InputFilename);
-  stdair::FFDisutilityFilePath lFFDisutilityFilePath (lFFDisutilityInputFilename);
+  const stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
+  const stdair::ODFilePath lODFilePath (lOnDInputFilename);
+  const stdair::FRAT5FilePath lFRAT5FilePath (lFRAT5InputFilename);
+  const stdair::FFDisutilityFilePath lFFDisutilityFilePath (lFFDisutilityInputFilename);
   const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
   const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
   const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
-  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad (lScheduleFilePath,
-                                                  lODFilePath,
-                                                  lFRAT5FilePath,
-                                                  lFFDisutilityFilePath,
-                                                  lYieldFilePath ,
-                                                  lFareFilePath,
-                                                  lDemandFilePath));
+
+  // Load the input files
+  BOOST_CHECK_NO_THROW (dsimService.setInputFiles(lScheduleFilePath, 
+						  lODFilePath, 
+						  lFRAT5FilePath,
+						  lFFDisutilityFilePath, 
+						  lYieldFilePath,
+						  lFareFilePath, 
+						  lDemandFilePath));
+	 
+  // Parse the input files 
+  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad ());
 
   // Initialise the snapshot and RM events
   BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());
