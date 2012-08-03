@@ -164,13 +164,14 @@ namespace DSIM {
      * \see SIMCRS::SIMCRS_Service, TRADEMGEN::TRADEMGEN_Service and
      *      stdair::CmdBomManager for more details.
      */
-    void buildSampleBom();
+    void buildSampleBom();  
 
     /**
-     * Parse the schedule, O&D, fare and yield input files.
+     * Load the schedule, O&D, FRAT5, FFDisutility, yield, fare and demand 
+     * input files.
      *
      * The CSV files, describing the airline schedule, O&Ds, fares and yields
-     * for the simulator, are parsed and instantiated in memory accordingly.
+     * for the simulator, are instantiated in the configuration holder.
      *
      * @param const stdair::ScheduleFilePath& Filename of the input schedule file.
      * @param const stdair::ODFilePath& Filename of the input O&D file.
@@ -180,13 +181,22 @@ namespace DSIM {
      * @param const SIMFQT::FareFilePath& Filename of the input fare file.
      * @param const TRADEMGEN::DemandFilePath& Filename of the input demand file.
      */
-    void parseAndLoad (const stdair::ScheduleFilePath&,
-                       const stdair::ODFilePath&,
-                       const stdair::FRAT5FilePath&,
-                       const stdair::FFDisutilityFilePath&,
-                       const AIRRAC::YieldFilePath&,
-                       const SIMFQT::FareFilePath&,
-                       const TRADEMGEN::DemandFilePath&);
+    void setInputFiles (const stdair::ScheduleFilePath&,
+			const stdair::ODFilePath&,
+			const stdair::FRAT5FilePath&,
+			const stdair::FFDisutilityFilePath&,
+			const AIRRAC::YieldFilePath&,
+			const SIMFQT::FareFilePath&,
+			const TRADEMGEN::DemandFilePath&);
+
+    /**
+     * Parse the schedule, O&D, FRAT5, FFDisutility, yield, fare and demand 
+     * input files.
+     *
+     * The CSV files, describing the airline schedule, O&Ds, fares and yields
+     * for the simulator, are parsed and instantiated in memory accordingly.
+     */
+    void parseAndLoad ();
 
     /**
      * Initialise the snapshot and RM events for the inventories.
@@ -443,11 +453,8 @@ namespace DSIM {
 
     /**
      * Initialise the TraDemGen service (including the log service).
-     *
-     * @param const stdair::RandomSeed_T& Seed for the random generation used
-     *        by the demand generation component (TraDemGen).
      */
-    void initTRADEMGENService (const stdair::RandomSeed_T&);
+    void initTRADEMGENService ();
 
     /**
      * Initialise the TravelCCM service (including the log service).
@@ -468,20 +475,23 @@ namespace DSIM {
     /**
      * Initialise the (DSim) service context (i.e., the
      * DSIM_ServiceContext object).
-     *
-     * @param const stdair::Date_T& Start date of the simulation.
-     * @param const stdair::Date_T& End date of the simulation.
      */
-    void initServiceContext (const stdair::Date_T& iStartDate,
-                             const stdair::Date_T& iEndDate);
+    void initServiceContext ();
     
     /**
      * @brief Initialise the configuration.
      *
      * Search if an INI config file exits in the current directory.
-     * If existing, try to transform its content into a boost property tree.
+     * If existing, try to transform its content into a boost property tree. 
+     *
+     * @param const stdair::Date_T& Start date of the simulation.
+     * @param const stdair::Date_T& End date of the simulation. 
+     * @param const stdair::RandomSeed_T& Seed for the random generation used
+     *        by the demand generation component (TraDemGen).
      */
-    void initConfig();
+    void initConfig (const stdair::Date_T& iStartDate,
+		    const stdair::Date_T& iEndDate,
+		    const stdair::RandomSeed_T&);
 
     /**
      * Initialise the (DSim) service context (i.e., the DSIM_ServiceContext
