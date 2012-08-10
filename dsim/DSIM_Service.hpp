@@ -20,6 +20,7 @@
 // TRADEMGEN
 #include <trademgen/TRADEMGEN_Types.hpp>
 // Dsim
+#include <dsim/basic/BasConst_General.hpp>
 #include <dsim/DSIM_Types.hpp>
 
 // Forward declarations
@@ -62,11 +63,19 @@ namespace DSIM {
      * @param const stdair::Date_T& Start date of the simulation.
      * @param const stdair::Date_T& End date of the simulation.
      * @param const stdair::RandomSeed_T& Seed for the random generation used
-     *        by the demand generation component (TraDemGen).
+     *        by the demand generation component (TraDemGen).   
+     * @param const stdair::DemandGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.  
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
      */
     DSIM_Service (const stdair::BasLogParams&, const stdair::BasDBParams&,
                   const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&,
+		  const stdair::DemandGenerationMethod&,
+		  const NbOfRuns_T& iNbOfRuns = DEFAULT_NUMBER_OF_RUNS);
 
     /**
      * Constructor.
@@ -84,10 +93,18 @@ namespace DSIM {
      * @param const stdair::Date_T& Start date of the simulation.
      * @param const stdair::Date_T& End date of the simulation.
      * @param const stdair::RandomSeed_T& Seed for the random generation used
-     *        by the demand generation component (TraDemGen).
+     *        by the demand generation component (TraDemGen).   
+     * @param const stdair::DemandGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.  
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
      */
     DSIM_Service (const stdair::BasLogParams&, const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&,
+		  const stdair::DemandGenerationMethod&,
+		  const NbOfRuns_T& iNbOfRuns = DEFAULT_NUMBER_OF_RUNS);
 
     /**
      * Constructor.
@@ -106,10 +123,18 @@ namespace DSIM {
      * @param const stdair::Date_T& Start date of the simulation.
      * @param const stdair::Date_T& End date of the simulation.
      * @param const stdair::RandomSeed_T& Seed for the random generation used
-     *        by the demand generation component (TraDemGen).
+     *        by the demand generation component (TraDemGen).   
+     * @param const stdair::DemandGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.  
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
      */
     DSIM_Service (stdair::STDAIR_ServicePtr_T, const stdair::Date_T& iStartDate,
-                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&);
+                  const stdair::Date_T& iEndDate, const stdair::RandomSeed_T&,
+		  const stdair::DemandGenerationMethod&,
+		  const NbOfRuns_T& iNbOfRuns = DEFAULT_NUMBER_OF_RUNS);
 
     /**
      * Destructor.
@@ -129,22 +154,9 @@ namespace DSIM {
      *       framework will require some significant work. In the meantime,
      *       a work around is to launch in a row several mono-run simulations,
      *       with a distinct random generation seed for every simulation run.
-     *
-     * @param const NbOfRuns_T& Number of simulation runs to be performed.
-     * @param const stdair::DemandGenerationMethod&
-     *        States whether the demand generation must be performed
-     *        following the method based on statistic orders.
-     *        The alternative method, while more "intuitive", is also a
-     *        sequential algorithm.
-     * @param const stdair::ForecastingMethod&
-     *        States which forecasting method should be used by the
-     *        revenue management (RMOL component).
-     * @param const stdair::PartnershipTechnique&
-     *        States which partnership technique should be used by both
-     *        the revenue management (RMOL) and inventory control (AirInv).
      */
-    void simulate (const NbOfRuns_T&, const stdair::DemandGenerationMethod&);
-
+    void simulate ();
+    
     /**
      * Optimise (revenue management) a flight-date/network-date
      */
@@ -487,11 +499,19 @@ namespace DSIM {
      * @param const stdair::Date_T& Start date of the simulation.
      * @param const stdair::Date_T& End date of the simulation. 
      * @param const stdair::RandomSeed_T& Seed for the random generation used
-     *        by the demand generation component (TraDemGen).
+     *        by the demand generation component (TraDemGen).  
+     * @param const stdair::DemandGenerationMethod&
+     *        States whether the demand generation must be performed
+     *        following the method based on statistic orders.
+     *        The alternative method, while more "intuitive", is also a
+     *        sequential algorithm.  
+     * @param const NbOfRuns_T& Number of simulation runs to be performed.
      */
     void initConfig (const stdair::Date_T& iStartDate,
 		    const stdair::Date_T& iEndDate,
-		    const stdair::RandomSeed_T&);
+		     const stdair::RandomSeed_T&,
+		     const stdair::DemandGenerationMethod&,
+		     const NbOfRuns_T&);
 
     /**
      * Initialise the (DSim) service context (i.e., the DSIM_ServiceContext
