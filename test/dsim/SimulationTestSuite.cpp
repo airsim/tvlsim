@@ -168,7 +168,8 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   
   DSIM::DSIM_Service dsimService (lLogParams, lStartDate, lEndDate,
-                                  lRandomSeed);
+                                  lRandomSeed, lOrderStatDemandGenMethod,
+				  lNbOfRuns);
 
   // Build the BOM tree from parsing input files
   const stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
@@ -196,8 +197,7 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   
   // Perform a simulation
   // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate (lNbOfRuns,
-                                              lOrderStatDemandGenMethod));
+  BOOST_CHECK_NO_THROW (dsimService.simulate ());
 
   // Close the log file
   logOutputFile.close();

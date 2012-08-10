@@ -38,7 +38,12 @@ namespace DSIM {
     typedef SimulationStatusKey Key_T;
     
   public:
-    // //////////////// Getters /////////////////
+    // //////////////// Getters ///////////////// 
+    /**
+     * Check whether the simulation has ended or not.
+     */
+    bool isTheSimulationDone() const;
+
     /**
      * Get the start date of the simulation.
      */
@@ -65,6 +70,13 @@ namespace DSIM {
      */
     const NbOfRuns_T& getCurrentRun() const {
       return _currentRun;
+    }  
+
+    /**
+     * Get the total number of runs
+     */
+    const NbOfRuns_T& getTotalNumberOfRuns() const {
+      return _totalNumberOfRuns; 
     } 
     
     /**
@@ -174,15 +186,6 @@ namespace DSIM {
      */
     void setTotalNumberOfRuns (const NbOfRuns_T& iNbOfRuns) {
       _totalNumberOfRuns = iNbOfRuns;
-    } 
-
-    /**
-     * Increase the number of the current run
-     */
-    void increaseCurrentNumberOfRun () {
-      if (_currentRun < _totalNumberOfRuns) {
-	_currentRun++;
-      }
     }
 
   public:
@@ -215,6 +218,17 @@ namespace DSIM {
     const std::string describeKey() const {
       return _key.toString();
     }
+
+    /**
+     * Display a short message describing the simulation status before starting 
+     * a run.
+     */
+    void displayStartStatusMessage () const; 
+
+    /**
+     * Display a short message describing the simulation status after a run.
+     */
+    void displayEndStatusMessage () const;
 
   private:
     void describeHelper(std::string&) const;

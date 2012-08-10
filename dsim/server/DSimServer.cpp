@@ -618,7 +618,8 @@ int main (int argc, char* argv[]) {
   // Initialise the simulation context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
-                                  lRandomSeed);
+                                  lRandomSeed, lDemandGenerationMethod, 
+				  lNbOfRuns);
 
   // DEBUG
   STDAIR_LOG_DEBUG ("Initialisation of the DSim server");

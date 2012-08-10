@@ -58,10 +58,13 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
-                              const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate,
-                              const stdair::RandomSeed_T& iRandomSeed)
+  DSIM_Service::DSIM_Service 
+  (const stdair::BasLogParams& iLogParams,
+   const stdair::Date_T& iStartDate,
+   const stdair::Date_T& iEndDate,
+   const stdair::RandomSeed_T& iRandomSeed,
+   const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+   const NbOfRuns_T& iNbOfRuns)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -77,7 +80,8 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
    
     // Init Config
-    initConfig (iStartDate, iEndDate, iRandomSeed);
+    initConfig (iStartDate, iEndDate, iRandomSeed, 
+		iDemandGenerationMethod, iNbOfRuns);
  
     // Initalise the SEVMGR service.
     initSEVMGRService();
@@ -97,11 +101,14 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::DSIM_Service (const stdair::BasLogParams& iLogParams,
-                              const stdair::BasDBParams& iDBParams,
-                              const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate,
-                              const stdair::RandomSeed_T& iRandomSeed)
+  DSIM_Service::DSIM_Service 
+  (const stdair::BasLogParams& iLogParams,
+   const stdair::BasDBParams& iDBParams,
+   const stdair::Date_T& iStartDate,
+   const stdair::Date_T& iEndDate,
+   const stdair::RandomSeed_T& iRandomSeed,
+   const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+   const NbOfRuns_T& iNbOfRuns)
     : _dsimServiceContext (NULL) {
     
     // Initialise the StdAir service handler
@@ -117,7 +124,8 @@ namespace DSIM {
     addStdAirService (lSTDAIR_Service_ptr, ownStdairService); 
 
     // Init Config
-    initConfig (iStartDate, iEndDate, iRandomSeed);
+    initConfig (iStartDate, iEndDate, iRandomSeed, 
+		iDemandGenerationMethod, iNbOfRuns);
 
     // Initalise the SEVMGR service.
     initSEVMGRService();
@@ -137,10 +145,13 @@ namespace DSIM {
   }
 
   // //////////////////////////////////////////////////////////////////////
-  DSIM_Service::DSIM_Service (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
-                              const stdair::Date_T& iStartDate,
-                              const stdair::Date_T& iEndDate,
-                              const stdair::RandomSeed_T& iRandomSeed)
+  DSIM_Service::DSIM_Service 
+  (stdair::STDAIR_ServicePtr_T ioSTDAIR_Service_ptr,
+   const stdair::Date_T& iStartDate,
+   const stdair::Date_T& iEndDate,
+   const stdair::RandomSeed_T& iRandomSeed,
+   const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+   const NbOfRuns_T& iNbOfRuns)
     : _dsimServiceContext (NULL) {
     
     // Initialise the service context
@@ -152,12 +163,13 @@ namespace DSIM {
     addStdAirService (ioSTDAIR_Service_ptr, doesNotOwnStdairService);     
 
     // Init Config
-    initConfig (iStartDate, iEndDate, iRandomSeed);
+    initConfig (iStartDate, iEndDate, iRandomSeed, 
+		iDemandGenerationMethod, iNbOfRuns);
 
     // Initalise the SEVMGR service.
     initSEVMGRService();
 
-    // Initalise the TraDemGen service.
+    // Initalise the TraDemGen service. 
     initTRADEMGENService ();
 
     // Initalise the TravelCCM service.
@@ -283,10 +295,10 @@ namespace DSIM {
     SEVMGR::SEVMGR_ServicePtr_T lSEVMGR_Service_ptr =
       lDSIM_ServiceContext.getSEVMGR_ServicePtr();
 
-    // TODO: do not hardcode the CRS code (e.g., take it from a
-    // configuration file).
-    // Initialise the SIMCRS service handler
-    const SIMCRS::CRSCode_T lCRSCode = "1S";
+    // Look for the CRS code
+    SIMCRS::CRSCode_T lCRSCode ("1S");  
+    lSTDAIR_Service_ptr->exportConfigValue<SIMCRS::CRSCode_T> (lCRSCode, 
+							       "CRS.code");
     
     /**
      * Initialise the SIMCRS service handler.
@@ -374,9 +386,12 @@ namespace DSIM {
   } 
 
 // //////////////////////////////////////////////////////////////////////
-  void DSIM_Service::initConfig (const stdair::Date_T& iStartDate,
-				 const stdair::Date_T& iEndDate,
-				 const stdair::RandomSeed_T& iRandomSeed) {
+  void DSIM_Service::
+  initConfig (const stdair::Date_T& iStartDate,
+	      const stdair::Date_T& iEndDate,
+	      const stdair::RandomSeed_T& iRandomSeed,
+	      const stdair::DemandGenerationMethod& iDemandGenerationMethod,
+	      const NbOfRuns_T& iNbOfRuns) {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -390,7 +405,8 @@ namespace DSIM {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 
-    // Import the start date, the end date and the random seed in the 
+    // Import the start date, the end date, the random seed,
+    // the demand generation method and the number of runs in the 
     // configuration.
     const std::string& lStartDateStr =
       boost::gregorian::to_simple_string(iStartDate);
@@ -400,8 +416,16 @@ namespace DSIM {
     lSTDAIR_Service.importConfigValue (lEndDateStr, "date.end");   
     const std::string& lRandomSeedStr = 
       boost::lexical_cast<std::string> (iRandomSeed);
-    lSTDAIR_Service.importConfigValue (lRandomSeedStr, "random.seed");
-    
+    lSTDAIR_Service.importConfigValue (lRandomSeedStr, "random.seed"); 
+    const std::string& lDemandGenerationMethodStr = 
+      iDemandGenerationMethod.getMethodAsString();   
+    lSTDAIR_Service.importConfigValue (lDemandGenerationMethodStr, 
+				       "demand generation.method");  
+    const std::string& lNbOfRunsStr = 
+      boost::lexical_cast<std::string> (iNbOfRuns); 
+    lSTDAIR_Service.importConfigValue (lNbOfRunsStr, 
+				       "runs.number");  
+
     // Look for a config INI file (which may be present in the conf
     // directory)
     const stdair::ConfigINIFile lConfigINIFile (SYSCONFDIR "/dsim.cfg");
@@ -420,11 +444,19 @@ namespace DSIM {
       lSTDAIR_Service.exportConfigValue<stdair::Date_T> (lEndDate, 
 							 "date.end");
     assert (hasEndDateBeenRetrieved == true);
+    // Look for the number of runs in the configuration holder.  
+    NbOfRuns_T lTotalNumberOfRuns (iNbOfRuns);
+    const bool hasNumberOfRunsBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<NbOfRuns_T> (lTotalNumberOfRuns, 
+						     "runs.number");
+    assert (hasNumberOfRunsBeenRetrieved == true);
  
-    // Update the Simulation Status
+    // Update the Simulation Status with the start date, end date and number 
+    // of runs.
     SimulationStatus& lSimulationStatus =
 	lDSIM_ServiceContext.getSimulationStatus(); 
-    lSimulationStatus.setSimulationPeriod (lStartDate, lEndDate);
+    lSimulationStatus.setSimulationPeriod (lStartDate, lEndDate); 
+    lSimulationStatus.setTotalNumberOfRuns(lTotalNumberOfRuns);
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -975,18 +1007,10 @@ namespace DSIM {
                                                     "has not been initialised");
     }
     assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext; 
-
-    //
-    // TODO: STOP hardcoding !!!
-    // Making a service to enable Json import of those values.
-    //
-    // Number of Run
-    const NbOfRuns_T lNbOfRuns = 1;
-    // Demand generation method.
-    const stdair::DemandGenerationMethod lDemandGenerationMethod ('S');
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
     
-    simulate (lNbOfRuns, lDemandGenerationMethod);
+    // Launch the simulation
+    simulate ();
 
     // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
@@ -1284,11 +1308,10 @@ namespace DSIM {
 
     return lSimulationStatus.describe();
   }
-  
+
   // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
-  simulate (const NbOfRuns_T& iNbOfRuns,
-            const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
+  simulate () {
 
     // Retrieve the DSim service context
     if (_dsimServiceContext == NULL) {
@@ -1296,16 +1319,11 @@ namespace DSIM {
                                                     "been initialised");
     }
     assert (_dsimServiceContext != NULL);
-    DSIM_ServiceContext& lDSIM_ServiceContext= *_dsimServiceContext;
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;
 
     // Get a reference on the Simulation Status
     SimulationStatus& lSimulationStatus =
-      lDSIM_ServiceContext.getSimulationStatus();  
-
-    // TODO: gsabatier
-    // Removed this line. The number of runs will be in 
-    // parsed from the config file
-    lSimulationStatus.setTotalNumberOfRuns (iNbOfRuns);
+      lDSIM_ServiceContext.getSimulationStatus();
 
     // Get a reference on the SIMCRS service handler
     SIMCRS::SIMCRS_Service& lSIMCRS_Service =
@@ -1321,44 +1339,46 @@ namespace DSIM {
 
     // Get a reference on the STDAIR service handler
     stdair::STDAIR_Service& lSTDAIR_Service =
-      lDSIM_ServiceContext.getSTDAIR_Service();
+      lDSIM_ServiceContext.getSTDAIR_Service(); 
+
+    // Extract the demand generation method from the config holder
+    char lChar;
+    const bool hasDemandGenMethodBeenRetrieved = 
+      lSTDAIR_Service.exportConfigValue<char> (lChar, 
+					       "demand generation.method"); 
+    assert (hasDemandGenMethodBeenRetrieved == true);
+    const stdair::DemandGenerationMethod lDemandGenerationMethod (lChar);
  
     // Get the number of the current run
-    const NbOfRuns_T& lCurrentRun = lSimulationStatus.getCurrentRun();
-    for (NbOfRuns_T idx = lCurrentRun; idx <= iNbOfRuns; ++idx) {
-    
-      // 
-      const SimulationMode& lSimulationModeAtBeginning = 
-	lSimulationStatus.getSimulationMode();
-      if (lSimulationModeAtBeginning == SimulationMode::DONE) {
-	prepareNewRun();
-	// DEBUG
-	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] begins - "
-			  << lDSIM_ServiceContext.display());
-      } else if (lSimulationModeAtBeginning == SimulationMode::BREAK) {
-	// DEBUG
-	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] continues - "
-			  << lDSIM_ServiceContext.display());
-      }
+    while (lSimulationStatus.isTheSimulationDone() == false) { 
 
-      // Delegate the booking to the dedicated command
+      if (lSimulationStatus.getMode() == SimulationMode::DONE) {
+	prepareNewRun(); 
+      }	 
+
+      const NbOfRuns_T& lCurrentRun = lSimulationStatus.getCurrentRun();
+
+      // DEBUG
+      lSimulationStatus.displayStartStatusMessage();	
+      STDAIR_LOG_DEBUG ("Simulation[" << lCurrentRun << "] begins"
+			<< " - " << lDSIM_ServiceContext.display());
+
+      // Delegate the bookings to the dedicated command
       stdair::BasChronometer lSimulationChronometer;
       lSimulationChronometer.start();
       Simulator::simulate (lSIMCRS_Service, lTRADEMGEN_Service,
                            lTRAVELCCM_Service, lSTDAIR_Service,
-                           lSimulationStatus, iDemandGenerationMethod);
+                           lSimulationStatus, lDemandGenerationMethod);
       const double lSimulationMeasure = lSimulationChronometer.elapsed();	
 
-      // Has a break point been encountered or is the run finished?
-      const SimulationMode& lSimulationModeAtTheEnd = 
-	lSimulationStatus.getSimulationMode();
-      if (lSimulationModeAtTheEnd == SimulationMode::BREAK) {
-	return;
-      } else if (lSimulationModeAtTheEnd == SimulationMode::DONE) { 
-	// DEBUG
-	STDAIR_LOG_DEBUG ("Simulation[" << idx << "] ends: " << lSimulationMeasure
-			  << " - " << lDSIM_ServiceContext.display());
-      }
+      // DEBUG 
+      lSimulationStatus.displayEndStatusMessage();	
+      STDAIR_LOG_DEBUG ("Simulation[" << lCurrentRun << "] ends: " << lSimulationMeasure
+			<< " - " << lDSIM_ServiceContext.display());
+
+       if (lSimulationStatus.getMode() == SimulationMode::BREAK) {
+	 return;
+      }	
     }
   }
 

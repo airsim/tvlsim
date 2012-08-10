@@ -1214,7 +1214,8 @@ int main (int argc, char* argv[]) {
   // Initialise the simulation context
   const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
   DSIM::DSIM_Service dsimService (lLogParams, lDBParams, lStartDate, lEndDate,
-                                  lRandomSeed);
+                                  lRandomSeed, lDemandGenerationMethod, 
+				  lNbOfRuns);
  
   // Check wether or not (CSV) input files should be read
   if (isBuiltin == true) {
@@ -1392,7 +1393,7 @@ int main (int argc, char* argv[]) {
     case Command_T::RUN: {
 
        // Perform a simulation
-      dsimService.simulate (lNbOfRuns, lDemandGenerationMethod);
+      dsimService.simulate ();
       break;
     }
 

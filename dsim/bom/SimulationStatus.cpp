@@ -19,7 +19,8 @@ namespace DSIM {
       _endDate (DEFAULT_SIMULATION_END_DATE),   
       _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
       _currentRun (DEFAULT_NUMBER_OF_RUNS),
-      _currentNbOfBookings (0),  
+      _currentNbOfBookings (0),
+      _totalNbOfBookings (0),
       _totalElapsedTime (0),    
       _estimatedRemainingTime (0),     
       _currentElapsedTime (0),
@@ -34,8 +35,9 @@ namespace DSIM {
       _currentDate (DEFAULT_SIMULATION_START_DATE),     
       _endDate (DEFAULT_SIMULATION_END_DATE),   
       _totalNumberOfRuns (DEFAULT_NUMBER_OF_RUNS),
-      _currentRun (DEFAULT_NUMBER_OF_RUNS),
-      _currentNbOfBookings (0),  
+      _currentRun (0),
+      _currentNbOfBookings (0), 
+      _totalNbOfBookings (0),  
       _totalElapsedTime (0),    
       _estimatedRemainingTime (0),  
       _currentElapsedTime  (0),      
@@ -52,6 +54,7 @@ namespace DSIM {
       _totalNumberOfRuns (iSimulationStatus._totalNumberOfRuns),
       _currentRun (iSimulationStatus._currentRun),
       _currentNbOfBookings (iSimulationStatus._currentNbOfBookings), 
+      _totalNbOfBookings (iSimulationStatus._totalNbOfBookings),
       _totalElapsedTime (iSimulationStatus._totalElapsedTime),    
       _estimatedRemainingTime (iSimulationStatus._estimatedRemainingTime), 
       _currentElapsedTime (iSimulationStatus._currentElapsedTime),
@@ -71,16 +74,25 @@ namespace DSIM {
  
     // Update the current progress status
     _currentProgressStatus = iProgressStatus;
-      
-    // Get the current number to
-    /** const stdair::Count_T& lCurrentNb = iProgressStatus.getCurrentNb(); 
-    _overallProgressStatus.setCurrentNb(iProgressStatus);
+  }
+ 
+  // //////////////////////////////////////////////////////////////////////
+  bool SimulationStatus::isTheSimulationDone() const {
 
-    // Get the actual number.
-    const stdair::Count_T& lActualNb = iProgressStatus.getActualNb(); 
-    // Mutilpy it by the number of runs
-    const stdair::Count_T& lGlobalCurrentNb = lActualNb * _totalNumberOfRuns;
-    _overallProgressStatus.setActualNb(iProgressStatus);*/
+    bool isTheSimulationDone = false;
+
+    if (_simulationMode == SimulationMode::DONE) {
+      if (_currentRun >= _totalNumberOfRuns) {
+	isTheSimulationDone = true;
+	return isTheSimulationDone;
+      } else { 
+	return isTheSimulationDone;
+      }
+    } else {  
+      return isTheSimulationDone;
+    }      
+
+    return isTheSimulationDone;
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -218,7 +230,78 @@ namespace DSIM {
     _currentProgressStatus.reset();
     _progressStatusMap.clear();
     _chronometerMap.clear();
+
+    // Increase the current run number.
+    _currentRun++;
    
+  }  
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::displayStartStatusMessage () const {  
+
+    std::ostringstream oStr;
+	
+    switch (_simulationMode.getMode()) {
+    case SimulationMode::START:   
+    case SimulationMode::DONE:	
+      // DEBUG
+      oStr << "Simulation";
+      if (_totalNumberOfRuns > 1) {
+	oStr << " [" <<_currentRun << "/" << _totalNumberOfRuns << "]";
+      }
+      oStr << " is starting..." << std::endl;  
+      std::cout << oStr.str() << std::endl;    
+      STDAIR_LOG_DEBUG (oStr.str());
+      break;
+
+    case SimulationMode::BREAK:	 
+
+      // DEBUG
+      oStr << "Resuming the Simulation ";
+      if (_totalNumberOfRuns > 1) {
+	oStr << "[" <<_currentRun << "/" << _totalNumberOfRuns << "]"
+	     << std::endl;  
+      } 
+      std::cout << oStr.str() << std::endl;  
+      STDAIR_LOG_DEBUG (oStr.str());
+      break; 
+ 
+    case SimulationMode::RUNNING:
+    default :
+      break;
+    } 
+  } 
+
+  // //////////////////////////////////////////////////////////////////////
+  void SimulationStatus::displayEndStatusMessage () const {  
+
+    std::ostringstream oStr;
+
+    switch (_simulationMode.getMode()) {  
+    case SimulationMode::DONE:	
+      // DEBUG
+      oStr << "Simulation";
+      if (_totalNumberOfRuns > 1) {
+	oStr << " [" <<_currentRun << "/" << _totalNumberOfRuns << "]";
+      }
+      oStr << " has ended." << std::endl;  
+      std::cout << oStr.str() << std::endl;    
+      STDAIR_LOG_DEBUG (oStr.str());
+      break;
+
+    case SimulationMode::BREAK:		
+
+      // DEBUG
+      std::cout << "The simulation has stopped on '" << _currentDate
+		<< "': break point encountered.\n" << describe() << std::endl; 
+      STDAIR_LOG_DEBUG ("Break point encountered\n" << describe());
+      break; 
+  
+    case SimulationMode::START:  
+    case SimulationMode::RUNNING:
+    default :
+      break;
+    } 
   }
    
   // //////////////////////////////////////////////////////////////////////
@@ -245,8 +328,12 @@ namespace DSIM {
 
     //
     // Add the number of the run
-    // 
-    oStr << "Current Run (" << _currentRun 
+    //
+    NbOfRuns_T lRunNumberToDisplay = _currentRun;
+    if (lRunNumberToDisplay > _totalNumberOfRuns) {
+      lRunNumberToDisplay--;
+    } 
+    oStr << "Current Run (" << lRunNumberToDisplay 
 	 << "/"  << _totalNumberOfRuns << ")"
 	 << std::endl;   
     

@@ -48,12 +48,9 @@ namespace DSIM {
 	    stdair::STDAIR_Service& ioSTDAIR_Service,
 	    SimulationStatus& ioSimulationStatus,
 	    const stdair::DemandGenerationMethod& iDemandGenerationMethod) {
- 
-    std::ostringstream oBeginStr;
-    if (ioSimulationStatus.getMode() == SimulationMode::START) {  
 
-      // DEBUG
-      oBeginStr << "Starting the simulation..." << std::endl;
+    if (ioSimulationStatus.getMode() == SimulationMode::START ||
+	ioSimulationStatus.getMode() == SimulationMode::DONE) {  
  
       /**
 	 Initialisation step.
@@ -71,17 +68,10 @@ namespace DSIM {
 			<< lExpectedNbOfEventsToBeGenerated << ", actual: "
 			<< lActualNbOfEventsToBeGenerated);
 
-    } else if (ioSimulationStatus.getMode() == SimulationMode::BREAK) {    
- 
-      // DEBUG 
-      oBeginStr << "Resuming the simulation..." << std::endl;
-    } 
+    }
 
     // Change the current mode of the simulation status
     ioSimulationStatus.setMode (SimulationMode::RUNNING);
-    
-    std::cout << oBeginStr.str() << std::endl;
-    STDAIR_LOG_DEBUG (oBeginStr.str());   
 
     // Initialise the (Boost) progress display object
     //boost::progress_display lProgressDisplay(lActualNbOfEventsToBeGenerated);
@@ -148,15 +138,6 @@ namespace DSIM {
 	// Change the current mode of the simulation status
 	ioSimulationStatus.setMode (SimulationMode::BREAK);
 	updateStatus (ioTRADEMGEN_Service, lEventType, ioSimulationStatus);
-        // DEBUG
-        std::cout << "The simulation has stopped on '"
-                  << ioSimulationStatus.getCurrentDate()
-                  << "': break point encountered.\n"
-                  << ioSimulationStatus.describe()
-                  << std::endl; 
-        STDAIR_LOG_DEBUG ("Break point encountered\n"
-                          << ioSimulationStatus.describe());
-        
 	return;
 	break;
 
@@ -180,13 +161,6 @@ namespace DSIM {
 
     // Change the current mode of the simulation status
     ioSimulationStatus.setMode (SimulationMode::DONE);
-    ioSimulationStatus.increaseCurrentNumberOfRun();	
-       
-    // DEBUG  
-    std::ostringstream oEndStr;
-    oEndStr << "The simulation has ended." << std::endl; 
-    std::cout << oEndStr.str() << std::endl;
-    STDAIR_LOG_DEBUG (oEndStr.str());
   } 
 
   // ////////////////////////////////////////////////////////////////////
