@@ -28,4 +28,9 @@ namespace DSIM {
    */
   const NbOfRuns_T DEFAULT_NUMBER_OF_RUNS (1);
 
+  /**
+   * Default config INI file (e.g., "dsim.cfg").
+   */
+  extern const stdair::ConfigINIFile DEFAULT_CONFIG_INI_FILE ("dsim.cfg");
+
 }
