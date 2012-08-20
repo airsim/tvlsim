@@ -1,3 +1,4 @@
+
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
@@ -39,11 +40,12 @@
 #include <dsim/basic/BasConst_DSIM_Service.hpp>
 #include <dsim/basic/SimulationMode.hpp>
 #include <dsim/bom/BomJSONExport.hpp>
+#include <dsim/bom/ConfigImport.hpp>
+#include <dsim/bom/ConfigExport.hpp>
 #include <dsim/factory/FacDsimServiceContext.hpp>
 #include <dsim/command/Simulator.hpp>
 #include <dsim/service/DSIM_ServiceContext.hpp>
 #include <dsim/DSIM_Service.hpp>
-#include <dsim/config/dsim-paths.hpp>
 
 namespace DSIM {
 
@@ -385,7 +387,7 @@ namespace DSIM {
     // calling the buildSampleBom() method
   } 
 
-// //////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////
   void DSIM_Service::
   initConfig (const stdair::Date_T& iStartDate,
 	      const stdair::Date_T& iEndDate,
@@ -405,58 +407,20 @@ namespace DSIM {
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
 
-    // Import the start date, the end date, the random seed,
-    // the demand generation method and the number of runs in the 
-    // configuration.
-    const std::string& lStartDateStr =
-      boost::gregorian::to_simple_string(iStartDate);
-    lSTDAIR_Service.importConfigValue (lStartDateStr, "date.start");    
-    const std::string& lEndDateStr =
-      boost::gregorian::to_simple_string(iEndDate); 
-    lSTDAIR_Service.importConfigValue (lEndDateStr, "date.end");   
-    const std::string& lRandomSeedStr = 
-      boost::lexical_cast<std::string> (iRandomSeed);
-    lSTDAIR_Service.importConfigValue (lRandomSeedStr, "random.seed"); 
-    const std::string& lDemandGenerationMethodStr = 
-      iDemandGenerationMethod.getMethodAsString();   
-    lSTDAIR_Service.importConfigValue (lDemandGenerationMethodStr, 
-				       "demand generation.method");  
-    const std::string& lNbOfRunsStr = 
-      boost::lexical_cast<std::string> (iNbOfRuns); 
-    lSTDAIR_Service.importConfigValue (lNbOfRunsStr, 
-				       "runs.number");  
-
-    // Look for a config INI file (which may be present in the conf
-    // directory)
-    const stdair::ConfigINIFile lConfigINIFile (SYSCONFDIR "/dsim.cfg");
-
-    // Try to import the configuration
-    lSTDAIR_Service.importINIConfig (lConfigINIFile);  
-
-    // Look for the start and end date in the configuration holder.
-    stdair::Date_T lStartDate (iStartDate);
-    const bool hasStartDateBeenRetrieved = 
-      lSTDAIR_Service.exportConfigValue<stdair::Date_T> (lStartDate, 
-							 "date.start"); 
-    assert (hasStartDateBeenRetrieved == true);
-    stdair::Date_T lEndDate (iEndDate);
-    const bool hasEndDateBeenRetrieved = 
-      lSTDAIR_Service.exportConfigValue<stdair::Date_T> (lEndDate, 
-							 "date.end");
-    assert (hasEndDateBeenRetrieved == true);
-    // Look for the number of runs in the configuration holder.  
-    NbOfRuns_T lTotalNumberOfRuns (iNbOfRuns);
-    const bool hasNumberOfRunsBeenRetrieved = 
-      lSTDAIR_Service.exportConfigValue<NbOfRuns_T> (lTotalNumberOfRuns, 
-						     "runs.number");
-    assert (hasNumberOfRunsBeenRetrieved == true);
- 
-    // Update the Simulation Status with the start date, end date and number 
-    // of runs.
+    // Load the input config parameters and try to retrieve the input config
+    // files.
+    ConfigImport::importINI (lSTDAIR_Service, iStartDate, iEndDate,
+                             iRandomSeed, iDemandGenerationMethod, iNbOfRuns);
+    
+    // Retrieve the Simulation Status
     SimulationStatus& lSimulationStatus =
-	lDSIM_ServiceContext.getSimulationStatus(); 
-    lSimulationStatus.setSimulationPeriod (lStartDate, lEndDate); 
-    lSimulationStatus.setTotalNumberOfRuns(lTotalNumberOfRuns);
+	lDSIM_ServiceContext.getSimulationStatus();
+
+    // Update the simulation status with the correct start date, end date and
+    // number of runs
+    ConfigExport::updateSimulationStatus (lSTDAIR_Service, lSimulationStatus,
+                                          iStartDate, iEndDate, iNbOfRuns);
+    
   }
 
   // //////////////////////////////////////////////////////////////////////
@@ -535,22 +499,13 @@ namespace DSIM {
     // Retrieve the StdAir service object from the (DSIM) service context
     stdair::STDAIR_Service& lSTDAIR_Service =
       lDSIM_ServiceContext.getSTDAIR_Service();
-    
-    // Import the input files names into the configuration
-    lSTDAIR_Service.importConfigValue (iScheduleInputFilename.name(), 
-				       "input.schedule");    
-    lSTDAIR_Service.importConfigValue (iODInputFilename.name(), 
-				       "input.ond");   
-    lSTDAIR_Service.importConfigValue (iFRAT5InputFilename.name(), 
-				       "input.frat5"); 
-    lSTDAIR_Service.importConfigValue (iFFDisutilityInputFilename.name(), 
-				       "input.ffdisutility");    
-    lSTDAIR_Service.importConfigValue (iYieldInputFilepath.name(), 
-				       "input.yield");   
-    lSTDAIR_Service.importConfigValue (iFareInputFilepath.name(), 
-				       "input.fare");  
-    lSTDAIR_Service.importConfigValue (iDemandFilepath.name(), 
-				       "input.demand");
+
+    // Load the file names into the configuration holder
+    ConfigImport::importFiles (lSTDAIR_Service, iScheduleInputFilename,
+                               iODInputFilename, iFRAT5InputFilename,
+                               iFFDisutilityInputFilename, iYieldInputFilepath,
+                               iFareInputFilepath, iDemandFilepath);
+
   } 
 
   // ////////////////////////////////////////////////////////////////////
