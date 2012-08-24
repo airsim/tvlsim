@@ -897,7 +897,10 @@ namespace DSIM {
     case stdair::JSonCommand::CONFIG:{ 
       // Retrieve the StdAir service object from the (DSim) service context
       stdair::STDAIR_Service& lSTDAIR_Service =
-	lDSIM_ServiceContext.getSTDAIR_Service();  
+	lDSIM_ServiceContext.getSTDAIR_Service();
+      // Try to import the JSON-ified string
+      lSTDAIR_Service.jsonImportConfiguration (iJSONString);
+      // Display the new configuration tree
       return lSTDAIR_Service.jsonExportConfiguration();
     }						  
     default: {
