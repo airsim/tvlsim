@@ -7,6 +7,7 @@
 
 # * SimulationTestSuite Test Suite
 module_test_add_suite (dsim SimulationTestSuite SimulationTestSuite.cpp)
+module_test_add_suite (dsim PartnerSimulationTestSuite PartnerSimulationTestSuite.cpp)
 
 
 ##
