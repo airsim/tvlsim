@@ -14,8 +14,11 @@ set_project_versions (0 1 0)
 ##
 # Project options
 # The parameters are:
+# The parameters are:
+#  * whether or not the tests must be compiled and run
 #  * whether or not the documentation must be built and installed
-set_project_options (on on)
+#  * whether or not the code coverage must be performed
+set_project_options (on on off)
 
 
 #####################################
@@ -40,7 +43,8 @@ packaging_set_other_options (TBZ2 "TBZ2;TGZ")
 #
 get_external_libs (git "python 2.6" "boost 1.41" readline mysql "soci 3.0"
   "stdair 0.45" "trademgen 0.1" "travelccm 0.5" "airsched 0.1" "sevmgr 0.1"
-  "airrac 0.2" "rmol 0.25" "airinv 0.1" "simfqt 0.1" "simcrs 0.1" doxygen)
+  "airrac 0.2" "rmol 0.25" "airinv 0.1" "simfqt 0.1" "simcrs 0.1" doxygen 
+  "gcov 4.6.3" "lcov 1.9")
 
 
 ##############################################
@@ -86,6 +90,12 @@ init_test ()
 ##
 # Test suites
 add_test_suite (${PROJECT_NAME})
+
+
+#######################################
+##             GCOV                 ##
+#######################################
+gcov_task()
 
 
 #######################################
