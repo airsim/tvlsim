@@ -12,7 +12,7 @@
 // Boost Unit Test Framework (UTF)
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE DSimTest
+#define BOOST_TEST_MODULE SimulationTestSuite
 #include <boost/test/unit_test.hpp>
 // StdAir
 #include <stdair/stdair_exceptions.hpp>
@@ -49,19 +49,19 @@ struct UnitTestConfig {
   }
 };
 
-
-// /////////////// Main: Unit Test Suite //////////////
-
-// Set the UTF configuration (re-direct the output to a specific file)
-BOOST_GLOBAL_FIXTURE (UnitTestConfig);
-
-// Start the test suite
-BOOST_AUTO_TEST_SUITE (master_test_suite)
-
+// //////////////////////////////////////////////////////////////////////
 /**
- * Test a simple simulation
+ * Perform a simple simulation
  */
-BOOST_AUTO_TEST_CASE (simple_simulation_test) {
+void SimulationTest (const unsigned short iTestFlag,
+                     const stdair::Filename_T iScheduleInputFilename,
+                     const stdair::Filename_T iOnDInputFilename,
+                     const stdair::Filename_T iFRAT5InputFilename,
+                     const stdair::Filename_T iFFDisutilityInputFilename,
+                     const stdair::Filename_T iYieldInputFilename,
+                     const stdair::Filename_T iFareInputFilename,
+                     const stdair::Filename_T iDemandInputFilename,
+                     const bool isBuiltin) {
 
   // Method for the demand generation (here, statistics order)
   const stdair::DemandGenerationMethod lOrderStatDemandGenMethod =
@@ -79,9 +79,80 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Number of simulation runs to be performed
   const DSIM::NbOfRuns_T lNbOfRuns (1);
 
-  // Demand input file name
-  const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
-                                                 "/rds01/demand.csv");
+  // Output log File
+  std::ostringstream oStr;
+  oStr << "SimpleSimulationTestSuite_" << iTestFlag << ".log";
+  const stdair::Filename_T lLogFilename (oStr.str());
+
+  // Set the log parameters
+  std::ofstream logOutputFile;
+  // Open and clean the log outputfile
+  logOutputFile.open (lLogFilename.c_str());
+  logOutputFile.clear();
+  
+  // Initialise the simulation context
+  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
+  
+  DSIM::DSIM_Service dsimService (lLogParams, lStartDate, lEndDate,
+                                  lRandomSeed, lOrderStatDemandGenMethod,
+				  lNbOfRuns);
+
+  // Check wether or not a (CSV) input file should be read
+  if (isBuiltin == true) {
+
+    // Build the default sample BOM tree (filled with fares) for Simfqt
+    dsimService.buildSampleBom();
+
+  } else {
+
+    // Retrieve the input file path
+    const stdair::ScheduleFilePath lScheduleFilePath (iScheduleInputFilename);
+    const stdair::ODFilePath lODFilePath (iOnDInputFilename);
+    const stdair::FRAT5FilePath lFRAT5FilePath (iFRAT5InputFilename);
+    const stdair::FFDisutilityFilePath lFFDisutilityFilePath (iFFDisutilityInputFilename);
+    const AIRRAC::YieldFilePath lYieldFilePath (iYieldInputFilename);
+    const SIMFQT::FareFilePath lFareFilePath (iFareInputFilename);
+    const TRADEMGEN::DemandFilePath lDemandFilePath (iDemandInputFilename);
+
+    // Load the input files
+    dsimService.setInputFiles(lScheduleFilePath, 
+                              lODFilePath, 
+                              lFRAT5FilePath,
+                              lFFDisutilityFilePath, 
+                              lYieldFilePath,
+                              lFareFilePath,
+                              lDemandFilePath);
+	 
+    // Parse the input files 
+    dsimService.parseAndLoad ();   
+  }
+  
+  // Initialise the snapshot and RM events
+  dsimService.initSnapshotAndRMEvents();
+  
+  // Perform a simulation
+  dsimService.simulate ();
+
+  // Close the log file
+  logOutputFile.close();
+
+}
+
+// /////////////// Main: Unit Test Suite //////////////
+
+// Set the UTF configuration (re-direct the output to a specific file)
+BOOST_GLOBAL_FIXTURE (UnitTestConfig);
+
+// Start the test suite
+BOOST_AUTO_TEST_SUITE (master_test_suite)
+
+/**
+ * Test a simple simulation
+ */
+BOOST_AUTO_TEST_CASE (simple_simulation_test) {
+
+  // State whether the BOM tree should be built-in or parsed from input files
+  const bool isBuiltin = false;
 
   // Schedule input file name
   const stdair::Filename_T lScheduleInputFilename (STDAIR_SAMPLE_DIR
@@ -105,102 +176,37 @@ BOOST_AUTO_TEST_CASE (simple_simulation_test) {
   // Fare input file name
   const stdair::Filename_T lFareInputFilename (STDAIR_SAMPLE_DIR
                                                "/rds01/fare.csv");
-
-  // Check that the file path given as input corresponds to an actual file
-  bool doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lScheduleInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lScheduleInputFilename
-                       << "' input file can not be open and read");
-
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lOnDInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lOnDInputFilename
-                       << "' input file can not be open and read");
   
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lFRAT5InputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lFRAT5InputFilename
-                       << "' input file can not be open and read");
-  
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lFFDisutilityInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lFFDisutilityInputFilename
-                       << "' input file can not be open and read");
+  // Demand input file name
+  const stdair::Filename_T lDemandInputFilename (STDAIR_SAMPLE_DIR
+                                                 "/rds01/demand.csv");
 
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lDemandInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lDemandInputFilename
-                       << "' input file can not be open and read");
+  // Simulate
+  BOOST_CHECK_NO_THROW (SimulationTest(0,
+                                       lScheduleInputFilename, 
+                                       lOnDInputFilename, 
+                                       lFRAT5InputFilename,
+                                       lFFDisutilityInputFilename,
+                                       lYieldInputFilename,
+                                       lFareInputFilename,
+                                       lDemandInputFilename,
+                                       isBuiltin));
+}
 
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lFareInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lFareInputFilename
-                       << "' input file can not be open and read");
+/**
+ * Test a simple simulation
+ */
+BOOST_AUTO_TEST_CASE (default_bom_simulation_test) {
 
-  // Check that the file path given as input corresponds to an actual file
-  doesExistAndIsReadable =
-    stdair::BasFileMgr::doesExistAndIsReadable (lYieldInputFilename);
-  BOOST_CHECK_MESSAGE (doesExistAndIsReadable == true,
-                       "The '" << lYieldInputFilename
-                       << "' input file can not be open and read");
+  // State whether the BOM tree should be built-in or parsed from input files
+  const bool isBuiltin = true;
 
-  // Output log File
-  const stdair::Filename_T lLogFilename ("SimulationTestSuite.log");
+  // Simulate
+  BOOST_CHECK_NO_THROW (SimulationTest(1,
+                                       " ", " ", " ", " ", " ", " ", " ",
+                                       isBuiltin));
 
-  // Set the log parameters
-  std::ofstream logOutputFile;
-  // Open and clean the log outputfile
-  logOutputFile.open (lLogFilename.c_str());
-  logOutputFile.clear();
-  
-  // Initialise the simulation context
-  const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-  
-  DSIM::DSIM_Service dsimService (lLogParams, lStartDate, lEndDate,
-                                  lRandomSeed, lOrderStatDemandGenMethod,
-				  lNbOfRuns);
-
-  // Build the BOM tree from parsing input files
-  const stdair::ScheduleFilePath lScheduleFilePath (lScheduleInputFilename);
-  const stdair::ODFilePath lODFilePath (lOnDInputFilename);
-  const stdair::FRAT5FilePath lFRAT5FilePath (lFRAT5InputFilename);
-  const stdair::FFDisutilityFilePath lFFDisutilityFilePath (lFFDisutilityInputFilename);
-  const SIMFQT::FareFilePath lFareFilePath (lFareInputFilename);
-  const AIRRAC::YieldFilePath lYieldFilePath (lYieldInputFilename);
-  const TRADEMGEN::DemandFilePath lDemandFilePath (lDemandInputFilename);
-
-  // Load the input files
-  BOOST_CHECK_NO_THROW (dsimService.setInputFiles(lScheduleFilePath, 
-						  lODFilePath, 
-						  lFRAT5FilePath,
-						  lFFDisutilityFilePath, 
-						  lYieldFilePath,
-						  lFareFilePath, 
-						  lDemandFilePath));
-	 
-  // Parse the input files 
-  BOOST_CHECK_NO_THROW (dsimService.parseAndLoad ());
-
-  // Initialise the snapshot and RM events
-  BOOST_CHECK_NO_THROW (dsimService.initSnapshotAndRMEvents());
-  
-  // Perform a simulation
-  // BOOST_CHECK_THROW (dsimService.simulate(), stdair::EventException);
-  BOOST_CHECK_NO_THROW (dsimService.simulate ());
-
-  // Close the log file
-  logOutputFile.close();
+ 
 }
 
 // End the test suite
