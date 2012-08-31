@@ -78,9 +78,25 @@ namespace DSIM {
 
   // //////////////////////////////////////////////////////////////////////
   void DSIM_ServiceContext::reset() {
-    if (_ownStdairService == true) {
-      _stdairService.reset();
-    }
+
+    // The shared_ptr<>::reset() method drops the refcount by one.
+    // If the count result is dropping to zero, the resource pointed to
+    // by the shared_ptr<> will be freed.
+    
+    // Reset the simcrs shared pointer
+    _simcrsService.reset();
+
+    // Reset the trademgen shared pointer
+    _trademgenService.reset();
+
+    // Reset the travelccm shared pointer
+    _travelccmService.reset();
+
+    // Reset the sevmgr shared pointer
+    _sevmgrService.reset();
+
+    // Reset the stdair shared pointer
+    _stdairService.reset();
   }
 
 }
