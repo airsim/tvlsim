@@ -161,6 +161,7 @@ struct Command_T {
     LIST_FLIGHT_DATE,
     DISPLAY_FLIGHT_DATE,
     DISPLAY_STATUS,
+    DISPLAY_CONFIG,
     SELL,
     SET_BREAK_POINT,
     JSON_LIST_EVENT,
@@ -517,7 +518,8 @@ void initReadline (swift::SReadline& ioInputReader) {
   Completers.push_back ("help");
   Completers.push_back ("run");
   Completers.push_back ("reset");
-  Completers.push_back ("optimise");  
+  Completers.push_back ("optimise");
+  Completers.push_back ("display_config");
   Completers.push_back ("display_status");
   Completers.push_back ("display_flight_date");  
   Completers.push_back ("list_event");
@@ -854,6 +856,9 @@ Command_T::Type_T extractCommand (TokenList_T& ioTokenList) {
 
     } else if (lCommand == "display_status") {
       oCommandType = Command_T::DISPLAY_STATUS;
+      
+    } else if (lCommand == "display_config") {
+      oCommandType = Command_T::DISPLAY_CONFIG;
 
     } else if (lCommand == "display_flight_date") {
       oCommandType = Command_T::DISPLAY_FLIGHT_DATE;
@@ -1291,6 +1296,8 @@ int main (int argc, char* argv[]) {
                 << std::endl;
       std::cout << " quit" << "\t\t\t\t" << "Quit the application."
                 << std::endl;
+      std::cout << " display_config" << "\t\t\t" << "Display the configuration."
+                << std::endl;
       std::cout << " display_status" << "\t\t\t" 
 		<< "Display the simulation status."
                 << std::endl;
@@ -1386,6 +1393,19 @@ int main (int argc, char* argv[]) {
  
       // ////////////////////////////// Quit ////////////////////////
     case Command_T::QUIT: {
+      break;
+    }
+
+      // ////////////////////////////// Quit ////////////////////////
+    case Command_T::DISPLAY_CONFIG: {
+
+      //
+      std::ostringstream oConfigStr;
+
+      // Display the config
+      oConfigStr << dsimService.configDisplay () << std::endl;
+      std::cout << oConfigStr.str();
+      STDAIR_LOG_DEBUG (oConfigStr.str());
       break;
     }
 

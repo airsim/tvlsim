@@ -346,7 +346,15 @@ namespace DSIM {
      * @return std::string Output string in which the BOM tree is
      *        logged/dumped.
      */
-    std::string csvDisplay() const;  
+    std::string csvDisplay() const;
+
+    /**
+     * Display (dump in the returned string) the configuration.
+     *
+     * @return std::string Output string in which the configuration is
+     *        logged/dumped.
+     */
+    std::string configDisplay () const; 
 
     /**
      * Display (dump in the returned string) the event list of the event queue.

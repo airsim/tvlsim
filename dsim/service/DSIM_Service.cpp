@@ -1398,6 +1398,26 @@ namespace DSIM {
     STDAIR_LOG_DEBUG ("Sample service for Dsim: " << lDsimMeasure);
   }
 
+  // //////////////////////////////////////////////////////////////////////
+  std::string DSIM_Service::configDisplay () const {
+
+    // Retrieve the DSim service context
+    if (_dsimServiceContext == NULL) {
+      throw stdair::NonInitialisedServiceException ("The DSim service "
+                                                    "has not been initialised");
+    }
+    assert (_dsimServiceContext != NULL);
+    DSIM_ServiceContext& lDSIM_ServiceContext = *_dsimServiceContext;  
+
+    // Retrieve the StdAir service object from the (DSIM) service context
+    stdair::STDAIR_Service& lSTDAIR_Service =
+      lDSIM_ServiceContext.getSTDAIR_Service();
+
+    // Display (dump in the returned string) the configuration.
+    return lSTDAIR_Service.configDisplay (); 
+  }
+
+
   // ////////////////////////////////////////////////////////////////////
   void DSIM_Service::optimise (const stdair::RMEventStruct& iRMEvent) {
 
