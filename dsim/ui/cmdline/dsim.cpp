@@ -688,7 +688,7 @@ void parseDateKey (const TokenList_T& iTokenList,
       } catch (boost::bad_lexical_cast& eCast) {
         std::cerr << "The year of the date ('" << *itTok
                   << "') cannot be understood. The default value ("
-                  << ioDateYear << ") is kept. " << std::endl;
+                  << ioDate << ") is kept. " << std::endl;
         return;
       }
 
@@ -709,7 +709,7 @@ void parseDateKey (const TokenList_T& iTokenList,
           if (isMonthANumber == true) {
             const unsigned short lMonth =
               boost::lexical_cast<unsigned short> (*itTok);
-            if (lMonth > 12) {
+            if (lMonth > 12 || lMonth < 1) {
               throw boost::bad_lexical_cast();
             }
             ioDateMonthStr = kMonthStr[lMonth-1];
@@ -729,7 +729,7 @@ void parseDateKey (const TokenList_T& iTokenList,
         } catch (boost::bad_lexical_cast& eCast) {
           std::cerr << "The month of the date ('" << *itTok
                     << "') cannot be understood. The default value ("
-                    << ioDateMonthStr << ") is kept. " << std::endl;
+                    << ioDate << ") is kept. " << std::endl;
           return;
         }
       }
@@ -750,7 +750,7 @@ void parseDateKey (const TokenList_T& iTokenList,
         } catch (boost::bad_lexical_cast& eCast) {
           std::cerr << "The day of the date ('" << *itTok
                     << "') cannot be understood. The default value ("
-                    << ioDateDay << ") is kept. " << std::endl;
+                    << ioDate << ") is kept. " << std::endl;
           return;
         }
       }
@@ -769,7 +769,7 @@ void parseDateKey (const TokenList_T& iTokenList,
       ioDate =
         boost::gregorian::from_simple_string (lDateStr.str());
 
-    } catch (boost::gregorian::bad_month& eCast) {
+    } catch (boost::gregorian::bad_day_of_month& eCast) {
       std::cerr << "The date ('" << lDateStr.str()
                 << "') cannot be understood. The default value ("
                 << ioDate << ") is kept. " << std::endl;
