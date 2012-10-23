@@ -32,7 +32,7 @@ def handle_opt():
     # Default options/parameters
     airlineCode = 'SQ'
     flightNumber = 12
-    departureDate = '2011-Jan-10'
+    departureDate = '2009-Feb-02'
 
     # Handling parameters
     if len (args) >= 1:
