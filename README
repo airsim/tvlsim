@@ -1,14 +1,30 @@
 
 Summary:
 --------
-DSim aims at providing a clean API and a simple implementation, as
-a C++ library, of a travel market simulator, focused on revenue
-management (RM) for airlines. That library uses the Standard Airline IT
-C++ object model (http://sf.net/projects/stdair).
+The Travel Market Simulator project aims at providing reference implementation,
+mainly in C++, of a travel market simulator, focusing on revenue management (RM)
+for airlines. It is intended to be used for applied research activities only:
+it is by no way intended to be used by production systems. It is a new breed of
+software and aims to become the new generation PODS (http://podsresearch.com/),
+which was instrumental in the inception of the Travel Market Simulator project.
 
-%{name} makes an extensive use of existing open-source libraries for
-increased functionality, speed and accuracy. In particular the
-Boost (C++ Standard Extensions: http://www.boost.org) library is used.
+Over a dozen components have been implemented and are fully functional,
+encompassing for instance (but not limited to) traveller demand generation
+(booking requests), travel distribution (GDS/CRS), low fare search (LFS),
+price calculation and inventory availability calculation), customer choice
+modelling (CCM), revenue management (RM), schedule and inventory management,
+revenue accounting (RA).
+
+The Travel Market Simulator can used in either batch or hosted mode.
+
+That project makes an extensive use of existing open-source libraries for
+increased functionality, speed and accuracy. In particular the Boost (C++
+Standard Extensions: http://www.boost.org) library is used.
+
+The DSim component itself aims at providing a clean API and a simple
+implementation, as a C++ library, of a travel market simulator, focusing
+on revenue management (RM) for airlines. That library uses the Standard
+Airline IT C++ object model (http://sf.net/projects/stdair).
 
 
 Getting and installing from the Fedora/CentOS/RedHat distribution:
@@ -88,5 +104,5 @@ Then, as usual:
 * To run the installed version:
   ${INSTALL_BASEDIR}/dsim-stable/bin/dsim -b
 
-Denis Arnaud (December 2011)
+Denis Arnaud (November 2012)
 
