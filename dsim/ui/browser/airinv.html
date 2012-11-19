@@ -1,0 +1,275 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+<title>Welcome to AirInv</title>
+<script type="text/javascript" src="config.js"></script>
+<link type="text/css" href="js/mylibs/jQueryUI/css/redmond/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="js/mylibs/jQueryUI/js/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="js/mylibs/jQueryUI/js/jquery-ui-1.8.13.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="js/mylibs/extJS/resources/css/ext-all.css" />
+<!--<link rel="stylesheet" type="text/css" href="js/mylibs/extJS/resources/css/grid.css" />-->
+<script type="text/javascript" src="js/airsimbean.js"></script>
+<script type="text/javascript" src="js/airlineautocomplete.js"></script>
+<script type="text/javascript" src="js/mylibs/extJS/bootstrap.js"></script>
+<script type="text/javascript" src="js/mylibs/extJS/ext-all-debug.js"></script>
+<script type="text/javascript" src="js/mylibs/Highcharts/highcharts.js"></script>
+<script type="text/javascript" src="js/mylibs/Highcharts//modules/exporting.js"></script>
+<script type="text/javascript" src="js/airinv-grid.js"></script>
+<script type="text/javascript" src="js/showall-grid.js"></script>
+<script type="text/javascript" src="js/bidprice-chart.js"></script>
+<script type="text/javascript" src="js/bookingarrival-chart.js"></script>
+
+<style type="text/css">
+body {
+	font: 92% Verdana, Arial, Helvetica, sans-serif;
+	background: #FFFFFF;
+	margin: 0;
+	padding: 0px;
+	text-align: center;
+	color: #000000;
+}
+.oneColElsCtrHdr #container {
+	width: 1200px;
+	background: #FFFFFF;
+	margin: 0 auto;
+	/*border: 1px solid #000000;*/
+	text-align: left;
+}
+.oneColElsCtrHdr #header {
+	
+	/*	background-image:url(assets/images/airinvheader1.png); */
+	padding: 0px;
+}
+.oneColElsCtrHdr #header h1 {
+	
+	margin: 0;
+	padding: 0px;/*3D Made in Vivi! YEAH! ou pas!*//*text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);*/
+}
+.oneColElsCtrHdr #mainContent {
+	padding: 0px;
+	background: #FFFFFF;
+}
+.oneColElsCtrHdr #footer {
+	padding: 0 0px;
+	background:#DDDDDD;
+}
+.oneColElsCtrHdr #footer p {
+	margin: 0;
+	padding: 0px;
+}
+.tabs{
+	font: 85% Verdana, Arial, Helvetica, sans-serif;
+}
+table /*Firefox table border fix*/
+{
+	border-style: solid;
+	border-color: #ffffff;
+	border: 0;
+	border-collapse: separate;
+}
+</style>
+</head>
+
+<body onLoad="onLoad()">
+<div id="container" style="width:1200px; padding-left:10px; font: 100% Verdana, Arial, Helvetica, sans-serif;" >
+  
+<div id="effect" class="ui-widget-content ui-corner-all" align="left" style="width:1200px; height:58px; padding:0px;">
+    <h3 class="ui-widget-header ui-corner-all">Search Inventory</h3>    
+    <div align="left" id="effect" class="demo" style="vertical-align:bottom; padding-top:5px; padding-left:5px; padding-bottom:5px;">
+      <p>Company Code:
+        <input id="tbCompanyCode" type="text" value="SQ"/>
+        Flight Number:
+        <input id="tbFlightNumber" type="text" value="12"/>
+        Date:
+        <input type="text" id="datepicker" value="2009-Apr-06" />
+        <!--<button id="btnFetch"  onClick="fetch()">Fetch !</button>-->
+        <input name="input" type="submit" value="Fetch!" onclick="fetch()"/>
+        <input name="input" type="submit" value="Show All Available" onclick="showAll()"/>
+      </p>
+    </div>
+  </div>
+  <div id="effect" class="ui-widget-content ui-corner-all" align="left" style="width:1200px; height:172px;">
+      <h3 class="ui-widget-header ui-corner-all">Flights & Legs</h3>
+  <div align="center" style="padding:0px; width:1200px;">
+    <table width="100%" cellpadding="0" align="center">
+      <tr align="center" >
+        <td align="right"><p align="left">&nbsp;</p>
+          <p align="left">&nbsp;</p></td>
+        <td align="left"><div id="flights-GridDisplay"></div></td>
+        <td align="left"><div id="segments-GridDisplay"></div></td>
+        <td align="left"><div id="legs-GridDisplay"></div></td>
+      </tr>
+    </table>
+    </div>
+    
+    <div id="tabs" class="tabs" style="width:1200px">
+      <ul>
+        <li><a href="#tabs-2">Subclasses</a></li>
+        <li><a href="#tabs-3">Cabins</a></li>
+        <li><a href="#tabs-1">Bid-Price Vectors</a></li>
+        <li><a href="#tabs-4">Booking Arrivals</a></li>
+      </ul>
+      <div id="tabs-1" style="height:420px; width:1100px">
+        <div id="bidpricechartcontainer" align="center" style="width:1100px;"></div>
+        
+      </div>
+      <div id="tabs-2" style="padding:1px; height:auto; width:auto">
+        <div style="width:100%; height:100%;">
+          <div id="subclasses-GridDisplay" style="height:auto; width:auto;"></div>
+        </div>
+      </div>
+      <div id="tabs-3" style="padding:1px; height:auto; width:auto">
+		<div style="width:100%; height:100%;">
+          <div id="cabins-GridDisplay" style="height:auto; width:auto;"></div>
+        </div>
+       </div>
+      <div id="tabs-4" style="height:420px; width:1100px">
+        <div id="bookingarrivalchartcontainer" align="center" style="padding-left:10px; size:95%"></div>
+        <p>&nbsp;</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	var localServer = currentServer; 
+	var serverURL = currentServer + "api/display/inv/";
+	var invJSON;
+	function onLoad()
+	{
+		document.getElementById('flights-GridDisplay').innerHTML = "No flight found."
+		document.getElementById('subclasses-GridDisplay').innerHTML = "No subclasses found.";
+		document.getElementById('cabins-GridDisplay').innerHTML = "No cabins found.";
+		
+		/*$.getJSON(serverURL + "SV/5/2010-Mar-11", function(data) {
+		initGrids(data);
+		});*/
+		buildBPV('' ,'Please select a leg', 'No flight selected')
+	}
+	
+	function fetch()
+	{
+		document.getElementById('flights-GridDisplay').innerHTML = "";
+		document.getElementById('segments-GridDisplay').innerHTML = "";
+		document.getElementById('legs-GridDisplay').innerHTML = "";
+		document.getElementById('subclasses-GridDisplay').innerHTML = "";
+		document.getElementById('cabins-GridDisplay').innerHTML = "";
+		
+		var companyCode=document.getElementById('tbCompanyCode').value.toUpperCase();
+		var flightNumber=document.getElementById('tbFlightNumber').value;
+		var date=document.getElementById('datepicker').value;
+		
+		$.getJSON(serverURL + companyCode + "/" + flightNumber + "/" + date + "/callback=?", function(data) {
+			if(data.error != null)
+			{
+				document.getElementById('flights-GridDisplay').innerHTML = "No flight found."
+				document.getElementById('subclasses-GridDisplay').innerHTML = "No subclasses found.";
+				document.getElementById('cabins-GridDisplay').innerHTML = "No cabins found.";
+
+				$(function() {
+					$( "#notfounddialog" ).dialog({
+					show: "blind",
+					modal: true,
+					position: "top"
+				});
+					$( "#opener" ).click(function() {
+					$( "#notfounddialog" ).dialog( "open" );
+					return false;
+					});
+				});
+			}else{
+					initGrids(data);
+					document.getElementById('subclasses-GridDisplay').innerHTML = "Select a segment to display cabins";
+					document.getElementById('cabins-GridDisplay').innerHTML = "Select a leg to display cabins";
+				}
+		
+		});
+			
+	}
+	
+	function showAll()
+	{
+		document.getElementById('allinvgrid').innerHTML = '';
+		
+		$("#dialog-allinv").dialog({
+			resizable: false,
+			width:295,
+			height:545,
+			modal: false,
+			position: "right top",
+			show: "blind",
+			buttons: {
+				Close:function() {$( this ).dialog( "close" );}
+				}
+		});	
+		showAllGrid(localServer);
+		
+	}
+	
+	function initGrids(tmpData)
+	{
+		invJSON = tmpData;
+		
+		
+		//filters to come
+		
+		
+		loadGrids(invJSON);
+	}
+	
+	function rebuildBPVChart(BPVData, chartLegName, chartFlightName)
+	{
+		var arrayBPVData = BPVData.split(",");
+		
+		for(var i=0; i<arrayBPVData.length; i++)
+		{
+			arrayBPVData[i] = parseFloat(arrayBPVData[i]);
+		}
+		
+		//console.log(arrayBPVData);
+		buildBPV(arrayBPVData, chartLegName, chartFlightName);
+	}
+
+//Datepicker + Date format
+	$(function() 
+	{
+		$( "#datepicker" ).datepicker({
+										changeMonth: true,
+										changeYear: true,
+										showButtonPanel: true,
+										numberOfMonths: 2,
+										dateFormat: "yy-M-d",
+									  });
+	});
+	
+	$(function() {
+		$( "input:submit, a, button", ".demo" ).button({icons: {
+                primary: "ui-icon-gear"
+            }});
+		$( "a", ".demo" ).click(function() { return false; });
+	});
+	
+	$(function() 
+	{
+		$( "button, input:submit, a", ".demo" ).button();
+		$( "a", ".demo" ).click(function() { return false; });
+	});
+
+
+	
+	
+	$(function() {
+		$( "#tabs" ).tabs();
+	});
+</script>
+</body>
+</html>
+<div id="notfounddialog" title="Oops..." style="font:.5em; display:none;">
+	<p>The flight you are looking for could not be found. Please check your inputs.</p>
+</div>
+<div id="timeoutdialog" title="Oops..." style="font-size:.7em; display:none;">
+	<p>The AirSim server is not responding. Please check your network configuration.</p>
+</div>
+<div id="dialog-allinv" title="All Inventory" style="display:none; font:.5em;">
+	<div id="allinvgrid"></div>
+</div>	

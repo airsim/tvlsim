@@ -1,0 +1,3 @@
+//Change var to your server address
+//An exemple is http://ncevsediri-fed/
+var currentServer = "http://[...]/";
