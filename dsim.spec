@@ -2,7 +2,7 @@
 %global mydocs __tmp_docdir
 #
 Name:           simcrs
-Version:        0.1.0
+Version:        1.00.0
 Release:        1%{?dist}
 
 Summary:        C++ Distributed Airline Market Simulator
@@ -112,6 +112,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+
+* Thu Dec 13 2012 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.00.0-1
+- Open source release
+
 * Sat Jan 07 2012 Denis Arnaud <denis.arnaud_fedora@m4x.org> 0.1.0-1
 - First RPM release
 

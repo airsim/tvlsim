@@ -9,7 +9,7 @@ include (config/project_config_embeddable.cmake)
 # Project info
 set_project_names (dsim DSim)
 set_project_brief ("C++ Simulated Travel-Oriented Distribution System Library")
-set_project_versions (0 1 0)
+set_project_versions (1 00 0)
 
 ##
 # Project options

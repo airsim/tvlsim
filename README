@@ -73,7 +73,7 @@ export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
 Then, as usual:
 * To configure the project, type something like:
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-1.00.0 \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
