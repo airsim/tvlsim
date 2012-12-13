@@ -50,7 +50,7 @@ but names may vary according to distributions):
   * cmake
   * gcc-c++
   * stdair-devel, trademgen-devel, travelccm-devel, airsched-devel,
-  * airrac-devel, rmol-devel, airinv-devel, simfqt-devel
+  * airrac-devel, rmol-devel, airinv-devel, simfqt-devel, sevmgr-devel
   * boost-devel
   * zeromq-devel
   * readline-devel
@@ -76,6 +76,7 @@ Then, as usual:
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-99.99.99 \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
+   -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
    -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
    -DWITH_AIRSCHED_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
    -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airrac-stable \
