@@ -94,7 +94,7 @@ Then, as usual:
   just type:
   make install
   cd ${INSTALL_BASEDIR}
-  rm -f dsim-stable && ln -s dsim-0.1.0 dsim-stable
+  rm -f tvlsim-stable && ln -s tvlsim-0.1.0 tvlsim-stable
   cd -
 * To package the source files, type:
   make dist
@@ -103,7 +103,7 @@ Then, as usual:
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
-  ${INSTALL_BASEDIR}/dsim-1.00.0/bin/dsim -b
+  ${INSTALL_BASEDIR}/tvlsim-1.00.0/bin/tvlsim -b
 
 Denis Arnaud (November 2012)
 
