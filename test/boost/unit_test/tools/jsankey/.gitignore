@@ -3,7 +3,7 @@ INSTALL
 Makefile.in
 aclocal.m4
 autom4te.cache
-batches/dsim
+batches/tvlsim
 config
 configure
 doc

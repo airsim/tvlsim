@@ -22,15 +22,15 @@ Note that on
 <a href="http://fedoraproject.org">Fedora</a>/<a href="http://www.redhat.com">RedHat</a>
 Linux distributions, RPM packages are available and can be installed
 with your usual package manager. For instance:<br>
-<code> yum -y install dsim-devel dsim-doc </code>
+<code> yum -y install tvlsim-devel tvlsim-doc </code>
 
 RPM packages can also be available on the
 <a href="http://sourceforge.net/project/showfiles.php?group_id=267805">SourceForge download site</a>.
 
 
-\section requirements DSim Requirements
+\section requirements TvlSim Requirements
 
-DSim should compile without errors or warnings on most GNU/Linux systems,
+TvlSim should compile without errors or warnings on most GNU/Linux systems,
 on UNIX systems like Solaris SunOS, and on POSIX based environments for
 Microsoft Windows like Cygwin or MinGW with MSYS. It can be also built on
 Microsoft Windows NT/2000/XP/Vista/7 using Microsoft's Visual C++ .NET, but our 
@@ -64,7 +64,7 @@ HTML and PDF documentation.
 We strongly recommend that you use recent stable releases of the GCC, if
 possible. We do not actively work on supporting older versions of the GCC,
 and they may therefore (without prior notice) become unsupported in future
-releases of DSim.
+releases of TvlSim.
 
 
 \section basic_instructions Basic Installation
@@ -405,7 +405,7 @@ The \c `cmake' script produces an ouput like this:
 \verbatim
 export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
 export INSTALL_BASEDIR=/home/user/dev/deliveries
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
+cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-0.1.0 \
  -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
  -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
  -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
@@ -468,17 +468,17 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 -- Found Doxygen: /usr/bin/doxygen 
 -- Found DoxygenWrapper: /usr/bin/doxygen (found version "1.7.5")
 -- Found Doxygen version: 1.7.5
--- Had to set the linker language for 'dsimlib' to CXX
+-- Had to set the linker language for 'tvlsimlib' to CXX
 -- Test 'CRSTestSuite' to be built with 'CRSTestSuite.cpp'
 -- 
 -- =============================================================
 -- -------------------------------------
 -- ---      Project Information      ---
 -- -------------------------------------
--- PROJECT_NAME ...................... : dsim
--- PACKAGE_PRETTY_NAME ............... : DSim
--- PACKAGE ........................... : dsim
--- PACKAGE_NAME ...................... : DSIM
+-- PROJECT_NAME ...................... : tvlsim
+-- PACKAGE_PRETTY_NAME ............... : TvlSim
+-- PACKAGE ........................... : tvlsim
+-- PACKAGE_NAME ...................... : TVLSIM
 -- PACKAGE_BRIEF ..................... : C++ Simulated Travel-Oriented Distribution System Library
 -- PACKAGE_VERSION ................... : 0.5.0
 -- GENERIC_LIB_VERSION ............... : 0.5.0
@@ -487,17 +487,17 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 -- -------------------------------------
 -- ---       Build Configuration     ---
 -- -------------------------------------
--- Modules to build .................. : dsim
--- Libraries to build/install ........ : dsimlib
--- Binaries to build/install ......... : dsim
--- Modules to test ................... : dsim
+-- Modules to build .................. : tvlsim
+-- Libraries to build/install ........ : tvlsimlib
+-- Binaries to build/install ......... : tvlsim
+-- Modules to test ................... : tvlsim
 -- Binaries to test .................. : CRSTestSuitetst
 -- 
--- * Module .......................... : dsim
+-- * Module .......................... : tvlsim
 --   + Layers to build ............... : .;basic;bom;factory;command;service
 --   + Dependencies on other layers .. : 
---   + Libraries to build/install .... : dsimlib
---   + Executables to build/install .. : dsim
+--   + Libraries to build/install .... : tvlsimlib
+--   + Executables to build/install .. : tvlsim
 --   + Tests to perform .............. : CRSTestSuitetst
 -- 
 -- BUILD_SHARED_LIBS ................. : ON
@@ -506,8 +506,8 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 --  * CMAKE_CXX_FLAGS ................ : -Wall -Werror -DBOOST_VERSION=104700
 --  * BUILD_FLAGS .................... : 
 --  * COMPILE_FLAGS .................. : 
--- CMAKE_MODULE_PATH ................. : /home/user/dev/sim/dsim/dsimgithub/config/
--- CMAKE_INSTALL_PREFIX .............. : /home/user/dev/deliveries/dsim-0.5.0
+-- CMAKE_MODULE_PATH ................. : /home/user/dev/sim/tvlsim/tvlsimgithub/config/
+-- CMAKE_INSTALL_PREFIX .............. : /home/user/dev/deliveries/tvlsim-0.5.0
 -- 
 -- * Doxygen:
 --   - DOXYGEN_VERSION ............... : 1.7.5
@@ -518,13 +518,13 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 -- -------------------------------------
 -- ---  Installation Configuration   ---
 -- -------------------------------------
--- INSTALL_LIB_DIR ................... : /home/user/dev/deliveries/dsim-0.5.0/lib64
--- INSTALL_BIN_DIR ................... : /home/user/dev/deliveries/dsim-0.5.0/bin
--- CMAKE_INSTALL_RPATH ............... : /home/user/dev/deliveries/dsim-0.5.0/lib64
+-- INSTALL_LIB_DIR ................... : /home/user/dev/deliveries/tvlsim-0.5.0/lib64
+-- INSTALL_BIN_DIR ................... : /home/user/dev/deliveries/tvlsim-0.5.0/bin
+-- CMAKE_INSTALL_RPATH ............... : /home/user/dev/deliveries/tvlsim-0.5.0/lib64
 -- CMAKE_INSTALL_RPATH_USE_LINK_PATH . : ON
--- INSTALL_INCLUDE_DIR ............... : /home/user/dev/deliveries/dsim-0.5.0/include
--- INSTALL_DATA_DIR .................. : /home/user/dev/deliveries/dsim-0.5.0/share
--- INSTALL_SAMPLE_DIR ................ : /home/user/dev/deliveries/dsim-0.5.0/share/dsim/samples
+-- INSTALL_INCLUDE_DIR ............... : /home/user/dev/deliveries/tvlsim-0.5.0/include
+-- INSTALL_DATA_DIR .................. : /home/user/dev/deliveries/tvlsim-0.5.0/share
+-- INSTALL_SAMPLE_DIR ................ : /home/user/dev/deliveries/tvlsim-0.5.0/share/tvlsim/samples
 -- INSTALL_DOC ....................... : ON
 -- 
 -- -------------------------------------
@@ -533,12 +533,12 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 -- CPACK_PACKAGE_CONTACT ............. : Denis Arnaud <denis_arnaud - at - users dot sourceforge dot net>
 -- CPACK_PACKAGE_VENDOR .............. : Denis Arnaud
 -- CPACK_PACKAGE_VERSION ............. : 0.5.0
--- CPACK_PACKAGE_DESCRIPTION_FILE .... : /home/user/dev/sim/dsim/dsimgithub/README
--- CPACK_RESOURCE_FILE_LICENSE ....... : /home/user/dev/sim/dsim/dsimgithub/COPYING
+-- CPACK_PACKAGE_DESCRIPTION_FILE .... : /home/user/dev/sim/tvlsim/tvlsimgithub/README
+-- CPACK_RESOURCE_FILE_LICENSE ....... : /home/user/dev/sim/tvlsim/tvlsimgithub/COPYING
 -- CPACK_GENERATOR ................... : TBZ2
 -- CPACK_DEBIAN_PACKAGE_DEPENDS ...... : 
 -- CPACK_SOURCE_GENERATOR ............ : TBZ2;TGZ
--- CPACK_SOURCE_PACKAGE_FILE_NAME .... : dsim-0.5.0
+-- CPACK_SOURCE_PACKAGE_FILE_NAME .... : tvlsim-0.5.0
 -- 
 -- ------------------------------------
 -- ---      External libraries      ---
@@ -625,7 +625,7 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-0.1.0 \
 -- 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/user/dev/sim/dsim/dsimgithub/build
+-- Build files have been written to: /home/user/dev/sim/tvlsim/tvlsimgithub/build
 \endverbatim
 
 It is recommended that you check if your library has been compiled and
@@ -634,25 +634,25 @@ the testing process <tt>`make check'</tt>. As a result, you should
 obtain a similar report:
 \verbatim
 
-[  0%] Built target hdr_cfg_dsim
-[ 90%] Built target dsimlib
+[  0%] Built target hdr_cfg_tvlsim
+[ 90%] Built target tvlsimlib
 [100%] Built target CRSTestSuitetst
-Scanning dependencies of target check_dsimtst
-Test project /home/user/dev/sim/dsim/dsimgithub/build/test/dsim
+Scanning dependencies of target check_tvlsimtst
+Test project /home/user/dev/sim/tvlsim/tvlsimgithub/build/test/tvlsim
     Start 1: CRSTestSuitetst
 1/1 Test #1: CRSTestSuitetst ..................   Passed    0.15 sec
 
 100% tests passed, 0 tests failed out of 1
 
 Total Test time (real) =   0.33 sec
-[100%] Built target check_dsimtst
+[100%] Built target check_tvlsimtst
 Scanning dependencies of target check
 [100%] Built target check
 
 \endverbatim
 
 Check if all the executed tests PASSED. If not, please contact us by filling a
-<a href="https://sourceforge.net/apps/trac/dsim/newticket">bug-report</a>.
+<a href="https://sourceforge.net/apps/trac/tvlsim/newticket">bug-report</a>.
 
 Finally, you should install the compiled and linked library, include files
 and (optionally) HTML and PDF documentation by typing:
@@ -673,7 +673,7 @@ make clean
 to remove all files created during compilation process, or even
 
 \verbatim
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 rm -rf build && mkdir build
 cd build
 \endverbatim

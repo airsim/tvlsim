@@ -1,6 +1,6 @@
 
-#ifndef __DSIM_NETWORKFUNCTIONS__
-#define __DSIM_NETWORKFUNCTIONS__
+#ifndef __TVLSIM_NETWORKFUNCTIONS__
+#define __TVLSIM_NETWORKFUNCTIONS__
 
 
 /**
@@ -22,4 +22,4 @@ std::string port_to_service (const int p);
 std::string ip_to_hostname (const std::string& s);
 
 
-#endif // __DSIM_NETWORKFUNCTIONS__
+#endif // __TVLSIM_NETWORKFUNCTIONS__

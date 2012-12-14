@@ -96,7 +96,7 @@ travel solution list built using:
 
 This travel solution list, reduced to a singleton, can be displayed as done before:
 
-\dontinclude dsim.ref
+\dontinclude tvlsim.ref
 \skipline [0]
 
 We deduce:
@@ -142,7 +142,7 @@ We obtain:
 The steps are the same as before \ref tut_procedure_summary 
 except the bom tree must be built using the network input file :
 
-\dontinclude dsim.cpp
+\dontinclude tvlsim.cpp
 \skipline parseAndLoad (lNetworkInputFilename);
 
 \subsection tut_how_network_building_result Result of the Batch Program

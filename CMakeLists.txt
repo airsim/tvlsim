@@ -7,7 +7,7 @@ include (config/project_config_embeddable.cmake)
 
 ##
 # Project info
-set_project_names (dsim DSim)
+set_project_names (tvlsim TvlSim)
 set_project_brief ("C++ Simulated Travel-Oriented Distribution System Library")
 set_project_versions (99 99 99)
 
@@ -59,9 +59,9 @@ init_build ()
 add_modules (${PROJECT_NAME})
 
 ##
-# For other projects to use DSim, install a few helpers for standard
+# For other projects to use TvlSim, install a few helpers for standard
 # build/packaging systems: CMake, GNU Autotools (M4), pkgconfig/pc, 
-# dsim-config
+# tvlsim-config
 install_dev_helper_files ()
 
 ##
@@ -111,6 +111,6 @@ store_in_cache ()
 
 
 #######################################
-##          DSim config file         ##
+##          TvlSim config file         ##
 #######################################
-module_config_add (config dsim)
+module_config_add (config tvlsim)

@@ -1,6 +1,6 @@
 # Prototype of a distributed simulator
 
-all: dsim
+all: tvlsim
 
 binaryProtocol.cmx: binaryProtocol.ml
 	ocamlfind ocamlopt -inline 100 \
@@ -11,7 +11,7 @@ binaryProtocol.cmx: binaryProtocol.ml
 	ocamlfind ocamlopt -package bitstring -inline 100 -c $^
 
 
-dsim: types.cmx agents.cmx simulation.cmx nutshell.cmx
+tvlsim: types.cmx agents.cmx simulation.cmx nutshell.cmx
 	ocamlfind ocamlopt -inline 100 -package bitstring -linkpkg $^ -o $@
 
 clean: 

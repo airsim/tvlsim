@@ -12,7 +12,7 @@ let port = ref 12000
 def wait() & release() = reply to wait
 
 let _ =
-  printf "DSIM Computing Element\n"; flush stdout ;
+  printf "TVLSIM Computing Element\n"; flush stdout ;
   Arg.parse [
     "-ip", Arg.String (fun s -> host := s), "<xxx.xxx.xxx.xxx>: ip core" ;
     "-port", Arg.Int (fun s -> port := s), "port" ;  

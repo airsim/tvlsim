@@ -1,0 +1,22 @@
+#
+# Config file for the TvlSim package. It defines the following variables:
+#  TVLSIM_VERSION      - version of TvlSim
+#  TVLSIM_BINARY_DIRS  - binary directories for TvlSim
+#  TVLSIM_INCLUDE_DIRS - include directories for TvlSim
+#  TVLSIM_LIBRARY_DIRS - library directories for TvlSim (normally not used!)
+#  TVLSIM_LIBRARIES    - libraries to link against
+#  TVLSIM_EXECUTABLES  - the TvlSim binaries/executables
+
+# Tell the user project where to find TvlSim headers and libraries
+set (TVLSIM_VERSION "@PACKAGE_VERSION@")
+set (TVLSIM_BINARY_DIRS "@TVLSIM_BIN_DIR@")
+set (TVLSIM_INCLUDE_DIRS "@TVLSIM_INCLUDE_DIRS@")
+set (TVLSIM_LIBRARY_DIRS "@TVLSIM_LIB_DIR@")
+
+# Library dependencies for TvlSim (contains definitions for the TvlSim IMPORTED
+# targets)
+include ("@TVLSIM_CMAKE_DIR@/tvlsim-library-depends.cmake")
+
+# These are the TvlSim IMPORTED targets, created by tvlsim-library-depends.cmake
+set (TVLSIM_LIBRARIES tvlsimlib)
+set (TVLSIM_EXECUTABLES tvlsim)

@@ -1,5 +1,5 @@
-#ifndef __DSIM_TINYLOG__
-#define __DSIM_TINYLOG__
+#ifndef __TVLSIM_TINYLOG__
+#define __TVLSIM_TINYLOG__
 
 // String, stream functions
 #include <string>
@@ -23,4 +23,4 @@ void send_string (const std::string& lServerName, const int lServerPort,
                   const std::string& buffer);
 
 
-#endif // __DSIM_TINYLOG__
+#endif // __TVLSIM_TINYLOG__

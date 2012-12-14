@@ -21,7 +21,7 @@ That project makes an extensive use of existing open-source libraries for
 increased functionality, speed and accuracy. In particular the Boost (C++
 Standard Extensions: http://www.boost.org) library is used.
 
-The DSim component itself aims at providing a clean API and a simple
+The TvlSim component itself aims at providing a clean API and a simple
 implementation, as a C++ library, of a travel market simulator, focusing
 on revenue management (RM) for airlines. That library uses the Standard
 Airline IT C++ object model (http://sf.net/projects/stdair).
@@ -30,7 +30,7 @@ Airline IT C++ object model (http://sf.net/projects/stdair).
 Getting and installing from the Fedora/CentOS/RedHat distribution:
 ------------------------------------------------------------------
 Just use Yum:
-yum -y install dsim-devel dsim-doc
+yum -y install tvlsim-devel tvlsim-doc
 
 You can also get the RPM packages (which may work on Linux
 distributions like Novel Suse and Mandriva) from the Fedora repository
@@ -41,8 +41,8 @@ http://fr2.rpmfind.net/linux/fedora/releases/16/Everything/)
 Building the library and test binary from Git repository:
 ----------------------------------------------------------------
 The Sourceforge Git repository may be cloned as following:
-git clone ssh://dsim.git.sourceforge.net/gitroot/dsim/dsim dsimgit
-cd dsimgit
+git clone ssh://tvlsim.git.sourceforge.net/gitroot/tvlsim/tvlsim tvlsimgit
+cd tvlsimgit
 git checkout trunk
 
 Then, you need the following packages (Fedora/RedHat/CentOS names here, 
@@ -62,7 +62,7 @@ but names may vary according to distributions):
 
 Building the library and test binary from the tarball:
 ------------------------------------------------------
-The latest stable source tarball (dsim*.tar.gz or .bz2) can be found here:
+The latest stable source tarball (tvlsim*.tar.gz or .bz2) can be found here:
 http://sourceforge.net/project/showfiles.php?group_id=267805
 
 To customise the following to your environment, you can alter the path
@@ -73,7 +73,7 @@ export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
 Then, as usual:
 * To configure the project, type something like:
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/dsim-99.99.99 \
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-99.99.99 \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
@@ -90,7 +90,7 @@ Then, as usual:
   make
 * To test the project, type:
   make check
-* To install the library (libdsim*.so*) and the binary (dsim),
+* To install the library (libtvlsim*.so*) and the binary (tvlsim),
   just type:
   make install
 * To package the source files, type:
@@ -98,9 +98,9 @@ Then, as usual:
 * To package the binary and the (HTML and PDF) documentation:
   make package
 * To run the local binary version:
-  ./dsim/dsim -b
+  ./tvlsim/tvlsim -b
 * To run the installed version:
-  ${INSTALL_BASEDIR}/dsim-99.99.99/bin/dsim -b
+  ${INSTALL_BASEDIR}/tvlsim-99.99.99/bin/tvlsim -b
 
 Denis Arnaud (November 2012)
 

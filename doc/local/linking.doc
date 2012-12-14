@@ -1,11 +1,11 @@
 /*! 
-\page linking Linking with DSim
+\page linking Linking with TvlSim
 
 \section toc Table of Contents
 - \ref intro
 - \ref dependencies
 - \ref pkgconfig
-- \ref dsim_config
+- \ref tvlsim_config
 - \ref autotools
 - \ref dynamiclinking
 
@@ -13,14 +13,14 @@
 \section intro Introduction
 
 There are two convenient methods of linking your
-programs with the DSim library. The first one employs the \c
+programs with the TvlSim library. The first one employs the \c
 `pkg-config' command (see <a href="http://pkgconfig.freedesktop.org/">
 http://pkgconfig.freedesktop.org/</a>), whereas the second one uses \c
-`dsim-config' script. These methods are shortly described below.
+`tvlsim-config' script. These methods are shortly described below.
 
 \section dependencies Dependencies
 
-The DSim library depends on several other C++ components.
+The TvlSim library depends on several other C++ components.
 
 \subsection stdairdep StdAir
 Among them, as for now, only StdAir has been packaged. The support for StdAir
@@ -28,7 +28,7 @@ is taken in charge by a dedicated M4 macro file (namely, <tt>`stdair.m4'</tt>),
 from the configuration script (generated thanks to <tt>`configure.ac'</tt>).
 
 \subsection compdep Other Simulation-Related Components
-DSim, as shown on the diagram below, depends on
+TvlSim, as shown on the diagram below, depends on
 - <a href="http://sourceforge.net/projects/sevmgr/">SEvMgr</a>
 - <a href="http://sourceforge.net/projects/trademgen/">TraDemGen</a>
 - <a href="http://sourceforge.net/projects/travel-ccm/">TravelCCM</a>
@@ -41,9 +41,9 @@ DSim, as shown on the diagram below, depends on
 - <a href="http://sourceforge.net/projects/simlfs/">SimLFS</a>
 - <a href="http://sourceforge.net/projects/simcrs/">SimCRS</a>
 
-\image html dsim_dependencies.png "DSim Dependencies"
-\image rtf dsim_dependencies.png "DSim Dependencies"
-\image latex dsim_dependencies.png "DSim Dependencies" width=15cm
+\image html tvlsim_dependencies.png "TvlSim Dependencies"
+\image rtf tvlsim_dependencies.png "TvlSim Dependencies"
+\image latex tvlsim_dependencies.png "TvlSim Dependencies" width=15cm
 
 \section pkgconfig Using the pkg-config command
 
@@ -55,38 +55,38 @@ options. The syntax of the \c `pkg-config' is as follows:
 pkg-config <options> <library_name>  
 \endcode
 
-For instance, assuming that you need to compile an DSim based program
+For instance, assuming that you need to compile an TvlSim based program
 <tt>`my_prog.cpp'</tt>, you should use the following command:
 
 \code
-g++ `pkg-config --cflags dsim` -o my_prog my_prog.cpp `pkg-config --libs dsim`
+g++ `pkg-config --cflags tvlsim` -o my_prog my_prog.cpp `pkg-config --libs tvlsim`
 \endcode  
 
 For more information see the \c `pkg-config' man pages.
 
 
-\section dsim_config Using the dsim-config script
+\section tvlsim_config Using the tvlsim-config script
 
-DSim provides a shell script called \c `dsim-config`, which is
+TvlSim provides a shell script called \c `tvlsim-config`, which is
 installed by default in \c `$prefix/bin'
 (\c `/usr/local/bin') directory. It can be used to simplify
-compilation and linking of DSim based programs. The usage of this
+compilation and linking of TvlSim based programs. The usage of this
 script is quite similar to the usage of the \c `pkg-config' command.
 
 Assuming that you need to compile the program \c `my_prog.cpp'
 you can now do that with the following command:
 
 \code
-g++ `dsim-config --cflags` -o my_prog_opt my_prog.cpp `dsim-config --libs`
+g++ `tvlsim-config --cflags` -o my_prog_opt my_prog.cpp `tvlsim-config --libs`
 \endcode
 
-A list of \c `dsim-config' options can be obtained by typing:
+A list of \c `tvlsim-config' options can be obtained by typing:
 
 \code
-dsim-config --help
+tvlsim-config --help
 \endcode
 
-If the \c `dsim-config' command is not found by your shell, you should add
+If the \c `tvlsim-config' command is not found by your shell, you should add
 its location \c `$prefix/bin' to the \c PATH environment variable, e.g.:
 
 \code
@@ -96,29 +96,29 @@ export PATH=/usr/local/bin:$PATH
 
 \section autotools M4 macro for the GNU Autotools
 
-A M4 macro file is delivered with DSim, namely `dsim.m4', which
+A M4 macro file is delivered with TvlSim, namely `tvlsim.m4', which
 can be found in, e.g., `/usr/share/aclocal'. When used by a
-`configure' script, thanks to he <tt>`AM_PATH_DSim'</tt> macro
+`configure' script, thanks to he <tt>`AM_PATH_TvlSim'</tt> macro
 (specified in the M4 macro file), the following Makefile variables are
 then defined:
-- <tt>`DSim_VERSION'</tt> (e.g., defined to 0.23.0)
-- <tt>`DSim_CFLAGS'</tt> (e.g., defined to <tt>`-I${prefix}/include'</tt>)
-- <tt>`DSim_LIBS'</tt> (e.g., defined to <tt>`-L${prefix}/lib -ldsim'</tt>)
+- <tt>`TvlSim_VERSION'</tt> (e.g., defined to 0.23.0)
+- <tt>`TvlSim_CFLAGS'</tt> (e.g., defined to <tt>`-I${prefix}/include'</tt>)
+- <tt>`TvlSim_LIBS'</tt> (e.g., defined to <tt>`-L${prefix}/lib -ltvlsim'</tt>)
 
 
-\section dynamiclinking Using DSim with dynamic linking
+\section dynamiclinking Using TvlSim with dynamic linking
 
-When using static linking some of the library routines in DSim are
+When using static linking some of the library routines in TvlSim are
 copied into your executable program. This can lead to unnecessary
 large executables. To avoid having too large executable files you may
 use dynamic linking instead. Dynamic linking means that the actual
 linking is performed when the program is executed. This requires that
-the system is able to locate the shared DSim library file during your
-program execution. If you install the DSim library using a non-standard
+the system is able to locate the shared TvlSim library file during your
+program execution. If you install the TvlSim library using a non-standard
 prefix, the \c `LD_LIBRARY_PATH' environment variable might be used to
 inform the linker of the dynamic library location, e.g.:
 \code
-export LD_LIBRARY_PATH=<DSim installation prefix>/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<TvlSim installation prefix>/lib:$LD_LIBRARY_PATH
 \endcode
 
 */

@@ -1,5 +1,5 @@
 ##
-# DSim manual pages, generated with Doxygen.
+# TvlSim manual pages, generated with Doxygen.
 #
 
 # Define the substitutes for the variables present in the Doxygen
@@ -23,18 +23,18 @@ configure_file (${DOXYGEN_CFG3_SRC} ${DOXYGEN_CFG3} @ONLY)
 
 ## Manual page sources
 # Section 1 (general commands)
-set (man1_SOURCES dsim.doc dsim-config.doc)
+set (man1_SOURCES tvlsim.doc tvlsim-config.doc)
 # Section 3 (development)
-set (man3_SOURCES dsim-library.doc)
+set (man3_SOURCES tvlsim-library.doc)
 
 # Add the build rule for Doxygen for section 1 manual pages
-set (DOXYGEN_OUTPUT1 ${man1_DIR}/dsim-config.1)
+set (DOXYGEN_OUTPUT1 ${man1_DIR}/tvlsim-config.1)
 add_custom_command (OUTPUT ${DOXYGEN_OUTPUT1}
   COMMAND ${DOXYGEN_EXECUTABLE} ARGS ${DOXYGEN_CFG1}
   DEPENDS ${DOXYGEN_CFG1} ${man1_SOURCES}
   COMMENT "Generating section 1 manual pages with Doxygen, from '${DOXYGEN_CFG1}'...")
 # Add the build rule for Doxygen for section 3 manual pages
-set (DOXYGEN_OUTPUT3 ${man3_DIR}/dsim-library.3)
+set (DOXYGEN_OUTPUT3 ${man3_DIR}/tvlsim-library.3)
 add_custom_command (OUTPUT ${DOXYGEN_OUTPUT3}
   COMMAND ${DOXYGEN_EXECUTABLE} ARGS ${DOXYGEN_CFG3}
   DEPENDS ${DOXYGEN_CFG3} ${man3_SOURCES}

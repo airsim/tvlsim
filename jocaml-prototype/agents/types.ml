@@ -1,5 +1,5 @@
 (*
- * DSIM Types
+ * TVLSIM Types
  *
  *)
 

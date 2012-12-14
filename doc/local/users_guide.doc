@@ -20,35 +20,35 @@
 
 \section ug_introduction Introduction
 
-The \c DSim library contains classes for airline business management.
-This document does not cover all the aspects of the \c DSim library. It 
+The \c TvlSim library contains classes for airline business management.
+This document does not cover all the aspects of the \c TvlSim library. It 
 does however explain the most important things you need to know in order
-to start using \c DSim. 
+to start using \c TvlSim. 
 
 \section ug_get_started Get Started
 
-\subsection ug_get_source Get the DSim library
+\subsection ug_get_source Get the TvlSim library
 
 Clone locally the full
-<a href="http://dsim.git.sourceforge.net/git/gitweb.cgi?p=dsim/dsim;a=tree;h=refs/heads/trunk;hb=trunk">Git project</a>:
+<a href="http://tvlsim.git.sourceforge.net/git/gitweb.cgi?p=tvlsim/tvlsim;a=tree;h=refs/heads/trunk;hb=trunk">Git project</a>:
 \verbatim 
 cd ~
 mkdir -p dev/sim
 cd ~/dev/sim
-git clone git://dsim.git.sourceforge.net/gitroot/dsim/dsim dsimgit
-cd dsimgit
+git clone git://tvlsim.git.sourceforge.net/gitroot/tvlsim/tvlsim tvlsimgit
+cd tvlsimgit
 git checkout trunk
 \endverbatim 
 
-\subsection ug_build_binaries Build the DSim project
+\subsection ug_build_binaries Build the TvlSim project
 
 Link with StdAir, create the distribution package (say, 0.5.0) and compile 
 using the following commands:
 \verbatim 
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 rm -rf build && mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=~/dev/deliveries/dsim-0.5.0 \
+cmake -DCMAKE_INSTALL_PREFIX=~/dev/deliveries/tvlsim-0.5.0 \
  -DWITH_STDAIR_PREFIX=~/dev/deliveries/stdair-stable \
  -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON ..
 make
@@ -56,9 +56,9 @@ make
 
 \subsection ug_build_and_run_tests Build and Run the Tests
 
-After building the DSim project, the following commands run the tests:
+After building the TvlSim project, the following commands run the tests:
 \verbatim 
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 cd build
 make check
 \endverbatim 
@@ -66,28 +66,28 @@ make check
 As a result, you should obtain a similar report:
 
 \verbatim 
-[  0%] Built target hdr_cfg_dsim
-[ 96%] Built target dsimlib
+[  0%] Built target hdr_cfg_tvlsim
+[ 96%] Built target tvlsimlib
 [100%] Built target AirlineScheduleTestSuitetst
-Scanning dependencies of target check_dsimtst
-Test project /home/dan/dev/sim/dsim/dsimgithub/build/test/dsim
+Scanning dependencies of target check_tvlsimtst
+Test project /home/dan/dev/sim/tvlsim/tvlsimgithub/build/test/tvlsim
     Start 1: AirlineScheduleTestSuitetst
 1/1 Test #1: AirlineScheduleTestSuitetst ......   Passed    0.15 sec
 
 100% tests passed, 0 tests failed out of 1
 
 Total Test time (real) =   0.40 sec
-[100%] Built target check_dsimtst
+[100%] Built target check_tvlsimtst
 Scanning dependencies of target check
 [100%] Built target check
 \endverbatim 
 
-\subsection ug_install_project Install the DSim Project (Binaries, Documentation)
+\subsection ug_install_project Install the TvlSim Project (Binaries, Documentation)
 
 After the step \ref ug_build_binaries, to install the library and its header 
 files, type:
 \verbatim 
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 cd build
 make install
 \endverbatim
@@ -96,27 +96,27 @@ You can check that the executables and other required files have been copied
 into the given final directory: 
 
 \verbatim 
-cd ~dev/deliveries/dsim-0.5.0
+cd ~dev/deliveries/tvlsim-0.5.0
 \endverbatim
 
-To generate the DSim project documentation, the commands are:
+To generate the TvlSim project documentation, the commands are:
 
 \verbatim 
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 cd build
 make doc
 \endverbatim
-The DSim project documentation is available in the following formats: HTML, 
+The TvlSim project documentation is available in the following formats: HTML, 
 LaTeX. 
 Those documents are available in a subdirectory:
 
 \verbatim 
-cd ~/dev/sim/dsimgit
+cd ~/dev/sim/tvlsimgit
 cd build
 cd doc
 \endverbatim
 
-\section ug_inputfile Input file of DSim Project 
+\section ug_inputfile Input file of TvlSim Project 
 
 The schedule input file structure should look like the following sample:
 
@@ -124,7 +124,7 @@ The schedule input file structure should look like the following sample:
 \until 10;
 
 Each line, beyond the header, represents a schedule entry, i.e., the
-specification of a given flight-period (see \c DSIM::FlightPeriodStruct).
+specification of a given flight-period (see \c TVLSIM::FlightPeriodStruct).
 The fields are as follows:
 - Flights section
  - AirlineCode (e.g., \c BA)
@@ -172,7 +172,7 @@ project</a>.
 \section ug_bom_bom The schedule BOM Tree
 
 The schedule-related Business Object Model (BOM) tree is a structure
-allowing to store all the \c DSIM::FlightPeriodStruct objects of
+allowing to store all the \c TVLSIM::FlightPeriodStruct objects of
 the simulation. That is why parsing an input file, containing the
 specification for all the flight-periods, is more convenient (\see the
 previous section \ref ug_inputfile).
@@ -186,62 +186,62 @@ provided by default when needed.
 First, a BOM root object (i.e., a root for all the classes in the project)
 is instantiated by the <tt>stdair::STDAIR_ServiceContext</tt> context object,
 when the <tt>stdair::STDAIR_Service</tt> is itself instantiated (during the
-instantiation of the <tt>DSIM::DSIM_Service</tt> object).
+instantiation of the <tt>TVLSIM::TVLSIM_Service</tt> object).
 
 The corresponding \c type (class) <tt>stdair::BomRoot</tt> is defined in the
 StdAir library.
 
 Then, the BOM root can be either constructed thanks to the 
-<tt>DSIM::DSIM_Service::buildSampleBom()</tt> method:
+<tt>TVLSIM::TVLSIM_Service::buildSampleBom()</tt> method:
 
-\dontinclude DSIM_Service.hpp
+\dontinclude TVLSIM_Service.hpp
 \skipline buildSampleBom
 
 or can be constructed using the schedule input file described above thanks to
 the
-<tt>DSIM::DSIM_Service::parseAndLoad (const stdair::Filename_T&)</tt>
+<tt>TVLSIM::TVLSIM_Service::parseAndLoad (const stdair::Filename_T&)</tt>
 method:
 
-\dontinclude DSIM_Service.hpp
+\dontinclude TVLSIM_Service.hpp
 \skipline parseAndLoad 
 
 \subsection ug_bom_display Display of the schedule BOM tree 
 
 \note That feature (of BOM tree display) has not been implemented yet.
       Do not hesitate to <a
-      href="https://sourceforge.net/apps/trac/dsim/newticket">open
+      href="https://sourceforge.net/apps/trac/tvlsim/newticket">open
       a ticket</a> if you would like to have it implemented more quickly.
 
 The schedule BOM tree can be displayed as done in the 
-<tt>batches::dsim.cpp</tt> program:
-\dontinclude dsim.cpp
+<tt>batches::tvlsim.cpp</tt> program:
+\dontinclude tvlsim.cpp
 \skipline lBOMCSVDump
 \line lBOMCSVDump
 
 When the default BOM tree is used (<tt>-b/--builtin</tt> option of the main
-program <tt>dsim.cpp</tt>), the schedule BOM tree display (for now,
+program <tt>tvlsim.cpp</tt>), the schedule BOM tree display (for now,
 corresponding to <a
 href="http://stdair.git.sourceforge.net/git/gitweb.cgi?p=stdair/stdair;a=blob_plain;f=samples/schedule03.csv;hb=trunk">schedule01.csv</a>
 parsed by
 <a
-href="http://dsim.git.sourceforge.net/git/gitweb.cgi?p=dsim/dsim;a=blob_plain;f=dsim/batches/parseInventory.cpp;hb=trunk">DSIM::parseInventory</a>)
+href="http://tvlsim.git.sourceforge.net/git/gitweb.cgi?p=tvlsim/tvlsim;a=blob_plain;f=tvlsim/batches/parseInventory.cpp;hb=trunk">TVLSIM::parseInventory</a>)
 should look like:
 
 \include bomTreeDisplay.ref
 
 \section ug_bom_structure Exploring the Predefined BOM Tree
 
-\image html dsim_bom_tree.png "DSim BOM tree"
-\image rtf dsim_bom_tree.png "DSim BOM tree"
-\image latex dsim_bom_tree.png "DSim BOM tree" width=15cm
+\image html tvlsim_bom_tree.png "TvlSim BOM tree"
+\image rtf tvlsim_bom_tree.png "TvlSim BOM tree"
+\image latex tvlsim_bom_tree.png "TvlSim BOM tree" width=15cm
 
-\c DSim predefines a BOM (Business Object Model) tree specific to the
+\c TvlSim predefines a BOM (Business Object Model) tree specific to the
 airline IT arena.
 
 \subsection ug_bom_network Airline Network BOM Tree
-- \c DSIM::ReachableUniverse
-- \c DSIM::OriginDestinationSet
-- \c DSIM::SegmentPathPeriod
+- \c TVLSIM::ReachableUniverse
+- \c TVLSIM::OriginDestinationSet
+- \c TVLSIM::SegmentPathPeriod
 
 \subsection ug_bom_schedule Airline Schedule BOM Tree
 - \c stdair::Inventory
@@ -253,7 +253,7 @@ airline IT arena.
 
 \section ug_procedure The travel solution calculation procedure
 
-The project DSim aims at calculating a list of <a
+The project TvlSim aims at calculating a list of <a
 href="http://stdair.sourceforge.net/TravelSolutionStruct_8hpp.html">
 travel solutions</a> for every incoming <a
 href="http://stdair.sourceforge.net/BookingRequestStruct_8hpp.html">

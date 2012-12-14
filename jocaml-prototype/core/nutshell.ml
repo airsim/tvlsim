@@ -12,7 +12,7 @@ def release () & wait () = reply to wait
 
     
 let _ = 
-  printf "Launching DSIM\n"; flush stdout; 
+  printf "Launching TVLSIM\n"; flush stdout; 
   
   (** External functions exposure *)
   
