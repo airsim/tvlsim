@@ -1,4 +1,4 @@
-# DSIM command
+# TVLSIM command
 
 command: command.ml
 	ocamlfind ocamlopt $^ -o $@

@@ -1,29 +1,29 @@
 /*!
 \page help_wanted Make a Difference            
 
-<b>Do not ask what DSim can do for you. Ask what you can do for DSim.</b>
+<b>Do not ask what TvlSim can do for you. Ask what you can do for TvlSim.</b>
 
-You can help us to develop the DSim library. There are always a lot of things 
+You can help us to develop the TvlSim library. There are always a lot of things 
 you can do:
 
-- Start using DSim
-- Tell your friends about DSim and help them to get started using it  
+- Start using TvlSim
+- Tell your friends about TvlSim and help them to get started using it  
 - If you find a bug, report it to us. Without your help we can never hope to
 produce a bug free code. 
 - Help us to improve the documentation by providing information about
 documentation bugs 
-- Answer support requests in the DSim discussion forums on SourceForge. If
-you know the answer to a question, help others to overcome their DSim
+- Answer support requests in the TvlSim discussion forums on SourceForge. If
+you know the answer to a question, help others to overcome their TvlSim
 problems. 
 - Help us to improve our algorithms. If you know of a better way (e.g. that
 is faster or requires less memory) to implement some of our algorithms, then
 let us know.
-- Help us to port DSim to new platforms. If you manage to compile DSim on a
+- Help us to port TvlSim to new platforms. If you manage to compile TvlSim on a
 new platform, then tell us how you did it.
-- Send us your code. If you have a good DSim compatible code, which you can
-release under the LGPL, and you think it should be included in DSim, then
+- Send us your code. If you have a good TvlSim compatible code, which you can
+release under the LGPL, and you think it should be included in TvlSim, then
 send it to us.
-- Become an DSim developer. Send us an e-mail and tell what you can do for
-DSim.
+- Become an TvlSim developer. Send us an e-mail and tell what you can do for
+TvlSim.
 
 */

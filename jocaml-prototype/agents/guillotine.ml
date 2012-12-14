@@ -188,7 +188,7 @@ def dump (server, port, rid) =
 	let dump_guillotine dtd flights = 
 	  let dump_flight flight_date record = 
 	    let insert_sql = 
-	      sprintf "INSERT INTO dsim_dump (RID, airline_code, flight_number, class_code, day_to_departure, flight_date, insertion_date, booking_counter, forecast) VALUES (\"%d\", \"%s\", \"%d\", \"%d\", \"%d\", \"%d\", \"%d\",  \"%d\", \"%f\")" 
+	      sprintf "INSERT INTO tvlsim_dump (RID, airline_code, flight_number, class_code, day_to_departure, flight_date, insertion_date, booking_counter, forecast) VALUES (\"%d\", \"%s\", \"%d\", \"%d\", \"%d\", \"%d\", \"%d\",  \"%d\", \"%f\")" 
 		rid airline_code flight_number class_code dtd flight_date !date !(record.real) !(record.expected) in 
 	    ignore(exec dbhandler insert_sql)
 	  in

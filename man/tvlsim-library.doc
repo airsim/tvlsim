@@ -1,0 +1,52 @@
+/*!
+\page tvlsim-library
+	  C++ Distributed Airline Market Simulator
+
+\section sec_synopsis SYNOPSIS
+
+\code
+#include <tvlsim/...>
+\endcode
+
+\section sec_description DESCRIPTION
+
+TvlSim aims at providing a clean API and a simple implementation, as
+a C++ library, of a travel market simulator, focused on revenue
+management (RM) for airlines.
+
+TvlSim makes an extensive use of existing open-source libraries for
+increased functionality, speed and accuracy. In particular the Boost
+(C++ Standard Extensions: http://www.boost.org) library is used.
+
+The library covers the following areas:
+- Demand (booking request) generation
+- Schedule (flight-periods) parsing and management:
+  travel solution finding
+- Inventory (flight-dates) parsing and management:
+  availability calculation and sell management
+- Pricing
+- Customer Choice Model (CCM)
+- Distributed airline inventories
+- Codeshare and alliances
+- Revenue Management (RM)
+- Simulation
+
+
+\section sec_see_also SEE ALSO
+ \b tvlsim(1), \b tvlsim-config(1)
+
+
+\section sec_support SUPPORT
+
+Please report any bugs to https://sourceforge.net/apps/trac/tvlsim/report
+
+
+\section sec_copyright COPYRIGHT
+
+Copyright © 2009-2011 Denis Arnaud
+
+See the COPYING file for more information on the (LGPLv2+) license, or
+directly on Internet:<br>
+http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+*/

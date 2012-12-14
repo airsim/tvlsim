@@ -1,5 +1,5 @@
 (*
- * DSIM Command
+ * TVLSIM Command
  *
  *)
 
@@ -14,7 +14,7 @@ def wait() & release() = reply to wait
 type action = RUN of int | DISPLAY
 
 let _ =
-  printf "DSIM Command\n"; flush stdout ;
+  printf "TVLSIM Command\n"; flush stdout ;
   Arg.parse [
     "-ip", Arg.String (fun s -> host := s), "<xxx.xxx.xxx.xxx>: ip core" ;
     "-port", Arg.Int (fun s -> port := s), "port" ;
@@ -50,7 +50,7 @@ let _ =
   in
 
     while true do 
-      printf "DSIM %% "; flush stdout; 
+      printf "TVLSIM %% "; flush stdout; 
       let request = input_line stdin in
 	  Scanf.sscanf request "RUN %i" run
 

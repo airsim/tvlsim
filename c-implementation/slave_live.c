@@ -61,7 +61,7 @@ int live(int duration,
 		      airline_code[1] =  translator[ 4 * guillotine_id + 1]; 
 		      airline_code[2] =  '\0'; 
 
-		      sprintf(q,"INSERT INTO dsim_dump (RID, airline_code, flight_number, class_code, day_to_departure, flight_date, insertion_date, booking_counter, forecast) VALUES (\"%d\", \"%s\", \"%d\", \"%d\", \"%d\", \"%d\", \"%d\",  \"%d\", \"%d\")",
+		      sprintf(q,"INSERT INTO tvlsim_dump (RID, airline_code, flight_number, class_code, day_to_departure, flight_date, insertion_date, booking_counter, forecast) VALUES (\"%d\", \"%s\", \"%d\", \"%d\", \"%d\", \"%d\", \"%d\",  \"%d\", \"%d\")",
 			      1, 
 			      airline_code, 
 			      translator[ 4 * guillotine_id + 2],  

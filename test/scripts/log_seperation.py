@@ -304,7 +304,7 @@ for i in lines:
         dtd_list.append (dtd_float)
         
     # BKGs
-    if (headline == "[N]../../../dsim/command/Simulator.cpp:228"):
+    if (headline == "[N]../../../tvlsim/command/Simulator.cpp:228"):
         c, fd, od, t, dtd = datedtd.split(';')
         date = extract_date (fd)
         try:
