@@ -110,8 +110,3 @@ display_status ()
 #######################################
 store_in_cache ()
 
-
-#######################################
-##          TvlSim config file         ##
-#######################################
-module_config_add (config tvlsim)
