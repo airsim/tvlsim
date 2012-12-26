@@ -96,6 +96,14 @@ macro (set_project_options _build_doc _enable_tests _run_gcov)
   option (INSTALL_DOC "Set to OFF to skip build/install Documentation" 
     ${_build_doc})
 
+  # Initialise a few variables
+  set (DOXYGEN_OUTPUT_REL)
+  set (REFMAN_TEX)
+  set (REFMAN_PDF)
+  set (CSS_ALL_TARGETS)
+  set (IMG_ALL_TARGETS)
+  set (MAN_ALL_TARGETS)
+
   # Set the library installation directory (either 32 or 64 bits)
   set (LIBDIR "lib${LIB_SUFFIX}" CACHE PATH
     "Library directory name, either lib or lib64")
@@ -110,8 +118,6 @@ macro (set_project_options _build_doc _enable_tests _run_gcov)
     "Installation directory for data files")
   set (INSTALL_SAMPLE_DIR share/${PROJECT_NAME}/samples CACHE PATH
     "Installation directory for (CSV) sample files")
-  set (INSTALL_ETC_DIR etc CACHE PATH
-    "Installation directory for Config files")
 
   # GCOV
   option (RUN_GCOV "Set to OFF to skip code coverage" 
@@ -256,12 +262,15 @@ macro (packaging_set_other_options _package_type_list _source_package_type_list)
     "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}"
     CACHE INTERNAL "tarball basename")
   set (AUTOTOOLS_IGNRD "/tmp/;/tmp2/;/autom4te\\\\.cache/;autogen\\\\.sh$")
-  set (PACK_IGNRD "${CMAKE_CURRENT_BINARY_DIR};${CPACK_PACKAGE_NAME}\\\\.spec;\\\\.gz$;\\\\.bz2$")
+  set (PACK_IGNRD
+    "${CMAKE_CURRENT_BINARY_DIR};${CPACK_PACKAGE_NAME}\\\\.spec;\\\\.gz$;\\\\.bz2$")
   set (EDIT_IGNRD "\\\\.swp$;\\\\.#;/#;~$")
   set (SCM_IGNRD 
     "/CVS/;/\\\\.svn/;/\\\\.bzr/;/\\\\.hg/;/\\\\.git/;\\\\.gitignore$")
+  set (PYTHON_IGNRD "\\\\.pyc$")
+  set (JS_IGNRD "/browser/js/mylibs;/browser/libs")
   set (CPACK_SOURCE_IGNORE_FILES
-    "${AUTOTOOLS_IGNRD};${SCM_IGNRD};${EDIT_IGNRD};${PACK_IGNRD}"
+    "${AUTOTOOLS_IGNRD};${SCM_IGNRD};${EDIT_IGNRD};${PACK_IGNRD};${PYTHON_IGNRD};${JS_IGNRD}"
     CACHE STRING "CPACK will ignore these files")
   #set (CPACK_SOURCE_IGNORE_DIRECTORY ${CPACK_SOURCE_IGNORE_FILES} .git)
 
@@ -332,6 +341,10 @@ macro (get_external_libs)
     if (${_arg_lower} STREQUAL "readline")
       get_readline (${_arg_version})
     endif (${_arg_lower} STREQUAL "readline")
+
+    if (${_arg_lower} STREQUAL "curses")
+      get_curses (${_arg_version})
+    endif (${_arg_lower} STREQUAL "curses")
 
     if (${_arg_lower} STREQUAL "mysql")
       get_mysql (${_arg_version})
@@ -606,6 +619,34 @@ macro (get_readline)
   endif (READLINE_FOUND)
 
 endmacro (get_readline)
+
+# ~~~~~~~~~~ (N)Curses ~~~~~~~~~
+macro (get_curses)
+  unset (_required_version)
+  if (${ARGC} GREATER 0)
+    set (_required_version ${ARGV0})
+    message (STATUS "Requires (N)Curses-${_required_version}")
+  else (${ARGC} GREATER 0)
+    message (STATUS "Requires (N)Curses without specifying any version")
+  endif (${ARGC} GREATER 0)
+
+  set (CURSES_FOUND False)
+
+  set (CURSES_NEED_NCURSES True)
+  find_package (Curses ${_required_version} REQUIRED)
+  if (CURSES_LIBRARY)
+    set (CURSES_FOUND True)
+  endif (CURSES_LIBRARY)
+
+  if (CURSES_FOUND)
+    # Update the list of include directories for the project
+    include_directories (${CURSES_INCLUDE_DIR})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${CURSES_LIBRARY})
+  endif (CURSES_FOUND)
+
+endmacro (get_curses)
 
 # ~~~~~~~~~~ MySQL ~~~~~~~~~
 macro (get_mysql)
@@ -1537,30 +1578,6 @@ macro (module_binary_add _exec_source_dir)
 endmacro (module_binary_add)
 
 ##
-# Installation of the configuration INI file (format cfg).
-# The two parameters (among which only the first one is mandatory) are:
-#  * The path/directory where the configuration file can be found.
-#  * If specified, the name to be given to the file. If no such name
-#    is given as parameter, the configuration file is given the name of 
-#    the current module.
-macro (module_config_add _config_source_dir)
-  # First, derive the name to be given to the config file, defaulting
-  # to the name of the module
-  set (_config_name ${MODULE_NAME})
-  if (${ARGC} GREATER 1})
-    set (_config_name ${ARGV1})
-  endif (${ARGC} GREATER 1})
-
-  # Define the macro path of the configuration file
-  set (PROJ_PATH_CFG_SRC ${_config_source_dir}/${_config_name}.cfg)
-
-  # Installation of the cfg file
-  install (FILES ${PROJ_PATH_CFG_SRC} 
-    DESTINATION "${INSTALL_ETC_DIR}" COMPONENT runtime)
-
-endmacro (module_config_add)
-
-##
 # Add a (Shell, Python, Perl, Ruby, etc) script to be installed.
 #
 # The parameter is the relative file path of the (template) script to
@@ -1799,16 +1816,25 @@ macro (doc_add_web_pages)
   set (REFMAN refman)
   set (TEX_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/latex)
   set (REFMAN_TEX ${REFMAN}.tex)
+  set (REFMAN_TEX ${REFMAN_TEX} PARENT_SCOPE)
   set (REFMAN_TEX_FULL ${TEX_GEN_DIR}/${REFMAN_TEX})
+  set (REFMAN_TEX_OTHERS ${TEX_GEN_DIR}/index.tex ${TEX_GEN_DIR}/namespaces.tex
+	${TEX_GEN_DIR}/annotated.tex ${TEX_GEN_DIR}/hierarchy.tex
+	${TEX_GEN_DIR}/files.tex)
 
   # Add the build rule for Doxygen
-  set (DOXYGEN_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
-  add_custom_command (OUTPUT ${DOXYGEN_OUTPUT} ${REFMAN_TEX_FULL}
+  set (DOXYGEN_OUTPUT_REL html/index.html)
+  set (DOXYGEN_OUTPUT_REL ${DOXYGEN_OUTPUT_REL} PARENT_SCOPE)
+  set (DOXYGEN_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOXYGEN_OUTPUT_REL})
+  set (DOXYGEN_OUTPUT ${DOXYGEN_OUTPUT} PARENT_SCOPE)
+  add_custom_command (
+	OUTPUT ${DOXYGEN_OUTPUT} ${REFMAN_TEX_FULL} ${REFMAN_TEX_OTHERS}
 	COMMAND ${DOXYGEN_EXECUTABLE} ARGS ${DOXYGEN_CFG}
 	DEPENDS ${DOXYGEN_CFG} ${doc_SOURCES}
 	COMMENT "Generating documentation with Doxygen, from '${DOXYGEN_CFG}'...")
   # Add the 'doc' target, depending on the generated HTML documentation
-  add_custom_target (doc ALL DEPENDS ${DOXYGEN_OUTPUT})
+  add_custom_target (doc ALL DEPENDS
+	${DOXYGEN_OUTPUT} ${REFMAN_TEX_FULL} ${REFMAN_TEX_OTHERS})
 
   ##
   # Copy the needed files into the generated HTML directory
@@ -1822,10 +1848,17 @@ macro (doc_add_web_pages)
 	add_custom_command (OUTPUT ${CSS_GEN_FULL_DIR}
 	  COMMAND ${CMAKE_COMMAND}
 	  ARGS -E copy ${CSS_SRC_FULL_DIR} ${CSS_GEN_FULL_DIR}
-	  DEPENDS ${DOXYGEN_OUTPUT} ${CSS_SRC_FULL_DIR}
+	  DEPENDS doc ${CSS_SRC_FULL_DIR}
 	  COMMENT "Copying style '${CSS_SRC_FULL_DIR}' into '${htmldoc_DIR}'...")
+
+	# Transpose the CSS-related operation into a target, so that CMake
+	# can handle it properly
 	add_custom_target (css_${style_SRC} ALL DEPENDS ${CSS_GEN_FULL_DIR})
+	list (APPEND CSS_ALL_TARGETS css_${style_SRC})
   endforeach (style_SRC)
+  set (CSS_ALL_TARGETS ${CSS_ALL_TARGETS} PARENT_SCOPE)
+  add_custom_target (css_style)
+  add_dependencies (css_style ${CSS_ALL_TARGETS})
 
   # Images
   foreach (image_SRC ${image_SOURCES})
@@ -1834,10 +1867,17 @@ macro (doc_add_web_pages)
 	add_custom_command (OUTPUT ${IMG_GEN_FULL_DIR}
 	  COMMAND ${CMAKE_COMMAND} 
 	  ARGS -E copy ${IMG_SRC_FULL_DIR} ${IMG_GEN_FULL_DIR}
-	  DEPENDS ${DOXYGEN_OUTPUT} ${IMG_SRC_FULL_DIR}
+	  DEPENDS doc ${IMG_SRC_FULL_DIR}
 	  COMMENT "Copying image '${IMG_SRC_FULL_DIR}' into '${htmldoc_DIR}'...")
+
+	# Transpose the image-related operation into a target, so that CMake
+	# can handle it properly
 	add_custom_target (img_${image_SRC} ALL DEPENDS ${IMG_GEN_FULL_DIR})
+	list (APPEND IMG_ALL_TARGETS img_${image_SRC})
   endforeach (image_SRC)
+  set (IMG_ALL_TARGETS ${IMG_ALL_TARGETS} PARENT_SCOPE)
+  add_custom_target (img_style)
+  add_dependencies (img_style ${IMG_ALL_TARGETS})
 
   ##
   # PDF, generated by (Pdf)Latex from the Latex source file, itself generated
@@ -1845,27 +1885,28 @@ macro (doc_add_web_pages)
   set (REFMAN_IDX ${REFMAN}.idx)
   set (REFMAN_IDX_FULL ${TEX_GEN_DIR}/${REFMAN_IDX})
   set (REFMAN_PDF ${REFMAN}.pdf)
+  set (REFMAN_PDF ${REFMAN_PDF} PARENT_SCOPE)
   set (REFMAN_PDF_FULL ${TEX_GEN_DIR}/${REFMAN_PDF})
+  set (WARNING_PDF_MSG "Warning: the PDF reference manual ('${REFMAN_PDF_FULL}') has failed to build. You can perform a simple re-build ('make' in the 'doc/latex' sub-directory).")
   # Note the "|| echo" addition to the pdflatex command, as that latter returns
   # as if there were an error.
   add_custom_command (OUTPUT ${REFMAN_IDX_FULL} ${REFMAN_PDF_FULL}
-	DEPENDS ${DOXYGEN_OUTPUT} ${REFMAN_TEX_FULL}
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} pdflatex -interaction batchmode ${REFMAN_TEX} || echo "First PDF generation done."
+	ARGS -E chdir ${TEX_GEN_DIR} pdflatex -interaction batchmode ${REFMAN_TEX} && echo 'First PDF generation done.' || echo 'First PDF generation done.'
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} makeindex -q ${REFMAN_IDX}
+	ARGS -E chdir ${TEX_GEN_DIR} egrep -s -e 'Fatal error occurred' -e 'Rerun to get cross-references right' refman.log && (cd ${TEX_GEN_DIR} && pdflatex -interaction batchmode ${REFMAN_TEX} && echo 'Second PDF generation done.') || echo 'Second PDF generation was not necessary'
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} pdflatex -interaction batchmode ${REFMAN_TEX} || echo "Second PDF generation done."
+	ARGS -E chdir ${TEX_GEN_DIR} egrep -s -e 'Fatal error occurred' -e 'Rerun to get cross-references right' refman.log && (cd ${TEX_GEN_DIR} && pdflatex -interaction batchmode ${REFMAN_TEX} && echo 'Third PDF generation done.') || echo 'Third PDF generation was not necessary'
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} makeindex -q ${REFMAN_IDX}
+	ARGS -E chdir ${TEX_GEN_DIR} test ! -f ${REFMAN_PDF} && (cd ${TEX_GEN_DIR} && echo '${WARNING_PDF_MSG}' > ${REFMAN_PDF} && echo '${WARNING_PDF_MSG}') || echo 'The PDF reference manual has been successfully built'
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} pdflatex -interaction batchmode ${REFMAN_TEX} || echo "Third PDF generation done."
-	COMMENT "Generating PDF Reference Manual ('${REFMAN_PDF}')..."
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E chdir ${TEX_GEN_DIR} test -f ${REFMAN_PDF} || (touch ${REFMAN_PDF} && echo "Warning: the PDF reference manual \\\('${REFMAN_PDF_FULL}'\\\) has failed to build. You can perform a simple re-build \\\('make' in the 'doc/latex' sub-directory\\\).")
-	COMMENT "Checking whether the PDF Reference Manual ('${REFMAN_PDF}') has been built...")
+	ARGS -E chdir ${TEX_GEN_DIR} echo 'The file size of the PDF reference manual is: ' && (cd ${TEX_GEN_DIR} && du -sh ${REFMAN_PDF} | cut -f1)
+	DEPENDS doc
+	COMMENT "Generating PDF Reference Manual ('${REFMAN_TEX}' => '${REFMAN_PDF}')...")
+
   # Add the 'pdf' target, depending on the generated PDF manual
-  add_custom_target (pdf ALL DEPENDS ${REFMAN_PDF_FULL})
+  add_custom_target (pdf ALL DEPENDS ${REFMAN_IDX_FULL} ${REFMAN_PDF_FULL})
+  add_dependencies (pdf css_style img_style)
 
   # Clean-up $build/html and $build/latex on 'make clean'
   set_property (DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES 
@@ -1903,12 +1944,11 @@ macro (doc_add_man_pages)
   endforeach (_idx RANGE 1 9)
 
   # Initialise the lists gathering information for each valid manual section
-  set (man_doxy_output_list "")
-  set (man_dir_list "")
+  set (man_dir_list)
 
   # Parse the arguments
-  set (options "")
-  set (oneValueArgs "")
+  set (options)
+  set (oneValueArgs)
 
   # Added one argument option for every manual section
   foreach (man_sect ${man_section_list})
@@ -1971,9 +2011,11 @@ macro (doc_add_man_pages)
 		DEPENDS ${DOXYGEN_CFG${man_sect}} ${man${man_sect}_SOURCES}
 		COMMENT "Generating section ${man_sect} manual pages with Doxygen, from '${DOXYGEN_CFG${man_sect}}'...")
 
-	  # Add the current manual section output to the dedicated list,
-	  # so that it can then be added to the corresponding target (see below).
-	  list (APPEND man_doxy_output_list ${DOXYGEN_OUTPUT${man_sect}})
+	  # Transpose the man-page-related operation into a target, so that CMake
+	  # can handle it properly
+	  add_custom_target (man_${man_sect} 
+		ALL DEPENDS ${DOXYGEN_OUTPUT${man_sect}})
+	  list (APPEND MAN_ALL_TARGETS man_${man_sect})
 
 	  # Specifiy what to do for the installation of the manual pages
 	  install (DIRECTORY "${man${man_sect}_DIR}" DESTINATION ${MAN_PATH})
@@ -1982,7 +2024,9 @@ macro (doc_add_man_pages)
   endforeach (man_sect ${man_section_list})
 
   # Add the 'man' target, depending on the generated manual page documentation
-  add_custom_target (man ALL DEPENDS ${man_doxy_output_list})
+  set (MAN_ALL_TARGETS ${MAN_ALL_TARGETS} PARENT_SCOPE)
+  add_custom_target (man)
+  add_dependencies (${MAN_ALL_TARGETS})
 
   # Clean-up $build/man1 and $build/man3 on 'make clean'
   set_property (DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES 
@@ -2175,6 +2219,17 @@ macro (display_readline)
     message (STATUS "  - READLINE_LIBRARY .............. : ${READLINE_LIBRARY}")
   endif (READLINE_FOUND)
 endmacro (display_readline)
+
+# (N)Curses
+macro (display_curses)
+  if (CURSES_FOUND)
+    message (STATUS)
+    message (STATUS "* (N)Curses:")
+    message (STATUS "  - CURSES_VERSION .............. : ${CURSES_VERSION}")
+    message (STATUS "  - CURSES_INCLUDE_DIR .......... : ${CURSES_INCLUDE_DIR}")
+    message (STATUS "  - CURSES_LIBRARY .............. : ${CURSES_LIBRARY}")
+  endif (CURSES_FOUND)
+endmacro (display_curses)
 
 # MySQL
 macro (display_mysql)
@@ -2410,6 +2465,19 @@ macro (display_status_all_test_suites)
 endmacro (display_status_all_test_suites)
 
 ##
+macro (display_doc_generation)
+  message (STATUS)
+    message (STATUS "* Documentation to be generated ... :")
+	if (INSTALL_DOC)
+      message (STATUS "  + HTML main page ................ : ${DOXYGEN_OUTPUT_REL}")
+      message (STATUS "  + CSS-related files ............. : ${CSS_ALL_TARGETS}")
+      message (STATUS "  + Image-related files ........... : ${IMG_ALL_TARGETS}")
+      message (STATUS "  + PDF reference manual .......... : ${REFMAN_TEX} => ${REFMAN_PDF}")
+	endif (INSTALL_DOC)
+    message (STATUS "  + Man page sections ............. : ${MAN_ALL_TARGETS}")
+endmacro (display_doc_generation)
+
+##
 macro (display_status)
   message (STATUS)
   message (STATUS "=============================================================")
@@ -2435,6 +2503,7 @@ macro (display_status)
   message (STATUS "Binaries to test .................. : ${PROJ_ALL_TST_TARGETS}")
   display_status_all_modules ()
   display_status_all_test_suites ()
+  display_doc_generation ()
   message (STATUS)
   message (STATUS "BUILD_SHARED_LIBS ................. : ${BUILD_SHARED_LIBS}")
   message (STATUS "CMAKE_BUILD_TYPE .................. : ${CMAKE_BUILD_TYPE}")
@@ -2484,6 +2553,7 @@ macro (display_status)
   display_boost ()
   display_xapian ()
   display_readline ()
+  display_curses ()
   display_mysql ()
   display_soci ()
   display_stdair ()

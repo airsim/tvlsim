@@ -15,7 +15,9 @@ price calculation and inventory availability calculation), customer choice
 modelling (CCM), revenue management (RM), schedule and inventory management,
 revenue accounting (RA).
 
-The Travel Market Simulator can used in either batch or hosted mode.
+The Travel Market Simulator can used in either batch or hosted mode. It is
+the main component of the Travel Market Simulator:
+http://www.travel-market-simulator
 
 That project makes an extensive use of existing open-source libraries for
 increased functionality, speed and accuracy. In particular the Boost (C++
@@ -41,7 +43,7 @@ http://fr2.rpmfind.net/linux/fedora/releases/16/Everything/)
 Building the library and test binary from Git repository:
 ----------------------------------------------------------------
 The Sourceforge Git repository may be cloned as following:
-git clone ssh://tvlsim.git.sourceforge.net/gitroot/tvlsim/tvlsim tvlsimgit
+git clone ssh://denis_arnaud@git.code.sf.net/p/tvlsim/code tvlsimgit
 cd tvlsimgit
 git checkout trunk
 
@@ -53,7 +55,7 @@ but names may vary according to distributions):
   * airrac-devel, rmol-devel, airinv-devel, simfqt-devel, sevmgr-devel
   * boost-devel
   * zeromq-devel
-  * readline-devel
+  * readline-devel, ncurses-devel
   * soci-mysql-devel
   * python-devel
   * gettext-devel (optional)
@@ -84,8 +86,8 @@ Then, as usual:
    -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
    -DWITH_SIMFQT_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
    -DWITH_SIMCRS_PREFIX=${INSTALL_BASEDIR}/simcrs-stable \
-   -DCMAKE_BUILD_TYPE:STRING=Debug -DINSTALL_DOC:BOOL=ON \
-   ${LIBSUFFIX_4_CMAKE} ..
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON -DINSTALL_DOC:BOOL=ON \
+   -DRUN_GCOV:BOOL=OFF ${LIBSUFFIX_4_CMAKE} ..
 * To build the project, type:
   make
 * To test the project, type:
@@ -100,10 +102,14 @@ Then, as usual:
   make dist
 * To package the binary and the (HTML and PDF) documentation:
   make package
+* To browse the (just installed, if enabled) HTML documentation:
+  midori file://${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/index.html
+* To browse the (just installed, if enabled) PDF documentation:
+  evince ${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/refman.pdf
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
   ${INSTALL_BASEDIR}/tvlsim-1.00.0/bin/tvlsim -b
 
-Denis Arnaud (November 2012)
+Denis Arnaud (December 2012)
 
