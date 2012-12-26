@@ -103,9 +103,9 @@ Then, as usual:
 * To package the binary and the (HTML and PDF) documentation:
   make package
 * To browse the (just installed, if enabled) HTML documentation:
-  midori file://${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/index.html
+  midori file://${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.00.0/html/index.html
 * To browse the (just installed, if enabled) PDF documentation:
-  evince ${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/refman.pdf
+  evince ${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.00.0/html/refman.pdf
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
