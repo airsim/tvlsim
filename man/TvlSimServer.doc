@@ -1,16 +1,16 @@
 /*!
-\page tvlsim
+\page TvlSimServer
 	  C++ Interactive Travel Market Simulator
 
 \section sec_synopsis SYNOPSIS
 
-<b>tvlsim</b> <tt>[--prefix] [-v|--version] [-h|--help] [-b|--builtin] [-s|--schedule <path-to-schedule-input>] [-l|--log <path-to-output-log-file>]</tt>
+<b>TvlSimServer</b> <tt>[--prefix] [-v|--version] [-h|--help] [-b|--builtin] [-i|--input <path-to-input>] [-l|--log <path-to-output-log-file>]</tt>
 
 \section sec_description DESCRIPTION
 
-\e tvlsim is a small interactive program showing how to use the TvlSim library.
+\e TvlSimServer is a small interactive program showing how to use the TvlSim library.
 
-\e tvlsim accepts the following options:
+\e TvlSimServer accepts the following options:
 
  \b --prefix<br>
     Show the TvlSim installation prefix.
@@ -61,6 +61,15 @@
     Path (absolute or relative) of the (CVS) input file specifying the
 	demand distributions
 
+ \b -t, \b --protocol <server-protocol><br>
+    Server protocol (e.g., tcp://)
+
+ \b -a, \b --address <server-binding-host-address><br>
+    Server binding address (e.g., * or localhost)
+
+ \b -p, \b --port <server-binding-host-port><br>
+    Server binding port (e.g., 5555)
+
  \b -l, \b --log <path-to-output-log-file><br>
     Path (absolute or relative) of the output log file.
 
@@ -77,7 +86,7 @@
  \b -H, \b --host <database-host-name><br>
     SQL database hostname (e.g., localhost)
 
- \b -P, \b --port <database-host-port><br>
+ \b -P, \b --dbport <database-host-port><br>
     SQL database port (e.g., 3306)
 
  \b -n, \b --dbname <database-name><br>
@@ -86,11 +95,12 @@
  \b -q, \b --query <travel-query><br>
     Query word list (not used for now)
 
-See the output of the <tt>`tvlsim --help'</tt> command for default options.
+
+See the output of the <tt>`TvlSimServer --help'</tt> command for default options.
 
 
 \section sec_see_also SEE ALSO
-\b simulate(1), \b TvlSimServer(1), \b tvlsim-config(1), \b tvlsim-library(3)
+\b tvlsim(1), \b simulate(1), \b tvlsim-config(1), \b tvlsim-library(3)
 
 
 \section sec_support SUPPORT

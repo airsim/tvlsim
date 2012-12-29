@@ -268,7 +268,7 @@ macro (packaging_set_other_options _package_type_list _source_package_type_list)
   set (SCM_IGNRD 
     "/CVS/;/\\\\.svn/;/\\\\.bzr/;/\\\\.hg/;/\\\\.git/;\\\\.gitignore$")
   set (PYTHON_IGNRD "\\\\.pyc$")
-  set (JS_IGNRD "/browser/js/mylibs;/browser/libs")
+  set (JS_IGNRD "/browser/js/libs;/browser/js/mylibs;/browser/libs")
   set (CPACK_SOURCE_IGNORE_FILES
     "${AUTOTOOLS_IGNRD};${SCM_IGNRD};${EDIT_IGNRD};${PACK_IGNRD};${PYTHON_IGNRD};${JS_IGNRD}"
     CACHE STRING "CPACK will ignore these files")

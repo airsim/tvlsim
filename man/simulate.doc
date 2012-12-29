@@ -1,16 +1,16 @@
 /*!
-\page tvlsim
-	  C++ Interactive Travel Market Simulator
+\page simulate
+	  C++ Batch Travel Market Simulator
 
 \section sec_synopsis SYNOPSIS
 
-<b>tvlsim</b> <tt>[--prefix] [-v|--version] [-h|--help] [-b|--builtin] [-s|--schedule <path-to-schedule-input>] [-l|--log <path-to-output-log-file>]</tt>
+<b>simulate</b> <tt>[--prefix] [-v|--version] [-h|--help] [-b|--builtin] [-s|--schedule <path-to-schedule-input>] [-l|--log <path-to-output-log-file>]</tt>
 
 \section sec_description DESCRIPTION
 
-\e tvlsim is a small interactive program showing how to use the TvlSim library.
+\e simulate is a small batch program showing how to use the TvlSim library.
 
-\e tvlsim accepts the following options:
+\e simulate accepts the following options:
 
  \b --prefix<br>
     Show the TvlSim installation prefix.
@@ -25,7 +25,7 @@
     The sample BOM tree can be either built-in or parsed from input files.
     In that latter case, the input files must then be specified as well (e.g.,
 	-d/--demand, -s/--schedule,  -o/--ond, -f/--fare, -y/--yield).
-	When that option is not selected, the \b tvlsim program builds a simple use
+	When that option is not selected, the \b simulate program builds a simple use
 	case directly from internal hard-coded parameters (demand distribution
 	details and resource/cabin capacities).
 
@@ -86,11 +86,11 @@
  \b -q, \b --query <travel-query><br>
     Query word list (not used for now)
 
-See the output of the <tt>`tvlsim --help'</tt> command for default options.
+See the output of the <tt>`simulate --help'</tt> command for default options.
 
 
 \section sec_see_also SEE ALSO
-\b simulate(1), \b TvlSimServer(1), \b tvlsim-config(1), \b tvlsim-library(3)
+\b tvlsim(1), \b TvlSimServer(1), \b tvlsim-config(1), \b tvlsim-library(3)
 
 
 \section sec_support SUPPORT
