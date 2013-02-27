@@ -1125,10 +1125,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2011, boost::gregorian::Apr, 01);
   
   // End date
-  stdair::Date_T lEndDate (2012, boost::gregorian::Sep, 01);
+  stdair::Date_T lEndDate (2013, boost::gregorian::Jan, 02);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
@@ -1209,7 +1209,7 @@ int main (int argc, char* argv[]) {
     // Update the default parameters for the following interactive session
     lDefaultAirlineCode = "SQ";
     lDefaultFlightNumber = 12;
-    lDefaultDate = stdair::Date_T (2009, 02, 9);
+    lDefaultDate = stdair::Date_T (2012, 04, 30);
     lDefaultBookingClass = "Y";
     lDefaultPartySize = 2;
     lDefaultOrigin = "SIN";
