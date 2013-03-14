@@ -550,10 +550,10 @@ int main (int argc, char* argv[]) {
   std::string lQuery;
 
   // Start date
-  stdair::Date_T lStartDate (2009, boost::gregorian::Feb, 01);
+  stdair::Date_T lStartDate (2011, boost::gregorian::Apr, 27);
   
   // End date
-  stdair::Date_T lEndDate (2012, boost::gregorian::Mar, 02);
+  stdair::Date_T lEndDate (2013, boost::gregorian::Jan, 02);
 
   // Schedule input file name
   stdair::Filename_T lScheduleInputFilename;
