@@ -1,15 +1,15 @@
 // //////////////////////////////////////////////////////////////////////
 // Import section
 // //////////////////////////////////////////////////////////////////////
-// Boost
-#include <boost/make_shared.hpp>
 // STL
 #include <fstream>
 #include <string>
 #include <vector>
 #include <exception>
 #include <iomanip>
-// StdAir
+// Boost
+#include <boost/make_shared.hpp>
+// StdAir (Standard Airline BOM)
 #include <stdair/stdair_demand_types.hpp>
 #include <stdair/basic/ProgressStatusSet.hpp>
 #include <stdair/basic/BasChronometer.hpp>
@@ -22,17 +22,17 @@
 #include <stdair/bom/TravelSolutionStruct.hpp>
 #include <stdair/service/Logger.hpp>
 #include <stdair/STDAIR_Service.hpp>
-// Distribution
+// SimCRS (Distribution)
 #include <simcrs/SIMCRS_Service.hpp>
-// SEVMGR
+// SEvMgr (Event Management)
 #include <sevmgr/SEVMGR_Service.hpp>
-// TRADEMGEN
+// TraDemGen (Demand Generation)
 #include <trademgen/TRADEMGEN_Service.hpp>
-// TRAVELCCM
+// TravelCCM (Customer Choice Model)
 #include <travelccm/TRAVELCCM_Service.hpp>
-// Airsched
-#include <airsched/AIRSCHED_Service.hpp>
-// Dsim
+// AirTSP (Travel Solution Provider)
+#include <airtsp/AIRTSP_Service.hpp>
+// TvlSim (Travel Simulator)
 #include <tvlsim/TVLSIM_Types.hpp>
 #include <tvlsim/basic/SimulationMode.hpp>
 #include <tvlsim/bom/SimulationStatus.hpp>

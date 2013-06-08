@@ -14,7 +14,7 @@ Ditaa (http://ditaa.org) Diagrams
  |             |            SimCRS           |
  |             |             c978            |
  |             |      +----------------------+
- |             |      |      AirSched        |
+ |             |      |       AirTSP         |
  |             |      |        c897          |
  |             |      +----------------------+
  |             |      |       SimFQT         |

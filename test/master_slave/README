@@ -1,5 +1,5 @@
 * Master-slave-log_server model: 
-	- Master receive demands (BookingRequest), get the TravelSolutionList and send each to the corresponding slave (by using slaveTable[]) (copied and modified from /airsched/batches/aisched.cpp)
+	- Master receive demands (BookingRequest), get the TravelSolutionList and send each to the corresponding slave (by using slaveTable[]) (copied and modified from airtsp/batches/airtsp.cpp)
 	- Each slave works on an inventory: one for BA, one for AA,... ( need to add AIRINV functionalities).
 	- Everytime slave receives order from master, he send log message to log_server and log_server will write this message in server.log.
 
