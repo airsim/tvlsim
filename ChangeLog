@@ -1,3 +1,6 @@
+* Sat Jun 08 2013 Denis Arnaud <denis_arnaud at users dot sourceforge dot net> 1.01.0
+- Renamed from AirSched into AirTSP, for trademark issue with Pancor
+
 * Thu Dec 13 2012 Denis Arnaud <denis_arnaud at users dot sourceforge dot net> 1.00.0
 - Open source release
 

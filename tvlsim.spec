@@ -2,7 +2,7 @@
 %global mydocs __tmp_docdir
 #
 Name:           simcrs
-Version:        1.00.0
+Version:        1.01.0
 Release:        1%{?dist}
 
 Summary:        C++ Distributed Airline Market Simulator
@@ -112,6 +112,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jun 08 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.01.0-1
+- Renamed from AirSched into AirTSP, for trademark issue with Pancor
 
 * Thu Dec 13 2012 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.00.0-1
 - Open source release
