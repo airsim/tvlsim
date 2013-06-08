@@ -75,7 +75,7 @@ export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
 Then, as usual:
 * To configure the project, type something like:
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-1.01.0 \
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-1.01.1 \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
@@ -103,13 +103,13 @@ Then, as usual:
 * To package the binary and the (HTML and PDF) documentation:
   make package
 * To browse the (just installed, if enabled) HTML documentation:
-  midori file://${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.01.0/html/index.html
+  midori file://${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.01.1/html/index.html
 * To browse the (just installed, if enabled) PDF documentation:
-  evince ${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.01.0/html/refman.pdf
+  evince ${INSTALL_BASEDIR}/tvlsim-stable/share/doc/tvlsim-1.01.1/html/refman.pdf
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
-  ${INSTALL_BASEDIR}/tvlsim-1.01.0/bin/tvlsim -b
+  ${INSTALL_BASEDIR}/tvlsim-1.01.1/bin/tvlsim -b
 
 Denis Arnaud (June 2013)
 
