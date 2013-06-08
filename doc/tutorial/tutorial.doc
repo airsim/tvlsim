@@ -11,12 +11,12 @@
  - \ref tut_how_network_building
  - \ref tut_how_network_building_result
 
-\section tut_configuration Preparing the AirSched Project for Development
+\section tut_configuration Preparing the AirTSP Project for Development
 
 The source code for these examples can be found in the
-<tt>batches</tt> and <tt>test/airsched</tt> directories. They are
-compiled along with the rest of the \c AirSched project. See the 
-\ref users_guide for more details on how to build the \c AirSched
+<tt>batches</tt> and <tt>test/airtsp</tt> directories. They are
+compiled along with the rest of the \c AirTSP project. See the 
+\ref users_guide for more details on how to build the \c AirTSP
 project.
 
 \section tut_procedure Your first networkBuilde
@@ -24,44 +24,44 @@ project.
 \subsection tut_procedure_summary Summary of the different steps
 
 All the steps below can be found in the same order in the batch
-<tt>AirSched.cpp</tt> program.
+<tt>AirTSP.cpp</tt> program.
 
-First, we instanciate the AIRSCHED_Service object:
+First, we instanciate the AIRTSP_Service object:
 
-\dontinclude AirSched.cpp
+\dontinclude AirTSP.cpp
 \skipline logOutputFile
 \skipline lLogParams
-\skipline AirSchedService
+\skipline AirTSPService
 
 Then, we construct a default sample list of travel solutions and a default 
 booking request (as mentionned in \ref ug_procedure_bookingrequest and
  \ref ug_procedure_travelsolution parts):
 
-\dontinclude airsched.cpp
+\dontinclude airtsp.cpp
 \skipline TravelSolutionList_T
 \line lTravelSolutionList
 \skipline BookingRequestStruct
-\line AirSchedService
+\line AirTSPService
 
 For basic use, the default BOM tree can be built using:
-\dontinclude AirSched.cpp
+\dontinclude AirTSP.cpp
 \skipline buildSampleBom()
 
 The main step is the network building (see \ref ug_procedure):
-\dontinclude AirSched.cpp
+\dontinclude AirTSP.cpp
 \skipline buildePrices
 
 \subsection tut_procedure_results Result of the Batch Program
 
-When the <tt>AirSched.cpp</tt> program is run (with the <tt>-b</tt>
+When the <tt>AirTSP.cpp</tt> program is run (with the <tt>-b</tt>
 option), the log output file should look like:
 
-\include AirSched.ref
+\include AirTSP.ref
 
 What is interesting is to compare the travel solution list (here reduced to a 
 single travel solution) displayed before:
 
-\dontinclude AirSched.ref
+\dontinclude AirTSP.ref
 \skipline [0]
 
 and after the network building:
@@ -90,7 +90,7 @@ considering either an inbound trip or an outbound one.
 The objective here is to build a network input file to network builde the default 
 travel solution list built using:
 
-\dontinclude AirSched.cpp
+\dontinclude AirTSP.cpp
 \skipline TravelSolutionList_T
 \line lTravelSolutionList
 
@@ -147,16 +147,16 @@ except the bom tree must be built using the network input file :
 
 \subsection tut_how_network_building_result Result of the Batch Program
 
-When the <tt>AirSched.cpp</tt> program is run with the <tt>-f</tt>
+When the <tt>AirTSP.cpp</tt> program is run with the <tt>-f</tt>
 option linking with the file built just above:
 \verbatim 
-~/AirSched -f ~/<YourFileName>.csv 
+~/AirTSP -f ~/<YourFileName>.csv 
 \endverbatim
 
 the last lines of the log output should look like:
 
 \verbatim 
-[D]~/AirSchedgit/AirSched/batches/AirSched.cpp:223: Travel solutions:
+[D]~/AirTSPgit/AirTSP/batches/AirTSP.cpp:223: Travel solutions:
     [0] [0] BA, 9, 2011-06-10, LHR, SYD, 21:45 --- Y, 145, 1 1 1 --- 
 \endverbatim
 

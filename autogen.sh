@@ -95,7 +95,7 @@ cat > configure << _EOF
 # projects with the same set up of options:
 # ./configure --with-stdair=/opt/stdair
 #   --with-sevmgr=/opt/sevmgr --with-trademgen=/opt/trademgen
-#   --with-travelccm=/opt/travelccm --with-airsched=/opt/airsched
+#   --with-travelccm=/opt/travelccm --with-airtsp=/opt/airtsp
 #   --with-airrac=/opt/airrac --with-rmol=/opt/rmol
 #   --with-airinv=/opt/airinv --with-avlcal=/opt/avlcal
 #   --with-simfqt=/opt/simfqt --with-simlfs=/opt/simlfs 
@@ -122,7 +122,7 @@ STDAIR_OPTION=""
 SEVMGR_OPTION=""
 TRADEMGEN_OPTION=""
 TRAVELCCM_OPTION=""
-AIRSCHED_OPTION=""
+AIRTSP_OPTION=""
 AIRRAC_OPTION=""
 RMOL_OPTION=""
 AIRINV_OPTION=""
@@ -140,7 +140,7 @@ do
   then
     echo ""
     echo "Usage:"
-    echo "    \$0 [--prefix=<install_dir>] [--with-stdair=<stdair_install_dir>] [--with-sevmgr=<sevmgr_install_dir>] [--with-trademgen=<trademgen_install_dir>] [--with-travelccm=<travelccm_install_dir>] [--with-airsched=<airsched_install_dir>] [--with-airrac=<airrac_install_dir>] [--with-rmol=<rmol_install_dir>] [--with-airinv=<airinv_install_dir>] [--with-avlcal=<avlcal_install_dir>] [--with-simfqt=<simfqt_install_dir>] [--with-simlfs=<simlfs_install_dir>] [--with-simcrs=<simcrs_install_dir>] [--with-doc | --without-doc] [-n|-N|--norm] [-b|--buildir]"
+    echo "    \$0 [--prefix=<install_dir>] [--with-stdair=<stdair_install_dir>] [--with-sevmgr=<sevmgr_install_dir>] [--with-trademgen=<trademgen_install_dir>] [--with-travelccm=<travelccm_install_dir>] [--with-airtsp=<airtsp_install_dir>] [--with-airrac=<airrac_install_dir>] [--with-rmol=<rmol_install_dir>] [--with-airinv=<airinv_install_dir>] [--with-avlcal=<avlcal_install_dir>] [--with-simfqt=<simfqt_install_dir>] [--with-simlfs=<simlfs_install_dir>] [--with-simcrs=<simcrs_install_dir>] [--with-doc | --without-doc] [-n|-N|--norm] [-b|--buildir]"
     echo "      --with-doc/--without-doc : Force the (resp. non) generation of the documentation" 
     echo "      -n/-N/--norm             : Do not remove/clean older potential 'build' sub-directory" 
     echo "      -b/-B/--buildir          : Do the build in a dedicated 'build' sub-directory, rather than in-place" 
@@ -203,14 +203,14 @@ then
 _EOF
 fi
 #
-if [ "${PROJECT_NAME}" != "airsched" ]
+if [ "${PROJECT_NAME}" != "airtsp" ]
 then
 	cat >> configure << _EOF
-  IS_OPTION_AIRSCHED=\`echo "\${opt_elem}" | grep "^--with-airsched="\`
-  if [ "\${IS_OPTION_AIRSCHED}" != "" ]
+  IS_OPTION_AIRTSP=\`echo "\${opt_elem}" | grep "^--with-airtsp="\`
+  if [ "\${IS_OPTION_AIRTSP}" != "" ]
   then
-    AIRSCHED_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-airsched=\(.*\)\$/\1/"\`
-    AIRSCHED_OPTION="-DWITH_AIRSCHED_PREFIX=\${AIRSCHED_DIR}"
+    AIRTSP_DIR=\`echo "\${opt_elem}" | sed -e "s/^--with-airtsp=\(.*\)\$/\1/"\`
+    AIRTSP_OPTION="-DWITH_AIRTSP_PREFIX=\${AIRTSP_DIR}"
   fi
 _EOF
 fi
@@ -332,7 +332,7 @@ fi
 BUILD_OPTION="-DCMAKE_BUILD_TYPE:STRING=Debug"
 
 #
-CMAKE_CMD="cmake \${PREFIX_OPTION} \${STDAIR_OPTION} \${SEVMGR_OPTION} \${TRADEMGEN_OPTION} \${TRAVELCCM_OPTION} \${AIRSCHED_OPTION} \${AIRRAC_OPTION} \${RMOL_OPTION} \${AIRINV_OPTION} \${AVLCAL_OPTION} \${SIMFQT_OPTION} \${SIMLFS_OPTION} \${SIMCRS_OPTION} \${LIB_OPTION} \${BUILD_OPTION} \${DOC_OPTION} \${SOURCE_DIR}"
+CMAKE_CMD="cmake \${PREFIX_OPTION} \${STDAIR_OPTION} \${SEVMGR_OPTION} \${TRADEMGEN_OPTION} \${TRAVELCCM_OPTION} \${AIRTSP_OPTION} \${AIRRAC_OPTION} \${RMOL_OPTION} \${AIRINV_OPTION} \${AVLCAL_OPTION} \${SIMFQT_OPTION} \${SIMLFS_OPTION} \${SIMCRS_OPTION} \${LIB_OPTION} \${BUILD_OPTION} \${DOC_OPTION} \${SOURCE_DIR}"
 
 # Trace on
 set -x

@@ -20,9 +20,9 @@
 #include <stdair/bom/BomSource.hpp>
 #include <stdair/bom/BomTypes.hpp>
 #include <stdair/factory/FacBomContent.hpp>
-// AIRSCHED
-#include <airsched/AIRSCHED_Service.hpp>
-#include <airsched/config/airsched-paths.hpp>
+// AirTSP
+#include <airtsp/AIRTSP_Service.hpp>
+#include <airtsp/config/airtsp-paths.hpp>
 // MPI
 #include <boost/mpi.hpp>
 // Some string functions
@@ -39,14 +39,14 @@ typedef std::vector<std::string> WordList_T;
 
 // //////// Constants //////
 /** Default name and location for the log file. */
-const std::string K_AIRSCHED_DEFAULT_LOG_FILENAME ("master.log");
+const std::string K_AIRTSP_DEFAULT_LOG_FILENAME ("master.log");
 
 /** Default name and location for the (CSV) input file. */
-const std::string K_AIRSCHED_DEFAULT_INPUT_FILENAME ("../../test/samples/schedule03.csv");
+const std::string K_AIRTSP_DEFAULT_INPUT_FILENAME ("../../test/samples/schedule03.csv");
 
-/** Default booking request string, to be seached against the AirSched
+/** Default booking request string, to be seached against the AirTSP
 	network. */
-const std::string K_AIRSCHED_DEFAULT_BOOKING_REQUEST ("NCE BKK NCE 2007-04-21 2007-03-21 08:32:00 C 1 DF RO 5 NONE 10:00:00 2000.0 20.0");
+const std::string K_AIRTSP_DEFAULT_BOOKING_REQUEST ("NCE BKK NCE 2007-04-21 2007-03-21 08:32:00 C 1 DF RO 5 NONE 10:00:00 2000.0 20.0");
 
 // //////////////////////////////////////////////////////////////////////
 void tokeniseStringIntoWordList (const std::string& iPhrase,
@@ -96,7 +96,7 @@ return os;
 }
 
 /** Early return status (so that it can be differentiated from an error). */
-const int K_AIRSCHED_EARLY_RETURN_STATUS = 99;
+const int K_AIRTSP_EARLY_RETURN_STATUS = 99;
 
 /** Read and parse the command line options. */
 int readConfiguration (int argc, char* argv[], int& ioRandomDraws,
@@ -106,7 +106,7 @@ int readConfiguration (int argc, char* argv[], int& ioRandomDraws,
 
 // Initialise the travel query string, if that one is empty
 if (ioBookingRequestString.empty() == true) {
-	ioBookingRequestString = K_AIRSCHED_DEFAULT_BOOKING_REQUEST;
+	ioBookingRequestString = K_AIRTSP_DEFAULT_BOOKING_REQUEST;
 }
 
 // Transform the query string into a list of words (STL strings)
@@ -126,10 +126,10 @@ generic.add_options()
 boost::program_options::options_description config ("Configuration");
 config.add_options()
 	("input,i",
-	boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_AIRSCHED_DEFAULT_INPUT_FILENAME),
+	boost::program_options::value< std::string >(&ioInputFilename)->default_value(K_AIRTSP_DEFAULT_INPUT_FILENAME),
 	"(CVS) input file for the demand distributions")
 	("log,l",
-	boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_AIRSCHED_DEFAULT_LOG_FILENAME),
+	boost::program_options::value< std::string >(&ioLogFilename)->default_value(K_AIRTSP_DEFAULT_LOG_FILENAME),
 	"Filename for the logs")
 	("bkg_req,b",
 	boost::program_options::value< WordList_T >(&lWordList)->multitoken(),
@@ -161,24 +161,24 @@ boost::program_options::
 	store (boost::program_options::command_line_parser (argc, argv).
 		options (cmdline_options).positional(p).run(), vm);
 
-std::ifstream ifs ("airsched.cfg");
+std::ifstream ifs ("airtsp.cfg");
 boost::program_options::store (parse_config_file (ifs, config_file_options),
 								vm);
 boost::program_options::notify (vm);
 
 if (vm.count ("help")) {
 	std::cout << visible << std::endl;
-	return K_AIRSCHED_EARLY_RETURN_STATUS;
+	return K_AIRTSP_EARLY_RETURN_STATUS;
 }
 
 if (vm.count ("version")) {
 	std::cout << PACKAGE_NAME << ", version " << PACKAGE_VERSION << std::endl;
-	return K_AIRSCHED_EARLY_RETURN_STATUS;
+	return K_AIRTSP_EARLY_RETURN_STATUS;
 }
 
 if (vm.count ("prefix")) {
 	std::cout << "Installation prefix: " << PREFIXDIR << std::endl;
-	return K_AIRSCHED_EARLY_RETURN_STATUS;
+	return K_AIRTSP_EARLY_RETURN_STATUS;
 }
 
 if (vm.count ("input")) {
@@ -355,7 +355,7 @@ int main (int argc, char* argv[]) {
 		readConfiguration (argc, argv, lRandomDraws, lInputFilename,
 							lLogFilename, lBookingRequestString);
 
-		if (lOptionParserStatus == K_AIRSCHED_EARLY_RETURN_STATUS) {
+		if (lOptionParserStatus == K_AIRTSP_EARLY_RETURN_STATUS) {
 		return 0;
 		}
 
@@ -371,9 +371,9 @@ int main (int argc, char* argv[]) {
 		logOutputFile.open (lLogFilename.c_str());
 		logOutputFile.clear();
 
-		// Initialise the AirSched service object
+		// Initialise the AirTSP service object
 		const stdair::BasLogParams lLogParams (stdair::LOG::DEBUG, logOutputFile);
-		AIRSCHED::AIRSCHED_Service airschedService (lLogParams, lInputFilename);
+		AIRTSP::AIRTSP_Service airtspService (lLogParams, lInputFilename);
 
 
 		// Create a booking request
@@ -385,7 +385,7 @@ int main (int argc, char* argv[]) {
 
 		// Get the corresponding travel solutions
 		stdair::TravelSolutionList_T lTravelSolutionList;
-		airschedService.getTravelSolutions (lTravelSolutionList, lBookingRequest);
+		airtspService.getTravelSolutions (lTravelSolutionList, lBookingRequest);
 
 		unsigned short idx = 1;
 		for (stdair::TravelSolutionList_T::const_iterator itTS =
@@ -426,7 +426,7 @@ int main (int argc, char* argv[]) {
 	
 
 	// Start a mini-simulation
-	// airschedService.simulate();
+	// airtspService.simulate();
 
 // } catch (const std::exception& stde) {
 //   std::cerr << "Standard exception: " << stde.what() << std::endl;

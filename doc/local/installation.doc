@@ -409,7 +409,7 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-0.1.0 \
  -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
  -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
  -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
- -DWITH_AIRSCHED_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
+ -DWITH_AIRTSP_PREFIX=${INSTALL_BASEDIR}/airtsp-stable \
  -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airrac-stable \
  -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/rmol-stable \
  -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
@@ -454,8 +454,8 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-0.1.0 \
 -- Found SOCI with MySQL back-end support version: 3.1.0
 -- Requires StdAir-0.43
 -- Found StdAir version: 0.44.3
--- Requires AirSched-0.1
--- Found AirSched version: 0.1.3
+-- Requires Airtsp-0.1
+-- Found Airtsp version: 0.1.3
 -- Requires AirRAC-0.2
 -- Found AirRAC version: 0.2.2
 -- Requires RMOL-0.25
@@ -580,13 +580,13 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-0.1.0 \
 --   - STDAIR_INCLUDE_DIRS ........... : /home/user/dev/deliveries/stdair-0.44.3/include
 --   - STDAIR_SAMPLE_DIR ............. : /home/user/dev/deliveries/stdair-0.44.3/share/stdair/samples
 -- 
--- * AirSched:
---   - AIRSCHED_VERSION .............. : 0.1.3
---   - AIRSCHED_BINARY_DIRS .......... : /home/user/dev/deliveries/airsched-0.1.3/bin
---   - AIRSCHED_EXECUTABLES .......... : airsched
---   - AIRSCHED_LIBRARY_DIRS ......... : /home/user/dev/deliveries/airsched-0.1.3/lib64
---   - AIRSCHED_LIBRARIES ............ : airschedlib
---   - AIRSCHED_INCLUDE_DIRS ......... : /home/user/dev/deliveries/airsched-0.1.3/include
+-- * Airtsp:
+--   - AIRTSP_VERSION .............. : 0.1.3
+--   - AIRTSP_BINARY_DIRS .......... : /home/user/dev/deliveries/airtsp-0.1.3/bin
+--   - AIRTSP_EXECUTABLES .......... : airtsp
+--   - AIRTSP_LIBRARY_DIRS ......... : /home/user/dev/deliveries/airtsp-0.1.3/lib64
+--   - AIRTSP_LIBRARIES ............ : airtsplib
+--   - AIRTSP_INCLUDE_DIRS ......... : /home/user/dev/deliveries/airtsp-0.1.3/include
 -- 
 -- * AirRAC:
 --   - AIRRAC_VERSION ................ : 0.2.2

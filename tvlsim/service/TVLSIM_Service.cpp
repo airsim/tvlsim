@@ -94,7 +94,7 @@ namespace TVLSIM {
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
 
-    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // Initalise the SimCRS service, itself initialising AirInv, AirTSP
     // and SimFQT.
     initSIMCRSService();
 
@@ -138,7 +138,7 @@ namespace TVLSIM {
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
 
-    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // Initalise the SimCRS service, itself initialising AirInv, AirTSP
     // and SimFQT.
     initSIMCRSService();
 
@@ -177,7 +177,7 @@ namespace TVLSIM {
     // Initalise the TravelCCM service.
     initTRAVELCCMService();    
 
-    // Initalise the SimCRS service, itself initialising AirInv, Airsched
+    // Initalise the SimCRS service, itself initialising AirInv, AirTSP
     // and SimFQT.
     initSIMCRSService();
 
@@ -772,7 +772,7 @@ namespace TVLSIM {
     }
     assert (_tvlsimServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (AirSched) service context
+    // Retrieve the StdAir service object from the (AirTSP) service context
     TVLSIM_ServiceContext& lTVLSIM_ServiceContext = *_tvlsimServiceContext;
     stdair::STDAIR_Service& lSTDAIR_Service =
       lTVLSIM_ServiceContext.getSTDAIR_Service();
@@ -792,7 +792,7 @@ namespace TVLSIM {
     }
     assert (_tvlsimServiceContext != NULL);
 
-    // Retrieve the StdAir service object from the (AirSched) service context
+    // Retrieve the StdAir service object from the (AirTSP) service context
     TVLSIM_ServiceContext& lTVLSIM_ServiceContext = *_tvlsimServiceContext;
     stdair::STDAIR_Service& lSTDAIR_Service =
       lTVLSIM_ServiceContext.getSTDAIR_Service();

@@ -13,13 +13,13 @@
 #include <stdair/basic/DemandGenerationMethod.hpp>
 #include <stdair/bom/TravelSolutionTypes.hpp>
 #include <stdair/bom/BreakPointStruct.hpp>
-// AIRRAC
+// AirRAC
 #include <airrac/AIRRAC_Types.hpp>
 // SimFQT
 #include <simfqt/SIMFQT_Types.hpp>
-// TRADEMGEN
+// TraDemGen
 #include <trademgen/TRADEMGEN_Types.hpp>
-// Dsim
+// TvlSim
 #include <tvlsim/basic/BasConst_General.hpp>
 #include <tvlsim/TVLSIM_Types.hpp>
 

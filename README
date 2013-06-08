@@ -51,7 +51,7 @@ Then, you need the following packages (Fedora/RedHat/CentOS names here,
 but names may vary according to distributions):
   * cmake
   * gcc-c++
-  * stdair-devel, trademgen-devel, travelccm-devel, airsched-devel,
+  * stdair-devel, trademgen-devel, travelccm-devel, airtsp-devel,
   * airrac-devel, rmol-devel, airinv-devel, simfqt-devel, sevmgr-devel
   * boost-devel
   * zeromq-devel
@@ -80,7 +80,7 @@ Then, as usual:
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
    -DWITH_TRAVELCCM_PREFIX=${INSTALL_BASEDIR}/travelccm-stable \
-   -DWITH_AIRSCHED_PREFIX=${INSTALL_BASEDIR}/airsched-stable \
+   -DWITH_AIRTSP_PREFIX=${INSTALL_BASEDIR}/airtsp-stable \
    -DWITH_AIRRAC_PREFIX=${INSTALL_BASEDIR}/airrac-stable \
    -DWITH_RMOL_PREFIX=${INSTALL_BASEDIR}/rmol-stable \
    -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
@@ -108,5 +108,5 @@ Then, as usual:
 * To run the installed version:
   ${INSTALL_BASEDIR}/tvlsim-99.99.99/bin/tvlsim -b
 
-Denis Arnaud (December 2012)
+Denis Arnaud (June 2013)
 

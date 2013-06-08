@@ -2,7 +2,7 @@
 ## CMake Macros for an embeddable project
 ##
 ## Author: Denis Arnaud
-## Date: July 2011
+## Date: June 2013
 #######################################################################
 
 
@@ -67,6 +67,7 @@ endmacro (set_project_versions)
 #  * ENABLE_TEST         - Whether or not to build and check the unit tests
 #  * INSTALL_DOC         - Whether or not to build and install the documentation
 #  * INSTALL_LIB_DIR     - Installation directory for the libraries
+#  * INSTALL_PY_LIB_DIR  - Installation directory for the Python libraries
 #  * INSTALL_BIN_DIR     - Installation directory for the binaries
 #  * INSTALL_INCLUDE_DIR - Installation directory for the header files
 #  * INSTALL_DATA_DIR    - Installation directory for the data files
@@ -110,7 +111,9 @@ macro (set_project_options _build_doc _enable_tests _run_gcov)
 
   # Offer the user the choice of overriding the installation directories
   set (INSTALL_LIB_DIR ${LIBDIR} CACHE PATH
-	"Installation directory for libraries")
+    "Installation directory for libraries")
+  set (INSTALL_PY_LIB_DIR ${LIBDIR}/python${PYTHONLIBS_VERSION}/${PROJECT_NAME}
+	CACHE PATH "Installation directory for Python libraries")
   set (INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
   set (INSTALL_INCLUDE_DIR include CACHE PATH
     "Installation directory for header files")
@@ -123,7 +126,7 @@ macro (set_project_options _build_doc _enable_tests _run_gcov)
   option (RUN_GCOV "Set to OFF to skip code coverage" ${_run_gcov})
 
   # Make relative paths absolute (needed later on)
-  foreach (_path_type LIB BIN INCLUDE DATA SAMPLE)
+  foreach (_path_type LIB PY_LIB BIN INCLUDE DATA SAMPLE)
     set (var INSTALL_${_path_type}_DIR)
     if (NOT IS_ABSOLUTE "${${var}}")
       set (${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
@@ -139,7 +142,7 @@ macro (set_project_options _build_doc _enable_tests _run_gcov)
     set (CMAKE_INSTALL_RPATH "")
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF)
   else()
-    set (CMAKE_INSTALL_RPATH ${INSTALL_LIB_DIR})
+    set (CMAKE_INSTALL_RPATH ${INSTALL_LIB_DIR} ${INSTALL_PY_LIB_DIR})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
   endif()
 
@@ -339,6 +342,10 @@ macro (get_external_libs)
       get_boost (${_arg_version})
     endif (${_arg_lower} STREQUAL "boost")
 
+    if (${_arg_lower} STREQUAL "protobuf")
+      get_protobuf (${_arg_version})
+    endif (${_arg_lower} STREQUAL "protobuf")
+
     if (${_arg_lower} STREQUAL "xapian")
       get_xapian (${_arg_version})
     endif (${_arg_lower} STREQUAL "xapian")
@@ -375,9 +382,9 @@ macro (get_external_libs)
       get_travelccm (${_arg_version})
     endif (${_arg_lower} STREQUAL "travelccm")
 
-    if (${_arg_lower} STREQUAL "airsched")
-      get_airsched (${_arg_version})
-    endif (${_arg_lower} STREQUAL "airsched")
+    if (${_arg_lower} STREQUAL "airtsp")
+      get_airtsp (${_arg_version})
+    endif (${_arg_lower} STREQUAL "airtsp")
 
     if (${_arg_lower} STREQUAL "airrac")
       get_airrac (${_arg_version})
@@ -583,20 +590,12 @@ macro (get_boost)
   set (Boost_USE_STATIC_LIBS OFF)
   set (Boost_USE_MULTITHREADED ON)
   set (Boost_USE_STATIC_RUNTIME OFF)
-  set (BOOST_REQUIRED_COMPONENTS_FOR_LIB
-    date_time iostreams serialization filesystem system locale python)
-  set (BOOST_REQUIRED_COMPONENTS_FOR_BIN regex program_options)
-  set (BOOST_REQUIRED_COMPONENTS_FOR_TST unit_test_framework)
-  set (BOOST_REQUIRED_COMPONENTS ${BOOST_REQUIRED_COMPONENTS_FOR_LIB}
-	${BOOST_REQUIRED_COMPONENTS_FOR_BIN} ${BOOST_REQUIRED_COMPONENTS_FOR_TST})
+  set (BOOST_REQUIRED_COMPONENTS
+    regex program_options date_time iostreams serialization filesystem 
+    unit_test_framework python)
 
   # The first check is for the required components.
   find_package (Boost COMPONENTS ${BOOST_REQUIRED_COMPONENTS})
-
-  # Fix a bug for some old CMake package finder scripts (e.g., on Fedora 15)
-  if (Boost_VERSION)
-    set (Boost_FOUND ON)
-  endif (Boost_VERSION)
 
   # The second check is for the required version (FindBoostWrapper.cmake is
   # provided by us). Indeed, the Fedora/RedHat FindBoost.cmake does not seem
@@ -607,24 +606,125 @@ macro (get_boost)
     # Update the list of include directories for the project
     include_directories (${Boost_INCLUDE_DIRS})
 
-	# For display purposes
-    set (BOOST_REQUIRED_LIBS "")
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB
+      ${Boost_REGEX_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} 
+	  ${Boost_SERIALIZATION_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
+	  ${Boost_DATE_TIME_LIBRARY} ${Boost_PYTHON_LIBRARY})
+    list (APPEND PROJ_DEP_LIBS_FOR_BIN
+	  ${Boost_REGEX_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY})
+    list (APPEND PROJ_DEP_LIBS_FOR_TST ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
-    # Update the list of library dependencies for the project
-	register_boost_lib ("PROJ_DEP_LIBS_FOR_LIB"
-	  "${BOOST_REQUIRED_COMPONENTS_FOR_LIB}")
-
-    # Update the list of binary dependencies for the project
-	register_boost_lib ("PROJ_DEP_LIBS_FOR_BIN"
-	  "${BOOST_REQUIRED_COMPONENTS_FOR_BIN}")
-
-    # Update the list of test dependencies for the project
-	register_boost_lib ("PROJ_DEP_LIBS_FOR_TST"
-	  "${BOOST_REQUIRED_COMPONENTS_FOR_TST}")
-
+    # For display purposes
+    set (BOOST_REQUIRED_LIBS
+      ${Boost_REGEX_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} 
+	  ${Boost_SERIALIZATION_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}
+	  ${Boost_DATE_TIME_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY}
+	  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} ${Boost_PYTHON_LIBRARY})
   endif (Boost_FOUND)
 
 endmacro (get_boost)
+
+##
+# PROTOBUF_GENERATE_PYTHON (public function)
+#   _proto_srcs = Variable to define with autogenerated Python source files
+#   ARGN = proto files
+function (PROTOBUF_GENERATE_PYTHON _proto_srcs _proto_output_dir)
+  if (NOT ARGN)
+    message (SEND_ERROR
+	  "Error: PROTOBUF_GENERATE_PYTHON() called without any proto files")
+    return()
+  endif()
+
+  # Output directory
+  set (_python_output_dir ${CMAKE_CURRENT_BINARY_DIR}/${_proto_output_dir})
+
+  #
+  set (${_proto_srcs})
+  foreach (FIL ${ARGN})
+	# Extract the file-path and the extension of the Protobuf specification file
+    get_filename_component (ABS_FIL ${FIL} ABSOLUTE)
+    get_filename_component (FIL_WE ${FIL} NAME_WE)
+
+	# With Python, Protobuf adds "_pb2"
+	set (_proto_gen_src ${FIL_WE}_pb2.py)
+
+    list (APPEND ${_proto_srcs} "${_python_output_dir}/${_proto_gen_src}")
+
+	# Calculate the Protobuf include path (Protobuf is a little dumb about
+	# file-path: it must be told twice, consistently, where the source is
+	# located)
+	set (_protobuf_include_path
+	  -I ${CMAKE_CURRENT_SOURCE_DIR}/${_layer_dir_name})
+
+	# Add a specific command for the Protobuf stub/skeleton generation
+    add_custom_command (OUTPUT "${_python_output_dir}/${_proto_gen_src}"
+      COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
+      ARGS --python_out ${_python_output_dir} ${_protobuf_include_path} ${ABS_FIL}
+      DEPENDS ${ABS_FIL}
+      COMMENT "Running Python protocol buffer compiler on ${FIL}, generating ${_python_output_dir}/${_proto_gen_src}"
+      VERBATIM)
+  endforeach (FIL ${ARGN})
+
+  set_source_files_properties (${${_proto_srcs}} PROPERTIES GENERATED TRUE)
+  set (${_proto_srcs} ${${_proto_srcs}} PARENT_SCOPE)
+endfunction (PROTOBUF_GENERATE_PYTHON)
+
+##
+# Internal function: search for normal library as well as a debug one
+#    if the debug one is specified also include debug/optimized keywords
+#    in *_LIBRARIES variable
+function(_protobuf_find_libraries name filename)
+   find_library(${name}_LIBRARY
+       NAMES ${filename}
+       PATHS ${PROTOBUF_SRC_ROOT_FOLDER}/vsprojects/Release)
+   mark_as_advanced(${name}_LIBRARY)
+
+   find_library(${name}_LIBRARY_DEBUG
+       NAMES ${filename}
+       PATHS ${PROTOBUF_SRC_ROOT_FOLDER}/vsprojects/Debug)
+   mark_as_advanced(${name}_LIBRARY_DEBUG)
+
+   if(NOT ${name}_LIBRARY_DEBUG)
+      # There is no debug library
+      set(${name}_LIBRARY_DEBUG ${${name}_LIBRARY} PARENT_SCOPE)
+      set(${name}_LIBRARIES     ${${name}_LIBRARY} PARENT_SCOPE)
+   else()
+      # There IS a debug library
+      set(${name}_LIBRARIES
+          optimized ${${name}_LIBRARY}
+          debug     ${${name}_LIBRARY_DEBUG}
+          PARENT_SCOPE
+      )
+   endif()
+endfunction()
+
+# ~~~~~~~~~~ Protobuf ~~~~~~~~~
+macro (get_protobuf)
+  unset (_required_version)
+  if (${ARGC} GREATER 0)
+    set (_required_version ${ARGV0})
+    message (STATUS "Requires Protobuf-${_required_version}")
+  else (${ARGC} GREATER 0)
+    message (STATUS "Requires Protobuf without specifying any version")
+  endif (${ARGC} GREATER 0)
+
+  set (PROTOBUF_FOUND False)
+
+  find_package (Protobuf ${_required_version} REQUIRED)
+  if (PROTOBUF_LIBRARY)
+    set (PROTOBUF_FOUND True)
+  endif (PROTOBUF_LIBRARY)
+
+  if (PROTOBUF_FOUND)
+    # Update the list of include directories for the project
+    include_directories (${PROTOBUF_INCLUDE_DIR})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${PROTOBUF_LIBRARIES})
+  endif (PROTOBUF_FOUND)
+
+endmacro (get_protobuf)
 
 # ~~~~~~~~~~ Xapian ~~~~~~~~~
 macro (get_xapian)
@@ -744,6 +844,17 @@ macro (get_soci)
     message (STATUS "Requires SOCI without specifying any version")
   endif (${ARGC} GREATER 0)
 
+  # SOCI core
+  find_package (SOCI ${_required_version} REQUIRED)
+  if (SOCI_FOUND)
+    #
+    message (STATUS "Found SOCI with version: ${SOCI_HUMAN_VERSION}")
+
+    # Update the list of include directories for the project
+    include_directories (${SOCI_INCLUDE_DIR})
+  endif (SOCI_FOUND)
+
+  # SOCI MySQL
   find_package (SOCIMySQL ${_required_version} REQUIRED)
   if (SOCIMYSQL_FOUND)
     #
@@ -751,12 +862,25 @@ macro (get_soci)
 	  " ${SOCI_HUMAN_VERSION}")
 
     # Update the list of include directories for the project
-    include_directories (${SOCI_INCLUDE_DIR})
     include_directories (${SOCIMYSQL_INCLUDE_DIR})
 
     # Update the list of dependencies for the project
     list (APPEND PROJ_DEP_LIBS_FOR_LIB ${SOCI_LIBRARIES} ${SOCIMYSQL_LIBRARIES})
   endif (SOCIMYSQL_FOUND)
+
+  # SOCI SQLite
+  find_package (SOCISQLite ${_required_version} REQUIRED)
+  if (SOCISQLITE_FOUND)
+    #
+    message (STATUS "Found SOCI with SQLite back-end support version:"
+	  " ${SOCI_HUMAN_VERSION}")
+
+    # Update the list of include directories for the project
+    include_directories (${SOCISQLITE_INCLUDE_DIR})
+
+    # Update the list of dependencies for the project
+    list (APPEND PROJ_DEP_LIBS_FOR_LIB ${SOCI_LIBRARIES} ${SOCISQLITE_LIBRARIES})
+  endif (SOCISQLITE_FOUND)
 
 endmacro (get_soci)
 
@@ -908,37 +1032,37 @@ macro (get_travelccm)
 
 endmacro (get_travelccm)
 
-# ~~~~~~~~~~ AirSched ~~~~~~~~~
-macro (get_airsched)
+# ~~~~~~~~~~ AirTSP ~~~~~~~~~
+macro (get_airtsp)
   unset (_required_version)
   if (${ARGC} GREATER 0)
     set (_required_version ${ARGV0})
-    message (STATUS "Requires AirSched-${_required_version}")
+    message (STATUS "Requires AirTSP-${_required_version}")
   else (${ARGC} GREATER 0)
-    message (STATUS "Requires AirSched without specifying any version")
+    message (STATUS "Requires AirTSP without specifying any version")
   endif (${ARGC} GREATER 0)
 
-  find_package (AirSched ${_required_version} REQUIRED
-	HINTS ${WITH_AIRSCHED_PREFIX})
-  if (AirSched_FOUND)
+  find_package (AirTSP ${_required_version} REQUIRED
+	HINTS ${WITH_AIRTSP_PREFIX})
+  if (AirTSP_FOUND)
     #
-    message (STATUS "Found AirSched version: ${AIRSCHED_VERSION}")
+    message (STATUS "Found AirTSP version: ${AIRTSP_VERSION}")
 
     # Update the list of include directories for the project
-    include_directories (${AIRSCHED_INCLUDE_DIRS})
+    include_directories (${AIRTSP_INCLUDE_DIRS})
 
     # Update the list of dependencies for the project
-    set (PROJ_DEP_LIBS_FOR_LIB ${PROJ_DEP_LIBS_FOR_LIB} ${AIRSCHED_LIBRARIES})
+    set (PROJ_DEP_LIBS_FOR_LIB ${PROJ_DEP_LIBS_FOR_LIB} ${AIRTSP_LIBRARIES})
 
-  else (AirSched_FOUND)
-    set (ERROR_MSG "The AirSched library cannot be found. If it is installed")
+  else (AirTSP_FOUND)
+    set (ERROR_MSG "The AirTSP library cannot be found. If it is installed")
     set (ERROR_MSG "${ERROR_MSG} in a in a non standard directory, just invoke")
-    set (ERROR_MSG "${ERROR_MSG} 'cmake' specifying the -DWITH_AIRSCHED_PREFIX=")
-    set (ERROR_MSG "${ERROR_MSG}<AirSched install path> variable.")
+    set (ERROR_MSG "${ERROR_MSG} 'cmake' specifying the -DWITH_AIRTSP_PREFIX=")
+    set (ERROR_MSG "${ERROR_MSG}<AirTSP install path> variable.")
     message (FATAL_ERROR "${ERROR_MSG}")
-  endif (AirSched_FOUND)
+  endif (AirTSP_FOUND)
 
-endmacro (get_airsched)
+endmacro (get_airtsp)
 
 # ~~~~~~~~~~ AirRAC ~~~~~~~~~
 macro (get_airrac)
@@ -1213,10 +1337,10 @@ macro (init_build)
   #    will set CMAKE_CXX_FLAGS as being equal to -O2.
   if (NOT CMAKE_CXX_FLAGS)
 	#set (CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -Werror")
-    if (${RUN_GCOV} STREQUAL "ON")
+        if (${RUN_GCOV} STREQUAL "ON")
 	  set (CMAKE_CXX_FLAGS "-Wall -Werror -fprofile-arcs -ftest-coverage")
-    else (${RUN_GCOV} STREQUAL "ON")
-      set (CMAKE_CXX_FLAGS "-Wall -Werror")
+        else (${RUN_GCOV} STREQUAL "ON")
+          set (CMAKE_CXX_FLAGS "-Wall -Werror")
 	endif (${RUN_GCOV} STREQUAL "ON")
   endif (NOT CMAKE_CXX_FLAGS)
   # Tell the source code the version of Boost (only once)
@@ -1343,6 +1467,32 @@ macro (module_generate_config_helpers)
 endmacro (module_generate_config_helpers)
 
 ##
+# Detect and generate Protobuf-related stubs
+macro (layer_generate_protobuf _protobuf_dir)
+
+  # Detect the presence of Protobuf specification files
+  file (GLOB _pb_interface_list
+	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${_protobuf_dir}*.proto)
+
+  # Generate the Protobuf stubs/skeletons for every Protobuf specification
+  # file detected
+  foreach (_proto_file ${_pb_interface_list})
+	# Build the C++ stubs/skeletons
+	PROTOBUF_GENERATE_CPP (PROTO_CPP_SRCS PROTO_CPP_HDRS ${_proto_file})
+	# Build the Python helper
+	PROTOBUF_GENERATE_PYTHON (PROTO_PY_SRCS python ${_proto_file})
+
+	# Specify the source file, which is by convention (here) made of the name
+	# of the Protobuf interface file suffixed by .hpp/.cpp
+	list (APPEND ${MODULE_LIB_TARGET}_HEADERS ${PROTO_CPP_HDRS})
+	list (APPEND ${MODULE_LIB_TARGET}_SOURCES ${PROTO_CPP_SRCS})
+	list (APPEND ${MODULE_LIB_TARGET}_PY_SRCS ${PROTO_PY_SRCS})
+
+  endforeach (_proto_file ${_pb_interface_list})
+
+endmacro (layer_generate_protobuf)
+
+##
 # Building and installation of the "standard library".
 # All the sources within each of the layers/sub-directories are used and
 # assembled, in order to form a single library, named here the
@@ -1439,7 +1589,7 @@ macro (module_library_add_standard _layer_list)
 
   # Convenient message to the user/developer
   if (NOT CMAKE_INSTALL_RPATH_USE_LINK_PATH)
-    install (CODE "message (\"On Unix-based platforms, run export LD_LIBRARY_PATH=${INSTALL_LIB_DIR}:\$LD_LIBRARY_PATH once per session\")")
+    install (CODE "message (\"On Unix-based platforms, run export LD_LIBRARY_PATH=${INSTALL_LIB_DIR}:${INSTALL_PY_LIB_DIR}:\$LD_LIBRARY_PATH once per session\")")
   endif (NOT CMAKE_INSTALL_RPATH_USE_LINK_PATH)
 
 endmacro (module_library_add_standard)
@@ -1479,7 +1629,7 @@ macro (module_library_add_specific
   foreach (_arg_module ${ARGV})
 
     if (NOT "${_lib_dir};${_lib_short_name};${_lib_headers};${_lib_sources}" 
-	MATCHES "${_arg_module}")
+		MATCHES "${_arg_module}")
       list (APPEND _intermodule_dependencies ${_arg_module}lib)
     endif ()
   endforeach (_arg_module)
@@ -1685,16 +1835,31 @@ macro (module_script_add _script_file)
 	# Extract the file name (only) from the full file path
 	get_filename_component (_script_alone ${_script_file} NAME)
     
+	# Initialise the list of script sources with the script itself
+	set (_full_script_srcs ${_full_script_path})
+
+	# If the script is Python, add a dependency on the Protobuf-related helpers
+	string (SUBSTRING ${_script_alone} 0 2 _script_ext)
+	if ("${_script_ext}" STREQUAL "py")
+	  message (STATUS "${_script_file} is assumed to be a Python script")
+	  message (STATUS " => Added dependencies: ${${MODULE_LIB_TARGET}_PY_SRCS}")
+      list (APPEND _full_script_srcs ${${MODULE_LIB_TARGET}_PY_SRCS})
+
+      # Install the Python helpers
+      install (PROGRAMS ${${MODULE_LIB_TARGET}_PY_SRCS}
+		DESTINATION "${INSTALL_PY_LIB_DIR}" COMPONENT devel)
+	endif ("${_script_ext}" STREQUAL "py")
+
 	# Add the 'scripts_${MODULE_NAME}' target, depending on the
     # converted (Shell, Python, Perl, Ruby, etc) scripts
-    add_custom_target (${_script_alone}_script ALL DEPENDS ${_full_script_path})
+    add_custom_target (${_script_alone}_script ALL DEPENDS ${_full_script_srcs})
 
     # Install the (Shell, Python, Perl, Ruby, etc) script file
     install (PROGRAMS ${_full_script_path} DESTINATION bin COMPONENT devel)
 
   else (EXISTS ${_full_script_src_path})
     message (FATAL_ERROR
-      "The Python template script, '${_script_file}.in', does not exist")
+      "The template of the script, '${_script_file}.in', does not exist")
   endif (EXISTS ${_full_script_src_path})
 
   # Register the binary target in the project (for reporting purpose)
@@ -1772,6 +1937,7 @@ endmacro (add_test_suite)
 ##
 # Register a test with CMake/CTest.
 # The parameters are:
+#  * The name of the test module
 #  * The name of the test, which will serve as the name for the test binary.
 #  * The list of sources for the test binary. The list must be
 #    semi-colon (';') seperated.
@@ -1808,7 +1974,8 @@ macro (module_test_add_suite _module_name _test_name _test_sources)
 
     # Tell the test binary that it depends on all those libraries
     target_link_libraries (${_test_name}tst ${_library_list} 
-      ${MODULE_LIB_TARGET} ${PROJ_DEP_LIBS_FOR_TST})
+      ${MODULE_LIB_TARGET} ${${MODULE_NAME}_INTER_TARGETS}
+	  ${PROJ_DEP_LIBS_FOR_TST})
 
     # Register the binary target in the module
     list (APPEND ${MODULE_NAME}_ALL_TST_TARGETS ${_test_name}tst)
@@ -2186,6 +2353,7 @@ macro (install_dev_helper_files)
   set (${PACKAGE_NAME}_INCLUDE_DIRS "${INSTALL_INCLUDE_DIR}")
   set (${PACKAGE_NAME}_BIN_DIR "${INSTALL_BIN_DIR}")
   set (${PACKAGE_NAME}_LIB_DIR "${INSTALL_LIB_DIR}")
+  set (${PACKAGE_NAME}_PY_LIB_DIR "${INSTALL_PY_LIB_DIR}")
   set (${PACKAGE_NAME}_SAMPLE_DIR "${INSTALL_SAMPLE_DIR}")
   set (${PACKAGE_NAME}_CMAKE_DIR "${LIB_DEPENDENCY_EXPORT_PATH}")
   configure_file (${PROJECT_NAME}-config.cmake.in
@@ -2230,6 +2398,7 @@ macro (display_doxygen)
   message (STATUS "  - DOXYGEN_DOT_EXECUTABLE ........ : ${DOXYGEN_DOT_EXECUTABLE}")
   message (STATUS "  - DOXYGEN_DOT_PATH .............. : ${DOXYGEN_DOT_PATH}")
 endmacro (display_doxygen)
+
 
 # Gcov
 macro (display_gcov)
@@ -2308,6 +2477,19 @@ macro (display_boost)
   endif (Boost_FOUND)
 endmacro (display_boost)
 
+# Protobuf
+macro (display_protobuf)
+  if (PROTOBUF_FOUND)
+    message (STATUS)
+    message (STATUS "* Protobuf:")
+    message (STATUS "  - PROTOBUF_VERSION .............. : ${PROTOBUF_VERSION}")
+    message (STATUS "  - PROTOBUF_INCLUDE_DIR .......... : ${PROTOBUF_INCLUDE_DIR}")
+    message (STATUS "  - PROTOBUF_LIBRARY .............. : ${PROTOBUF_LIBRARY}")
+    message (STATUS "  - PROTOBUF_PROTOC_EXECUTABLE .... : ${PROTOBUF_PROTOC_EXECUTABLE}")
+    message (STATUS "  - PROTOBUF_PROTOC_LIBRARY ....... : ${PROTOBUF_PROTOC_LIBRARY}")
+  endif (PROTOBUF_FOUND)
+endmacro (display_protobuf)
+
 # Xapian
 macro (display_xapian)
   if (XAPIAN_FOUND)
@@ -2362,8 +2544,10 @@ macro (display_soci)
     message (STATUS "  - SOCI_HUMAN_VERSION ............ : ${SOCI_HUMAN_VERSION}")
     message (STATUS "  - SOCI_INCLUDE_DIR .............. : ${SOCI_INCLUDE_DIR}")
     message (STATUS "  - SOCIMYSQL_INCLUDE_DIR ......... : ${SOCIMYSQL_INCLUDE_DIR}")
+    message (STATUS "  - SOCISQLITE_INCLUDE_DIR ........ : ${SOCISQLITE_INCLUDE_DIR}")
     message (STATUS "  - SOCI_LIBRARIES ................ : ${SOCI_LIBRARIES}")
     message (STATUS "  - SOCIMYSQL_LIBRARIES ........... : ${SOCIMYSQL_LIBRARIES}")
+    message (STATUS "  - SOCISQLITE_LIBRARIES .......... : ${SOCISQLITE_LIBRARIES}")
   endif (SOCI_FOUND)
 endmacro (display_soci)
 
@@ -2424,19 +2608,19 @@ macro (display_travelccm)
   endif (TravelCCM_FOUND)
 endmacro (display_travelccm)
 
-# AirSched
-macro (display_airsched)
-  if (AirSched_FOUND)
+# AirTSP
+macro (display_airtsp)
+  if (AirTSP_FOUND)
     message (STATUS)
-    message (STATUS "* AirSched:")
-    message (STATUS "  - AIRSCHED_VERSION .............. : ${AIRSCHED_VERSION}")
-    message (STATUS "  - AIRSCHED_BINARY_DIRS .......... : ${AIRSCHED_BINARY_DIRS}")
-    message (STATUS "  - AIRSCHED_EXECUTABLES .......... : ${AIRSCHED_EXECUTABLES}")
-    message (STATUS "  - AIRSCHED_LIBRARY_DIRS ......... : ${AIRSCHED_LIBRARY_DIRS}")
-    message (STATUS "  - AIRSCHED_LIBRARIES ............ : ${AIRSCHED_LIBRARIES}")
-    message (STATUS "  - AIRSCHED_INCLUDE_DIRS ......... : ${AIRSCHED_INCLUDE_DIRS}")
-  endif (AirSched_FOUND)
-endmacro (display_airsched)
+    message (STATUS "* AirTSP:")
+    message (STATUS "  - AIRTSP_VERSION .............. : ${AIRTSP_VERSION}")
+    message (STATUS "  - AIRTSP_BINARY_DIRS .......... : ${AIRTSP_BINARY_DIRS}")
+    message (STATUS "  - AIRTSP_EXECUTABLES .......... : ${AIRTSP_EXECUTABLES}")
+    message (STATUS "  - AIRTSP_LIBRARY_DIRS ......... : ${AIRTSP_LIBRARY_DIRS}")
+    message (STATUS "  - AIRTSP_LIBRARIES ............ : ${AIRTSP_LIBRARIES}")
+    message (STATUS "  - AIRTSP_INCLUDE_DIRS ......... : ${AIRTSP_INCLUDE_DIRS}")
+  endif (AirTSP_FOUND)
+endmacro (display_airtsp)
 
 # AirRAC
 macro (display_airrac)
@@ -2633,6 +2817,7 @@ macro (display_status)
   message (STATUS "---  Installation Configuration   ---")
   message (STATUS "-------------------------------------")
   message (STATUS "INSTALL_LIB_DIR ................... : ${INSTALL_LIB_DIR}")
+  message (STATUS "INSTALL_PY_LIB_DIR ................ : ${INSTALL_PY_LIB_DIR}")
   message (STATUS "INSTALL_BIN_DIR ................... : ${INSTALL_BIN_DIR}")
   message (STATUS "CMAKE_INSTALL_RPATH ............... : ${CMAKE_INSTALL_RPATH}")
   message (STATUS "CMAKE_INSTALL_RPATH_USE_LINK_PATH . : ${CMAKE_INSTALL_RPATH_USE_LINK_PATH}")
@@ -2663,6 +2848,7 @@ macro (display_status)
   display_icu ()
   display_zeromq ()
   display_boost ()
+  display_protobuf ()
   display_xapian ()
   display_readline ()
   display_curses ()
@@ -2672,7 +2858,7 @@ macro (display_status)
   display_sevmgr ()
   display_trademgen ()
   display_travelccm ()
-  display_airsched ()
+  display_airtsp ()
   display_airrac ()
   display_rmol ()
   display_airinv ()
