@@ -42,7 +42,7 @@ int pending_slave (void)
    
   if (to_bi)
     {
-      rc = init_dbconnection(&dbconnection, "nceorilnx02", "root", "pods3030", 3306); 
+      rc = init_dbconnection(&dbconnection, "mydbserver", "root", "rootpwd", 3306); 
       
       rc = live(duration, 
 		nb_guillotines, 
