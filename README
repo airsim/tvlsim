@@ -42,8 +42,8 @@ http://fr2.rpmfind.net/linux/fedora/releases/16/Everything/)
 
 Building the library and test binary from Git repository:
 ----------------------------------------------------------------
-The Sourceforge Git repository may be cloned as following:
-git clone ssh://denis_arnaud@git.code.sf.net/p/tvlsim/code tvlsimgit
+The Git repository may be cloned as following:
+git clone git@github.com:airsim/tvlsim.git tvlsimgit
 cd tvlsimgit
 git checkout trunk
 
@@ -70,12 +70,14 @@ http://sourceforge.net/project/showfiles.php?group_id=267805
 To customise the following to your environment, you can alter the path
 to the installation directory:
 export INSTALL_BASEDIR=/home/user/dev/deliveries
-export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=64"
+export TVLSIM_VER=99.99.99
+if [ -d /usr/lib64 ]; then LIBSUFFIX=64; fi
+export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=$LIBSUFFIX"
 
 Then, as usual:
 * To configure the project, type something like:
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-99.99.99 \
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
@@ -100,13 +102,46 @@ Then, as usual:
 * To package the binary and the (HTML and PDF) documentation:
   make package
 * To browse the (just installed, if enabled) HTML documentation:
-  midori file://${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/index.html
+  midori file://${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/share/doc/tvlsim/html/index.html
 * To browse the (just installed, if enabled) PDF documentation:
-  evince ${INSTALL_BASEDIR}/tvlsim-99.99.99/share/doc/tvlsim-99.99.99/html/refman.pdf
+  evince ${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/share/doc/tvlsim/html/refman.pdf
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
-  ${INSTALL_BASEDIR}/tvlsim-99.99.99/bin/tvlsim -b
+  ${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/bin/tvlsim -b
 
-Denis Arnaud (June 2013)
+'simulate' binary:
+------------------
+The 'simulate' executable requires a MySQL/MariaDB relational database.
+Also, the StdAir package contains helper scripts in order to create:
+* a database user, namely 'tvlsim';
+* as well as a database, namely 'sim_tvlsim'.
+Some data need to be loaded into a specific table, namely 'airlines'.
 
+Following is a sequence of commands allowing to initialise the MySQL database
+correctly:
+$ /usr/libexec/stdair/create_tvlsim_user.sh
+# Then, enter the credentials of an admin MySQL account.
+# Launch with the '-h' option to see how to change the hostname and/or port.
+$ /usr/libexec/stdair/create_tvlsim_db.sh
+# Then, enter the credentials of an admin MySQL account.
+# Launch with the '-h' option to see how to change the hostname and/or port.
+$ /usr/libexec/stdair/load_tvlsim_data.sh
+# Launch with the '-h' option to see how to change the hostname and/or port.
+$ simulate
+$ less simulate.log
+
+'TvlSimServer' binary:
+----------------------
+Same as for the 'simulate' executable.
+A command-line (test) client exists in Python (appserver/django/tvlsimClient.py).
+$ TvlSimServer &
+$ wget https://raw.github.com/airsim/tvlsim/trunk/appserver/django/tvlsimClient.py
+$ python tvlsimClient.py
+$ kill %1
+$ less tvlsimServer.log
+Note that a Django-based Web application server also exists,
+but it has not been packaged yet.
+
+
+Denis Arnaud (April 2015)
