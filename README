@@ -36,36 +36,44 @@ yum -y install tvlsim-devel tvlsim-doc
 
 You can also get the RPM packages (which may work on Linux
 distributions like Novel Suse and Mandriva) from the Fedora repository
-(e.g., for Fedora 16, 
-http://fr2.rpmfind.net/linux/fedora/releases/16/Everything/)
+(e.g., for Fedora 22, 
+http://fr2.rpmfind.net/linux/fedora/releases/22/Everything/)
 
 
 Building the library and test binary from Git repository:
 ----------------------------------------------------------------
 The Git repository may be cloned as following:
-git clone git@github.com:airsim/tvlsim.git tvlsimgit
+$ git clone git@github.com:airsim/tvlsim.git tvlsimgit # through SSH
+$ git clone https://github.com/airsim/tvlsim.git # if the firewall filters SSH
 cd tvlsimgit
 git checkout trunk
 
 Then, you need the following packages (Fedora/RedHat/CentOS names here, 
 but names may vary according to distributions):
-  * cmake
-  * gcc-c++
-  * stdair-devel, trademgen-devel, travelccm-devel, airtsp-devel,
-  * airrac-devel, rmol-devel, airinv-devel, simfqt-devel, sevmgr-devel
-  * boost-devel
-  * zeromq-devel
-  * readline-devel, ncurses-devel
-  * soci-mysql-devel
-  * python-devel
-  * gettext-devel (optional)
-  * doxygen, ghostscript, graphviz and tetex-latex (optional)
-  * rpm-build (optional)
+* cmake
+* gcc-c++
+* boost-devel / libboost-dev
+* python-devel / python-dev
+* gettext-devel / gettext-dev
+* sqlite3-devel / libsqlite3-dev
+* readline-devel / readline-dev
+* ncurses-devel
+* soci-mysql-devel, soci-sqlite3-devel
+* stdair-devel / libstdair-dev
+* sevmgr-devel / libsevmgr-dev
+* airrac-devel / libairrac-dev
+* rmol-devel / librmol-dev
+* airinv-devel / libairinv-dev
+* simfqt-devel / libsimfqt-dev
+* airtsp-devel / libairtsp-dev
+* doxygen, ghostscript, graphviz
+* tetex-latex (optional)
+* rpm-build (optional)
 
 Building the library and test binary from the tarball:
 ------------------------------------------------------
 The latest stable source tarball (tvlsim*.tar.gz or .bz2) can be found here:
-http://sourceforge.net/project/showfiles.php?group_id=267805
+https://sourceforge.net/projects/tvlsim/files/
 
 To customise the following to your environment, you can alter the path
 to the installation directory:
@@ -147,5 +155,5 @@ Note that a Django-based Web application server also exists,
 but it has not been packaged yet.
 
 
-Denis Arnaud (April 2015)
+Denis Arnaud (June 2015)
 
