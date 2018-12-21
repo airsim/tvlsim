@@ -38,7 +38,7 @@ namespace TVLSIM {
   // Forward declaration
   class TVLSIM_ServiceContext;
   struct RDSParameters;
-  class SimulationStatus;
+  struct SimulationStatus;
   
   /**
    * Interface (API) for the simulator services.

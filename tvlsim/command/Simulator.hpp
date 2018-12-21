@@ -31,26 +31,34 @@ namespace SEVMGR {
 
 namespace TVLSIM {
 
-  class SimulationStatus;
+  struct SimulationStatus;
 
-  /** Class wrapping the simulation methods. */
+  /**
+   * Class wrapping the simulation methods.
+   */
   class Simulator : public CmdAbstract {
     friend class TVLSIM_Service;
   private:
 
-    /** Perform a simulation. */
+    /**
+     * Perform a simulation.
+     */
     static void simulate(SIMCRS::SIMCRS_Service&, TRADEMGEN::TRADEMGEN_Service&,
                          TRAVELCCM::TRAVELCCM_Service&,stdair::STDAIR_Service&,
                          SimulationStatus&,
                          const stdair::DemandGenerationMethod&);  
 
-    /** Update the simulation status. */
+    /**
+     * Update the simulation status.
+     */
     static void updateStatus(const TRADEMGEN::TRADEMGEN_Service&,
 			     const stdair::EventType::EN_EventType&,
 			     SimulationStatus&,
 			     const double& iEventMeasure = 0);
 
-    /** Play a booking request event. */
+    /**
+     * Play a booking request event.
+     */
     static void playBookingRequest (SIMCRS::SIMCRS_Service&,
                                     TRADEMGEN::TRADEMGEN_Service&,
                                     TRAVELCCM::TRAVELCCM_Service&,
@@ -59,30 +67,48 @@ namespace TVLSIM {
                                     SimulationStatus&,
                                     const stdair::DemandGenerationMethod&);
 
-    /** Play a cancellation event. */
+    /**
+     * Play a cancellation event.
+     */
     static void playCancellation (SIMCRS::SIMCRS_Service&,
                                   const stdair::EventStruct&);
                                   
-    /** Play a snapshot event. */
+    /**
+     * Play a snapshot event.
+     */
     static void playSnapshotEvent (SIMCRS::SIMCRS_Service&,
                                    const stdair::EventStruct&);
 
 
-    /** Play a RM event. */
+    /**
+     * Play a RM event.
+     */
     static void playRMEvent (SIMCRS::SIMCRS_Service&,
                              const stdair::EventStruct&);  
  
-    /** Add the break points into the event queue. */
-    static const stdair::Count_T initialiseBreakPoint (const TRADEMGEN::TRADEMGEN_Service&,
-						       SEVMGR::SEVMGR_Service&,
-						       const stdair::BreakPointList_T&,
-						       SimulationStatus&);
+    /**
+     * Add the break points into the event queue.
+     */
+    static const stdair::Count_T
+    initialiseBreakPoint (const TRADEMGEN::TRADEMGEN_Service&,
+                          SEVMGR::SEVMGR_Service&,
+                          const stdair::BreakPointList_T&,
+                          SimulationStatus&);
 
   private:
-    /** Constructors. */
+    /**
+     * Default constructor.
+     */
     Simulator() {}
+
+    /**
+     * Default copy constructor.
+     */
     Simulator(const Simulator&) {}
-    /** Destructor. */
+
+    /**
+     * Destructor.
+     */
     ~Simulator() {}
   };
 

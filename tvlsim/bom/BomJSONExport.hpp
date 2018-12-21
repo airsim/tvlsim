@@ -22,7 +22,7 @@
 
 namespace TVLSIM {
 
-  class SimulationStatus;
+  struct SimulationStatus;
 
   /**
    * @brief Utility class to export StdAir objects in a JSON format.
