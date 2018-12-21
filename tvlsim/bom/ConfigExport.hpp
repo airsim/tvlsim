@@ -18,7 +18,7 @@ namespace stdair {
 namespace TVLSIM {
 
   // Forward declaration
-  class SimulationStatus;
+  struct SimulationStatus;
 
   /**
    * @brief Utility class to export object from the confguration holder.
