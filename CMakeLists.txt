@@ -14,7 +14,6 @@ set_project_versions (1 01 1)
 ##
 # Project options
 # The parameters are:
-# The parameters are:
 #  * whether or not the documentation must be built and installed
 #  * whether or not the tests must be compiled and run
 #  * whether or not the code coverage must be performed
