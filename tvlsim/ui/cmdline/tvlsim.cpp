@@ -1469,7 +1469,7 @@ int main (int argc, char* argv[]) {
 	    lEventType.getType();
 	  oEventListStr << tvlsimService.listEvents (lActualEventType);	
 	  
-	} catch (stdair::CodeConversionException e) {
+	} catch (stdair::CodeConversionException& e) {
 	  oEventListStr << "The event type '" << lEventTypeStr
 			<< "' is not known. Try 'help' for "
 			<< "more information on the 'list_event' command."
@@ -1686,7 +1686,7 @@ int main (int argc, char* argv[]) {
       // Launch the optimiser
       try {
         tvlsimService.optimise (lRMEvent);
-      } catch (stdair::ObjectNotFoundException lObjectNotFoundException) {
+      } catch (stdair::ObjectNotFoundException& lObjectNotFoundException) {
         oOptimiseStr << " FAILED: " << lObjectNotFoundException.what();
       }
 
