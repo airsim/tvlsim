@@ -112,8 +112,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Sat Jun 07 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.01.1-1
-- Future version
+* Tue Jan 15 2019 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.01.1-1
+- Aligned with StdAir CMake configuration scripts
 
 * Sat Jun 08 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> 1.01.0-1
 - Renamed from AirSched into AirTSP, for trademark issue with Pancor

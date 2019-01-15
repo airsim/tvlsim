@@ -106,20 +106,20 @@ Then, as usual:
   just type:
   make install
   cd ${INSTALL_BASEDIR}
-  rm -f tvlsim-stable && ln -s tvlsim-0.1.0 tvlsim-stable
+  rm -f tvlsim-stable && ln -s tvlsim-${TVLSIM_VER} tvlsim-stable
   cd -
 * To package the source files, type:
   make dist
 * To package the binary and the (HTML and PDF) documentation:
   make package
 * To browse the (just installed, if enabled) HTML documentation:
-  midori file://${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/share/doc/tvlsim/html/index.html
+  midori file://${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER}/share/doc/tvlsim/html/index.html
 * To browse the (just installed, if enabled) PDF documentation:
-  evince ${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/share/doc/tvlsim/html/refman.pdf
+  evince ${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER}/share/doc/tvlsim/html/refman.pdf
 * To run the local binary version:
   ./tvlsim/tvlsim -b
 * To run the installed version:
-  ${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER/bin/tvlsim -b
+  ${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER}/bin/tvlsim -b
 
 'simulate' binary:
 ------------------
