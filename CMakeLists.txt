@@ -44,7 +44,7 @@ packaging_set_other_options (TBZ2 "TBZ2;TGZ")
 ##            Dependencies            ##
 ########################################
 #
-get_external_libs ("python 3.4" "boost 1.41" "mysql 5.0" "soci 3.0"
+get_external_libs (git "python 3.4" "boost 1.41" "mysql 5.0" "soci 3.0"
 	"zeromq 2.0" readline curses "doxygen 1.4" "gcov 4.6.3" "lcov 1.9"
 	"stdair 1.00.0" "airtsp 1.01.0" "airrac 1.00.0" "rmol 1.00.0"
 	"sevmgr 1.00.0" "airinv 1.00.0" "simfqt 1.00.0"
