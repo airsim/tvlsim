@@ -13,34 +13,34 @@
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED 
 # define BOOST_FILESYSTEM_NO_DEPRECATED
 #endif
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
 #ifndef BOOST_SYSTEM_NO_DEPRECATED 
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif // BOOST_SYSTEM_NO_DEPRECATED
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
 
 #include <boost/filesystem/config.hpp>
 
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
 # ifdef BOOST_FILESYSTEM2_NARROW_ONLY
 #   error This compiler or standard library does not support wide-character strings or paths
 # endif
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
 # ifdef BOOST_FILESYSTEM_NARROW_ONLY
 #   error This compiler or standard library does not support wide-character strings or paths
 # endif
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/detail/lightweight_test.hpp>
 
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
 #  include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
 #  include "utf8_codecvt_facet.hpp"
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
 
 namespace fs = boost::filesystem;
 
@@ -69,11 +69,11 @@ namespace {
     if ( !f )
       throw fs::basic_filesystem_error<Path>( "wide_test create_file",
                                               ph,
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
         boost::system::error_code( errno, boost::system::generic_category() ) );
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
         boost::system::error_code( errno, boost::system::errno_ecat ) );
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
     if ( !contents.empty() ) f << contents;
   }
 

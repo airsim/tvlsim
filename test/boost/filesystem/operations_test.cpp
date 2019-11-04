@@ -72,11 +72,11 @@ namespace
     std::ofstream f( ph.file_string().c_str() );
     if ( !f )
       throw fs::filesystem_error( "operations_test create_file",
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
       ph, error_code(errno, system_category()) );
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
       ph, error_code(errno, system_category) );
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
     if ( !contents.empty() ) f << contents;
   }
 
@@ -85,11 +85,11 @@ namespace
     std::ifstream f( ph.file_string().c_str() );
     if ( !f )
       throw fs::filesystem_error( "operations_test verify_file",
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
       ph, error_code(errno, system_category()) );
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
       ph, error_code(errno, system_category) );
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
     std::string contents;
     f >> contents;
     if ( contents != expected )

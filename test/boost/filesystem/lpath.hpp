@@ -11,11 +11,11 @@
 // Boost
 #include <boost/version.hpp> // To check whether which version API is needed
 
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
 #include <boost/filesystem/v2/path.hpp>
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
 #include <boost/filesystem/path.hpp>
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
 
 #include <cwchar>      // for std::mbstate_t
 #include <string>
@@ -102,11 +102,11 @@ namespace user
 
 namespace boost
 {
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
   namespace filesystem2
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
   namespace filesystem
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
   {
     template<> struct is_basic_path<user::lpath>
       { static const bool value = true; };
