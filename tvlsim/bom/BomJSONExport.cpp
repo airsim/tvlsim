@@ -4,23 +4,23 @@
 // STL
 #include <cassert>
 #include <ostream>
-#if BOOST_VERSION >= 104100
+#if BOOST_VERSION_MACRO >= 104100
 // Boost Property Tree
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/regex.hpp>
-#endif // BOOST_VERSION >= 104100
+#endif // BOOST_VERSION_MACRO >= 104100
 // TVLSIM
 #include <tvlsim/bom/SimulationStatus.hpp>
 #include <tvlsim/bom/BomJSONExport.hpp>
 
-#if BOOST_VERSION >= 104100
+#if BOOST_VERSION_MACRO >= 104100
 namespace bpt = boost::property_tree;
-#else // BOOST_VERSION >= 104100
+#else // BOOST_VERSION_MACRO >= 104100
 namespace bpt {
   typedef char ptree;
 }
-#endif // BOOST_VERSION >= 104100
+#endif // BOOST_VERSION_MACRO >= 104100
 
 namespace TVLSIM { 
 
@@ -29,7 +29,7 @@ namespace TVLSIM {
   jsonExportSimulationStatus (std::ostream& oStream,
 			      const SimulationStatus& iSimulationStatus) {
 
-#if BOOST_VERSION >= 104100   
+#if BOOST_VERSION_MACRO >= 104100   
     // Create empty property tree objects
     bpt::ptree ptSimulationStatus;   
     bpt::ptree ptEventStatusList;   
@@ -110,7 +110,7 @@ namespace TVLSIM {
     // Write the property tree into the JSON stream.
     write_json (oStream,  pt);
 
-#endif // BOOST_VERSION >= 104100
+#endif // BOOST_VERSION_MACRO >= 104100
   }
 
 }

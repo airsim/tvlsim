@@ -503,7 +503,7 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-0.1.0 \
 -- BUILD_SHARED_LIBS ................. : ON
 -- CMAKE_BUILD_TYPE .................. : Debug
 --  * CMAKE_C_FLAGS .................. : 
---  * CMAKE_CXX_FLAGS ................ : -Wall -Werror -DBOOST_VERSION=104700
+--  * CMAKE_CXX_FLAGS ................ : -Wall -Werror -DBOOST_VERSION=1.71.0 -DBOOST_VERSION_MACRO=104700
 --  * BUILD_FLAGS .................... : 
 --  * COMPILE_FLAGS .................. : 
 -- CMAKE_MODULE_PATH ................. : /home/user/dev/sim/tvlsim/tvlsimgithub/config/

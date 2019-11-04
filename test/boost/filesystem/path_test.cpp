@@ -79,11 +79,11 @@ namespace {
   {
     const std::string str_1("string-1");
 
-#if defined(BOOST_VERSION) && BOOST_VERSION >= 104400
+#if BOOST_VERSION_MACRO >= 104400
     boost::system::error_code ec( 12345, boost::system::system_category());
-#else // BOOST_VERSION
+#else // BOOST_VERSION_MACRO
     boost::system::error_code ec( 12345, boost::system::system_category);
-#endif // BOOST_VERSION
+#endif // BOOST_VERSION_MACRO
     
     try { throw fs::filesystem_error( str_1, ec ); }
     catch ( const fs::filesystem_error & ex )
