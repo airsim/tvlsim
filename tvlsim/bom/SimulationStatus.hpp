@@ -6,8 +6,6 @@
 // //////////////////////////////////////////////////////////////////////
 // STL
 #include <string>
-// Boost Simulation
-#include <boost/progress.hpp>
 // StdAir
 #include <stdair/stdair_date_time_types.hpp>
 #include <stdair/basic/StructAbstract.hpp>
