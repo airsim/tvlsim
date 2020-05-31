@@ -1,6 +1,7 @@
+C++ Simulated Travel-Oriented Distribution System Library
+=========================================================
 
-Summary:
---------
+# Summary
 The Travel Market Simulator project aims at providing reference implementation,
 mainly in C++, of a travel market simulator, focusing on revenue management (RM)
 for airlines. It is intended to be used for applied research activities only:
@@ -17,39 +18,37 @@ revenue accounting (RA).
 
 The Travel Market Simulator can used in either batch or hosted mode. It is
 the main component of the Travel Market Simulator:
-http://www.travel-market-simulator
+https://travel-sim.org
 
 That project makes an extensive use of existing open-source libraries for
 increased functionality, speed and accuracy. In particular the Boost (C++
-Standard Extensions: http://www.boost.org) library is used.
+Standard Extensions: https://www.boost.org) library is used.
 
 The TvlSim component itself aims at providing a clean API and a simple
 implementation, as a C++ library, of a travel market simulator, focusing
 on revenue management (RM) for airlines. That library uses the Standard
-Airline IT C++ object model (http://sf.net/projects/stdair).
+Airline IT C++ object model (https://github.com/airsim/stdair).
 
+# Installation
 
-Getting and installing from the Fedora/CentOS/RedHat distribution:
-------------------------------------------------------------------
+## On Fedora/CentOS/RedHat distribution
 Just use DNF:
 ```bash
-dnf -y install tvlsim-devel tvlsim-doc
+$ dnf -y install tvlsim-devel tvlsim-doc
 ```
 
 You can also get the RPM packages (which may work on Linux
 distributions like Novel Suse and Mandriva) from the Fedora repository
-(_e.g._, for Fedora 30, 
-http://fr2.rpmfind.net/linux/fedora/releases/30/Everything/)
+(_e.g._, for Fedora 32, 
+https://fr2.rpmfind.net/linux/RPM/fedora/32/x86_64/)
 
 
-Building the library and test binary from Git repository:
-----------------------------------------------------------------
+## Building the library and test binary from Git repository
 The Git repository may be cloned as following:
 ```bash
 $ git clone git@github.com:airsim/tvlsim.git tvlsimgit # through SSH
 $ git clone https://github.com/airsim/tvlsim.git # if the firewall filters SSH
-cd tvlsimgit
-git checkout trunk
+$ cd tvlsimgit
 ```
 
 Then, you need the following packages (Fedora/RedHat/CentOS names here, 
@@ -74,8 +73,7 @@ but names may vary according to distributions):
 * tetex-latex (optional)
 * rpm-build (optional)
 
-Building the library and test binary from the tarball:
-------------------------------------------------------
+## Building the library and test binary from the tarball
 The latest stable source tarball (`tvlsim*.tar.gz` or `.bz2`)
 can be found here:
 https://github.com/airsim/tvlsim/releases
@@ -83,9 +81,9 @@ https://github.com/airsim/tvlsim/releases
 To customise the following to your environment, you can alter the path
 to the installation directory:
 ```bash
-export INSTALL_BASEDIR=/home/user/dev/deliveries
-export TVLSIM_VER=1.01.2
-if [ -d /usr/lib64 ]; then LIBSUFFIX=64; fi
+export INSTALL_BASEDIR="${HOME}/dev/deliveries"
+export TVLSIM_VER="1.01.3"
+if [ -d /usr/lib64 ]; then LIBSUFFIX="64"; fi
 export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=$LIBSUFFIX"
 ```
 
