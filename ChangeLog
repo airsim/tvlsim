@@ -1,3 +1,6 @@
+* Sat Jun 26 2021 Denis Arnaud <denis.arnaud_fedora at m4x.org> - 1.01.4
+- Upgraded CMake support files
+
 * Sat May 30 2020 Denis Arnaud <denis.arnaud_fedora at m4x.org> - 1.01.3
 - Removed dependency on Python
 
