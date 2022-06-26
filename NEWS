@@ -1,29 +1,33 @@
-2021-06-26:
+* 2022-06-26:
+- Version 1.01.5
+- Upgraded CMake support files
+
+* 2021-06-26:
 - Version 1.01.4
 - Upgraded CMake support files
 
-2020-05-30:
+* 2020-05-30:
 - Version 1.01.3
 - Removed dependency on Python
 
-2019-07-11:
+* 2019-07-11:
 - Version 1.01.2
 - CMake support files updated for Python 3.8
 
-2019-01-15:
+* 2019-01-15:
 - Version 1.01.1
 - CMake nows finds out automatically the right Boost.Python library version
 - Python 3.4 is the new minimum required version
 
-2013-06-08:
+* 2013-06-08:
 - Version 1.01.0
 - Renamed from AirSched into AirTSP, for trademark issue with Pancor.
 
-2012-12-13:
+* 2012-12-13:
 - Version 1.00.0
 - Open source release
 
-2011-11-23:
+* 2011-11-23:
 - Version 0.1.0
 - First release
 
