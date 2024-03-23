@@ -1,5 +1,5 @@
 #
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.15..)
 
 ##
 # CMake macros for the project
@@ -10,7 +10,7 @@ include (config/project_config_embeddable.cmake)
 project (tvlsim)
 set_project_names (tvlsim TvlSim)
 set_project_brief ("C++ Simulated Travel-Oriented Distribution System Library")
-set_project_versions (1 01 6)
+set_project_versions (1 01 7)
 
 ##
 # Project options
