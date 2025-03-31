@@ -82,7 +82,7 @@ To customise the following to your environment, you can alter the path
 to the installation directory:
 ```bash
 export INSTALL_BASEDIR="${HOME}/dev/deliveries"
-export TVLSIM_VER="1.01.8"
+export TVLSIM_VER="1.01.9"
 ```
 
 Then, as usual:
@@ -91,8 +91,8 @@ Then, as usual:
 ```bash
   mkdir build && cd build
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER} \
-   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON -DINSTALL_DOC:BOOL=ON \
-   -DRUN_GCOV:BOOL=OFF ..
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON \
+   -DINSTALL_DOC:BOOL=ON -DRUN_GCOV:BOOL=OFF ..
 ```
   * When dependencies are installed in non-standard directories (_e.g._,
     in the same base directory as of RMOL, that is, `${INSTALL_BASEDIR}`):
