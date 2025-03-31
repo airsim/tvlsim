@@ -83,15 +83,22 @@ to the installation directory:
 ```bash
 export INSTALL_BASEDIR="${HOME}/dev/deliveries"
 export TVLSIM_VER="1.01.8"
-if [ -d /usr/lib64 ]; then LIBSUFFIX="64"; fi
-export LIBSUFFIX_4_CMAKE="-DLIB_SUFFIX=$LIBSUFFIX"
 ```
 
 Then, as usual:
-* To configure the project, type something like:
+* To configure the project
+  * When dependencies are installed in standard directories (_e.g._, `/usr`):
 ```bash
   mkdir build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-$TVLSIM_VER \
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER} \
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON -DINSTALL_DOC:BOOL=ON \
+   -DRUN_GCOV:BOOL=OFF ..
+```
+  * When dependencies are installed in non-standard directories (_e.g._,
+    in the same base directory as of RMOL, that is, `${INSTALL_BASEDIR}`):
+```bash
+  mkdir build && cd build
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_BASEDIR}/tvlsim-${TVLSIM_VER} \
    -DWITH_STDAIR_PREFIX=${INSTALL_BASEDIR}/stdair-stable \
    -DWITH_TRADEMGEN_PREFIX=${INSTALL_BASEDIR}/trademgen-stable \
    -DWITH_SEVMGR_PREFIX=${INSTALL_BASEDIR}/sevmgr-stable \
@@ -102,8 +109,8 @@ Then, as usual:
    -DWITH_AIRINV_PREFIX=${INSTALL_BASEDIR}/airinv-stable \
    -DWITH_SIMFQT_PREFIX=${INSTALL_BASEDIR}/simfqt-stable \
    -DWITH_SIMCRS_PREFIX=${INSTALL_BASEDIR}/simcrs-stable \
-   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON -DINSTALL_DOC:BOOL=ON \
-   -DRUN_GCOV:BOOL=OFF ${LIBSUFFIX_4_CMAKE} ..
+   -DCMAKE_BUILD_TYPE:STRING=Debug -DENABLE_TEST:BOOL=ON \
+   -DINSTALL_DOC:BOOL=ON -DRUN_GCOV:BOOL=OFF ..
 ```
 * To build the project, type:
 ```bash

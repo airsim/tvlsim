@@ -1,3 +1,5 @@
+@PACKAGE_INIT@
+
 #
 # Config file for the TvlSim package. It defines the following variables:
 #  TVLSIM_VERSION      - version of TvlSim
@@ -9,13 +11,13 @@
 
 # Tell the user project where to find TvlSim headers and libraries
 set (TVLSIM_VERSION "@PACKAGE_VERSION@")
-set (TVLSIM_BINARY_DIRS "@TVLSIM_BIN_DIR@")
-set (TVLSIM_INCLUDE_DIRS "@TVLSIM_INCLUDE_DIRS@")
-set (TVLSIM_LIBRARY_DIRS "@TVLSIM_LIB_DIR@")
+set (TVLSIM_BINARY_DIRS "@PACKAGE_TVLSIM_BIN_DIR@")
+set (TVLSIM_INCLUDE_DIRS "@PACKAGE_TVLSIM_INCLUDE_DIRS@")
+set (TVLSIM_LIBRARY_DIRS "@PACKAGE_TVLSIM_LIB_DIR@")
 
 # Library dependencies for TvlSim (contains definitions for the TvlSim IMPORTED
 # targets)
-include ("@TVLSIM_CMAKE_DIR@/tvlsim-library-depends.cmake")
+include ("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-library-depends.cmake")
 
 # These are the TvlSim IMPORTED targets, created by tvlsim-library-depends.cmake
 set (TVLSIM_LIBRARIES tvlsimlib)
