@@ -511,7 +511,13 @@ int readConfiguration (int argc, char* argv[], std::string& ioServerProtocol,
  */
 static std::string s_recv (zmq::socket_t& socket) {
   zmq::message_t message;
-  socket.recv (message);
+  zmq::recv_result_t rc = socket.recv (message);
+
+  // DEBUG
+  if (rc.has_value()) {
+    const unsigned int rc_val = rc.value();
+    std::cout << "Receive status: " << rc_val << std::endl;
+  }
 
   return std::string (static_cast<char*> (message.data()), message.size());
 }
@@ -682,7 +688,13 @@ int main (int argc, char* argv[]) {
     STDAIR_LOG_DEBUG ("Send: '" << lJSONDump << "'");
 
     // Send back the answer details to the client
-    s_send (socket, lJSONDump);
+    zmq::send_result_t rc = s_send (socket, lJSONDump);
+
+    // DEBUG
+    if (rc.has_value()) {
+      const unsigned int rc_val = rc.value();
+      std::cout << "Send status: " << rc_val << std::endl;
+    }
   }
 
   return 0;
