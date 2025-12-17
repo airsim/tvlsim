@@ -96,7 +96,7 @@
     Query word list (not used for now)
 
 
-See the output of the <tt>`TvlSimServer --help'</tt> command for default options.
+See the output of the <tt>TvlSimServer --help</tt> command for default options.
 
 
 \section sec_see_also SEE ALSO
